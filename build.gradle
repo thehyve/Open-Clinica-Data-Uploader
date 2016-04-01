@@ -13,7 +13,13 @@ buildscript {
 apply plugin: 'java'
 apply plugin: 'eclipse'
 apply plugin: 'idea'
-apply plugin: 'spring-boot' 
+apply plugin: 'spring-boot'
+apply plugin: 'war'
+
+war {
+	baseName = 'ocdu'
+	version =  '0.0.1'
+}
 
 jar {
 	baseName = 'ocdu'
@@ -37,7 +43,8 @@ dependencies {
 	compile('org.springframework.boot:spring-boot-starter-ws')
 	runtime('com.h2database:h2')
 	compile("org.springframework.ws:spring-ws-core")
-	testCompile('org.springframework.boot:spring-boot-starter-test') 
+	testCompile('org.springframework.boot:spring-boot-starter-test')
+	providedRuntime("org.springframework.boot:spring-boot-starter-tomcat")
 }
 
 

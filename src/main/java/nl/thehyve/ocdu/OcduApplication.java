@@ -1,4 +1,4 @@
-package nl.thehyve.ocdu.configs;
+package nl.thehyve.ocdu;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

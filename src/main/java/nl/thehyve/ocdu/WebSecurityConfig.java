@@ -1,4 +1,4 @@
-package nl.thehyve.ocdu.configs;
+package nl.thehyve.ocdu;
 
 /**
  * Created by piotrzakrzewski on 21/03/16.

@@ -16,4 +16,6 @@ public class OcduApplicationTests {
 	public void contextLoads() {
 	}
 
+	//TODO: We should put our Unit Tests here. Later if we have time we can also add Hamcrest Integration tests.
+
 }

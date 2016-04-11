@@ -1,5 +1,6 @@
 package nl.thehyve.ocdu;
 
+import nl.thehyve.ocdu.configs.OcduApplication;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.test.context.web.WebAppConfiguration;
@@ -14,5 +15,7 @@ public class OcduApplicationTests {
 	@Test
 	public void contextLoads() {
 	}
+
+	//TODO: We should put our Unit Tests here. Later if we have time we can also add Hamcrest Integration tests.
 
 }

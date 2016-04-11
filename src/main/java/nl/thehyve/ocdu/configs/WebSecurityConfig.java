@@ -1,4 +1,4 @@
-package nl.thehyve.ocdu;
+package nl.thehyve.ocdu.configs;
 
 /**
  * Created by piotrzakrzewski on 21/03/16.
@@ -19,14 +19,12 @@ class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         http
                 .authorizeRequests()
-                .antMatchers("/", "/index").permitAll()
-                .anyRequest().authenticated()
+                .antMatchers("/", "/index").authenticated()
                 .and()
                 .formLogin()
                 .loginPage("/login")
                 .permitAll()
                 .and()
-
                 .logout()
                 .permitAll();
     }

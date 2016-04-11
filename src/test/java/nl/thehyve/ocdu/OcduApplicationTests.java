@@ -1,5 +1,6 @@
 package nl.thehyve.ocdu;
 
+import nl.thehyve.ocdu.configs.OcduApplication;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.test.context.web.WebAppConfiguration;

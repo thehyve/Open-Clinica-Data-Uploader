@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 @Controller
 public class DataUploadController {
 
-    @RequestMapping(value="/data", method= RequestMethod.GET)
+    @RequestMapping(value="/", method= RequestMethod.GET)
     public String data() {
         return "data";
     }

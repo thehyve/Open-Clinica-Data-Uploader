@@ -41,7 +41,7 @@ dependencies {
 	compile('org.springframework.boot:spring-boot-starter-thymeleaf')
 	compile('org.springframework.boot:spring-boot-starter-web')
 	compile('org.springframework.boot:spring-boot-starter-ws')
-	runtime('com.h2database:h2')
+	//runtime('com.h2database:h2')
 	compile("org.springframework.ws:spring-ws-core")
 	testCompile('org.springframework.boot:spring-boot-starter-test')
 	providedRuntime("org.springframework.boot:spring-boot-starter-tomcat")

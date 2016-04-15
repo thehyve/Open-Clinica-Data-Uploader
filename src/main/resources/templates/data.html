@@ -1,12 +1,60 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <link href="/css/style.css" rel="stylesheet"/>
-    <title>Upload your data file</title>
+    <title>Data Upload</title>
 </head>
 <body role="document">
-    <div th:replace="header :: header">fafafafa</div>
-    <div class="container" style="padding-top: 50px;"> this is data view, also the index </div>
+    <div th:replace="header"></div>
+    <div class="container" style="padding-top: 100px;">
+
+        <!--<form id="data-upload-form">-->
+            <!--<label>Select data</label>-->
+            <!--<input id="data-upload-input" name="data-upload-input-name" type="file" accept="*" />-->
+            <!--<br />-->
+            <!--<button type="button" id="data-sub-btn" onclick="uploadFile()">submit</button>-->
+            <!--<span id="upload-file-success-message" class="alert alert-info"></span>-->
+            <!--<span id="upload-file-fail-message" class="alert alert-danger"></span>-->
+        <!--</form>-->
+
+        <form id="upload-file-form">
+            <div class="form-group">
+                <label for="upload-file-input">Select data file</label>
+                <input id="upload-file-input" type="file" name="uploadfile" accept="*" />
+            </div>
+
+            <button type="button" class="btn btn-primary" id="subtn" onclick="uploadFile()">submit</button>
+            <span id="upload-file-message"></span>
+        </form>
+
+    </div>
+
+    <script>
+
+        /**
+         * Upload the file sending it via Ajax at the Spring Boot server.
+         */
+        function uploadFile() {
+            $.ajax({
+                url: "/uploadFile",
+                type: "POST",
+                data: new FormData($("#upload-file-form")[0]),
+                enctype: 'multipart/form-data',
+                processData: false,
+                contentType: false,
+                cache: false,
+                success: function () {
+                    // Handle upload success
+                    $("#upload-file-message").text("File succesfully uploaded");
+                },
+                error: function () {
+                    // Handle upload error
+                    $("#upload-file-message").text(
+                            "File not uploaded");
+                }
+            });
+        } // function uploadFile
+    </script>
+
     <div th:replace="footer :: footer"></div>
 </body>
 </html>

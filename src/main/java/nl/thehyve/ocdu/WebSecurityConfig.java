@@ -33,6 +33,8 @@ class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .and()
             .logout()
                 .permitAll();
+
+        http.csrf().disable();
     }
 
     @Autowired
@@ -49,5 +51,6 @@ class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 //        handler.setDefaultTargetUrl("/events");
 //        return handler;
 //    }
+
 
 }

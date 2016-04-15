@@ -9,14 +9,19 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import static nl.thehyve.ocdu.soap.ResponseHandlers.SoapUtils.getFirstChildByName;
+
 /**
  * Created by piotrzakrzewski on 15/04/16.
  */
 public class ListStudiesResponseHandler {
 
     public static List<Study> parseListStudiesResponse(SOAPMessage response) throws Exception {
-        Iterator<SOAPElement> studies = response.getSOAPPart().getEnvelope().getBody().getChildElements(new QName("study"));
-        List<Study> studiesParsed = new ArrayList<Study>();
+        Iterator<SOAPElement> listAllResponse = response.getSOAPPart().getEnvelope().
+                getBody().getChildElements();
+        SOAPElement studiesElement = getFirstChildByName(listAllResponse.next(), "studies");
+        Iterator<SOAPElement> studies = studiesElement.getChildElements(new QName("study"));
+        List<Study> studiesParsed = new ArrayList<>();
         while (studies.hasNext()) {
             SOAPElement studyElement = studies.next();
             Study study = parseStudy(studyElement);
@@ -32,13 +37,5 @@ public class ListStudiesResponseHandler {
         return new Study(identifier, oid, name);
     }
 
-    public static SOAPElement getFirstChildByName(SOAPElement soapElement, String name) {
-        Iterator<SOAPElement> childElements = soapElement.getChildElements(new QName(name));
-        if (!childElements.hasNext()) {
-            return null;
-        } else {
-            return childElements.next();
-        }
-    }
 
 }

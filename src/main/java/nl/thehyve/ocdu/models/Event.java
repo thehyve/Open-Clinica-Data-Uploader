@@ -1,15 +1,63 @@
 package nl.thehyve.ocdu.models;
 
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
 import java.util.Date;
 
 /**
  * Created by piotrzakrzewski on 16/04/16.
  */
+
+@Entity
 public class Event {
 
-    private final String eventName;
-    private final String ssid;
-    private final String study;
+    private String eventName;
+    private String ssid;
+    private String study;
+    private String location;
+    private Date startDate;
+    private Date startTime;
+    private Date endDate;
+    private Date endTime;
+    private Integer repeatNumber;
+    private String submission;
+    private String owner;
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private long id;
+
+    public Event(String eventName, String ssid, String study, String location, Date startDate, Date startTime, Date endDate, Date endTime, Integer repeatNumber, String submission, String owner) {
+        this.eventName = eventName;
+        this.ssid = ssid;
+        this.study = study;
+        this.location = location;
+        this.startDate = startDate;
+        this.startTime = startTime;
+        this.endDate = endDate;
+        this.endTime = endTime;
+        this.repeatNumber = repeatNumber;
+        this.submission = submission;
+        this.owner = owner;
+    }
+
+    public String getSubmission() {
+        return submission;
+    }
+
+    public String getOwner() {
+        return owner;
+    }
+
+    protected Event() {
+    }
+
+
+
+    public long getId() {
+        return id;
+    }
 
     public String getEventName() {
         return eventName;
@@ -45,24 +93,5 @@ public class Event {
 
     public Integer getRepeatNumber() {
         return repeatNumber;
-    }
-
-    private final String location;
-    private final Date startDate;
-    private final Date startTime;
-    private final Date endDate;
-    private final Date endTime;
-    private final Integer repeatNumber;
-
-    public Event(String eventName, String ssid, String study, String location, Date startDate, Date startTime, Date endDate, Date endTime, Integer repeatNumber) {
-        this.eventName = eventName;
-        this.ssid = ssid;
-        this.study = study;
-        this.location = location;
-        this.startDate = startDate;
-        this.startTime = startTime;
-        this.endDate = endDate;
-        this.endTime = endTime;
-        this.repeatNumber = repeatNumber;
     }
 }

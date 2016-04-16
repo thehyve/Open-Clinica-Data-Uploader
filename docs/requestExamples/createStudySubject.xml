@@ -1,0 +1,32 @@
+<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/"
+                  xmlns:v1="http://openclinica.org/ws/studySubject/v1"
+                  xmlns:bean="http://openclinica.org/ws/beans">
+    ${insert header}
+    <soapenv:Body>
+        <v1:createRequest>
+            <!--1 or more repetitions:-->
+            <v1:studySubject>
+                <bean:label>?</bean:label>
+                <!--Optional:-->
+                <bean:secondaryLabel>?</bean:secondaryLabel>
+                <bean:enrollmentDate>?</bean:enrollmentDate>
+                <bean:subject>
+                    <!--Optional:-->
+                    <bean:uniqueIdentifier>?</bean:uniqueIdentifier>
+                    <!--Optional:-->
+                    <bean:gender>?</bean:gender>
+                    <!--You have a CHOICE of the next 2 items at this level-->
+                    <bean:dateOfBirth>?</bean:dateOfBirth>
+                    <bean:yearOfBirth>?</bean:yearOfBirth>
+                </bean:subject>
+                <bean:studyRef>
+                    <bean:identifier>?</bean:identifier>
+                    <!--Optional:-->
+                    <bean:siteRef>
+                        <bean:identifier>?</bean:identifier>
+                    </bean:siteRef>
+                </bean:studyRef>
+            </v1:studySubject>
+        </v1:createRequest>
+    </soapenv:Body>
+</soapenv:Envelope>

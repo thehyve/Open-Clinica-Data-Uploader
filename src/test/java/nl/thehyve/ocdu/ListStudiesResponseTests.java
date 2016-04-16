@@ -52,7 +52,7 @@ public class ListStudiesResponseTests {
             MessageFactory messageFactory = MessageFactory.newInstance();
             FileInputStream in = new FileInputStream(new File("docs/responseExamples/listStudiesResponse.xml"));
 
-            mockedResponseListAllStudies = messageFactory.createMessage(null, in);;//soapMessage;
+            mockedResponseListAllStudies = messageFactory.createMessage(null, in);//soapMessage;
         } catch (Exception ex) {
             ex.printStackTrace();
         }

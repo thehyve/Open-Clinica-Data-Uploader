@@ -3,6 +3,8 @@ package nl.thehyve.ocdu.soap;
 import javax.xml.namespace.QName;
 import javax.xml.soap.*;
 
+import static nl.thehyve.ocdu.soap.SOAPRequestDecorators.listAllStudiesRequestDecorator.decorateListAllStudiesBody;
+
 /**
  * Created by piotrzakrzewski on 15/04/16.
  */
@@ -19,17 +21,14 @@ public class SOAPRequestFactory {
         envelope.addNamespaceDeclaration(apiVersion, "http://openclinica.org/ws/study/v1");
 
         decorateHeader(envelope, username, passwordHash);
-        decorateBody(envelope);
+        decorateListAllStudiesBody(envelope);
 
         soapMessage.saveChanges();
 
         return soapMessage;
     }
 
-    private void decorateBody(SOAPEnvelope envelope) throws Exception {
-        SOAPBody soapBody = envelope.getBody();
-        soapBody.addChildElement("listAllRequest","v1");
-    }
+
 
     private void decorateHeader(SOAPEnvelope envelope, String username, String passwordHash ) throws Exception{
         SOAPHeader header = envelope.getHeader();

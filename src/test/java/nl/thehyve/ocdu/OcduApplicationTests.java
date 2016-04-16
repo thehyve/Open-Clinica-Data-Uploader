@@ -37,92 +37,9 @@ import static nl.thehyve.ocdu.soap.ResponseHandlers.SoapUtils.toDocument;
 @WebAppConfiguration
 public class OcduApplicationTests {
 
-    SOAPMessage mockedResponseListAllStudies;
-
-    @Before
-    public void setUp() {
-        try {
-            MessageFactory messageFactory = MessageFactory.newInstance();
-            soapFactory = SOAPFactory.newInstance();
-            SOAPMessage soapMessage = messageFactory.createMessage();
-            SOAPPart soapPart = soapMessage.getSOAPPart();
-
-            SOAPEnvelope envelope = soapPart.getEnvelope();
-            decorateBody(envelope);
-            soapMessage.saveChanges();
-            FileInputStream in = new FileInputStream(new File("docs/responseExamples/listStudiesResponse.xml"));
-
-            mockedResponseListAllStudies = messageFactory.createMessage(null, in);;//soapMessage;
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
-    }
-
-    public void decorateBody(SOAPEnvelope envelope) {
-        try {
-            SOAPBody soapBody = envelope.getBody();
-            SOAPElement listAllResponseEl = soapBody.addChildElement("listAllResponse");
-            SOAPElement studiesEl = listAllResponseEl.addChildElement("studies");
-            SOAPElement s1 = mockStudyEl("id1","oid1","name1");
-            SOAPElement s2 = mockStudyEl("id2","oid2","name2");
-            studiesEl.addChildElement(s1);
-            studiesEl.addChildElement(s2);
-        } catch (SOAPException e) {
-            e.printStackTrace();
-        }
-    }
-    SOAPFactory soapFactory;
-    public SOAPElement mockStudyEl(String id, String uid, String name) {
-        try {
-            SOAPElement studyEl = soapFactory.createElement("study");
-            studyEl.addChildElement("identifier").setTextContent(id);
-            studyEl.addChildElement("oid").setTextContent(uid);
-            studyEl.addChildElement("name").setTextContent(name);
-            return studyEl;
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
-        return null;
-    }
 
     @Test
     public void contextLoads() {
     }
-
-
-    @Test
-    public void responseHandlerSimpleCase() {
-
-        List<Study> studies = null;
-        try {
-            studies = ListStudiesResponseHandler.parseListStudiesResponse(mockedResponseListAllStudies);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        assertEquals(2, studies.size());
-    }
-
-    @Test
-    public void xpathTest() {
-        try {
-            Document document = toDocument(mockedResponseListAllStudies);
-            XPath xpath = XPathFactory.newInstance().newXPath();
-            NodeList studyNodes = (NodeList) xpath.evaluate("//listAllResponse/studies/study", document, XPathConstants.NODESET);
-            assertEquals(2, studyNodes.getLength());
-        } catch (TransformerException e) {
-            e.printStackTrace();
-        } catch (SOAPException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (ParserConfigurationException e) {
-            e.printStackTrace();
-        } catch (SAXException e) {
-            e.printStackTrace();
-        } catch (XPathExpressionException e) {
-            e.printStackTrace();
-        }
-    }
-
 
 }

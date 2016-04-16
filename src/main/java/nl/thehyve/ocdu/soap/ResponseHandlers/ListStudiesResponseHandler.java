@@ -37,7 +37,7 @@ import static nl.thehyve.ocdu.soap.ResponseHandlers.SoapUtils.toDocument;
  */
 public class ListStudiesResponseHandler {
 
-    public static List<Study> parseListStudiesResponse(SOAPMessage response) throws Exception {
+    public static List<Study> parseListStudiesResponse(SOAPMessage response) throws Exception { //TODO: handle exception
         Document document = toDocument(response);
 
         XPath xpath = XPathFactory.newInstance().newXPath();
@@ -51,7 +51,7 @@ public class ListStudiesResponseHandler {
         return studiesParsed;
     }
 
-    public static Study parseStudy(Node studyElement) throws Exception{
+    public static Study parseStudy(Node studyElement) throws Exception { //TODO: handle exception
         XPath xpath = XPathFactory.newInstance().newXPath();
         Node identifier = (Node) xpath.evaluate("./identifier", studyElement, XPathConstants.NODE);
         Node oid = (Node) xpath.evaluate("./oid", studyElement, XPathConstants.NODE);

@@ -44,7 +44,7 @@ public class SoapUtils {
         return null;
     }
 
-    public static Document toDocument(SOAPMessage soapMsg)
+    public static Document toDocument(SOAPMessage soapMsg) //TODO: handle exception
             throws TransformerException, SOAPException, IOException, ParserConfigurationException, SAXException {
         final StringWriter sw = new StringWriter();
         TransformerFactory.newInstance().newTransformer().transform(

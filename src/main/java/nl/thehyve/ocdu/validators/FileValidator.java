@@ -1,6 +1,7 @@
 package nl.thehyve.ocdu.validators;
 
 import java.io.File;
+import java.nio.file.Path;
 import java.util.List;
 
 /**
@@ -12,5 +13,5 @@ public interface FileValidator {
 
     List<String> getErrorMessages();
 
-    void validateFile(File file);
+    void validateFile(Path file);
 }

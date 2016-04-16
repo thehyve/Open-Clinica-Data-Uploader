@@ -1,6 +1,7 @@
 package nl.thehyve.ocdu.validators;
 
 import java.io.File;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -23,7 +24,7 @@ public class DataFileValidator implements FileValidator {
     }
 
     @Override
-    public void validateFile(File file) {
+    public void validateFile(Path file) {
         this.valid = true; //TODO: implement validation
         this.humanreadableErrors = new ArrayList<>();
     }

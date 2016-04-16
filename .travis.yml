@@ -3,6 +3,12 @@ language: java
 jdk:
     - oraclejdk8
 
+before_script:
+    - psql -c 'CREATE USER ocdu WITH PASSWORD 'ocdu' SUPERUSER;create database ocdu OWNER=ocdu;' -U postgres
+
 script:
     - ./gradlew test
+
+services:
+    - postgresql
 

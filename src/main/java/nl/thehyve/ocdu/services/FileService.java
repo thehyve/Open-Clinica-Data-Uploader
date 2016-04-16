@@ -1,5 +1,6 @@
 package nl.thehyve.ocdu.services;
 
+import nl.thehyve.ocdu.factories.ClinicalDataFactory;
 import nl.thehyve.ocdu.models.ClinicalData;
 import nl.thehyve.ocdu.repositories.ClinicalDataRepository;
 import nl.thehyve.ocdu.repositories.EventRepository;
@@ -9,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -28,12 +30,13 @@ public class FileService {
     @Autowired
     SubjectRepository subjectRepository;
 
-    public List<String> depositDataFile(File dataFile, String username, String submissionName) {
+    public List<String> depositDataFile(Path dataFile, String username, String submissionName) {
         DataFileValidator validator = new DataFileValidator();
         validator.validateFile(dataFile);
         List<String> errorMsgs = new ArrayList<>();
         if (validator.isValid()) {
-            List<ClinicalData> newEntries = null;
+            ClinicalDataFactory factory = new ClinicalDataFactory(username, submissionName);
+            List<ClinicalData> newEntries = factory.createClinicalData(dataFile);
             clinicalDataRepository.save(newEntries);
             return errorMsgs;
         } else {

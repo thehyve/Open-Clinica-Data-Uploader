@@ -3,9 +3,11 @@ package nl.thehyve.ocdu;
 import nl.thehyve.ocdu.factories.ClinicalDataFactory;
 import nl.thehyve.ocdu.models.ClinicalData;
 import nl.thehyve.ocdu.models.Study;
+import nl.thehyve.ocdu.services.FileService;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.SpringApplicationConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
@@ -38,6 +40,9 @@ public class ClinicalDataFactoryTests {
     private ClinicalDataFactory factory;
     private Path testFile;
 
+    @Autowired
+    FileService fileService;
+
     @Test
     public void streamTest() {
         Path testDataFile = Paths.get("docs/examplefiles/data.txt");
@@ -51,6 +56,12 @@ public class ClinicalDataFactoryTests {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    @Test
+    public void depositionDataFileTest() throws Exception{
+        List<String> errorMessages = fileService.depositDataFile(testFile, "user", "submission");
+        assertEquals(0, errorMessages.size());
     }
 
     @Test

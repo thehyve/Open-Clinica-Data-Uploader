@@ -1,0 +1,70 @@
+package nl.thehyve.ocdu;
+
+import nl.thehyve.ocdu.factories.ClinicalDataFactory;
+import nl.thehyve.ocdu.models.ClinicalData;
+import nl.thehyve.ocdu.models.Study;
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.boot.test.SpringApplicationConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.web.WebAppConfiguration;
+
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Stream;
+
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.core.AllOf.allOf;
+import static org.hamcrest.core.Every.everyItem;
+import static org.hamcrest.core.IsInstanceOf.instanceOf;
+import static org.hamcrest.core.IsNull.notNullValue;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThat;
+
+/**
+ * Created by piotrzakrzewski on 16/04/16.
+ */
+@RunWith(SpringJUnit4ClassRunner.class)
+@SpringApplicationConfiguration(classes = OcduApplication.class)
+@WebAppConfiguration
+public class ClinicalDataFactoryTests {
+
+
+    private ClinicalDataFactory factory;
+    private Path testFile;
+
+    @Test
+    public void streamTest() {
+        Path testDataFile = Paths.get("docs/examplefiles/data.txt");
+        try {
+            Stream<String> lines = Files.lines(testDataFile);
+            lines.skip(1).forEach(s -> System.out.println(s));
+            lines.close();
+            lines = Files.lines(testDataFile);
+            Optional<String> header = lines.findFirst();
+            System.out.println("Header: "+header.toString());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Test
+    public void clinicalDataFactoryTest1() {
+        List<ClinicalData> clinicalData = factory.createClinicalData(testFile);
+        assertThat(
+                clinicalData,
+                everyItem(is(allOf(notNullValue(), instanceOf(ClinicalData.class)))));
+        assertEquals(6, clinicalData.size());
+    }
+
+    @Before
+    public void setUp() throws Exception {
+        this.factory = new ClinicalDataFactory("TEST_USER","TEST_SUBMISSION");
+        this.testFile = Paths.get("docs/examplefiles/data.txt");
+    }
+}

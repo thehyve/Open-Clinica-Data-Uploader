@@ -24,11 +24,14 @@ public class ClinicalData {
     private String submission;
     private String crfVersion;
     private Integer groupRepeat;
+    private String owner;
+    private String value;
 
-    protected ClinicalData() {
+    public String getValue() {
+        return value;
     }
 
-    public ClinicalData(String study, String item, String ssid, String eventName, Integer eventRepeat, String crfName, String submission, String crfVersion, Integer groupRepeat) {
+    public ClinicalData(String study, String item, String ssid, String eventName, Integer eventRepeat, String crfName, String submission, String crfVersion, Integer groupRepeat, String owner, String value) {
         this.study = study;
         this.item = item;
         this.ssid = ssid;
@@ -38,6 +41,15 @@ public class ClinicalData {
         this.submission = submission;
         this.crfVersion = crfVersion;
         this.groupRepeat = groupRepeat;
+        this.owner = owner;
+        this.value = value;
+    }
+
+    protected ClinicalData() {
+    }
+
+    public String getOwner() {
+        return owner;
     }
 
     public long getId() {

@@ -19,7 +19,7 @@ public class Subject {
     private String personId;
     private Date dateOfEnrollment;
     private String secondaryId;
-    private Study study;
+    private String study;
     private String owner;
     private String submission;
 
@@ -30,7 +30,7 @@ public class Subject {
     protected Subject() {
     }
 
-    public Subject(String ssid, String gender, Date dateOfBirth, String personId, Date dateOfEnrollment, String secondaryId, Study study, String owner, String submission) {
+    public Subject(String ssid, String gender, Date dateOfBirth, String personId, Date dateOfEnrollment, String secondaryId, String study, String owner, String submission) {
         this.ssid = ssid;
         this.gender = gender;
         this.dateOfBirth = dateOfBirth;
@@ -78,7 +78,7 @@ public class Subject {
         return secondaryId;
     }
 
-    public Study getStudy() {
+    public String getStudy() {
         return study;
     }
 

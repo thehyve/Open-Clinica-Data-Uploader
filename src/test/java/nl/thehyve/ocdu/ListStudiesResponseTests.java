@@ -69,10 +69,7 @@ public class ListStudiesResponseTests {
 
     @Test
     public void testFileExists() throws Exception {
-        log.error(testFile.getAbsolutePath());
-        Path pathTest = Paths.get("docs/responseExamples/listStudiesResponse.xml");
         assertEquals(true, testFile.exists());
-        assertEquals(true, Files.exists(pathTest));
     }
 
     @Test

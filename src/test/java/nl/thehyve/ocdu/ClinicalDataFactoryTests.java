@@ -48,21 +48,6 @@ public class ClinicalDataFactoryTests {
     FileService fileService;
 
     @Test
-    public void streamTest() {
-        Path testDataFile = Paths.get("docs/exampleFiles/data.txt");
-        try {
-            Stream<String> lines = Files.lines(testDataFile);
-            lines.skip(1).forEach(s -> System.out.println(s));
-            lines.close();
-            lines = Files.lines(testDataFile);
-            Optional<String> header = lines.findFirst();
-            System.out.println("Header: "+header.toString());
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    @Test
     public void depositionDataFileTest() throws Exception{
         List<String> errorMessages = fileService.depositDataFile(testFile, "user", "submission");
         assertEquals(0, errorMessages.size());
@@ -70,9 +55,6 @@ public class ClinicalDataFactoryTests {
 
     @Test
     public void testFilePathCorrect() throws Exception {
-        File test = new File("docs/exampleFiles/data.txt");
-        log.error(test.getAbsolutePath());
-        assertEquals(true, test.exists());
         assertEquals(true, Files.exists(testFile));
     }
 
@@ -88,6 +70,6 @@ public class ClinicalDataFactoryTests {
     @Before
     public void setUp() throws Exception {
         this.factory = new ClinicalDataFactory("TEST_USER","TEST_SUBMISSION");
-        this.testFile = Paths.get("docs/examplefiles/data.txt");
+        this.testFile = Paths.get("docs/exampleFiles/data.txt");
     }
 }

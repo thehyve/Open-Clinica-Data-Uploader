@@ -13,5 +13,3 @@ script:
 services:
     - postgresql
 
-after_failure: "cat docs/exampleFiles/data.txt"
-

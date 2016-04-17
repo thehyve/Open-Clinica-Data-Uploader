@@ -49,7 +49,7 @@ public class ClinicalDataFactoryTests {
 
     @Test
     public void streamTest() {
-        Path testDataFile = Paths.get("docs/examplefiles/data.txt");
+        Path testDataFile = Paths.get("docs/exampleFiles/data.txt");
         try {
             Stream<String> lines = Files.lines(testDataFile);
             lines.skip(1).forEach(s -> System.out.println(s));
@@ -70,7 +70,7 @@ public class ClinicalDataFactoryTests {
 
     @Test
     public void testFilePathCorrect() throws Exception {
-        File test = new File("docs/examplefiles/data.txt");
+        File test = new File("docs/exampleFiles/data.txt");
         log.error(test.getAbsolutePath());
         assertEquals(true, test.exists());
         assertEquals(true, Files.exists(testFile));

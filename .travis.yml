@@ -13,5 +13,5 @@ script:
 services:
     - postgresql
 
-after_failure: "grep docs ocdu.log"
+after_failure: "cat docs/exampleFiles/data.txt"
 

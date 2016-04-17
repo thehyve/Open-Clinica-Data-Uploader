@@ -25,6 +25,9 @@ import javax.xml.xpath.XPathFactory;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 
 import static nl.thehyve.ocdu.soap.ResponseHandlers.SoapUtils.toDocument;
@@ -67,7 +70,9 @@ public class ListStudiesResponseTests {
     @Test
     public void testFileExists() throws Exception {
         log.error(testFile.getAbsolutePath());
+        Path pathTest = Paths.get("docs/responseExamples/listStudiesResponse.xml");
         assertEquals(true, testFile.exists());
+        assertEquals(true, Files.exists(pathTest));
     }
 
     @Test

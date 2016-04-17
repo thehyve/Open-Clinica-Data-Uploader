@@ -7,11 +7,14 @@ import nl.thehyve.ocdu.services.FileService;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.SpringApplicationConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -35,6 +38,7 @@ import static org.junit.Assert.assertThat;
 @SpringApplicationConfiguration(classes = OcduApplication.class)
 @WebAppConfiguration
 public class ClinicalDataFactoryTests {
+    private static final Logger log = LoggerFactory.getLogger(ClinicalDataFactoryTests.class);
 
 
     private ClinicalDataFactory factory;
@@ -62,6 +66,14 @@ public class ClinicalDataFactoryTests {
     public void depositionDataFileTest() throws Exception{
         List<String> errorMessages = fileService.depositDataFile(testFile, "user", "submission");
         assertEquals(0, errorMessages.size());
+    }
+
+    @Test
+    public void testFilePathCorrect() throws Exception {
+        File test = new File("docs/examplefiles/data.txt");
+        log.error(test.getAbsolutePath());
+        assertEquals(true, test.exists());
+        assertEquals(true, Files.exists(testFile));
     }
 
     @Test

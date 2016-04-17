@@ -5,6 +5,8 @@ import nl.thehyve.ocdu.soap.ResponseHandlers.ListStudiesResponseHandler;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.boot.test.SpringApplicationConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
@@ -44,18 +46,28 @@ import static org.junit.Assert.assertThat;
 @WebAppConfiguration
 public class ListStudiesResponseTests {
 
+    private static final Logger log = LoggerFactory.getLogger(ListStudiesResponseTests.class);
+
     SOAPMessage mockedResponseListAllStudies;
+    private File testFile;
 
     @Before
     public void setUp() {
         try {
             MessageFactory messageFactory = MessageFactory.newInstance();
-            FileInputStream in = new FileInputStream(new File("docs/responseExamples/listStudiesResponse.xml"));
+            this.testFile = new File("docs/responseExamples/listStudiesResponse.xml");
+            FileInputStream in = new FileInputStream(testFile);
 
             mockedResponseListAllStudies = messageFactory.createMessage(null, in);//soapMessage;
         } catch (Exception ex) {
             ex.printStackTrace();
         }
+    }
+
+    @Test
+    public void testFileExists() throws Exception {
+        log.error(testFile.getAbsolutePath());
+        assertEquals(true, testFile.exists());
     }
 
     @Test

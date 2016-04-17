@@ -35,10 +35,11 @@ public class ClinicalDataFactory extends UserSubmittedDataFactory {
             Stream<String> lines2 = Files.lines(dataFile);
             Optional<String> headerLine = lines2.findFirst();
             HashMap<String, Integer> header = parseHeader(headerLine.get());
+            HashMap<String, Integer> coreColumns = getCoreHeader(header);
             List<ClinicalData> clinicalData = new ArrayList<>();
             List<List<ClinicalData>> clinicalDataAggregates = lines.skip(1).
                     filter(s -> s.split(FILE_SEPARATOR).length > 2).
-                    map(s -> parseLine(s, header)).collect(Collectors.toList());
+                    map(s -> parseLine(s, header, coreColumns)).collect(Collectors.toList());
             clinicalDataAggregates.forEach(aggregate -> clinicalData.addAll(aggregate));
             lines.close();
             lines2.close();
@@ -47,6 +48,23 @@ public class ClinicalDataFactory extends UserSubmittedDataFactory {
             e.printStackTrace();
         }
         return null;
+    }
+
+    private HashMap<String,Integer> getCoreHeader(HashMap<String, Integer> headerMap) {
+        HashMap<String, Integer> coreMap = new HashMap<>();
+        Integer ssidIndex = getAndRemove(headerMap, STUDY_SUBJECT_ID);
+        coreMap.put(STUDY_SUBJECT_ID, ssidIndex);
+        Integer studyIndex = getAndRemove(headerMap, STUDY_SITE);
+        coreMap.put(STUDY_SITE, studyIndex);
+        Integer eventNameIndex = getAndRemove(headerMap, EventName);
+        coreMap.put(EventName, eventNameIndex);
+        Integer eventRepeatIndex = getAndRemove(headerMap, EventRepeat);
+        coreMap.put(EventRepeat, eventRepeatIndex);
+        Integer crfNameIndex = getAndRemove(headerMap, CRFName);
+        coreMap.put(CRFName, crfNameIndex);
+        Integer crfVersionIndex = getAndRemove(headerMap, CRFVersion);
+        coreMap.put(CRFVersion, crfVersionIndex);
+        return coreMap;
     }
 
     private HashMap<String, Integer> parseHeader(String headerLine) {
@@ -60,22 +78,16 @@ public class ClinicalDataFactory extends UserSubmittedDataFactory {
         return header;
     }
 
-    private List<ClinicalData> parseLine(String line, HashMap<String, Integer> headerMapOriginal) {
+    private List<ClinicalData> parseLine(String line, HashMap<String,
+            Integer> headerMap, HashMap<String, Integer> coreColumns) {
         String[] split = line.split(FILE_SEPARATOR);
-        HashMap<String, Integer> headerMap = (HashMap<String, Integer>) headerMapOriginal.clone();
-        Integer ssidIndex = getAndRemove(headerMap, STUDY_SUBJECT_ID);
-        Integer studyIndex = getAndRemove(headerMap, STUDY_SITE);
-        Integer eventNameIndex = getAndRemove(headerMap, EventName);
-        Integer eventRepeatIndex = getAndRemove(headerMap, EventRepeat);
-        Integer crfNameIndex = getAndRemove(headerMap, CRFName);
-        Integer crfVersionIndex = getAndRemove(headerMap, CRFVersion);
 
-        String ssid = split[ssidIndex];
-        String study = split[studyIndex];
-        String eventName = split[eventNameIndex];
-        Integer eventRepeat = Integer.parseInt(split[eventRepeatIndex]);
-        String crf = split[crfNameIndex];
-        String crfVer = split[crfVersionIndex];
+        String ssid = split[coreColumns.get(STUDY_SUBJECT_ID)];
+        String study = split[coreColumns.get(STUDY_SITE)];
+        String eventName = split[coreColumns.get(EventName)];
+        Integer eventRepeat = Integer.parseInt(split[coreColumns.get(EventRepeat)]);
+        String crf = split[coreColumns.get(CRFName)];
+        String crfVer = split[coreColumns.get(CRFVersion)];
 
 
         List<ClinicalData> aggregation = new ArrayList<>();

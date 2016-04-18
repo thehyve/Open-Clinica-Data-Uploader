@@ -1,45 +1,31 @@
 package nl.thehyve.ocdu.soap.ResponseHandlers;
 
 import nl.thehyve.ocdu.models.Study;
+import org.springframework.security.authentication.AuthenticationCredentialsNotFoundException;
+import org.springframework.security.core.AuthenticationException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
-import org.xml.sax.InputSource;
-import org.xml.sax.SAXException;
 
-import javax.xml.namespace.QName;
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.soap.SOAPElement;
-import javax.xml.soap.SOAPException;
 import javax.xml.soap.SOAPMessage;
-import javax.xml.transform.*;
-import javax.xml.transform.dom.DOMResult;
-import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.stream.StreamResult;
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathFactory;
-import java.io.IOException;
-import java.io.StringReader;
-import java.io.StringWriter;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
-import static nl.thehyve.ocdu.soap.ResponseHandlers.SoapUtils.getFirstChildByName;
-import static nl.thehyve.ocdu.soap.ResponseHandlers.SoapUtils.getFirtsChildByName;
 import static nl.thehyve.ocdu.soap.ResponseHandlers.SoapUtils.toDocument;
 
 /**
  * Created by piotrzakrzewski on 15/04/16.
  */
-public class ListStudiesResponseHandler {
+public class ListStudiesResponseHandler extends OCResponseHandler{
 
     public static List<Study> parseListStudiesResponse(SOAPMessage response) throws Exception { //TODO: handle exception
         Document document = toDocument(response);
-
+        if (isAuthFailure(document)) {
+            throw new AuthenticationCredentialsNotFoundException("Authentication against OpenClinica unsuccessfull");
+        }
         XPath xpath = XPathFactory.newInstance().newXPath();
         NodeList studyNodes = (NodeList) xpath.evaluate("//listAllResponse/studies/study", document, XPathConstants.NODESET);
         List<Study> studiesParsed = new ArrayList<>();

@@ -28,7 +28,7 @@ public class OpenClinicaService {
         SOAPConnectionFactory soapConnectionFactory = SOAPConnectionFactory.newInstance();
         SOAPConnection soapConnection = soapConnectionFactory.createConnection();
         SOAPMessage message = responseFactory.createListStudiesRequest(username, passwordHash);
-        SOAPMessage soapResponse = soapConnection.call(message, url);
+        SOAPMessage soapResponse = soapConnection.call(message, url + "/ws/study/v1");  // Add SOAP endopint to OCWS URL.
         List<Study> studies = ListStudiesResponseHandler.parseListStudiesResponse(soapResponse);
         soapConnection.close();
         return studies;
@@ -38,7 +38,7 @@ public class OpenClinicaService {
         SOAPConnectionFactory soapConnectionFactory = SOAPConnectionFactory.newInstance();
         SOAPConnection soapConnection = soapConnectionFactory.createConnection();
         SOAPMessage message = responseFactory.createListStudiesRequest(username, passwordHash);
-        SOAPMessage soapResponse = soapConnection.call(message, url);
+        SOAPMessage soapResponse = soapConnection.call(message, url + "/ws/study/v1");  // Add SOAP endopint to OCWS URL.
         Document responseXml = SoapUtils.toDocument(soapResponse);
         soapConnection.close();
         return !OCResponseHandler.isAuthFailure(responseXml);

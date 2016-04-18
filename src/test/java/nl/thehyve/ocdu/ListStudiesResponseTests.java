@@ -58,7 +58,7 @@ public class ListStudiesResponseTests {
     public void setUp() {
         try {
             MessageFactory messageFactory = MessageFactory.newInstance();
-            this.testFile = new File("docs/responseExamples/listStudiesResponse.xml");
+            this.testFile = new File("docs/responseExamples/listStudiesResponse.xml"); //TODO: Replace File with Path
             FileInputStream in = new FileInputStream(testFile);
 
             mockedResponseListAllStudies = messageFactory.createMessage(null, in);//soapMessage;

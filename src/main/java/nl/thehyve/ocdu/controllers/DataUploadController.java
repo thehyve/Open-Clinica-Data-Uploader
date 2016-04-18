@@ -45,7 +45,6 @@ public class DataUploadController {
         try {
             // Get the filename and build the local file path
             String filename = uploadfile.getOriginalFilename();
-//      String directory = env.getProperty("netgloo.paths.uploadedFiles");
             String directory = System.getProperty("java.io.tmpdir");
             String filepath = Paths.get(directory, filename).toString();
 
@@ -63,4 +62,28 @@ public class DataUploadController {
         return new ResponseEntity<>(HttpStatus.OK);
     } // method uploadFile
 
+    @RequestMapping(value = "/uploadMapping", method = RequestMethod.POST)
+    @ResponseBody
+    public ResponseEntity<?> uploadMapping(
+            @RequestParam("uploadmapping") MultipartFile uploadmapping) {
+        System.out.println("mapping mapping");
+        try {
+            // Get the filename and build the local file path
+            String filename = uploadmapping.getOriginalFilename();
+            String directory = System.getProperty("java.io.tmpdir");
+            String filepath = Paths.get(directory, filename).toString();
+
+            // Save the file locally
+            BufferedOutputStream stream =
+                    new BufferedOutputStream(new FileOutputStream(new File(filepath)));
+            stream.write(uploadmapping.getBytes());
+            stream.close();
+        }
+        catch (Exception e) {
+            System.out.println(e.getMessage());
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+
+        return new ResponseEntity<>(HttpStatus.OK);
+    } // method uploadFile
 }

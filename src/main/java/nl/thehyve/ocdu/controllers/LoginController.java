@@ -15,6 +15,5 @@ public class LoginController {
         return "login";
     }
 
-    //TODO: How does Spring-security handle logout?
 
 }

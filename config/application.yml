@@ -1,0 +1,7 @@
+OpenClinicaEnvironments:
+  ocEnvironments:
+   -
+      url: http://ocdu-openclinica-dev.thehyve.net/openclinica
+      name: oc-dev
+      version: 3.6
+

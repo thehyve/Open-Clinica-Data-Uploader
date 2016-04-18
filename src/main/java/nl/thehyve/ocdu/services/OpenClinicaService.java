@@ -34,16 +34,14 @@ public class OpenClinicaService {
         return studies;
     }
 
-    public boolean isAuthenticated(String username, String /* hexdigest of sha1 password */ passwordHash, String url) throws Exception
-
-    {
+    public boolean isAuthenticated(String username, String /* hexdigest of sha1 password */ passwordHash, String url) throws Exception {
         SOAPConnectionFactory soapConnectionFactory = SOAPConnectionFactory.newInstance();
         SOAPConnection soapConnection = soapConnectionFactory.createConnection();
         SOAPMessage message = responseFactory.createListStudiesRequest(username, passwordHash);
         SOAPMessage soapResponse = soapConnection.call(message, url);
         Document responseXml = SoapUtils.toDocument(soapResponse);
         soapConnection.close();
-        return  OCResponseHandler.isAuthFailure(responseXml);
+        return !OCResponseHandler.isAuthFailure(responseXml);
     }
 
 }

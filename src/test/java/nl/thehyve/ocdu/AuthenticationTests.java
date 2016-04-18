@@ -76,7 +76,7 @@ public class AuthenticationTests {
     @Test
     public void xpathExpressionTest1() throws Exception {
         XPath xpath = XPathFactory.newInstance().newXPath();
-        Node faultNode = (Node) xpath.evaluate("//faultcode",
+        Node faultNode = (Node) xpath.evaluate(OCResponseHandler.authFailXpathExpr,
                 authFailPureXML, XPathConstants.NODE);
 
         assertEquals(false, faultNode == null);

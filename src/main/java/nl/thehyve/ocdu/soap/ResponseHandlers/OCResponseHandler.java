@@ -14,10 +14,12 @@ import javax.xml.xpath.XPathFactory;
  */
 public class OCResponseHandler {
 
+    public final static String authFailXpathExpr =  "//faultcode";
+
     public static boolean isAuthFailure(Document xmlResponse) {
         XPath xpath = XPathFactory.newInstance().newXPath();
         try {
-            Node faultNode = (Node) xpath.evaluate("//faultcode",  //TODO: make it more specific, can we distinguish between different faultcodes?
+            Node faultNode = (Node) xpath.evaluate(authFailXpathExpr,  //TODO: make it more specific, can we distinguish between different faultcodes?
                     xmlResponse, XPathConstants.NODE);
             if (faultNode == null) {
                 return false;

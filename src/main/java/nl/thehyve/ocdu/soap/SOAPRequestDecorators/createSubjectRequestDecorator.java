@@ -11,9 +11,10 @@ import java.util.List;
  */
 public class createSubjectRequestDecorator {
 
-    public static void decorateCreateSubjectRequestBody(SOAPEnvelope envelope, List<Subject> subjects) throws SOAPException {
+    public  void decorateCreateSubjectRequestBody(SOAPEnvelope envelope, List<Subject> subjects) throws SOAPException {
         SOAPBody soapBody = envelope.getBody();
-        soapBody.addChildElement("listAllRequest","v1");
+        //TODO: implement
+        // soapBody.addChildElement("listAllRequest","v1");
     }
 
 }

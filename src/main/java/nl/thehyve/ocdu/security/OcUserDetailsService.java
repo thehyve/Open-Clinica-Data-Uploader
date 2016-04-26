@@ -24,7 +24,9 @@ public class OcUserDetailsService implements UserDetailsService {
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         List<GrantedAuthority> authList = new ArrayList<>();
         HttpSession session = session();
-        String ocEnvironment = (String) session.getAttribute("ocEnvironment");
+        System.out.println("User retrieved: " + username );
+        String ocEnvironment =  "http://ocdu-openclinica-dev.thehyve.net/OpenClinica-ws";//TODO: fix passing ocEnvironment to session via custom filter
+                // (String) session.getAttribute("ocEnvironment");
         UserDetails usr = new OcUser(username, "notused", authList, ocEnvironment);
         return usr;
     }

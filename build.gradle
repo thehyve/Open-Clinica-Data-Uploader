@@ -43,6 +43,7 @@ dependencies {
     compile('org.springframework.boot:spring-boot-starter-ws')
     compile('postgresql:postgresql:9.1-901-1.jdbc4')
     compile("org.springframework.ws:spring-ws-core")
+    compile('net.sourceforge.nekohtml:nekohtml:1.9.22')
     testCompile('org.springframework.boot:spring-boot-starter-test')
     providedRuntime("org.springframework.boot:spring-boot-starter-tomcat")
 }

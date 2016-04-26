@@ -1,0 +1,88 @@
+.node {
+    cursor: pointer;
+}
+
+.overlay{
+    background-color:#EEE;
+}
+
+.nodeCircle {
+    /*fill: steelblue;*/
+    stroke: steelblue;
+    stroke-width: 2px;
+}
+
+.itemCircle {
+    fill: Bisque;
+    stroke: steelblue ;
+    stroke-width: 1.5px;
+}
+
+.highlightCircle {
+    stroke: red;
+    stroke-width: 3.5px;
+    stroke-opacity: .6;
+}
+
+.node text {
+    font-size:15px;
+    font-family:sans-serif;
+}
+
+.link {
+    fill: none;
+    stroke: #C0C0C0 ;
+    stroke-width: 1.5px;
+    stroke-opacity: .7;
+}
+
+.ocrect {
+    fill: steelblue;
+    fill-opacity: .6;
+}
+
+.usrrect {
+    fill: LightSteelBlue;
+    fill-opacity: .6;
+}
+
+.octext {
+    text-anchor: middle;
+    alignment-baseline: central;
+    font-size:15px;
+    font-family:sans-serif;
+}
+
+.usrtext {
+    text-anchor: middle;
+    alignment-baseline: central;
+    font-size:15px;
+    font-family:sans-serif;
+}
+
+.connector {
+    fill: lightgrey;
+    stroke: grey;
+}
+
+.connector:hover {
+    stroke: orange;
+}
+
+.griditem {
+    cursor: pointer;
+}
+
+.griditem_rect {
+    fill: LightSteelBlue;
+    fill-opacity: .5;
+    stroke: darkgrey;
+    stroke-width: 1;
+}
+
+.griditem_text {
+    text-anchor: middle;
+    alignment-baseline: central;
+    font-size:15px;
+    font-family:sans-serif;
+}

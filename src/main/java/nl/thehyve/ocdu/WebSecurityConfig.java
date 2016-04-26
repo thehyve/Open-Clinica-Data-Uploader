@@ -43,8 +43,9 @@ class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .inMemoryAuthentication()
                 .withUser("user").password("password").roles("USER");
     }
-
-//    @Bean
+//TODO: Configure custom UserDetails service
+//TODO: Configure password encoder with sha1
+//   @Bean
 //    public AuthenticationSuccessHandler successHandler() {
 //        SimpleUrlAuthenticationSuccessHandler handler = new SimpleUrlAuthenticationSuccessHandler();
 //        handler.setUseReferer(true);

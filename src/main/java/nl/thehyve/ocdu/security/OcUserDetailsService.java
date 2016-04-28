@@ -1,5 +1,7 @@
 package nl.thehyve.ocdu.security;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -20,11 +22,13 @@ import java.util.List;
 @Service
 public class OcUserDetailsService implements UserDetailsService {
 
+    private static final Logger log = LoggerFactory.getLogger(OcUserDetailsService.class);
+
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         List<GrantedAuthority> authList = new ArrayList<>();
         HttpSession session = session();
-        System.out.println("User retrieved: " + username );
+        log.debug("User retrieved: " + username );
         String ocEnvironment =  "http://ocdu-openclinica-dev.thehyve.net/OpenClinica-ws";//TODO: fix passing ocEnvironment to session via custom filter
                 // (String) session.getAttribute("ocEnvironment");
         UserDetails usr = new OcUser(username, "notused", authList, ocEnvironment);

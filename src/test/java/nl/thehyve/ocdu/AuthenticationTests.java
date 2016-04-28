@@ -1,11 +1,13 @@
 package nl.thehyve.ocdu;
 
+import nl.thehyve.ocdu.security.CustomPasswordEncoder;
 import nl.thehyve.ocdu.soap.ResponseHandlers.OCResponseHandler;
 import nl.thehyve.ocdu.soap.ResponseHandlers.SoapUtils;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.boot.test.SpringApplicationConfiguration;
+import org.springframework.security.crypto.codec.Hex;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.w3c.dom.Document;
@@ -26,8 +28,11 @@ import javax.xml.xpath.XPathFactory;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.StringWriter;
+import java.io.UnsupportedEncodingException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 
 import static org.junit.Assert.assertEquals;
 
@@ -89,5 +94,21 @@ public class AuthenticationTests {
                 authFailPureXML, XPathConstants.NODE);
 
         assertEquals(true, faultNode == null);
+    }
+
+    @Test
+    public void encoderTest() throws Exception {
+        CustomPasswordEncoder encoder = new CustomPasswordEncoder();
+        String result = encoder.encode("password");
+        String expectedHexDigest = "5baa61e4c9b93f3f0682250b6cf8331b7ee68fd8";
+        assertEquals(expectedHexDigest, result);
+    }
+
+    @Test
+    public void passwordMatchesTest() throws Exception {
+        CustomPasswordEncoder encoder = new CustomPasswordEncoder();
+        String expectedHexDigest = "5baa61e4c9b93f3f0682250b6cf8331b7ee68fd8";
+        boolean matches = encoder.matches("password",expectedHexDigest);
+        assertEquals(true, matches);
     }
 }

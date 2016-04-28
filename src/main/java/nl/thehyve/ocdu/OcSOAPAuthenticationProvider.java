@@ -1,7 +1,7 @@
 package nl.thehyve.ocdu;
 
 import nl.thehyve.ocdu.security.CustomPasswordEncoder;
-import nl.thehyve.ocdu.security.OcUser;
+import nl.thehyve.ocdu.models.OcUser;
 import nl.thehyve.ocdu.security.OcUserDetailsService;
 import nl.thehyve.ocdu.services.OpenClinicaService;
 import org.slf4j.Logger;
@@ -14,8 +14,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.web.authentication.WebAuthenticationDetails;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;

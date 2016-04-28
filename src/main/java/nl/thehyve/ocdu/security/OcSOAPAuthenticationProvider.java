@@ -1,8 +1,6 @@
-package nl.thehyve.ocdu;
+package nl.thehyve.ocdu.security;
 
-import nl.thehyve.ocdu.security.CustomPasswordEncoder;
 import nl.thehyve.ocdu.models.OcUser;
-import nl.thehyve.ocdu.security.OcUserDetailsService;
 import nl.thehyve.ocdu.services.OpenClinicaService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -50,8 +48,8 @@ public class OcSOAPAuthenticationProvider implements AuthenticationProvider {
                 grantedAuths.add(new SimpleGrantedAuthority("ROLE_USER"));
                 return new UsernamePasswordAuthenticationToken(name, password, grantedAuths);
             } else {
-                log.error("Failed to authenticate user: "+ name + " password: "+ password);
-                throw new AuthenticationServiceException("Unable to auth against third party systems");
+                log.error("Failed to authenticate user: "+ name +" against Open Clinica instance: "+ ocEnvironment);
+                return null;
             }
         } catch (Exception e) {
             e.printStackTrace();

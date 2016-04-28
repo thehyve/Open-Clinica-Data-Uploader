@@ -34,8 +34,9 @@ repositories {
 
 
 dependencies {
+
     compile('org.springframework.boot:spring-boot-starter-data-jpa')
-    compile('org.springframework.boot:spring-boot-devtools')  //TODO: Does it need to be compile?
+    compile('org.springframework.boot:spring-boot-devtools')
     compile('org.springframework.boot:spring-boot-starter-security')
     compile('org.springframework.session:spring-session')
     compile('org.springframework.boot:spring-boot-starter-thymeleaf')
@@ -44,6 +45,9 @@ dependencies {
     compile('postgresql:postgresql:9.1-901-1.jdbc4')
     compile("org.springframework.ws:spring-ws-core")
     compile('net.sourceforge.nekohtml:nekohtml:1.9.22')
+    compile('commons-codec:commons-codec:1.10')
+    compile('org.apache.httpcomponents:httpclient:4.5.2')
+
     testCompile('org.springframework.boot:spring-boot-starter-test')
     providedRuntime("org.springframework.boot:spring-boot-starter-tomcat")
 }

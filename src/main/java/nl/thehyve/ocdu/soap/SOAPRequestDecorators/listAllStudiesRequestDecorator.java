@@ -6,9 +6,9 @@ import javax.xml.soap.SOAPEnvelope;
 /**
  * Created by piotrzakrzewski on 16/04/16.
  */
-public class listAllStudiesRequestDecorator {
+public class listAllStudiesRequestDecorator implements SoapDecorator{
 
-    public static void decorateListAllStudiesBody(SOAPEnvelope envelope) throws Exception { //TODO: handle exception
+    public  void decorateBody(SOAPEnvelope envelope) throws Exception { //TODO: handle exception
         SOAPBody soapBody = envelope.getBody();
         soapBody.addChildElement("listAllRequest","v1");
     }

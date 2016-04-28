@@ -34,47 +34,46 @@ class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http
-            .authorizeRequests()
+                .authorizeRequests()
                 .antMatchers("/", "/data").authenticated()
                 .and()
-            .formLogin()
+                .formLogin()
                 .loginPage("/login")
-//                .successHandler(successHandler())
                 .permitAll()
                 .and()
-            .logout()
+                .logout()
                 .permitAll();
 
         http.csrf().disable();
+        ExUsernamePasswordAuthenticationFilter customFilter = new ExUsernamePasswordAuthenticationFilter();
+        customFilter.setAuthenticationManager(authenticationManager);
+        http.addFilter(customFilter);
     }
 
+    @Bean(name="myAuthenticationManager")
+    @Override
+    public AuthenticationManager authenticationManagerBean() throws Exception {
+        return super.authenticationManagerBean();
+    }
 
-   @Autowired
+    @Autowired
     public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
        /* auth
                 .inMemoryAuthentication()
                 .withUser("user").password("password").roles("USER");*/
-       auth.authenticationProvider(ocSOAPAuthenticationProvider)
-               .userDetailsService(ocUserDetailsService)
-               .passwordEncoder(new CustomPasswordEncoder());
+        auth.authenticationProvider(ocSOAPAuthenticationProvider)
+                .userDetailsService(ocUserDetailsService)
+                .passwordEncoder(new CustomPasswordEncoder());
     }
+
 
     @Autowired
     OcSOAPAuthenticationProvider ocSOAPAuthenticationProvider;
 
+    @Autowired
+    AuthenticationManager authenticationManager;
 
     @Autowired
     OcUserDetailsService ocUserDetailsService;
-
-   /* @Override
-    protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-        if (ocUserDetailsService == null) {
-            log.error("User details Service null");
-        }
-        auth.authenticationProvider(ocSOAPAuthenticationProvider);
-        auth.userDetailsService(ocUserDetailsService);
-    }*/
-
-
 
 }

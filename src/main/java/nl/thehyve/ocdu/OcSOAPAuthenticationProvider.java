@@ -45,7 +45,7 @@ public class OcSOAPAuthenticationProvider implements AuthenticationProvider {
         String ocEnvironment =  userDetails.getOcEnvironment();//"http://ocdu-openclinica-dev.thehyve.net/OpenClinica-ws"; //  usr.getOcEnvironment();
         CustomPasswordEncoder encoder = new CustomPasswordEncoder();
         password = encoder.encode(password);
-        
+
         try {
             if (openClinicaService.isAuthenticated(name, password, ocEnvironment)) {
                 List<GrantedAuthority> grantedAuths = new ArrayList<>();

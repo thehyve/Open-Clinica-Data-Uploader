@@ -29,8 +29,7 @@ public class OcUserDetailsService implements UserDetailsService {
         List<GrantedAuthority> authList = new ArrayList<>();
         HttpSession session = session();
         log.debug("User retrieved: " + username );
-        String ocEnvironment =  "http://ocdu-openclinica-dev.thehyve.net/OpenClinica-ws";//TODO: fix passing ocEnvironment to session via custom filter
-                // (String) session.getAttribute("ocEnvironment");
+        String ocEnvironment = (String) session.getAttribute("ocEnvironment");
         UserDetails usr = new OcUser(username, "notused", authList, ocEnvironment);
         return usr;
     }

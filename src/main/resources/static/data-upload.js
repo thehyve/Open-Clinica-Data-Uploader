@@ -14,6 +14,10 @@ $('#upload-mapping-input').change(function () {
 });
 
 function uploadFile() {
+    var isDataUploaded = false;
+    var isMappingUploaded = false;
+    var isDirected = false;
+
     $("#message-board").empty();
     if(isDataSelected) {
         $.ajax({
@@ -28,11 +32,17 @@ function uploadFile() {
                 // Handle upload success
                 var info = '<span id="data-alert" class="alert alert-success">Data succesfully uploaded</span>';
                 $("#message-board").append(info);
+                isDataUploaded = true;
+                if(!isDirected && ((isMappingSelected && isMappingUploaded) || !isMappingSelected)) {
+                    window.location.replace("/mapping");
+                    isDirected = true;
+                }
             },
             error: function () {
                 // Handle upload error
                 var info = '<span id="data-alert" class="alert alert-danger">Data not uploaded</span>';
                 $("#message-board").append(info);
+                isDataUploaded = false;
             }
         });
         window.setTimeout(function() {
@@ -54,11 +64,17 @@ function uploadFile() {
                     // Handle upload success
                     var info = '<span id="mapping-alert" class="alert alert-success">Mapping succesfully uploaded</span>';
                     $("#message-board").append(info);
+                    isMappingUploaded = true;
+                    if(!isDirected && isDataUploaded) {
+                        window.location.replace("/mapping");
+                        isDirected = true;
+                    }
                 },
                 error: function () {
                     // Handle upload error
                     var info = '<span id="mapping-alert" class="alert alert-danger">Mapping not uploaded</span>';
                     $("#message-board").append(info);
+                    isMappingUploaded = false;
                 }
             });
             window.setTimeout(function() {
@@ -67,10 +83,7 @@ function uploadFile() {
                 });
             }, 3000);
         }
-        /**
-         * redirect to the mapping view
-         */
-        window.location.replace("/mapping");
+
     }
     else{
         var info = '<span id="message-alert" class="alert alert-danger">Data file needs to be specified</span>';
@@ -83,3 +96,37 @@ function uploadFile() {
     }
 
 } // function uploadFile
+
+var _USERNAME = "";
+
+function retrieveSessions() {
+    $.ajax({
+        url: "/username",
+        type: "get",
+        success: function (data) {
+            _USERNAME = data;
+            console.log("username is " + _USERNAME);
+        }
+    });
+
+    $.ajax({
+        url: "/unfinished-sessions",
+        type: "get",
+        success: handle_retrieval,
+        error: handle_error
+    });
+}
+
+function handle_retrieval(sessions) {
+    console.log("unfinished sessions: ");
+    console.log(sessions);
+    console.log(JSON.stringify(sessions));
+}
+
+function handle_error() {
+    console.log('Fail to load sessions.');
+}
+
+$(document).ready(function() {
+    retrieveSessions();
+});

@@ -132,7 +132,14 @@ $(document).ready(function() {
         }
     }
 
-});//doc ready
+    $('#map-proceed-btn').click(function() {
+        var isValid = true;
+        if(isValid) {
+            window.location.replace(baseApp + "/patients");
+        }
+    })
+
+});//end of the function $(document).ready...
 
 function updateGridItems(duration) {
     d3.selectAll('.griditem').each(function(d, i) {

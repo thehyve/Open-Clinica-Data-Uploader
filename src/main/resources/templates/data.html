@@ -7,23 +7,30 @@
     <div th:replace="header"></div>
     <div class="container" style="padding-top: 100px;">
 
-        <form id="upload-file-form" class="form-horizontal">
-            <div class="form-group">
-                <label for="upload-file-input">* Select data file:</label>
-                <input id="upload-file-input" type="file" name="uploadfile" accept="*" />
-            </div>
-        </form>
+        <div id="new_upload_section" class="jumbotron container-fluid">
+            <h2>Upload new data</h2>
+            <form id="upload-file-form" class="form-horizontal">
+                <div class="form-group">
+                    <label for="upload-file-input">* Select data file:</label>
+                    <input id="upload-file-input" type="file" name="uploadfile" accept="*" />
+                </div>
+            </form>
 
-        <form id="upload-mapping-form" class="form-horizontal">
-            <div class="form-group">
-                <label for="upload-mapping-input">Select mapping file:</label>
-                <input id="upload-mapping-input" type="file" name="uploadmapping" accept="*" />
-            </div>
-        </form>
+            <form id="upload-mapping-form" class="form-horizontal">
+                <div class="form-group">
+                    <label for="upload-mapping-input">Select mapping file:</label>
+                    <input id="upload-mapping-input" type="file" name="uploadmapping" accept="*" />
+                </div>
+            </form>
 
-        <button type="button" class="btn btn-primary" id="subtn" onclick="uploadFile()">submit</button>
-        <br/><br/><br/>
-        <span id="message-board"></span>
+            <button type="button" class="btn btn-primary" id="data-proceed-btn" onclick="uploadFile()">Next</button>
+            <br/><br/><br/>
+            <span id="message-board"></span>
+        </div>
+
+        <div id="old_upload_section" class="jumbotron container-fluid">
+            <h2>Resume previous uploads</h2>
+        </div>
 
     </div>
 

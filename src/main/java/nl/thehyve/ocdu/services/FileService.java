@@ -26,7 +26,7 @@ public class FileService {
 
     @Autowired
     EventRepository eventRepository;
-
+    //TODO: Add events, subjects and clinical data to UploadSession so that they are destroyed when session is destroyed
     @Autowired
     SubjectRepository subjectRepository;
 
@@ -44,7 +44,6 @@ public class FileService {
             return errorMsgs;
         }
     }
-
 
 
 }

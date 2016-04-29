@@ -2,8 +2,8 @@
 <html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
 <head>
     <title>Mapping</title>
-    <link href="/css/style-mapping.css" rel="stylesheet"/>
-    <link rel="stylesheet" type="text/css" href="css/bootstrap-toggle.min.css"/>
+    <link th:href="@{/css/style-mapping.css}" rel="stylesheet"/>
+    <link th:href="@{/css/bootstrap-toggle.min.css}" rel="stylesheet" />
 </head>
 <body role="document">
 <div th:replace="header"></div>
@@ -18,10 +18,10 @@
 <div id="tree-container" style="margin-top: 5px;">
 </div>
 
-<script src="js/jszip.min.js"></script>
-<script src="js/filesaver.js"></script>
-<script src="js/bootstrap-toggle.min.js"></script>
-<script src="/data-mapping.js"></script>
+<script th:src="@{/js/jszip.min.js}"></script>
+<script th:src="@{/js/filesaver.js}"></script>
+<script th:src="@{/js/bootstrap-toggle.min.js}"></script>
+<script th:src="@{/data-mapping.js}"></script>
 <div th:replace="footer :: footer"></div>
 </body>
 </html>

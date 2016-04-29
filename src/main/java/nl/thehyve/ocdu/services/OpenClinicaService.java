@@ -1,6 +1,7 @@
 package nl.thehyve.ocdu.services;
 
 import nl.thehyve.ocdu.models.Study;
+import nl.thehyve.ocdu.models.StudyMetadata;
 import nl.thehyve.ocdu.soap.ResponseHandlers.ListStudiesResponseHandler;
 import nl.thehyve.ocdu.soap.ResponseHandlers.OCResponseHandler;
 import nl.thehyve.ocdu.soap.ResponseHandlers.SoapUtils;
@@ -32,6 +33,10 @@ public class OpenClinicaService {
         List<Study> studies = ListStudiesResponseHandler.parseListStudiesResponse(soapResponse);
         soapConnection.close();
         return studies;
+    }
+
+    public StudyMetadata getMetadat(String username, String passwordHash, String url) throws Exception {
+        return null;
     }
 
     public boolean isAuthenticated(String username, String /* hexdigest of sha1 password */ passwordHash, String url) throws Exception {

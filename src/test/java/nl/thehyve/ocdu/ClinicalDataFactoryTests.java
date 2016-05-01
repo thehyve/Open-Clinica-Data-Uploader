@@ -2,6 +2,7 @@ package nl.thehyve.ocdu;
 
 import nl.thehyve.ocdu.factories.ClinicalDataFactory;
 import nl.thehyve.ocdu.models.ClinicalData;
+import nl.thehyve.ocdu.models.OcUser;
 import nl.thehyve.ocdu.models.Study;
 import nl.thehyve.ocdu.services.FileService;
 import org.junit.Before;
@@ -69,6 +70,7 @@ public class ClinicalDataFactoryTests {
 
     @Before
     public void setUp() throws Exception {
+        //this.testUser = new OcUser();
         this.factory = new ClinicalDataFactory("TEST_USER","TEST_SUBMISSION");
         this.testFile = Paths.get("docs/exampleFiles/data.txt");
     }

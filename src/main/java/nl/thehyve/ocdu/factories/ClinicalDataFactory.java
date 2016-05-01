@@ -1,13 +1,12 @@
 package nl.thehyve.ocdu.factories;
 
 import nl.thehyve.ocdu.models.ClinicalData;
+import nl.thehyve.ocdu.models.OcUser;
+import nl.thehyve.ocdu.models.UploadSession;
 
-import java.io.File;
 import java.io.IOException;
-import java.lang.reflect.Array;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -25,8 +24,8 @@ public class ClinicalDataFactory extends UserSubmittedDataFactory {
     public final static String CRFName = "CRFName";
     public final static String CRFVersion = "CRFVersion";
 
-    public ClinicalDataFactory(String userName, String submission) {
-        super(userName, submission);
+    public ClinicalDataFactory(OcUser user, UploadSession submission) {
+        super(user, submission);
     }
 
     public List<ClinicalData> createClinicalData(Path dataFile) {
@@ -96,7 +95,7 @@ public class ClinicalDataFactory extends UserSubmittedDataFactory {
             Integer groupRepeat = parseGroupRepeat(colName);
             String value = split[headerMap.get(colName)];
             ClinicalData dat = new ClinicalData(study, item, ssid, eventName, eventRepeat, crf,
-                    getSubmission(), crfVer, groupRepeat, getUserName(), value);
+                    getSubmission(), crfVer, groupRepeat, getUser(), value);
             aggregation.add(dat);
         }
         return aggregation;

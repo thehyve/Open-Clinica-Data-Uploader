@@ -1,9 +1,6 @@
 package nl.thehyve.ocdu.models;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
 
 /**
  * Created by piotrzakrzewski on 16/04/16.
@@ -15,23 +12,25 @@ public class ClinicalData {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long id;
+    @ManyToOne
+    private UploadSession submission;
+    @ManyToOne
+    private OcUser owner;
     private String study;
     private String item;
     private String ssid;
     private String eventName;
     private Integer eventRepeat;
     private String crfName;
-    private String submission;
+
+
     private String crfVersion;
     private Integer groupRepeat;
-    private String owner;
+
+
     private String value;
 
-    public String getValue() {
-        return value;
-    }
-
-    public ClinicalData(String study, String item, String ssid, String eventName, Integer eventRepeat, String crfName, String submission, String crfVersion, Integer groupRepeat, String owner, String value) {
+    public ClinicalData(String study, String item, String ssid, String eventName, Integer eventRepeat, String crfName, UploadSession submission, String crfVersion, Integer groupRepeat, OcUser owner, String value) {
         this.study = study;
         this.item = item;
         this.ssid = ssid;
@@ -48,7 +47,11 @@ public class ClinicalData {
     protected ClinicalData() {
     }
 
-    public String getOwner() {
+    public String getValue() {
+        return value;
+    }
+
+    public OcUser getOwner() {
         return owner;
     }
 
@@ -56,7 +59,7 @@ public class ClinicalData {
         return id;
     }
 
-    public String getSubmission() {
+    public UploadSession getSubmission() {
         return submission;
     }
 

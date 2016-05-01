@@ -1,9 +1,9 @@
 package nl.thehyve.ocdu;
 
+import nl.thehyve.ocdu.models.MetaData;
 import nl.thehyve.ocdu.models.Study;
-import nl.thehyve.ocdu.models.StudyMetadata;
 import nl.thehyve.ocdu.services.OpenClinicaService;
-import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,10 +14,8 @@ import org.springframework.test.context.web.WebAppConfiguration;
 import java.util.List;
 
 import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.Matchers.hasProperty;
 import static org.hamcrest.core.AllOf.allOf;
 import static org.hamcrest.core.Every.everyItem;
-import static org.hamcrest.core.IsEqual.equalTo;
 import static org.hamcrest.core.IsInstanceOf.instanceOf;
 import static org.hamcrest.core.IsNull.notNullValue;
 import static org.junit.Assert.assertEquals;
@@ -55,15 +53,17 @@ public class Integration {
     public void listStudiesTest() throws Exception {
         // Watch out for this one. This will obviously fail if there are no studies loaded into OC, even if the call works
         List<Study> studies = openClinicaService.listStudies(user, sha1hexDigest, ocUrl);
-        assertEquals(true, studies.size() > 0 );
+        assertEquals(true, studies.size() > 0);
         assertThat(
                 studies,
                 everyItem(is(allOf(notNullValue(), instanceOf(Study.class)))));
     }
 
+    @Ignore("Not implemented yet...")
     @Test
     public void getMetaDataTest() throws Exception {
-        StudyMetadata metadat = openClinicaService.getMetadat(user, sha1hexDigest, ocUrl);
-        assertThat(metadat,is(notNullValue()));
+        Study study = new Study("Study 1", "", ""); // Only Identifier should be used for this call
+        MetaData metadat = openClinicaService.getMetadat(user, sha1hexDigest, ocUrl, study);
+        assertThat(metadat, is(notNullValue()));
     }
 }

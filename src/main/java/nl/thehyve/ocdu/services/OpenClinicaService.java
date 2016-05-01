@@ -1,18 +1,17 @@
 package nl.thehyve.ocdu.services;
 
+import nl.thehyve.ocdu.models.MetaData;
 import nl.thehyve.ocdu.models.Study;
-import nl.thehyve.ocdu.models.StudyMetadata;
+import nl.thehyve.ocdu.soap.ResponseHandlers.GetStudyMetadataResponseHandler;
 import nl.thehyve.ocdu.soap.ResponseHandlers.ListStudiesResponseHandler;
 import nl.thehyve.ocdu.soap.ResponseHandlers.OCResponseHandler;
 import nl.thehyve.ocdu.soap.ResponseHandlers.SoapUtils;
 import nl.thehyve.ocdu.soap.SOAPRequestFactory;
-import org.springframework.security.authentication.AuthenticationCredentialsNotFoundException;
 import org.springframework.stereotype.Service;
 import org.w3c.dom.Document;
 
 import javax.xml.soap.SOAPConnection;
 import javax.xml.soap.SOAPConnectionFactory;
-import javax.xml.soap.SOAPException;
 import javax.xml.soap.SOAPMessage;
 import java.util.List;
 
@@ -35,8 +34,14 @@ public class OpenClinicaService {
         return studies;
     }
 
-    public StudyMetadata getMetadat(String username, String passwordHash, String url) throws Exception {
-        return null;
+    public MetaData getMetadat(String username, String passwordHash, String url, Study study) throws Exception {
+        SOAPConnectionFactory soapConnectionFactory = SOAPConnectionFactory.newInstance();
+        SOAPConnection soapConnection = soapConnectionFactory.createConnection();
+        SOAPMessage message = responseFactory.createGetStudyMetadataRequest(username, passwordHash, study);
+        SOAPMessage soapResponse = soapConnection.call(message, url + "/ws/study/v1");  // Add SOAP endopint to OCWS URL.
+        MetaData metaData = GetStudyMetadataResponseHandler.parseGetStudyMetadataResponse(soapResponse);
+        soapConnection.close();
+        return metaData;
     }
 
     public boolean isAuthenticated(String username, String /* hexdigest of sha1 password */ passwordHash, String url) throws Exception {

@@ -6,7 +6,6 @@ import java.util.Date;
 /**
  * Created by piotrzakrzewski on 28/04/16.
  */
-
 @Entity
 public class UploadSession {
 

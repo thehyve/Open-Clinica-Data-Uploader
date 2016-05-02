@@ -2,7 +2,6 @@ package nl.thehyve.ocdu.models;
 
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
 import java.util.Collection;
@@ -18,8 +17,7 @@ public class OcUser{
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long id;
-    @OneToMany( targetEntity=UploadSession.class )
-    private List UploadSession;
+
     private String ocEnvironment;
     private String username;
 
@@ -43,14 +41,14 @@ public class OcUser{
         this.id = id;
     }
 
-    public List getUploadSession() {
-        return UploadSession;
+    /*public List getUploadSessions() {
+        return uploadSessions;
     }
 
-    public void setUploadSession(List uploadSession) {
-        UploadSession = uploadSession;
+    public void setUploadSessions(List uploadSessions) {
+        this.uploadSessions = uploadSessions;
     }
-
+*/
     public String getOcEnvironment() {
         return ocEnvironment;
     }

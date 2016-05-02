@@ -51,7 +51,7 @@ public class UploadSessionController {
     public List<UploadSession> unfinishedSessions(HttpSession session) {
         String ocEnv = (String) session.getAttribute("ocEnvironment");
         OcUser ocUser = getOcUser(ocEnv);
-        List uploadSessions = ocUser.getUploadSession();
+        List uploadSessions = uploadSessionRepository.findByOwner(ocUser);
         if (uploadSessions == null) {
             log.error("Attempted retrieving uploadedSessions before any was created.");
             return new ArrayList<>();

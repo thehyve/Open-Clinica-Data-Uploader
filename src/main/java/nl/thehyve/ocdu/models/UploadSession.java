@@ -15,7 +15,7 @@ public class UploadSession {
 
     private String name;
 
-    @ManyToOne
+    @ManyToOne()
     private OcUser owner;
 
     public enum Step {

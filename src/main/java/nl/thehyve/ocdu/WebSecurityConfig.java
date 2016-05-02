@@ -40,7 +40,7 @@ class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     private AuthenticationFailureHandler authenticationFailureHandler = (request, response, e) -> {
         log.error("Error: " + e.getMessage());
-        response.sendRedirect("/login?error");
+        response.sendRedirect(request.getContextPath()+"/login?error");
     };
 
     @Override

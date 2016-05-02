@@ -14,4 +14,6 @@ public interface UserRepository extends CrudRepository<OcUser, Long> {
 
     List<OcUser> findByOcEnvironment(String ocEnvironment);
 
+    List<OcUser> findByUsername(String username);
+
 }

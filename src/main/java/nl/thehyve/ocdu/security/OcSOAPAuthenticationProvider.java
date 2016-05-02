@@ -1,6 +1,7 @@
 package nl.thehyve.ocdu.security;
 
 import nl.thehyve.ocdu.models.OcUser;
+import nl.thehyve.ocdu.models.OcUserDetails;
 import nl.thehyve.ocdu.services.OpenClinicaService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,7 +37,7 @@ public class OcSOAPAuthenticationProvider implements AuthenticationProvider {
     public Authentication authenticate(Authentication authentication) throws AuthenticationException {
         String name = authentication.getName();
         String password = authentication.getCredentials().toString();
-        OcUser userDetails = (OcUser) userDetailsService.loadUserByUsername(name); //TODO: should not call userDetails here, find a better way
+        OcUserDetails userDetails = (OcUserDetails) userDetailsService.loadUserByUsername(name); //TODO: should not call userDetails here, find a better way
 
         String ocEnvironment =  userDetails.getOcEnvironment();//"http://ocdu-openclinica-dev.thehyve.net/OpenClinica-ws"; //  usr.getOcEnvironment();
         CustomPasswordEncoder encoder = new CustomPasswordEncoder();

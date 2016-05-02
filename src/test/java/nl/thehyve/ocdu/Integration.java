@@ -37,18 +37,21 @@ public class Integration {
     // excluded from Gradle test task.
     String user = "integration";
 
+    @Ignore("Too expensive for frequent checks")
     @Test
     public void isAuthenticatedNegativeTest() throws Exception {
         boolean authenticated = openClinicaService.isAuthenticated("nonexistent_user", "withboguspassword", ocUrl);
         assertEquals(false, authenticated);
     }
 
+    @Ignore("Too expensive for frequent checks")
     @Test
     public void isAuthenticatedPositiveTest() throws Exception {
         boolean authenticated = openClinicaService.isAuthenticated(user, sha1hexDigest, ocUrl);
         assertEquals(true, authenticated);
     }
 
+    @Ignore("Too expensive for frequent checks")
     @Test
     public void listStudiesTest() throws Exception {
         // Watch out for this one. This will obviously fail if there are no studies loaded into OC, even if the call works

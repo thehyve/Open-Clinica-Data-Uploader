@@ -3,8 +3,12 @@ package nl.thehyve.ocdu;
 import nl.thehyve.ocdu.factories.ClinicalDataFactory;
 import nl.thehyve.ocdu.models.ClinicalData;
 import nl.thehyve.ocdu.models.OcUser;
-import nl.thehyve.ocdu.models.Study;
+import nl.thehyve.ocdu.models.UploadSession;
+import nl.thehyve.ocdu.repositories.ClinicalDataRepository;
+import nl.thehyve.ocdu.repositories.UploadSessionRepository;
+import nl.thehyve.ocdu.repositories.UserRepository;
 import nl.thehyve.ocdu.services.FileService;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -15,14 +19,11 @@ import org.springframework.boot.test.SpringApplicationConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 
-import java.io.File;
-import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Date;
 import java.util.List;
-import java.util.Optional;
-import java.util.stream.Stream;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.core.AllOf.allOf;
@@ -48,9 +49,21 @@ public class ClinicalDataFactoryTests {
     @Autowired
     FileService fileService;
 
+    @Autowired
+    UserRepository userRepository;
+
+    @Autowired
+    UploadSessionRepository uploadSessionRepository;
+
+    @Autowired
+    ClinicalDataRepository clinicalDataRepository;
+
+    private OcUser testUser;
+    private UploadSession testSubmission;
+
     @Test
     public void depositionDataFileTest() throws Exception{
-        List<String> errorMessages = fileService.depositDataFile(testFile, "user", "submission");
+        List<String> errorMessages = fileService.depositDataFile(testFile, testUser, testSubmission);
         assertEquals(0, errorMessages.size());
     }
 
@@ -70,8 +83,19 @@ public class ClinicalDataFactoryTests {
 
     @Before
     public void setUp() throws Exception {
-        //this.testUser = new OcUser();
-        this.factory = new ClinicalDataFactory("TEST_USER","TEST_SUBMISSION");
+        this.testUser = new OcUser();
+        this.testUser.setUsername("tester");
+        userRepository.save(testUser);
+        this.testSubmission = new UploadSession("submission1", UploadSession.Step.MAPPING, new Date(), this.testUser);
+        uploadSessionRepository.save(testSubmission);
+        this.factory = new ClinicalDataFactory(testUser, testSubmission);
         this.testFile = Paths.get("docs/exampleFiles/data.txt");
+    }
+
+    @After
+    public void tearDown() throws Exception {
+        clinicalDataRepository.deleteAll();
+        uploadSessionRepository.deleteAll();
+        userRepository.deleteAll();
     }
 }

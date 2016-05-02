@@ -17,8 +17,7 @@ public class OcUser{
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long id;
-    @OneToMany(targetEntity = UploadSession.class)
-    private List uploadSessions;
+
     private String ocEnvironment;
     private String username;
 
@@ -42,14 +41,14 @@ public class OcUser{
         this.id = id;
     }
 
-    public List getUploadSessions() {
+    /*public List getUploadSessions() {
         return uploadSessions;
     }
 
     public void setUploadSessions(List uploadSessions) {
         this.uploadSessions = uploadSessions;
     }
-
+*/
     public String getOcEnvironment() {
         return ocEnvironment;
     }

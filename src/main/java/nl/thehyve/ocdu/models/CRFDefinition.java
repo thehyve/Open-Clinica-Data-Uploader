@@ -15,7 +15,72 @@ public class CRFDefinition {
 
     private boolean mandatoryInEvent;
     private boolean hidden;
+    private String oid;
+    private String name;
+    private boolean repeating;
 
+    public String getOid() {
+        return oid;
+    }
 
+    public void setOid(String oid) {
+        this.oid = oid;
+    }
 
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public boolean isRepeating() {
+        return repeating;
+    }
+
+    public void setRepeating(boolean repeating) {
+        this.repeating = repeating;
+    }
+
+    public long getId() {
+        return id;
+    }
+
+    public void setId(long id) {
+        this.id = id;
+    }
+
+    public EventDefinition getEvent() {
+        return event;
+    }
+
+    public void setEvent(EventDefinition event) {
+        this.event = event;
+    }
+
+    public boolean isMandatoryInEvent() {
+        return mandatoryInEvent;
+    }
+
+    public void setMandatoryInEvent(boolean mandatoryInEvent) {
+        this.mandatoryInEvent = mandatoryInEvent;
+    }
+
+    public boolean isHidden() {
+        return hidden;
+    }
+
+    public void setHidden(boolean hidden) {
+        this.hidden = hidden;
+    }
+
+    public CRFDefinition(CRFDefinition prototype) {
+        this.name = prototype.getName();
+        this.oid = prototype.getOid();
+        this.repeating = prototype.isRepeating();
+    }
+
+    public CRFDefinition() {
+    }
 }

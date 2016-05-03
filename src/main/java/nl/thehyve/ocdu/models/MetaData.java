@@ -12,8 +12,19 @@ public class MetaData {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long id;
 
-    @OneToMany(targetEntity = EventDefinition.class)
+    private String studyIdentifier; //TODO: shouldn't it be Study entity? Should we serialize Study as well?
+
+    @OneToMany(targetEntity = EventDefinition.class, cascade = CascadeType.ALL)
     private List eventDefinitions;
+
+    @OneToMany(targetEntity = ItemGroupDefinition.class, cascade = CascadeType.ALL )
+    private List itemGroupDefinitions;
+
+    @OneToMany(targetEntity = CRFDefinition.class, cascade = CascadeType.ALL )
+    private List crfDefinitions;
+
+    @OneToMany(targetEntity = CodeListDefinition.class, cascade = CascadeType.ALL )
+    private List codeListDefinitions;
 
 
 

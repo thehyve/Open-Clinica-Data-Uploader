@@ -4,6 +4,7 @@ import nl.thehyve.ocdu.models.OCEntities.ClinicalData;
 import nl.thehyve.ocdu.models.MetaData;
 import nl.thehyve.ocdu.models.ValidationErrorMessage;
 import nl.thehyve.ocdu.validators.checks.DataFieldWidthCheck;
+import nl.thehyve.ocdu.validators.crossChecks.EventExistsCrossCheck;
 import nl.thehyve.ocdu.validators.checks.OcEntityCheck;
 import nl.thehyve.ocdu.validators.crossChecks.ClinicalDataCrossCheck;
 import nl.thehyve.ocdu.validators.crossChecks.DataFieldWidthCrossCheck;
@@ -28,6 +29,8 @@ public class ClinicalDataOcChecks {
         this.metadata = metadata;
         this.clinicalData = clinicalData;
         recordChecks.add(new DataFieldWidthCheck());
+
+        crossChecks.add(new EventExistsCrossCheck());
         crossChecks.add(new DataFieldWidthCrossCheck());
     }
 

@@ -42,6 +42,7 @@ public class ValidationTests {
     ClinicalDataFactory factory;
     Path testFileCorrect;
     Path testFileInCorrectSsidLength;
+    Path testFileNonExistentEvent;
 
     @Before
     public void setUp() throws Exception {
@@ -53,7 +54,7 @@ public class ValidationTests {
 
             this.testFileCorrect = Paths.get("docs/exampleFiles/data.txt");
             this.testFileInCorrectSsidLength = Paths.get("docs/exampleFiles/tooLongSSID.txt");
-
+            this.testFileNonExistentEvent = Paths.get("docs/exampleFiles/nonExistentEvent.txt");
 
             MessageFactory messageFactory = MessageFactory.newInstance();
             File testFile = new File("docs/responseExamples/getStudyMetadata.xml"); //TODO: Replace File with Path
@@ -75,8 +76,16 @@ public class ValidationTests {
     }
 
     @Test
-    public void validateIncorrectClinicalDataset() throws Exception {
+    public void tooLongSSID() throws Exception {
         List<ClinicalData> incorrectClinicalData = factory.createClinicalData(testFileInCorrectSsidLength);
+        clinicalDataOcChecks = new ClinicalDataOcChecks(metaData, incorrectClinicalData);
+        List<ValidationErrorMessage> errors = clinicalDataOcChecks.getErrors();
+        assertEquals(1, errors.size());
+    }
+
+    @Test
+    public void nonExistentEvent() throws Exception {
+        List<ClinicalData> incorrectClinicalData = factory.createClinicalData(testFileNonExistentEvent);
         clinicalDataOcChecks = new ClinicalDataOcChecks(metaData, incorrectClinicalData);
         List<ValidationErrorMessage> errors = clinicalDataOcChecks.getErrors();
         assertEquals(1, errors.size());

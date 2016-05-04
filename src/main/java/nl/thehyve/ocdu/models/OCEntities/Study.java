@@ -1,4 +1,4 @@
-package nl.thehyve.ocdu.models;
+package nl.thehyve.ocdu.models.OCEntities;
 
 /**
  * Created by piotrzakrzewski on 15/04/16.

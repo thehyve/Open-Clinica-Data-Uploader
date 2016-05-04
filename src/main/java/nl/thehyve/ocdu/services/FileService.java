@@ -1,13 +1,13 @@
 package nl.thehyve.ocdu.services;
 
 import nl.thehyve.ocdu.factories.ClinicalDataFactory;
-import nl.thehyve.ocdu.models.ClinicalData;
+import nl.thehyve.ocdu.models.OCEntities.ClinicalData;
 import nl.thehyve.ocdu.models.OcUser;
 import nl.thehyve.ocdu.models.UploadSession;
 import nl.thehyve.ocdu.repositories.ClinicalDataRepository;
 import nl.thehyve.ocdu.repositories.EventRepository;
 import nl.thehyve.ocdu.repositories.SubjectRepository;
-import nl.thehyve.ocdu.validators.DataFileValidator;
+import nl.thehyve.ocdu.validators.fileValidators.DataFileValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

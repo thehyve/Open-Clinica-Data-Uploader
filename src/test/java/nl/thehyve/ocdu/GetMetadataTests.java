@@ -1,10 +1,8 @@
 package nl.thehyve.ocdu;
 
-import nl.thehyve.ocdu.models.ClinicalData;
-import nl.thehyve.ocdu.models.EventDefinition;
+import nl.thehyve.ocdu.models.OcDefinitions.EventDefinition;
 import nl.thehyve.ocdu.models.MetaData;
 import nl.thehyve.ocdu.soap.ResponseHandlers.GetStudyMetadataResponseHandler;
-import nl.thehyve.ocdu.soap.ResponseHandlers.SoapUtils;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;

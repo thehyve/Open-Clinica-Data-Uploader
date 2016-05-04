@@ -1,6 +1,6 @@
 package nl.thehyve.ocdu.repositories;
 
-import nl.thehyve.ocdu.models.CodeListItemDefinition;
+import nl.thehyve.ocdu.models.OcDefinitions.CodeListItemDefinition;
 import org.springframework.data.repository.CrudRepository;
 
 /**

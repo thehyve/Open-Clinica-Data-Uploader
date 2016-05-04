@@ -1,6 +1,6 @@
 package nl.thehyve.ocdu;
 
-import nl.thehyve.ocdu.models.Study;
+import nl.thehyve.ocdu.models.OCEntities.Study;
 import nl.thehyve.ocdu.soap.ResponseHandlers.ListStudiesResponseHandler;
 import org.junit.Before;
 import org.junit.Test;
@@ -14,7 +14,6 @@ import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
-import org.hamcrest.core.IsEqual;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.soap.*;
 import javax.xml.transform.TransformerException;
@@ -25,9 +24,6 @@ import javax.xml.xpath.XPathFactory;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.List;
 
 import static nl.thehyve.ocdu.soap.ResponseHandlers.SoapUtils.toDocument;

@@ -1,9 +1,9 @@
-package nl.thehyve.ocdu.models;
+package nl.thehyve.ocdu.models.OCEntities;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import nl.thehyve.ocdu.models.OcUser;
+import nl.thehyve.ocdu.models.UploadSession;
+
+import javax.persistence.*;
 import java.util.Date;
 
 /**
@@ -11,7 +11,7 @@ import java.util.Date;
  */
 
 @Entity
-public class Subject {
+public class Subject implements OcEntity, UserSubmitted {
 
     private String ssid;
     private String gender;
@@ -20,40 +20,43 @@ public class Subject {
     private Date dateOfEnrollment;
     private String secondaryId;
     private String study;
-    private String owner;
-    private String submission;
+
+    @ManyToOne()
+    private OcUser owner;
+    @ManyToOne()
+    private UploadSession submission;
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long id;
 
-    protected Subject() {
+    public Subject() {
     }
 
-    public Subject(String ssid, String gender, Date dateOfBirth, String personId, Date dateOfEnrollment, String secondaryId, String study, String owner, String submission) {
-        this.ssid = ssid;
-        this.gender = gender;
-        this.dateOfBirth = dateOfBirth;
-        this.personId = personId;
-        this.dateOfEnrollment = dateOfEnrollment;
-        this.secondaryId = secondaryId;
-        this.study = study;
-        this.owner = owner;
-        this.submission = submission;
-    }
 
-    public String getOwner() {
+    public OcUser getOwner() {
         return owner;
     }
 
-    public String getSubmission() {
+    public UploadSession getSubmission() {
         return submission;
+    }
+
+    @Override
+    public void setOwner(OcUser owner) {
+        this.owner = owner;
+    }
+
+    @Override
+    public void setSubmission(UploadSession submission) {
+        this.submission = submission;
     }
 
     public long getId() {
         return id;
     }
 
+    @Override
     public String getSsid() {
         return ssid;
     }
@@ -78,6 +81,7 @@ public class Subject {
         return secondaryId;
     }
 
+    @Override
     public String getStudy() {
         return study;
     }

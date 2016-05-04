@@ -1,6 +1,6 @@
 package nl.thehyve.ocdu.soap;
 
-import nl.thehyve.ocdu.models.Study;
+import nl.thehyve.ocdu.models.OCEntities.Study;
 import nl.thehyve.ocdu.soap.SOAPRequestDecorators.GetStudyMetadataRequestDecorator;
 import nl.thehyve.ocdu.soap.SOAPRequestDecorators.listAllStudiesRequestDecorator;
 

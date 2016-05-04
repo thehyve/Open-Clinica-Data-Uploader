@@ -1,6 +1,6 @@
 package nl.thehyve.ocdu.soap.SOAPRequestDecorators;
 
-import nl.thehyve.ocdu.models.Study;
+import nl.thehyve.ocdu.models.OCEntities.Study;
 
 import javax.xml.soap.SOAPBody;
 import javax.xml.soap.SOAPElement;

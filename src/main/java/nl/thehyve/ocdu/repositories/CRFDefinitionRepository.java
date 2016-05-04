@@ -1,6 +1,6 @@
 package nl.thehyve.ocdu.repositories;
 
-import nl.thehyve.ocdu.models.CRFDefinition;
+import nl.thehyve.ocdu.models.OcDefinitions.CRFDefinition;
 import org.springframework.data.repository.CrudRepository;
 
 /**

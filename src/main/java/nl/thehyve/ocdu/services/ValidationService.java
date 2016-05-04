@@ -1,6 +1,6 @@
 package nl.thehyve.ocdu.services;
 
-import nl.thehyve.ocdu.models.ClinicalData;
+import nl.thehyve.ocdu.models.OCEntities.ClinicalData;
 import nl.thehyve.ocdu.models.UploadSession;
 import nl.thehyve.ocdu.models.ValidationErrorMessage;
 import nl.thehyve.ocdu.repositories.ClinicalDataRepository;
@@ -30,7 +30,7 @@ public class ValidationService {
     public List<ValidationErrorMessage> getDataErrors(UploadSession submission) {
         List<ClinicalData> bySubmission = clinicalDataRepository.findBySubmission(submission);
         ArrayList<ValidationErrorMessage> validationErrorMessages = new ArrayList<>();
-        //TODO: implement generating validation error messages
+        bySubmission.stream();
         return validationErrorMessages;
     }
 

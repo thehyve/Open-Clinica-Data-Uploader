@@ -1,9 +1,8 @@
-package nl.thehyve.ocdu.models;
+package nl.thehyve.ocdu.models.OCEntities;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import nl.thehyve.ocdu.models.*;
+
+import javax.persistence.*;
 import java.util.Date;
 
 /**
@@ -11,7 +10,7 @@ import java.util.Date;
  */
 
 @Entity
-public class Event {
+public class Event implements OcEntity, UserSubmitted, EventReference {
 
     private String eventName;
     private String ssid;
@@ -22,31 +21,32 @@ public class Event {
     private Date endDate;
     private Date endTime;
     private Integer repeatNumber;
-    private String submission;
-    private String owner;
+    @ManyToOne()
+    private UploadSession submission;
+
+    @ManyToOne()
+    private OcUser owner;
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long id;
 
-    public Event(String eventName, String ssid, String study, String location, Date startDate, Date startTime, Date endDate, Date endTime, Integer repeatNumber, String submission, String owner) {
-        this.eventName = eventName;
-        this.ssid = ssid;
-        this.study = study;
-        this.location = location;
-        this.startDate = startDate;
-        this.startTime = startTime;
-        this.endDate = endDate;
-        this.endTime = endTime;
-        this.repeatNumber = repeatNumber;
-        this.submission = submission;
-        this.owner = owner;
-    }
 
-    public String getSubmission() {
+    public UploadSession getSubmission() {
         return submission;
     }
 
-    public String getOwner() {
+    @Override
+    public void setOwner(OcUser owner) {
+        this.owner = owner;
+    }
+
+    @Override
+    public void setSubmission(UploadSession submission) {
+        this.submission = submission;
+    }
+
+    @Override
+    public OcUser getOwner() {
         return owner;
     }
 
@@ -54,19 +54,26 @@ public class Event {
     }
 
 
-
     public long getId() {
         return id;
     }
 
+    @Override
     public String getEventName() {
         return eventName;
     }
 
+    @Override
+    public void setEventName(String eventName) {
+        this.eventName = eventName;
+    }
+
+    @Override
     public String getSsid() {
         return ssid;
     }
 
+    @Override
     public String getStudy() {
         return study;
     }

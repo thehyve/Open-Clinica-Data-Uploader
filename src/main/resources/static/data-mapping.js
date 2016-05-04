@@ -1,11 +1,18 @@
-var uploaded_data;
-var uploaded_mapping;
-var usritems = [];
-var ocitems = [];
-var gridData = [];
+var usr_data;//store user-uploaded tabular data in JSON
+var oc_data;//store oc tree data in JSON
+var map_data;//store user-uploaded mapping data
+var usr_item_data;//store user-edited mapping data
+var selectedOCItem = null;//the selected OC item in the tree
+var selectedUsrItem = null;//the selected Usr item in the list
+var mapped_ocitems = [];//an array containing the paths of mapped oc items
+
 var baseSvg;
+var treeg, listg;
+
+var tipDiv;
+var leaf_depth = 5;
 var zoomListener;
-var hoveredItem = null;
+var rect_w = 100, rect_h = 15;//default rect size
 // update and store mouse position
 var mousepos = {x:0, y:0};
 $( document ).on( "mousemove", function( event ) {
@@ -16,71 +23,142 @@ $( document ).on( "mousemove", function( event ) {
 $( window ).on('resize', function() {
     //resize base svg
     baseSvg.attr('width', $( window ).width());
-    //position the items in the matching area
-    var w = 200, m = 5;
-    var x0 = +d3.select('#baseSvg').attr('width') - w - 5*m;
-    var y0 = +d3.select('.ocrect').attr('y');
 })
 
 // initializing and button listeners
 $(document).ready(function() {
-    d3.tsv("test-data.tsv", function (data) {
-        uploaded_data = data;
-        var treeData = prepareTreeData(data);
-        visualizeTree(treeData);
-    });//d3.tsv
 
+    d3.json('data/test-usr-data.json', function(data) {
+        initialize();
+        usr_data = data;
+        visualizeUsrList(usr_data);
+        d3.json('data/test-oc-data.json', function (data) {
+            oc_data = data;
+            visualizeOCTree(oc_data);
+        });
+        d3.json('data/test-map-data.json', function(data) {
+            map_data = data;
+        });
+    });
+
+    //for testing: mapping data
     $('#auto-map-btn').click(function(){
-        d3.tsv('test-mapping.tsv', function(mapping) {
-            uploaded_mapping = mapping;
-            for(var i=0; i<mapping.length; i++) {
-                var inst = mapping[i];
-                var usr_name = inst['USR'];
-                var oc_name = inst['OC'];
-                clearManualItems(usr_name);
-                for(var j=0; j<ocitems.length; j++) {
-                    var item = ocitems[j];
-                    if(item.ocname == oc_name) {
-                        item.connected = true;
-                        item.usrname = usr_name;
-                        break;
+        clearMapping();
+        for(var i=0; i<map_data.length; i++) {
+            var pair = map_data[i];
+            var ocd = findOCitem(pair['Study_Site'], pair['EventName'], pair['CRFname'], pair['CRFversion'], pair['ocItemName']);
+            var usritem_obj = findUsrItem(pair['usrItemName']);
+            // console.log(ocd);
+
+            if(ocd !== null && usritem_obj !== null) {
+                var ocname = ocd.name;
+                var ocCRFv = ocd.parent.name;
+                var ocCRF = ocd.parent.parent.name;
+                var ocEventName = ocd.parent.parent.parent.name;
+                var ocStudy = ocd.parent.parent.parent.parent.name;
+                var path = ocStudy+"\t"+ocEventName+"\t"+ocCRF+"\t"+ocCRFv+"\t"+ocname;
+                var d = usritem_obj.datum();
+                if(mapped_ocitems.indexOf(path) == -1) {
+                    mapped_ocitems.push(path);
+                    d.mapped = true;
+                    d.ocItemName = ocname;
+                    d.ocCRFv = ocCRFv;
+                    d.ocCRF = ocCRF;
+                    d.ocEventName = ocEventName;
+                    d.ocStudy = ocStudy;
+                    d.ocItemData = ocd;
+                    d.ocPath = path;
+                }
+                positionUsrList(usr_item_data, 800);
+            }
+        }
+
+        function findOCitem(study, event, crf, crfv, itemname) {
+            for(var _study in oc_data.children) {
+                _study = oc_data.children[_study];
+                if(_study.name == study) {
+                    for(var _event in _study.children) {
+                        _event = _study.children[_event];
+                        if(_event.name == event) {
+                            for(var _crf in _event.children) {
+                                _crf = _event.children[_crf];
+                                if(_crf.name == crf) {
+                                    for(var _crfv in _crf.children) {
+                                        _crfv = _crf.children[_crfv];
+                                        if(_crfv.name == crfv) {
+                                            for(var _item in _crfv.children) {
+                                                _item = _crfv.children[_item];
+                                                if(_item.name == itemname) {
+                                                    return _item;
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
                     }
-                }//for each mapping-pair in oc-items
-            }//for each mapping instance
-        });//d3.tsv
+                }
+            }
+            return null;
+        }
+
+        function findUsrItem(itemname) {
+            var item = null;
+            d3.selectAll('.usritem').each(function(d) {
+                if(d.usrItemName == itemname) {
+                    item = d3.select(this);
+                }
+            });
+            return item;
+        }
     });//auto-map-btn click
 
-    $('#clear-map-btn').click(function() {
-        for(var j=0; j<ocitems.length; j++) {
-            var item = ocitems[j];
-            item.connected = false;
-            item.usrname = '';
+    function clearMapping() {
+        for(var i=0; i<usr_item_data.length; i++) {
+            var d = usr_item_data[i];
+            if(d.mapped) {
+                var idx = mapped_ocitems.indexOf(d.ocPath);
+                mapped_ocitems.splice(idx, 1);
+                d.mapped = false;
+                d.ocItemName = "";
+                d.ocCRFv = "";
+                d.ocCRF = "";
+                d.ocEventName = "";
+                d.ocStudy = "";
+                d.ocItemData = null;
+                d.ocPath = "";
+            }
         }
+        positionUsrList(usr_item_data);
+    }
+
+    $('#clear-map-btn').click(function() {
+        clearMapping();
     });
 
     $('#download-map-btn').click(function() {
-        var output = "USR\tOC\n";
-        for(var j=0; j<ocitems.length; j++) {
-            var item = ocitems[j];
-            if(item.connected) {
-                output += item.usrname + "\t" + item.ocname + "\n";
+        var output = [];
+
+        for(var i=0; i<usr_item_data.length; i++) {
+            var d = usr_item_data[i];
+            if(d.mapped) {
+                var item = {};
+                item['Study_Site'] = d.ocStudy;
+                item['EventName'] = d.ocEventName;
+                item['CRFname'] = d.ocCRF;
+                item['CRFversion'] = d.ocCRFv;
+                item['ocItemName'] = d.ocItemName;
+                item['usrItemName'] = d.usrItemName;
+                output.push(item);
             }
         }
+
         var zip = new JSZip();
-        zip.file("my_mapping.tsv",  output);
+        zip.file("my_mapping.json", JSON.stringify(output));
         var content = zip.generate({type:"blob"});
         saveAs(content, "my_mapping.zip");
     });
-
-    function clearManualItems(usr_name) {
-        for(var j=0; j<ocitems.length; j++) {
-            var item = ocitems[j];
-            if(item.usrname == usr_name) {
-                item.connected = false;
-                item.usrname = "";
-            }
-        }
-    }
 
     $('#map-proceed-btn').click(function() {
         var isValid = true;
@@ -92,95 +170,33 @@ $(document).ready(function() {
 });//end of the function $(document).ready...
 
 
-function prepareTreeData(data) {
-    ocitems = [];
-    //convert csv/tsv to json hierarchy
-    //------ assisting functions BEGIN ------
-    function getChild(hierarchy, name) {
-        for(var i=0; i<hierarchy['children'].length; i++) {
-            var child = hierarchy['children'][i];
-            if(child['name'] == name) {
-                return child;
-            }
-        }
-        var branch = {};
-        branch.name = name;
-        branch.children = [];
-        hierarchy.children.push(branch);
-        return branch;
+function initialize() {
+    var viewerWidth = $( window ).width();
+    var viewerHeight = 800; // $(document).height();
+    // Define the zoom function for the zoomable tree
+    function zoom() {
+        treeg.attr("transform", "translate(" + d3.event.translate + ")scale(" + d3.event.scale + ")");
+        listg.attr("transform", "translate(" + d3.event.translate + ")scale(" + d3.event.scale + ")");
     }
+    // define the zoomListener which calls the zoom function on the "zoom" event constrained within the scaleExtents
+    zoomListener = d3.behavior.zoom().scaleExtent([0.1, 3]).on("zoom", zoom);
 
-    function hasChild(hierarchy, name) {
-        for(var i=0; i<hierarchy['children'].length; i++) {
-            var child = hierarchy['children'][i];
-            if(child['name'] == name) {
-                return true;
-            }
-        }
-        return false;
-    }
-    //------ assisting functions END ------
+    // define the baseSvg, attaching a class for styling and the zoomListener
+    baseSvg = d3.select("#tree-container")
+        .append("svg")
+        .attr("class", "overlay")
+        .attr('id','baseSvg')
+        .attr("width", viewerWidth)
+        .attr("height", viewerHeight)
+        .call(zoomListener)
+        .on("dblclick.zoom", null);
 
-    var headernames = d3.keys(data[0]);
-    var itemnames = [];
-    var headername_dict = {};
-    for (var i = 0; i<headernames.length; i++) {
-        var upper = headernames[i].toUpperCase();
-        if(upper == "EVENTNAME" || upper == "CRFNAME" || upper == "CRFVERSION") {
-            headername_dict[upper] = headernames[i];
-        }
-        else if(upper !== "STUDYSUBJECTID" && upper !== "STUDY_SITE" && upper !== "EVENTREPEAT"){
-            itemnames.push(headernames[i]);
-        }
-    }
+    tipDiv = d3.select("body").append("div")
+        .attr("class", "tooltip")
+        .style("opacity", 0);
+}//initialize
 
-    var combo_items = {};
-    data.forEach(function(d){
-        var eventname = d[headername_dict["EVENTNAME"]];
-        var crfname = d[headername_dict["CRFNAME"]];
-        var crfversion = d[headername_dict["CRFVERSION"]];
-        var combo = eventname+"\t"+crfname+"\t"+crfversion;
-        if(!(combo in combo_items)){
-            combo_items[combo] = [];
-        }
-        for(var i=0; i<itemnames.length; i++) {
-            if(d[itemnames[i]] !== "" && combo_items[combo].indexOf(itemnames[i]) == -1) {
-                combo_items[combo].push(itemnames[i]);
-            }
-        }
-    });
-    // console.log(combo_items);
-
-    var hierarchy = {};
-    hierarchy.name = "Study";
-    hierarchy.children = [];
-    for(combo in combo_items) {
-        var s = combo.split("\t");
-        var eventname = s[0];
-        var crfname = s[1];
-        var crfversion = s[2];
-
-        var branch_event = getChild(hierarchy, "Event: "+eventname);
-        var branch_crf = getChild(branch_event, "CRF: "+crfname);
-        var branch_crf_v = getChild(branch_crf, "CRF Version: "+crfversion);
-        for(var k=0; k<combo_items[combo].length; k++) {
-            var item = combo_items[combo][k];
-            if(usritems.indexOf(item) == -1) {
-                usritems.push(item);
-            }
-            if(!hasChild(branch_crf_v, item)) {
-                var child = {};
-                child.name = item;
-                branch_crf_v.children.push(child);
-            }
-        }
-    }//for
-
-    // console.log(hierarchy);
-    return hierarchy;
-}
-
-function visualizeTree(treeData) {
+function visualizeOCTree(treeData) {
     // Calculate total nodes, max label length
     var totalNodes = 0;
     var maxLabelLength = 0;
@@ -191,9 +207,7 @@ function visualizeTree(treeData) {
 
     // size of the diagram
     var viewerWidth = $( window ).width();
-    // var viewerWidth = $(document).width()>1000?$(document).width():1000;
     var viewerHeight = 800; // $(document).height();
-
     var tree = d3.layout.tree()
         .size([viewerHeight, viewerWidth]);
 
@@ -204,7 +218,6 @@ function visualizeTree(treeData) {
         });
 
     // A recursive helper function for performing some setup by walking through all nodes
-
     function visit(parent, visitFn, childrenFn) {
         if (!parent) return;
 
@@ -239,63 +252,55 @@ function visualizeTree(treeData) {
     // Sort the tree initially incase the JSON isn't in a sorted order.
     sortTree();
 
-    // Define the zoom function for the zoomable tree
-    function zoom() {
-        treeg.attr("transform", "translate(" + d3.event.translate + ")scale(" + d3.event.scale + ")");
-    }
-
-
-    // define the zoomListener which calls the zoom function on the "zoom" event constrained within the scaleExtents
-    zoomListener = d3.behavior.zoom().scaleExtent([0.1, 3]).on("zoom", zoom);
-
-    // define the baseSvg, attaching a class for styling and the zoomListener
-    baseSvg = d3.select("#tree-container").append("svg")
-        .attr("width", viewerWidth)
-        .attr("height", viewerHeight)
-        .attr("class", "overlay")
-        .attr('id','baseSvg')
-        .call(zoomListener);
-    baseSvg.on("dblclick.zoom", null);
-
     // Helper functions for collapsing and expanding nodes.
     function collapse(d) {
+        d.collapsed = true;
         if (d.children) {
             d._children = d.children;
             d._children.forEach(collapse);
             d.children = null;
         }
     }
-
     function expand(d) {
+        d.collapsed = false;
         if (d._children) {
             d.children = d._children;
             d.children.forEach(expand);
             d._children = null;
         }
     }
-
     // Toggle children function
     function toggleChildren(d) {
         if (d.children) {
-            d._children = d.children;
-            d.children = null;
+            collapse(d);
         } else if (d._children) {
-            d.children = d._children;
-            d._children = null;
+            expand(d);
         }
         return d;
     }
 
     // Toggle children on click.
+    var ready_for_second_click = true;
     function click(d) {
+        var event = d3.event;
+        window.setTimeout(function() {
+            ready_for_second_click = true;
+        }, 1000);
         if (d3.event.defaultPrevented) return; // click suppressed
-        d = toggleChildren(d);
-        update(d);
+
+        if(ready_for_second_click) {
+            d = toggleChildren(d);
+            update(d);
+            interactWithItems();
+            ready_for_second_click = false;
+            positionUsrList(usr_item_data, duration);
+        }
+        tipDiv.style("opacity", 0);
     }
 
     function update(source) {
         // Compute the new height, function counts total children of root node and sets tree height accordingly.
-        // This prevents the layout looking squashed when new nodes are made visible or looking sparse when nodes are removed
+        // This prevents the layout appearing squashed when new nodes are made visible or appearing sparse when nodes are removed
         // This makes the layout more consistent.
         var levelWidth = [1];
         var childCount = function(level, n) {
@@ -319,10 +324,10 @@ function visualizeTree(treeData) {
 
         // Set widths between levels based on maxLabelLength.
         nodes.forEach(function(d) {
-            d.y = (d.depth * (maxLabelLength * 10)); //maxLabelLength * 10px
+            // d.y = (d.depth * (maxLabelLength * 10)); //maxLabelLength * 10px
             // alternatively to keep a fixed scale one can set a fixed depth per level
             // Normalize for fixed-depth by commenting out below line
-            // d.y = (d.depth * 500); //500px per level.
+            d.y = (d.depth * 150); //150px per level.
         });
 
         // Update the nodes…
@@ -339,12 +344,20 @@ function visualizeTree(treeData) {
             })
             .on('click', click);
 
-        nodeEnter.append("circle")
-            .attr('class', function(d) {
-                if(d.children == null) return d._children ? "nodeCircle" : "itemCircle";
-                else return d.children ? "nodeCircle" : "itemCircle";
-            })
-            .attr("r", 0);
+        nodeEnter.each(function(d,i){
+            var node = d3.select(this);
+            if((d.children == null && d._children) || d.children) {
+                node.append('circle').attr('class', 'nodeCircle').attr('r',0);
+            }
+            else {
+                node.append('rect').attr('class', 'itemRect')
+                    .attr('rx', 4).attr('ry', 4)
+                    .attr('width', rect_w).attr('height', rect_h);
+                // node.append('rect').attr('class', 'itemRect')
+                //     .attr('rx', 4).attr('ry', 4)
+                //     .attr('width', rect_w).attr('height', rect_h);
+            }
+        });
 
         nodeEnter.append("text")
             .attr("x", function(d) {
@@ -357,8 +370,9 @@ function visualizeTree(treeData) {
             })
             .text(function(d) {
                 return d.name;
-            })
-            .style("fill-opacity", 0);
+            });
+
+        node.select('text').text(function(d) {return d.name;});
 
 
         // Update the text to reflect whether node has children or not.
@@ -366,12 +380,22 @@ function visualizeTree(treeData) {
             .attr("x", function(d) {
                 return d.children || d._children ? -10 : 10;
             })
+            .attr('dy', function(d) {
+                return d.children || d._children ? 5 : rect_h/1.2;
+            })
             .attr("text-anchor", function(d) {
                 return d.children || d._children ? "end" : "start";
             })
             .text(function(d) {
+                if(d.depth == leaf_depth ) {
+                    var len = this.getComputedTextLength();
+                    if(len > rect_w)  {
+                        return d.name.substring(0,9) + "...";
+                    }
+                }
                 return d.name;
             });
+        tree = tree.size([newHeight, 10]);
 
         // Change the circle fill depending on whether it has children and is collapsed
         node.select("circle").attr("r", 5);
@@ -385,19 +409,15 @@ function visualizeTree(treeData) {
         var nodeUpdate = node.transition()
             .duration(duration)
             .attr("transform", function(d) {
-                d.y += 50;
-                return "translate(" + d.y + "," + d.x + ")";
+                d.y -= 50;
+                if(d.depth == leaf_depth) {
+                    return "translate(" + d.y + "," + (d.x-rect_h/2) + ")";
+                }
+                else return "translate(" + d.y + "," + d.x + ")";
             });
-        // .each('start', function(){
-        //     console.log('start');
-        // })
-        // .each('end', function(){
-        //     console.log('end');
-        // });
 
         // Fade the text in
-        nodeUpdate.select("text")
-            .style("fill-opacity", 1);
+        nodeUpdate.select("text").style("fill-opacity", 1);
 
         // Transition exiting nodes to the parent's new position.
         var nodeExit = node.exit().transition()
@@ -458,111 +478,37 @@ function visualizeTree(treeData) {
             d.x0 = d.x;
             d.y0 = d.y;
         });
-
-        // d3.selectAll('.itemCircle').each(function (d) { console.log(d);
-        //     var r = d3.select(this).attr('r'); console.log(r);
-        //     if(r < 5) d3.select(this).transition().attr('r', 5);
-        // });
-    }
+    }//function update()
 
     function interactWithItems() {
-        /*
-         * ------ item drag behavior ------
-         */
-        function dragstart(d) {
-            if(d.depth == 4) {
-                d3.event.sourceEvent.stopPropagation();
-            }
-        }
-        function dragging(d) {
-            if(d.depth == 4) {
-                var coord  = d3.mouse(this);
-                var c = d3.select(this).select('circle');
-                c.attr('cx', coord[0]).attr('cy', coord[1]);
-                var t = d3.select(this).select('text');
-                t.attr('x', (coord[0]+10)).attr('y', coord[1]);
-                // update links
-                d3.selectAll('.link').each(function(ld){
-                    if(ld.target.id == d.id) {
-                        d3.select(this).attr("d", function(d) {
-                            var source = {
-                                x: ld.source.x,
-                                y: ld.source.y
-                            };
-                            var target = {
-                                x: ld.target.x+coord[1],
-                                y: ld.target.y+coord[0]
-                            };
-                            return diagonal({
-                                source: source,
-                                target: target
-                            });
-                        });//adjust the link's curve
-                    }//if the link connects to the selected item node
-                });
-                //update item rectangles
-                hoveredItem = null;
-                d3.selectAll('.usrrect').each(function(d) {
-                    var rect = d3.select(this);
-                    var hovering = isHovering(rect, mousepos.x, mousepos.y);
-                    if(hovering) {
-                        hoveredItem = d3.select(this.parentNode);
-                        rect.style('fill', 'orange');
-                    }
-                    else rect.style('fill', 'LightSteelBlue');
-                });
-            }
-        }
-        function dragend(d) {
-            if(d.depth == 4) {
-                var c = d3.select(this).select('circle');
-                c.transition().attr('cx', 0).attr('cy', 0);
-                var t = d3.select(this).select('text');
-                t.transition().attr('x', 10).attr('y', 0);
-                // update links
-                d3.selectAll('.link').each(function(ld){
-                    if(ld.target.id == d.id) {
-                        d3.select(this).transition().attr("d", function(d) {
-                            var source = {
-                                x: ld.source.x,
-                                y: ld.source.y
-                            };
-                            var target = {
-                                x: ld.target.x,
-                                y: ld.target.y
-                            };
-                            return diagonal({
-                                source: source,
-                                target: target
-                            });
-                        });//adjust the link's curve
-                    }//if the link connects to the selected item node
-                });
-            }//if depth is 4, i.e. it is a leaf node
-        }
-
-        var itemdrag = d3.behavior.drag()
-            .on('dragstart', dragstart)
-            .on('drag', dragging)
-            .on('dragend', dragend);
-        d3.selectAll('.node').call(itemdrag);
-
         /*
          * ------ item mouse over/out behavior ------
          */
         function itemover(d) {
+            tipDiv.transition()
+                .duration(200)
+                .style("opacity", .95);
+            tipDiv.html('<span style="font-size:18px;">'+d.name+'</span>')
+                .style("left", (d3.event.pageX) + "px")
+                .style("top", (d3.event.pageY - 28) + "px");
             adjustColors(d, true);
+            selectedOCItem = d3.select(this);
         }
         function itemout(d) {
+            tipDiv.transition()
+                .style("opacity", 0);
             adjustColors(d, false);
+            selectedOCItem = null;
         }
         function adjustColors(d, highlight) {
             traceBackward(d, highlight);
             traceForward(d, highlight);
-            d3.selectAll('.node circle').each(function(d){
-                d3.select(this).classed('highlightCircle', d.highlight);
+            d3.selectAll('.node').each(function(d){
+                d3.select(this).select('circle')
+                    .classed('highlighted', d.highlight);
+                d3.select(this).select('rect')
+                    .classed('highlighted', d.highlight);
             });
-            // console.log(root);
         }
         function traceBackward(d, highlight) {
             d.highlight = highlight;
@@ -572,7 +518,7 @@ function visualizeTree(treeData) {
         }
         function traceForward(d, highlight) {
             d.highlight = highlight;
-            if(d.depth < 4 && d.children) {
+            if(d.depth < leaf_depth && d.children) {
                 for(var i=0; i<d.children.length; i++) {
                     traceForward(d.children[i], highlight);
                 }
@@ -582,11 +528,9 @@ function visualizeTree(treeData) {
         d3.selectAll('.node')
             .on('mouseover', itemover)
             .on('mouseout', itemout);
-    }
+    }//function interactWitemItems
 
-    // Append a group which holds all nodes and which the zoom Listener can act upon.
-    var matchg = baseSvg.append("g").attr('id', 'matchg').attr('class','matching_area');
-    var treeg = baseSvg.append("g").attr('id', 'treeg');
+    treeg = baseSvg.append("g").attr('id', 'treeg');
 
     // Define the root
     root = treeData;
@@ -596,4 +540,180 @@ function visualizeTree(treeData) {
     // Layout the tree initially and center on the root node.
     update(root);
     interactWithItems();
-}
+}//visualizeOCTree
+
+function visualizeUsrList(usrData) {
+    listg = d3.select('#baseSvg').append('g').attr('id', 'listg');
+    usr_item_data = [];
+    var usr_path_names = ['CRFNAME', 'CRFVERSION', 'EVENTNAME', 'EVENTREPEAT', 'STUDYSUBJECTID', 'STUDY_SITE'];
+    var usr_item_names = [];
+    for(var i=0; i<usrData.length; i++) {
+        for(var key in usrData[i]) {
+            var upper_key = key.toUpperCase();
+            if(usr_path_names.indexOf(upper_key) == -1 && usr_item_names.indexOf(key) == -1) {
+                var listitem = {};
+                listitem.usrItemName = key;
+                listitem.mapped = false;
+                listitem.ocStudy = "";
+                listitem.ocEventName = "";
+                listitem.ocCRF = "";
+                listitem.ocCRFv = "";
+                listitem.ocItemName = "";
+                listitem.ocItemData = null;
+                usr_item_data.push(listitem);
+                usr_item_names.push(key);
+            }
+        }
+    }
+
+    var usritem = listg.selectAll('.listitem').data(usr_item_data);
+    usritem.enter().append('g').attr('class', 'usritem');
+
+    usritem.append('rect')
+        .attr('rx', 4).attr('ry', 4)
+        .attr('width', rect_w).attr('height', rect_h);
+    usritem.append('text')
+        .attr('dx', 10)
+        .attr('dy', rect_h/1.2)
+        .attr('text-anchor', 'start')
+        .text(function(d) {
+            return d.usrItemName;
+        });
+    usritem.select('text')
+        .text(function(d) {
+            var len = this.getComputedTextLength();
+            if(len > rect_w)  {
+                return d.usrItemName.substring(0,9) + "...";
+            }
+            return d.usrItemName;
+        });
+
+    usritem.on('mouseover', usrItemMouseOver)
+        .on('mouseout', usrItemMouseOut)
+        .on('click', usrItemClick);
+
+    var usrItemDrag = d3.behavior.drag()
+        .on('dragstart', usrItemDragstart)
+        .on('drag', usrItemDragging)
+        .on('dragend', usrItemDragend);
+    usritem.call(usrItemDrag);
+    positionUsrList(usr_item_data);
+
+    function usrItemMouseOver(d) {
+        d3.select(this).select('rect').style('fill','Orange');
+        var len = computeTextLength(d3.select(this).select('text'));
+        tipDiv.transition()
+            .duration(200)
+            .style("opacity", .95);
+        tipDiv.html('<span style="font-size:18px;">'+d.usrItemName+'</span>')
+            .style("left", (d3.event.pageX - len) + "px")
+            .style("top", (d3.event.pageY - 30) + "px");
+
+        selectedUsrItem = d3.select(this);
+    }
+
+    function usrItemMouseOut() {
+        tipDiv.transition().style("opacity", 0);
+        d3.select(this).select('rect').style('fill','LightSteelBlue');
+        selectedUsrItem = null;
+    }
+
+    function computeTextLength(selection) {
+        selection.text(selection.datum().usrItemName);
+        var len = selection[0][0].getComputedTextLength();
+        selection.text(function(d) {
+            if(len > rect_w)  {
+                return d.usrItemName.substring(0,9) + "...";
+            }
+            return d.usrItemName;
+        });
+        return len;
+    }
+
+    function usrItemClick(d) {
+        if(d.mapped) {
+            var idx = mapped_ocitems.indexOf(d.ocPath);
+            mapped_ocitems.splice(idx, 1);
+            d.mapped = false;
+            d.ocItemName = "";
+            d.ocCRFv = "";
+            d.ocCRF = "";
+            d.ocEventName = "";
+            d.ocStudy = "";
+            d.ocItemData = null;
+            d.ocPath = "";
+            positionUsrList(usr_item_data);
+        }
+    }
+
+    function usrItemDragstart(d) {
+        d3.event.sourceEvent.stopPropagation();
+        d.offsetX = d3.mouse(this)[0] - d3.select(this).select('rect').attr('x');
+        d.offsetY = d3.mouse(this)[1] - d3.select(this).select('rect').attr('y');
+    }
+    function usrItemDragging(d) {
+        var coord  = d3.mouse(this);
+        var x = coord[0]-d.offsetX, y = coord[1]-d.offsetY;
+        d3.select(this).select('rect').attr('x', x).attr('y', y);
+        d3.select(this).select('text').attr('x', x).attr('y', y);
+    }
+    function usrItemDragend(d) {
+        if(selectedOCItem !== null) {
+            usrItemClick(d);
+            var ocd = selectedOCItem.datum();
+            var ocname = ocd.name;
+            var ocCRFv = ocd.parent.name;
+            var ocCRF = ocd.parent.parent.name;
+            var ocEventName = ocd.parent.parent.parent.name;
+            var ocStudy = ocd.parent.parent.parent.parent.name;
+            var path = ocStudy+"\t"+ocEventName+"\t"+ocCRF+"\t"+ocCRFv+"\t"+ocname;
+
+            if(mapped_ocitems.indexOf(path) == -1) {
+                mapped_ocitems.push(path);
+                d.mapped = true;
+                d.ocItemName = ocname;
+                d.ocCRFv = ocCRFv;
+                d.ocCRF = ocCRF;
+                d.ocEventName = ocEventName;
+                d.ocStudy = ocStudy;
+                d.ocItemData = selectedOCItem.datum();
+                d.ocPath = path;
+            }
+        }
+        positionUsrList(usr_item_data);
+    }
+
+}//function visualizeUsrList
+
+function positionUsrList(usr_item_data, time) {
+    if(!time) time = 250;
+    for(var i=0; i<usr_item_data.length; i++) {
+        var uitem = usr_item_data[i];
+        //position the usr items when they are not mapped
+        if(!uitem.mapped) {
+            uitem.x = 1000; uitem.y = 15 + i*(rect_h + 5);
+        }
+        //position the usr items when they are mapped
+        else{
+            var head = uitem.ocItemData;
+            uitem.x = head.y + rect_w + 2;
+            uitem.y = head.x - rect_h / 2;
+
+            if(head.parent.collapsed) {
+                head = head.parent;
+                if(head.parent.collapsed) head = head.parent;
+                if(head.parent.collapsed) head = head.parent;
+                if(head.parent.collapsed) head = head.parent;
+                uitem.x = head.y + 9;
+                uitem.y = head.x - 7;
+            }
+        }
+    }
+
+    d3.selectAll('.usritem').each(function(d,i) {
+        var rect = d3.select(this).select('rect');
+        var text = d3.select(this).select('text');
+        rect.transition().duration(time).attr('x', d.x).attr('y', d.y);
+        text.transition().duration(time).attr('x', d.x).attr('y', d.y);
+    });
+}//function positionUsrList()

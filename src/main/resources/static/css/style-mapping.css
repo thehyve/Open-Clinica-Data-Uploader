@@ -12,13 +12,16 @@
     stroke-width: 2px;
 }
 
-.itemCircle {
-    fill: Bisque;
+.itemRect {
+    fill: white;
+    fill-opacity: .2;
     stroke: steelblue ;
     stroke-width: 1.5px;
+    stroke-opacity: .7;
+    /*font-family: "Courier";*/
 }
 
-.highlightCircle {
+.highlighted {
     stroke: red;
     stroke-width: 3.5px;
     stroke-opacity: .6;
@@ -36,30 +39,6 @@
     stroke-opacity: .7;
 }
 
-.ocrect {
-    fill: steelblue;
-    fill-opacity: .6;
-}
-
-.usrrect {
-    fill: LightSteelBlue;
-    fill-opacity: .6;
-}
-
-.octext {
-    text-anchor: middle;
-    alignment-baseline: central;
-    font-size:15px;
-    font-family:sans-serif;
-}
-
-.usrtext {
-    text-anchor: middle;
-    alignment-baseline: central;
-    font-size:15px;
-    font-family:sans-serif;
-}
-
 .connector {
     fill: lightgrey;
     stroke: grey;
@@ -69,20 +48,34 @@
     stroke: orange;
 }
 
-.griditem {
+.usritem {
     cursor: pointer;
 }
 
-.griditem_rect {
+.usritem rect {
     fill: LightSteelBlue;
     fill-opacity: .5;
     stroke: darkgrey;
     stroke-width: 1;
 }
 
-.griditem_text {
-    text-anchor: middle;
-    alignment-baseline: central;
+.usritem text {
+    /*text-anchor: middle;*/
+    /*alignment-baseline: central;*/
     font-size:15px;
     font-family:sans-serif;
+}
+
+div.tooltip {
+    font-size: 30;
+    position: absolute;
+    text-align: center;
+    float: left;
+    padding: 3px;
+    margin: 3px;
+    font: 12px sans-serif;
+    background: white;
+    border: 0px;
+    border-radius: 5px;
+    pointer-events: none;
 }

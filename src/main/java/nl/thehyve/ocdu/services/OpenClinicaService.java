@@ -34,7 +34,7 @@ public class OpenClinicaService {
         return studies;
     }
 
-    public MetaData getMetadat(String username, String passwordHash, String url, Study study) throws Exception {
+    public MetaData getMetadata(String username, String passwordHash, String url, Study study) throws Exception {
         SOAPConnectionFactory soapConnectionFactory = SOAPConnectionFactory.newInstance();
         SOAPConnection soapConnection = soapConnectionFactory.createConnection();
         SOAPMessage message = responseFactory.createGetStudyMetadataRequest(username, passwordHash, study);

@@ -66,7 +66,7 @@ public class Integration {
     @Test
     public void getMetaDataTest() throws Exception {
         Study study = new Study("Study 1", "", ""); // Only Identifier should be used for this call
-        MetaData metadat = openClinicaService.getMetadat(user, sha1hexDigest, ocUrl, study);
+        MetaData metadat = openClinicaService.getMetadata(user, sha1hexDigest, ocUrl, study);
         assertThat(metadat, is(notNullValue()));
     }
 }

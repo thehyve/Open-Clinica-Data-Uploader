@@ -72,7 +72,7 @@ public class UploadSessionController {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         String username = auth.getName(); //get logged in username
         List<OcUser> byUsername = userRepository.findByUsername(username);
-        List<OcUser> matching = byUsername.stream().filter(usr -> usr.getOcEnvironment() == ocEnv)
+        List<OcUser> matching = byUsername.stream().filter(usr -> usr.getOcEnvironment().equals( ocEnv))
                 .collect(Collectors.toList());
         if (matching.size() == 1) {
             return matching.get(0);

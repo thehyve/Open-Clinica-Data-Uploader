@@ -1,6 +1,7 @@
 package nl.thehyve.ocdu.models;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -76,5 +77,25 @@ public class EventDefinition {
 
     public void setMandatory(boolean mandatory) {
         this.mandatory = mandatory;
+    }
+
+    public List getCrfDefinitions() {
+        return crfDefinitions;
+    }
+
+    public void setCrfDefinitions(List crfDefinitions) {
+        this.crfDefinitions = crfDefinitions;
+    }
+
+    public void addCrfDef(CRFDefinition crfDefinition) {
+        this.crfDefinitions.add(crfDefinition);
+    }
+
+    public void removeCrfDef(CRFDefinition crfDefinition) {
+        this.crfDefinitions.remove(crfDefinition);
+    }
+
+    public EventDefinition() {
+        this.crfDefinitions = new ArrayList<>();
     }
 }

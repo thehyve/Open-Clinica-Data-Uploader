@@ -1,4 +1,4 @@
-package nl.thehyve.ocdu.validators;
+package nl.thehyve.ocdu.validators.fileValidators;
 
 import java.nio.file.Path;
 import java.util.ArrayList;

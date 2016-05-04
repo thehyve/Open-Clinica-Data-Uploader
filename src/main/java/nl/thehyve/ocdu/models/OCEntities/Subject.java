@@ -3,10 +3,7 @@ package nl.thehyve.ocdu.models.OCEntities;
 import nl.thehyve.ocdu.models.OcUser;
 import nl.thehyve.ocdu.models.UploadSession;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
 import java.util.Date;
 
 /**
@@ -23,7 +20,10 @@ public class Subject implements OcEntity, UserSubmitted {
     private Date dateOfEnrollment;
     private String secondaryId;
     private String study;
+
+    @ManyToOne()
     private OcUser owner;
+    @ManyToOne()
     private UploadSession submission;
 
     @Id

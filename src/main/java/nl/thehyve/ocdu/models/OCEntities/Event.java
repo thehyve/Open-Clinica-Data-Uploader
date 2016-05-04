@@ -2,10 +2,7 @@ package nl.thehyve.ocdu.models.OCEntities;
 
 import nl.thehyve.ocdu.models.*;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
 import java.util.Date;
 
 /**
@@ -24,7 +21,10 @@ public class Event implements OcEntity, UserSubmitted, EventReference {
     private Date endDate;
     private Date endTime;
     private Integer repeatNumber;
+    @ManyToOne()
     private UploadSession submission;
+
+    @ManyToOne()
     private OcUser owner;
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)

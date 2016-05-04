@@ -1,4 +1,4 @@
-package nl.thehyve.ocdu.validators;
+package nl.thehyve.ocdu.validators.fileValidators;
 
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -7,7 +7,7 @@ import java.util.List;
 /**
  * Created by piotrzakrzewski on 11/04/16.
  */
-public class DataFileValidator implements FileFormatValidator {
+public class EventsFileValidator implements FileFormatValidator {
 
     private boolean valid;
     private List<String> humanreadableErrors;

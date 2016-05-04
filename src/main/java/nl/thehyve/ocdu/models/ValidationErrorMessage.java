@@ -13,7 +13,7 @@ public class ValidationErrorMessage {
 
     private String generalMessage;
     private List<String> offendingValues = new ArrayList<String>();
-    private boolean isError = false; // Warning by default
+    private boolean isError = true; // Error by default
 
     public boolean isError() {
         return isError;
@@ -30,6 +30,8 @@ public class ValidationErrorMessage {
     public void addOffendingValue(String value) {
         offendingValues.add(value);
     }
+
+    public void addAllOffendingValues(List<String> values) {offendingValues.addAll(values);}
 
     public List<String> getOffendingValues() {
         return offendingValues;

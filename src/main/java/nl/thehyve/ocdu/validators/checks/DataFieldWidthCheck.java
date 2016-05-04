@@ -13,7 +13,6 @@ import static nl.thehyve.ocdu.models.ValidationErrorMessage.generateOffendingVal
 public class DataFieldWidthCheck implements OcEntityCheck {
 
     public static final int ITEM_MAX_LENGTH = 4000; //TODO: make configurable
-    public static final int SSID_MAX_LENGTH = 30; //TODO: make configurable
 
     @Override
     public ValidationErrorMessage getCorrespondingError(OcEntity dataRecord, MetaData metaData) {
@@ -21,16 +20,11 @@ public class DataFieldWidthCheck implements OcEntityCheck {
         ValidationErrorMessage error = new ValidationErrorMessage("One or more values in your " +
                 "data violate Open Clinica field width constraints");
         String item = data.getItem();
-        String ssid = data.getSsid();
         boolean itemLengthViolated = item.length() > ITEM_MAX_LENGTH;
-        boolean ssidLengthViolated = ssid.length() > SSID_MAX_LENGTH;
         if (itemLengthViolated ) {
             error.addOffendingValue(generateOffendingValueString(data, item));
         }
-        if (ssidLengthViolated) {
-            error.addOffendingValue(generateOffendingValueString(data, ssid));
-        }
-        if (itemLengthViolated || ssidLengthViolated) {
+        if (itemLengthViolated) {
             return error;
         } else return null;
     }

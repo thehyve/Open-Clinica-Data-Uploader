@@ -1,7 +1,7 @@
 package nl.thehyve.ocdu;
 
 import nl.thehyve.ocdu.models.MetaData;
-import nl.thehyve.ocdu.models.Study;
+import nl.thehyve.ocdu.models.OCEntities.Study;
 import nl.thehyve.ocdu.services.OpenClinicaService;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -27,7 +27,7 @@ import static org.junit.Assert.assertThat;
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringApplicationConfiguration(classes = OcduApplication.class)
 @WebAppConfiguration
-public class Integration {
+public class OcIntegration {
 
     @Autowired
     OpenClinicaService openClinicaService;

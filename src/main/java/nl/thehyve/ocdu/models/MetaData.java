@@ -1,5 +1,8 @@
 package nl.thehyve.ocdu.models;
 
+import nl.thehyve.ocdu.models.OcDefinitions.CodeListDefinition;
+import nl.thehyve.ocdu.models.OcDefinitions.EventDefinition;
+
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -66,27 +69,27 @@ public class MetaData {
         this.studyIdentifier = studyIdentifier;
     }
 
-    public List getEventDefinitions() {
+    public List<EventDefinition> getEventDefinitions() {
         return eventDefinitions;
     }
 
-    public void setEventDefinitions(List eventDefinitions) {
+    public void setEventDefinitions(List<EventDefinition> eventDefinitions) {
         this.eventDefinitions = eventDefinitions;
     }
 
-    public List getItemGroupDefinitions() {
+    public List<ItemGroupDefinition> getItemGroupDefinitions() {
         return itemGroupDefinitions;
     }
 
-    public void setItemGroupDefinitions(List itemGroupDefinitions) {
+    public void setItemGroupDefinitions(List<ItemGroupDefinition> itemGroupDefinitions) {
         this.itemGroupDefinitions = itemGroupDefinitions;
     }
 
-    public List getCodeListDefinitions() {
+    public List<CodeListDefinition> getCodeListDefinitions() {
         return codeListDefinitions;
     }
 
-    public void setCodeListDefinitions(List codeListDefinitions) {
+    public void setCodeListDefinitions(List<CodeListDefinition> codeListDefinitions) {
         this.codeListDefinitions = codeListDefinitions;
     }
 

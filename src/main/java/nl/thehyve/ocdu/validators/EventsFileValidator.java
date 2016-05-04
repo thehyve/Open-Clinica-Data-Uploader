@@ -1,6 +1,5 @@
 package nl.thehyve.ocdu.validators;
 
-import java.io.File;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
@@ -8,7 +7,7 @@ import java.util.List;
 /**
  * Created by piotrzakrzewski on 11/04/16.
  */
-public class EventsFileValidator implements FileValidator {
+public class EventsFileValidator implements FileFormatValidator {
 
     private boolean valid;
     private List<String> humanreadableErrors;

@@ -7,7 +7,7 @@ import java.util.List;
 /**
  * Created by piotrzakrzewski on 11/04/16.
  */
-public interface FileValidator {
+public interface FileFormatValidator {
 
     boolean isValid();
 

@@ -1,6 +1,4 @@
-package nl.thehyve.ocdu.models;
-
-import org.springframework.data.repository.CrudRepository;
+package nl.thehyve.ocdu.models.OcDefinitions;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -11,7 +9,8 @@ import javax.persistence.Id;
  * Created by piotrzakrzewski on 01/05/16.
  */
 @Entity
-public class CodeListItemDefinition  {
+public class CodeListDefinition {
+
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long id;

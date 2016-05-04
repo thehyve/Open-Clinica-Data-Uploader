@@ -1,6 +1,6 @@
 package nl.thehyve.ocdu.factories;
 
-import nl.thehyve.ocdu.models.ClinicalData;
+import nl.thehyve.ocdu.models.OCEntities.ClinicalData;
 import nl.thehyve.ocdu.models.OcUser;
 import nl.thehyve.ocdu.models.UploadSession;
 
@@ -18,11 +18,15 @@ public class ClinicalDataFactory extends UserSubmittedDataFactory {
 
 
     public final static String STUDY_SUBJECT_ID = "StudySubjectID";
-    public final static String STUDY_SITE = "StudySite";
+    public final static String STUDY = "Study";
     public final static String EventName = "EventName";
     public final static String EventRepeat = "EventRepeat";
     public final static String CRFName = "CRFName";
     public final static String CRFVersion = "CRFVersion";
+    public final static String[] MANDATORY_HEADERS = {STUDY_SUBJECT_ID, STUDY, EventName, EventRepeat,
+            CRFName, CRFVersion};
+
+    public final static String SITE = "Site";
 
     public ClinicalDataFactory(OcUser user, UploadSession submission) {
         super(user, submission);
@@ -49,12 +53,12 @@ public class ClinicalDataFactory extends UserSubmittedDataFactory {
         return null;
     }
 
-    private HashMap<String,Integer> getCoreHeader(HashMap<String, Integer> headerMap) {
+    private HashMap<String, Integer> getCoreHeader(HashMap<String, Integer> headerMap) {
         HashMap<String, Integer> coreMap = new HashMap<>();
         Integer ssidIndex = getAndRemove(headerMap, STUDY_SUBJECT_ID);
         coreMap.put(STUDY_SUBJECT_ID, ssidIndex);
-        Integer studyIndex = getAndRemove(headerMap, STUDY_SITE);
-        coreMap.put(STUDY_SITE, studyIndex);
+        Integer studyIndex = getAndRemove(headerMap, STUDY);
+        coreMap.put(STUDY, studyIndex);
         Integer eventNameIndex = getAndRemove(headerMap, EventName);
         coreMap.put(EventName, eventNameIndex);
         Integer eventRepeatIndex = getAndRemove(headerMap, EventRepeat);
@@ -63,6 +67,8 @@ public class ClinicalDataFactory extends UserSubmittedDataFactory {
         coreMap.put(CRFName, crfNameIndex);
         Integer crfVersionIndex = getAndRemove(headerMap, CRFVersion);
         coreMap.put(CRFVersion, crfVersionIndex);
+        Integer siteIndex = getAndRemove(headerMap, SITE);
+        coreMap.put(SITE, siteIndex);
         return coreMap;
     }
 
@@ -82,11 +88,12 @@ public class ClinicalDataFactory extends UserSubmittedDataFactory {
         String[] split = line.split(FILE_SEPARATOR);
 
         String ssid = split[coreColumns.get(STUDY_SUBJECT_ID)];
-        String study = split[coreColumns.get(STUDY_SITE)];
+        String study = split[coreColumns.get(STUDY)];
         String eventName = split[coreColumns.get(EventName)];
         Integer eventRepeat = Integer.parseInt(split[coreColumns.get(EventRepeat)]);
         String crf = split[coreColumns.get(CRFName)];
         String crfVer = split[coreColumns.get(CRFVersion)];
+        String site = split[coreColumns.get(SITE)];
 
 
         List<ClinicalData> aggregation = new ArrayList<>();
@@ -96,6 +103,7 @@ public class ClinicalDataFactory extends UserSubmittedDataFactory {
             String value = split[headerMap.get(colName)];
             ClinicalData dat = new ClinicalData(study, item, ssid, eventName, eventRepeat, crf,
                     getSubmission(), crfVer, groupRepeat, getUser(), value);
+            dat.setSite(site);
             aggregation.add(dat);
         }
         return aggregation;

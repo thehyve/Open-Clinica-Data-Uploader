@@ -1,4 +1,4 @@
-package nl.thehyve.ocdu.models;
+package nl.thehyve.ocdu.models.errors;
 
 import nl.thehyve.ocdu.models.OCEntities.OcEntity;
 

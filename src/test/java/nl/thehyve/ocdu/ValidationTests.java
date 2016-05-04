@@ -5,7 +5,7 @@ import nl.thehyve.ocdu.models.MetaData;
 import nl.thehyve.ocdu.models.OCEntities.ClinicalData;
 import nl.thehyve.ocdu.models.OcUser;
 import nl.thehyve.ocdu.models.UploadSession;
-import nl.thehyve.ocdu.models.ValidationErrorMessage;
+import nl.thehyve.ocdu.models.errors.ValidationErrorMessage;
 import nl.thehyve.ocdu.soap.ResponseHandlers.GetStudyMetadataResponseHandler;
 import nl.thehyve.ocdu.validators.ClinicalDataOcChecks;
 import org.junit.Before;
@@ -21,7 +21,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -43,6 +42,7 @@ public class ValidationTests {
     Path testFileCorrect;
     Path testFileInCorrectSsidLength;
     Path testFileNonExistentEvent;
+    Path testFileNonExistentCRF;
 
     @Before
     public void setUp() throws Exception {
@@ -55,6 +55,7 @@ public class ValidationTests {
             this.testFileCorrect = Paths.get("docs/exampleFiles/data.txt");
             this.testFileInCorrectSsidLength = Paths.get("docs/exampleFiles/tooLongSSID.txt");
             this.testFileNonExistentEvent = Paths.get("docs/exampleFiles/nonExistentEvent.txt");
+            this.testFileNonExistentCRF = Paths.get("docs/exampleFiles/nonExistentCrf.txt");
 
             MessageFactory messageFactory = MessageFactory.newInstance();
             File testFile = new File("docs/responseExamples/getStudyMetadata.xml"); //TODO: Replace File with Path
@@ -86,6 +87,15 @@ public class ValidationTests {
     @Test
     public void nonExistentEvent() throws Exception {
         List<ClinicalData> incorrectClinicalData = factory.createClinicalData(testFileNonExistentEvent);
+        clinicalDataOcChecks = new ClinicalDataOcChecks(metaData, incorrectClinicalData);
+        List<ValidationErrorMessage> errors = clinicalDataOcChecks.getErrors();
+        assertEquals(2, errors.size()); // We expect one error because of Event which does
+                                        // not exist and one erorr for CRF
+    }
+
+    @Test
+    public void nonExistentCRF() throws Exception {
+        List<ClinicalData> incorrectClinicalData = factory.createClinicalData(testFileNonExistentCRF);
         clinicalDataOcChecks = new ClinicalDataOcChecks(metaData, incorrectClinicalData);
         List<ValidationErrorMessage> errors = clinicalDataOcChecks.getErrors();
         assertEquals(1, errors.size());

@@ -20,10 +20,6 @@ $( window ).on('resize', function() {
     var w = 200, m = 5;
     var x0 = +d3.select('#baseSvg').attr('width') - w - 5*m;
     var y0 = +d3.select('.ocrect').attr('y');
-    var items_height = positionMatchingItems(x0, y0);
-    //if in the plain view, position the grid-items
-    var is_tree_view = $('#tree-toggle').prop('checked');
-    if(!is_tree_view) positionGridItems(5,5);
 })
 
 // initializing and button listeners
@@ -32,25 +28,7 @@ $(document).ready(function() {
         uploaded_data = data;
         var treeData = prepareTreeData(data);
         visualizeTree(treeData);
-        visualizeMatchingArea();
     });//d3.tsv
-
-    $('#tree-toggle').change(function() {
-        // console.log('change ' + $(this).prop('checked'));
-        //clear the div #tree-container
-        $('#tree-container').empty();
-        var is_tree_view = $(this).prop('checked');
-        if(is_tree_view) {
-            var treeData = prepareTreeData(uploaded_data);
-            visualizeTree(treeData);
-            visualizeMatchingArea();
-        }
-        else{
-            gridData = prepareGridData(uploaded_data);
-            visualizeGrid(gridData);
-            visualizeMatchingArea();
-        }
-    });
 
     $('#auto-map-btn').click(function(){
         d3.tsv('test-mapping.tsv', function(mapping) {
@@ -69,25 +47,6 @@ $(document).ready(function() {
                     }
                 }//for each mapping-pair in oc-items
             }//for each mapping instance
-            updateMatchingItems();
-            var is_tree_view = $('#tree-toggle').prop('checked');
-            if(!is_tree_view) {
-                d3.selectAll('.mitem').each(function(d,i){
-                    if(d.connected) {
-                        var m = 5;
-                        d3.selectAll('.griditem').each(function(gridd, gridi) {
-                            if(gridd.name == d.usrname) {
-                                gridd.x = +d.x - 2*m - d.w;
-                                gridd.y = +d.y;
-                                gridd.mapped = true;
-                                gridd.matchingItem = d;
-                            }
-                        });
-                    }
-                });
-                updateGridItems(250);
-                positionGridItems(5,5);
-            }
         });//d3.tsv
     });//auto-map-btn click
 
@@ -96,15 +55,6 @@ $(document).ready(function() {
             var item = ocitems[j];
             item.connected = false;
             item.usrname = '';
-        }
-        updateMatchingItems();
-        var is_tree_view = $('#tree-toggle').prop('checked');
-        if(!is_tree_view) {
-            for(var i=0; i<gridData.length; i++) {
-                gridData[i].mapped = false;
-                gridData[i].matchingItem = null;
-            }
-            positionGridItems(5,5);
         }
     });
 
@@ -141,44 +91,6 @@ $(document).ready(function() {
 
 });//end of the function $(document).ready...
 
-function updateGridItems(duration) {
-    d3.selectAll('.griditem').each(function(d, i) {
-        var rect = d3.select(this).select('rect');
-        var text = d3.select(this).select('text');
-        rect.transition().duration(duration).attr('x', +d.x).attr('y', +d.y);
-        text.transition().duration(duration).attr('x', +d.x + d.w / 2).attr('y', +d.y + d.h / 2);
-    });
-}
-
-function updateMatchingItems() {
-    var is_tree_view = $('#tree-toggle').prop('checked');
-    if(is_tree_view) {
-        d3.selectAll('.mitem').each(function(d,i){
-            var mitem = d3.select(this);
-            var usrtext = mitem.select('.usrtext');
-            var connector = mitem.select('.connector');
-            if(d.connected) {
-                usrtext.text(d.usrname);
-                usrtext.style('fill-opacity',0).transition().duration(500).style('fill-opacity','1');
-                connector.transition().style('fill', 'dimgrey');
-            }
-            else{
-                usrtext.text('');
-                connector.transition().style('fill', 'lightgrey');
-            }
-        });
-    }
-    else {
-        d3.selectAll('.mitem').each(function(d,i){
-            var mitem = d3.select(this);
-            var usrtext = mitem.select('.usrtext');
-            var connector = mitem.select('.connector');
-            usrtext.text('');
-            if(d.connected) {  connector.transition().style('fill', 'dimgrey'); }
-            else{ connector.transition().style('fill', 'lightgrey'); }
-        });
-    }
-}//update matching items
 
 function prepareTreeData(data) {
     ocitems = [];
@@ -343,6 +255,7 @@ function visualizeTree(treeData) {
         .attr("class", "overlay")
         .attr('id','baseSvg')
         .call(zoomListener);
+    baseSvg.on("dblclick.zoom", null);
 
     // Helper functions for collapsing and expanding nodes.
     function collapse(d) {
@@ -545,6 +458,11 @@ function visualizeTree(treeData) {
             d.x0 = d.x;
             d.y0 = d.y;
         });
+
+        // d3.selectAll('.itemCircle').each(function (d) { console.log(d);
+        //     var r = d3.select(this).attr('r'); console.log(r);
+        //     if(r < 5) d3.select(this).transition().attr('r', 5);
+        // });
     }
 
     function interactWithItems() {
@@ -620,51 +538,7 @@ function visualizeTree(treeData) {
                         });//adjust the link's curve
                     }//if the link connects to the selected item node
                 });
-                // update usr-item's text in the matching area
-                if(hoveredItem !== null) {
-                    var msg = validateOCitems(d.name);
-                    if(msg == null) {
-                        var item_data = hoveredItem.datum();
-                        item_data.connected = true;
-                        item_data.usrname = d.name;
-                        hoveredItem.select('.usrtext').text(d.name);
-                        hoveredItem.select('.connector').style('fill', 'dimgrey');
-                    }
-                    else {
-                        // alert('The item "' + d.name + '" has been mapped to "' + msg + '"!');
-                        var message = 'The item "<strong>' + d.name + '</strong>" has been mapped to "<strong>' + msg + '</strong>"!';
-                        var alert_html = '<span id="duplicate_alert" class="alert alert-danger" role="alert">'+message+'</span>';
-                        $(alert_html).insertAfter('#empty_space');
-                        // $("#duplicate_alert").fadeTo(2000, 0).slideUp("slow", function(){
-                        //     // $("#duplicate_alert").alert('close');
-                        // });
-
-                        $("#duplicate_alert").fadeTo(6000, 0.3, function() {
-                            $("#duplicate_alert").alert('close');
-                        });
-                    }
-                }
             }//if depth is 4, i.e. it is a leaf node
-        }
-
-        function validateOCitems(new_usr_defined_item_name) {
-            for(var i=0; i<ocitems.length; i++) {
-                var item = ocitems[i];
-                if(item.connected && item.usrname == new_usr_defined_item_name) {
-                    return item.ocname;
-                }//if
-            }//for
-            return null;
-        }
-
-        function isHovering(rect, mousex, mousey) {
-            var x = +rect.attr('x'), y = +rect.attr('y');
-            var w = +rect.attr('width'), h = +rect.attr('height');
-            var hon = mousex > x && mousex < (x+w);
-            var ver = mousey > y && mousey < (y+h);
-            // console.log(x+","+y+","+w+","+h+" -- " + mousex + ", " + mousey + ": " + hon + " and " + ver);
-            if(hon && ver) return true;
-            else return false;
         }
 
         var itemdrag = d3.behavior.drag()
@@ -723,402 +597,3 @@ function visualizeTree(treeData) {
     update(root);
     interactWithItems();
 }
-
-function prepareGridData(data) {
-    ocitems = [];
-
-    var headernames = d3.keys(data[0]);
-    var itemnames = [];
-    var headername_dict = {};
-    for (var i = 0; i<headernames.length; i++) {
-        var upper = headernames[i].toUpperCase();
-        if(upper == "EVENTNAME" || upper == "CRFNAME" || upper == "CRFVERSION") {
-            headername_dict[upper] = headernames[i];
-        }
-        else if(upper !== "STUDYSUBJECTID" && upper !== "STUDY_SITE" && upper !== "EVENTREPEAT"){
-            itemnames.push(headernames[i]);
-        }
-    }
-
-    gridData = [];
-    for(var i=0; i<itemnames.length; i++) {
-        var item = {};
-        item.name = itemnames[i];
-        item.mapped = false;
-        item.matchingItem = null;
-        gridData.push(item);
-    }
-    return gridData;
-}
-
-function visualizeGrid(gridData) {
-    // size of the diagram
-    var viewerWidth = $( window ).width();
-    var viewerHeight = 800; // $(document).height();
-
-    var grid_zoomListener = d3.behavior.zoom().scaleExtent([1, 1]).on("zoom", function(){});
-    baseSvg = d3.select("#tree-container").append("svg")
-        .attr("width", viewerWidth)
-        .attr("height", viewerHeight)
-        .attr("class", "overlay")
-        .attr('id','baseSvg')
-        .call(grid_zoomListener);
-
-    var matchg = baseSvg.append("g").attr('id', 'matchg').attr('class','matching_area');
-    var gridg = baseSvg.append("g").attr('id', 'gridg');
-
-    var w = 200, h = 30;
-    var griditem = d3.select('#gridg').selectAll('.griditem')
-        .data(gridData).enter().append('g').attr('class', 'griditem');
-    griditem.append('rect')
-        .attr('class', 'griditem_rect')
-        .attr('rx', 8).attr('ry', 8)
-        .attr('width', w)
-        .attr('height', h)
-        .on('mouseover', function(d,i){
-            d3.select(this).style('fill', 'red');
-        })
-        .on('mouseout', function(d,i){
-            d3.select(this).style('fill', 'LightSteelBlue');
-        });
-    griditem.append('text')
-        .attr('class', 'griditem_text')
-        .text(function(d) {
-            return d.name;
-        })
-        .on('mouseover', function(d,i){
-            var rect = d3.select(this.parentNode).select('.griditem_rect');
-            rect.style('fill', 'red');
-        })
-        .on('mouseout', function(d,i){
-            var rect = d3.select(this.parentNode).select('.griditem_rect');
-            rect.style('fill', 'LightSteelBlue');
-        });
-
-    var m = 5;
-    positionGridItems(m,m);
-    listenToGridItemDrag();
-
-    function listenToGridItemDrag() {
-        var was_dragged = false;
-        function dragstart(d) {
-            was_dragged = false;
-            d.prev_x = +d3.select(this).select('rect').attr('x');
-            d.prev_y = +d3.select(this).select('rect').attr('y');
-        }
-        function dragging(d) {
-            d.x = +d.x + d3.event.dx;
-            d.y = +d.y + d3.event.dy;
-            updateGridItems(1);
-            //update item rectangles
-            hoveredItem = null;
-            d3.selectAll('.usrrect').each(function(d) {
-                var rect = d3.select(this);
-                var hovering = isHovering(rect, mousepos.x, mousepos.y);
-                if(hovering) {
-                    hoveredItem = d3.select(this.parentNode);
-                    rect.style('fill', 'orange');
-                }
-                else rect.style('fill', 'LightSteelBlue');
-            });
-            was_dragged = true;
-        }
-        function dragend(d) {
-            if(was_dragged) {
-                if(hoveredItem !== null) {
-                    hoveredItem.select('.usrrect').style('fill', 'LightSteelBlue');
-                    var item_data = hoveredItem.datum();
-                    if(item_data.connected) {//already occupied
-                        d.x = +d.prev_x; d.y = +d.prev_y;
-                    }
-                    else {
-                        item_data.connected = true;
-                        item_data.usrname = d.name;
-                        d.x = +hoveredItem.select('.usrrect').attr('x');
-                        d.y = +hoveredItem.select('.usrrect').attr('y');
-                        if(d.matchingItem !== null) {
-                            d.matchingItem.connected = false;
-                            d.matchingItem.usrname = '';
-                        }
-                        d.mapped = true;
-                        d.matchingItem = item_data;
-                        updateMatchingItems();
-                    }
-                }//if a usr-rect in a matching item is hovered
-                else {
-                    // d.x = d.prev_x; d.y = d.prev_y;
-                    d.mapped = false;
-                    if(d.matchingItem !== null) {
-                        d.matchingItem.connected = false;
-                        d.matchingItem.usrname = '';
-                        updateMatchingItems();
-                    }
-                }
-                updateGridItems(250);
-                positionGridItems(5,5);
-            }//if the griditem was dragged
-
-        }
-
-        function isHovering(rect, mousex, mousey) {
-            var x = +rect.attr('x'), y = +rect.attr('y');
-            var w = +rect.attr('width'), h = +rect.attr('height');
-            var hon = mousex > x && mousex < (x+w);
-            var ver = mousey > y && mousey < (y+h);
-            // console.log(x+","+y+","+w+","+h+" -- " + mousex + ", " + mousey + ": " + hon + " and " + ver);
-            if(hon && ver) return true;
-            else return false;
-        }
-
-        var itemdrag = d3.behavior.drag()
-            .on('dragstart', dragstart)
-            .on('drag', dragging)
-            .on('dragend', dragend);
-        d3.selectAll('.griditem').call(itemdrag);
-
-    }
-}
-
-function positionGridItems(x0,y0) {
-    var duration = 700;
-    var w = +d3.select('.griditem_rect').attr('width');
-    var h = +d3.select('.griditem_rect').attr('height');
-    var m = 5;
-    var _width = 2*w + 8*m;
-    var xlimit = d3.select('#baseSvg').attr('width') - _width - w;
-
-    var col_count = 0;
-    var row_count = 0;
-
-    for(var i=0; i<gridData.length; i++) {
-        var d = gridData[i];
-        if(!d.mapped) {
-            d.w = w; d.h = h;
-            var x1 = x0 + col_count*(w+m);
-            if(x1 > xlimit) {
-                x1 = x0; col_count = 1; row_count++;
-            }
-            else {
-                col_count++;
-            }
-            d.x = x1;
-
-            var y1 = y0 + row_count*(h+m);
-            d.y = y1;
-        }
-    }
-
-    d3.selectAll('.griditem').each(function(d,i) {
-        var rect = d3.select(this).select('rect');
-        var text = d3.select(this).select('text');
-        rect.transition().duration(duration).attr('x', d.x).attr('y', d.y);
-        text.transition().duration(duration).attr('x',d.x + d.w / 2).attr('y', d.y + d.h / 2);
-    });
-}
-
-function visualizeMatchingArea() {
-    //construct synthetic data items
-    for(var i=1; i<30; i++) {
-        var item = {};
-        item.idx = i;
-        item.usrname = '';
-        item.ocname = 'ocitem'+i;
-        item.connected = false;
-        ocitems.push(item);
-    }
-
-    //construct items
-    var mitem = d3.select('#matchg').selectAll('.mitem')
-        .data(ocitems).enter().append('g').attr('class', 'mitem');
-
-    var w = 200, h = 30, m = 5;
-    mitem.append('rect')
-        .attr('class', 'ocrect')
-        .attr('rx', 6).attr('ry', 6)
-        .attr('width', w)
-        .attr('height', h)
-        .on('mouseover', function(d,i){
-            hoveredItem = d3.select(this.parentNode);
-            d3.select(this).style('fill', 'orange');
-        })
-        .on('mouseout', function(d,i){
-            hoveredItem = null;
-            d3.select(this).style('fill', 'steelblue');
-        });
-    mitem.append('text')
-        .attr('class', 'octext')
-        .text(function(d) {
-            return d.ocname;
-        })
-        .on('mouseover', function(d,i){
-            hoveredItem = d3.select(this.parentNode);
-            var rect = d3.select(this.parentNode).select('.ocrect');
-            rect.style('fill', 'orange');
-        })
-        .on('mouseout', function(d,i){
-            hoveredItem = null;
-            var rect = d3.select(this.parentNode).select('.ocrect');
-            rect.style('fill', 'steelblue');
-        });
-    mitem.append('rect')
-        .attr('class', 'usrrect')
-        .attr('rx', 6).attr('ry', 6)
-        .attr('width', w)
-        .attr('height', h)
-        .on('mouseover', function(d,i){
-            hoveredItem = d3.select(this.parentNode);
-            d3.select(this).style('fill', 'orange');
-        })
-        .on('mouseout', function(d,i){
-            hoveredItem = null;
-            d3.select(this).style('fill', 'LightSteelBlue');
-        });
-    mitem.append('text')
-        .attr('class', 'usrtext')
-        .text(function(d) {
-            return d.usrname;
-        })
-        .on('mouseover', function(d,i){
-            hoveredItem = d3.select(this.parentNode);
-            var rect = d3.select(this.parentNode).select('.usrrect');
-            rect.style('fill', 'orange');
-        })
-        .on('mouseout', function(d,i){
-            hoveredItem = null;
-            var rect = d3.select(this.parentNode).select('.usrrect');
-            rect.style('fill', 'LightSteelBlue');
-        });
-    mitem.append('rect')
-        .attr('class', 'connector')
-        .attr('width', 2*m)
-        .attr('height', 2*m)
-        .on('click', function(d) {
-            if(d.connected) {
-                var is_tree_view = $('#tree-toggle').prop('checked');
-                if(!is_tree_view) {
-                    d3.selectAll('.griditem').each(function(gridd){
-                        if(gridd.name == d.usrname) {
-                            gridd.mapped = false;
-                            gridd.matchingItem = null;
-                            positionGridItems(5,5);
-                        }
-                    });
-                }//if
-                d.connected = false;
-                d.usrname = "";
-                d3.select(this.parentNode).transition().select('.usrtext').text('');
-                d3.select(this).transition().style('fill', 'lightgrey');
-            }
-        });
-
-    var x0 = +d3.select('#baseSvg').attr('width') - w - 5*m;
-    var y0 = m;
-    var items_height = positionMatchingItems(x0, y0);
-
-    baseSvg.on('click', function(){
-        if(is_mouse_in_matching_area()) {
-            d3.event.stopPropagation();
-        }
-    });
-
-    function is_mouse_in_matching_area() {
-        var m = 5;
-        var mouseX = event.pageX, mouseY = event.pageY;
-        var _width = 2*w + 8*m;
-        var x = d3.select('#baseSvg').attr('width') - _width;
-        var y = m;
-        var is_within_width = mouseX > x && mouseX < d3.select('#baseSvg').attr('width');
-        var is_within_height = mouseY > y && mouseY < d3.select('#baseSvg').attr('height');
-        if(is_within_width && is_within_height) return true;
-        else return false;
-    }
-
-    $(document).on('mousewheel', '#baseSvg', function(e) {
-
-        if(is_mouse_in_matching_area()) {
-            var s = zoomListener.scale();
-            zoomListener.scaleExtent([s, s]);
-
-            var v = e.originalEvent.wheelDelta / 8;
-            y0 += v;
-            if(y0 < -items_height+10*m) y0 = -items_height+10*m;
-            if(y0 > d3.select('#baseSvg').attr('height')-10*m) {
-                y0 = d3.select('#baseSvg').attr('height')-10*m;
-            }
-
-            var x0 = +d3.select('#baseSvg').attr('width') - w - 5*m;
-            positionMatchingItems(x0, y0);
-        }
-        else {
-            zoomListener.scaleExtent([0.1, 3]);
-        }
-        // console.log(is_mouse_in_matching_area());
-
-    });
-    // console.log(usritems);
-}//visualizeMatchingArea
-
-function positionMatchingItems(x0,y0) {
-    var w = +d3.select('.usrrect').attr('width');
-    var h = +d3.select('.usrrect').attr('height');
-    var m = 5;
-    var total_y = 0;
-    d3.selectAll('.ocrect').transition()
-        .attr('x', function(d) {
-            d.w = w; d.h = h;
-            d.x = x0;
-            return x0;
-        })
-        .attr('y', function(d,i){
-            var y1 = y0 + i*(h+m);
-            d.y = y1;
-            total_y += (h + m);
-            return y1;
-        });
-    d3.selectAll('.octext').transition()
-        .attr('x', function(d) {
-            return d.x + d.w / 2;
-        })
-        .attr('y', function(d) {
-            return d.y + d.h / 2;
-        });
-    d3.selectAll('.usrrect').transition()
-        .attr('x', function(d) {
-            return (d.x - w - 2*m);
-        })
-        .attr('y', function(d,i){
-            return d.y;
-        });
-    d3.selectAll('.usrtext').transition()
-        .attr('x', function(d) {
-            return d.x - d.w / 2 - 2*m;
-        })
-        .attr('y', function(d) {
-            return d.y + d.h / 2;
-        });
-    d3.selectAll('.connector').transition()
-        .attr('x', function(d) {
-            return d.x - 2*m;
-        })
-        .attr('y', function(d) {
-            return d.y + d.h / 2 - m;
-        });
-
-    var is_tree_view = $('#tree-toggle').prop('checked');
-    if(!is_tree_view) {//also position the grid items if in grid view
-        d3.selectAll('.mitem').each(function(d,i){
-            if(d.connected) {
-                var m = 5;
-                d3.selectAll('.griditem').each(function(gridd, gridi) {
-                    if(gridd.name == d.usrname) {
-                        gridd.x = d.x - 2*m - d.w;
-                        gridd.y = d.y;
-                    }
-                });
-            }
-        });
-        updateGridItems(250);
-    }
-
-    return total_y;
-}  

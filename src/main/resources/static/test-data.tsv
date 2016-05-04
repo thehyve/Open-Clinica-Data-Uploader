@@ -8,4 +8,4 @@ s6	VisitsA	Medication	2	c	8	2011-01-01
 s7	VisitsA	Medication	1	a	10	2011-01-01
 s7	VisitsB	Medication	2	c	8	2011-01-01
 s8	VisitsC	Medication	1		110
-s4	VisitsC	Medication							test
+s4	VisitsC	Medication  3							test

@@ -4,6 +4,13 @@
 /**
  * Upload the file sending it via Ajax at the Spring Boot server.
  */
+var sessionNames = [];
+
+var isSessionNameDefined = false;
+$('#upload-session-input').change(function () {
+    var name = $('#upload-session-input').val();
+    if(name !== "") isSessionNameDefined = true;
+});
 var isDataSelected = false;
 $('#upload-file-input').change(function () {
     isDataSelected = true;
@@ -14,12 +21,15 @@ $('#upload-mapping-input').change(function () {
 });
 
 function uploadFile() {
+
     var isDataUploaded = false;
     var isMappingUploaded = false;
     var isDirected = false;
 
     $("#message-board").empty();
-    if (isDataSelected) {
+    if (isSessionNameDefined && isDataSelected) {
+        SESSIONNAME = $('#upload-session-input').val();
+
         $.ajax({
             url: "/uploadFile",
             type: "POST",
@@ -47,7 +57,7 @@ function uploadFile() {
         });
         window.setTimeout(function () {
             $("#data-alert").fadeTo(500, 0).slideUp(500, function () {
-                $(this).remove();
+                $(this).empty();
             });
         }, 3000);
 
@@ -79,56 +89,52 @@ function uploadFile() {
             });
             window.setTimeout(function () {
                 $("#mapping-alert").fadeTo(500, 0).slideUp(500, function () {
-                    $(this).remove();
+                    $(this).empty();
                 });
             }, 3000);
         }
 
     }
-    else {
-        var info = '<span id="message-alert" class="alert alert-danger">Data file needs to be specified</span>';
-        $("#message-board").append(info);
-        window.setTimeout(function () {
-            $("#message-alert").fadeTo(500, 0).slideUp(500, function () {
-                $(this).remove();
-            });
-        }, 3000);
+
+    if(!isSessionNameDefined || !isDataSelected) {
+        $("#message-board").empty();
+        if(!isSessionNameDefined) {
+            var info = '<span id="message-alert" class="alert alert-danger">Session name needs to be specified</span>';
+            $("#message-board").append(info);
+        }
+        if(!isDataSelected) {
+            var info = '<span id="message-alert" class="alert alert-danger">Data file needs to be specified</span>';
+            $("#message-board").append(info);
+        }
     }
 
 } // function uploadFile
 
-var _USERNAME = "";
-
 function retrieveSessions() {
     $.ajax({
-        url: "/username",
-        type: "get",
-        success: function (data) {
-            _USERNAME = data;
-            console.log("username is " + _USERNAME);
-        }
-    });
-    var _sessionAjax = $.ajax({
         url: "/unfinished-sessions",
         type: "get",
         success: handle_retrieval,
         error: handle_error
     });
 
-    $.ajax({
-        url: "/create-session",
-        type: "post",
-        data: {name:"newestSession"},
-        success: _sessionAjax,
-        error: handle_error
-    });
+    // $.ajax({
+    //     url: "/create-session",
+    //     type: "post",
+    //     data: {name:"newestSession"},
+    //     success: _sessionAjax,
+    //     error: handle_error
+    // });
 }
 
 function handle_retrieval(sessions) {
+    console.log('retrieve sessions...');
+    $("#data-proceed-btn").attr("disabled",false);
     var monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
     $('#old_upload_section').append('<div id="session_container" class="row-fluid"></div>');
     for (var i = 0; i < sessions.length; i++) {
         var s = sessions[i];
+        sessionNames.push(s.name);
         var btnid = "s" + (i + 1);
         var d = new Date(s.savedDate);
         var sessionHTML = '<div class="well">' +
@@ -149,5 +155,57 @@ function handle_error() {
 }
 
 $(document).ready(function () {
-    retrieveSessions();
+    $("#data-proceed-btn").attr("disabled","disabled");
+
+    $.ajax({
+        url: "/username",
+        type: "get",
+        success: function (data) {
+            USERNAME = data;
+        }
+    });
+
+    //for testing
+    $.ajax({
+        url: "/create-session",
+        type: "post",
+        data: {
+            name:"sessions1"
+        },
+        success: function (data) {
+            console.log('session1 created');
+            $.ajax({
+                url: "/create-session",
+                type: "post",
+                data: {
+                    name:"sessions2"
+                },
+                success: function (data) {
+                    console.log('session2 created');
+                    $.ajax({
+                        url: "/create-session",
+                        type: "post",
+                        data: {
+                            name:"sessions3"
+                        },
+                        success: function (data) {
+                            console.log('session3 created');
+                            retrieveSessions();
+                        },
+                        error: function () {
+                            console.log('Fail to load sessions.');
+                        }
+                    });
+                },
+                error: function () {
+                    console.log('Fail to load sessions.');
+                }
+            });
+        },
+        error: function () {
+            console.log('Fail to load sessions.');
+        }
+    });
+
+    // retrieveSessions();
 });

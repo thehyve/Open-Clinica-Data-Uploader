@@ -609,6 +609,7 @@ function visualizeUsrList(usrData) {
 
     function usrItemMouseOver(d) {
         d3.select(this).select('rect').style('fill','Orange');
+        var len = d3.select(this).select('text').getComputedTextLength();
         if(d.shortTexted) {
             tipDiv.transition()
                 .duration(200)

@@ -6,7 +6,7 @@ import nl.thehyve.ocdu.models.OcUser;
 import nl.thehyve.ocdu.models.UploadSession;
 import nl.thehyve.ocdu.repositories.ClinicalDataRepository;
 import nl.thehyve.ocdu.repositories.UploadSessionRepository;
-import nl.thehyve.ocdu.repositories.UserRepository;
+import nl.thehyve.ocdu.repositories.OCUserRepository;
 import nl.thehyve.ocdu.services.FileService;
 import org.junit.After;
 import org.junit.Before;
@@ -50,7 +50,7 @@ public class ClinicalDataFactoryTests {
     FileService fileService;
 
     @Autowired
-    UserRepository userRepository;
+    OCUserRepository OCUserRepository;
 
     @Autowired
     UploadSessionRepository uploadSessionRepository;
@@ -85,7 +85,7 @@ public class ClinicalDataFactoryTests {
     public void setUp() throws Exception {
         this.testUser = new OcUser();
         this.testUser.setUsername("tester");
-        userRepository.save(testUser);
+        OCUserRepository.save(testUser);
         this.testSubmission = new UploadSession("submission1", UploadSession.Step.MAPPING, new Date(), this.testUser);
         uploadSessionRepository.save(testSubmission);
         this.factory = new ClinicalDataFactory(testUser, testSubmission);
@@ -96,6 +96,6 @@ public class ClinicalDataFactoryTests {
     public void tearDown() throws Exception {
         clinicalDataRepository.deleteAll();
         uploadSessionRepository.deleteAll();
-        userRepository.deleteAll();
+        OCUserRepository.deleteAll();
     }
 }

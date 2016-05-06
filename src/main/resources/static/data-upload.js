@@ -19,7 +19,7 @@ function uploadFile() {
     var isDirected = false;
 
     $("#message-board").empty();
-    if(isDataSelected) {
+    if (isDataSelected) {
         $.ajax({
             url: "/uploadFile",
             type: "POST",
@@ -33,7 +33,7 @@ function uploadFile() {
                 var info = '<span id="data-alert" class="alert alert-success">Data succesfully uploaded</span>';
                 $("#message-board").append(info);
                 isDataUploaded = true;
-                if(!isDirected && ((isMappingSelected && isMappingUploaded) || !isMappingSelected)) {
+                if (!isDirected && ((isMappingSelected && isMappingUploaded) || !isMappingSelected)) {
                     window.location.replace("/mapping");
                     isDirected = true;
                 }
@@ -45,13 +45,13 @@ function uploadFile() {
                 isDataUploaded = false;
             }
         });
-        window.setTimeout(function() {
-            $("#data-alert").fadeTo(500, 0).slideUp(500, function(){
+        window.setTimeout(function () {
+            $("#data-alert").fadeTo(500, 0).slideUp(500, function () {
                 $(this).remove();
             });
         }, 3000);
 
-        if(isMappingSelected) {
+        if (isMappingSelected) {
             $.ajax({
                 url: "/uploadMapping",
                 type: "POST",
@@ -65,7 +65,7 @@ function uploadFile() {
                     var info = '<span id="mapping-alert" class="alert alert-success">Mapping succesfully uploaded</span>';
                     $("#message-board").append(info);
                     isMappingUploaded = true;
-                    if(!isDirected && isDataUploaded) {
+                    if (!isDirected && isDataUploaded) {
                         window.location.replace("/mapping");
                         isDirected = true;
                     }
@@ -77,19 +77,19 @@ function uploadFile() {
                     isMappingUploaded = false;
                 }
             });
-            window.setTimeout(function() {
-                $("#mapping-alert").fadeTo(500, 0).slideUp(500, function(){
+            window.setTimeout(function () {
+                $("#mapping-alert").fadeTo(500, 0).slideUp(500, function () {
                     $(this).remove();
                 });
             }, 3000);
         }
 
     }
-    else{
+    else {
         var info = '<span id="message-alert" class="alert alert-danger">Data file needs to be specified</span>';
         $("#message-board").append(info);
-        window.setTimeout(function() {
-            $("#message-alert").fadeTo(500, 0).slideUp(500, function(){
+        window.setTimeout(function () {
+            $("#message-alert").fadeTo(500, 0).slideUp(500, function () {
                 $(this).remove();
             });
         }, 3000);
@@ -108,35 +108,35 @@ function retrieveSessions() {
             console.log("username is " + _USERNAME);
         }
     });
-
-    //this commented code is for retrieving the sessions in real situations
-    // $.ajax({
-    //     url: "/unfinished-sessions",
-    //     type: "get",
-    //     success: handle_retrieval,
-    //     error: handle_error
-    // });
-
-    //the code below is only for testing purpose
-    d3.json('data/test-sessions.json', function(sessions) {
-        handle_retrieval(sessions);
+    var _sessionAjax = $.ajax({
+        url: "/unfinished-sessions",
+        type: "get",
+        success: handle_retrieval,
+        error: handle_error
     });
 
+    $.ajax({
+        url: "/create-session",
+        type: "post",
+        data: {name:"newestSession"},
+        success: _sessionAjax,
+        error: handle_error
+    });
 }
 
 function handle_retrieval(sessions) {
     var monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
     $('#old_upload_section').append('<div id="session_container" class="row-fluid"></div>');
-    for(var i=0; i<sessions.length; i++) {
+    for (var i = 0; i < sessions.length; i++) {
         var s = sessions[i];
-        var btnid = "s"+(i+1);
+        var btnid = "s" + (i + 1);
         var d = new Date(s.savedDate);
         var sessionHTML = '<div class="well">' +
-            '<button type="button" class="btn btn-primary" id="'+btnid+'" session_index='+i+'>'+s.name+'</button>'+
-            '<p><small>saved on: '+monthNames[d.getMonth()] +' '+ d.getDate()+', ' + d.getFullYear()+'</small></p></div>';
+            '<button type="button" class="btn btn-primary" id="' + btnid + '" session_index=' + i + '>' + s.name + '</button>' +
+            '<p><small>saved on: ' + monthNames[d.getMonth()] + ' ' + d.getDate() + ', ' + d.getFullYear() + '</small></p></div>';
         // $(sessionHTML).insertAfter("#old_upload_section_anchor");
         $('#session_container').append(sessionHTML);
-        $('#'+btnid).click(function(){
+        $('#' + btnid).click(function () {
             var ind = $(this).attr('session_index');
             console.log(sessions[ind]);
         });
@@ -148,6 +148,6 @@ function handle_error() {
     console.log('Fail to load sessions.');
 }
 
-$(document).ready(function() {
+$(document).ready(function () {
     retrieveSessions();
 });

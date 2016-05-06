@@ -1,3 +1,5 @@
+var baseApp = "";
+
 var usr_data;//store user-uploaded tabular data in JSON
 var oc_data;//store oc tree data in JSON
 var map_data;//store user-uploaded mapping data
@@ -388,8 +390,10 @@ function visualizeOCTree(treeData) {
             })
             .text(function(d) {
                 if(d.depth == leaf_depth ) {
+                    d.shortTexted = false;
                     var len = this.getComputedTextLength();
                     if(len > rect_w)  {
+                        d.shortTexted = true;
                         return d.name.substring(0,9) + "...";
                     }
                 }
@@ -485,12 +489,14 @@ function visualizeOCTree(treeData) {
          * ------ item mouse over/out behavior ------
          */
         function itemover(d) {
-            tipDiv.transition()
-                .duration(200)
-                .style("opacity", .95);
-            tipDiv.html('<span style="font-size:18px;">'+d.name+'</span>')
-                .style("left", (d3.event.pageX) + "px")
-                .style("top", (d3.event.pageY - 28) + "px");
+            if(d.shortTexted) {
+                tipDiv.transition()
+                    .duration(200)
+                    .style("opacity", .95);
+                tipDiv.html('<span style="font-size:18px;">'+d.name+'</span>')
+                    .style("left", (d3.event.pageX) + "px")
+                    .style("top", (d3.event.pageY - 28) + "px");
+            }
             adjustColors(d, true);
             selectedOCItem = d3.select(this);
         }
@@ -581,8 +587,10 @@ function visualizeUsrList(usrData) {
         });
     usritem.select('text')
         .text(function(d) {
+            d.shortTexted = false;
             var len = this.getComputedTextLength();
             if(len > rect_w)  {
+                d.shortTexted = true;
                 return d.usrItemName.substring(0,9) + "...";
             }
             return d.usrItemName;
@@ -601,13 +609,14 @@ function visualizeUsrList(usrData) {
 
     function usrItemMouseOver(d) {
         d3.select(this).select('rect').style('fill','Orange');
-        var len = computeTextLength(d3.select(this).select('text'));
-        tipDiv.transition()
-            .duration(200)
-            .style("opacity", .95);
-        tipDiv.html('<span style="font-size:18px;">'+d.usrItemName+'</span>')
-            .style("left", (d3.event.pageX - len) + "px")
-            .style("top", (d3.event.pageY - 30) + "px");
+        if(d.shortTexted) {
+            tipDiv.transition()
+                .duration(200)
+                .style("opacity", .95);
+            tipDiv.html('<span style="font-size:18px;">'+d.usrItemName+'</span>')
+                .style("left", (d3.event.pageX - len) + "px")
+                .style("top", (d3.event.pageY - 30) + "px");
+        }
 
         selectedUsrItem = d3.select(this);
     }
@@ -622,7 +631,9 @@ function visualizeUsrList(usrData) {
         selection.text(selection.datum().usrItemName);
         var len = selection[0][0].getComputedTextLength();
         selection.text(function(d) {
+            d.shortTexted = false;
             if(len > rect_w)  {
+                d.shortTexted = true;
                 return d.usrItemName.substring(0,9) + "...";
             }
             return d.usrItemName;

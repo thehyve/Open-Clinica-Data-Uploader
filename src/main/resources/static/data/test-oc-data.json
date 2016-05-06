@@ -1,0 +1,154 @@
+{
+  "name": "root",
+  "children": [
+    {
+      "name": "Study_Site_example",
+      "children": [
+        {
+          "name": "Event: VisitsA",
+          "children": [
+            {
+              "name": "CRF: Laboratory",
+              "children": [
+                {
+                  "name": "CRF Version: 1",
+                  "children": [
+                    {
+                      "name": "item4"
+                    },
+                    {
+                      "name": "item5"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "name": "CRF: Medication",
+              "children": [
+                {
+                  "name": "CRF Version: 1",
+                  "children": [
+                    {
+                      "name": "item1"
+                    },
+                    {
+                      "name": "item2"
+                    },
+                    {
+                      "name": "a_ver_very_very_very_very_very_long_item3"
+                    },
+                    {
+                      "name": "item4"
+                    },
+                    {
+                      "name": "item5"
+                    }
+                  ]
+                },
+                {
+                  "name": "CRF Version: 2",
+                  "children": [
+                    {
+                      "name": "item1"
+                    },
+                    {
+                      "name": "item2"
+                    },
+                    {
+                      "name": "a_ver_very_very_very_very_very_long_item3"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "Event: VisitsC",
+          "children": [
+            {
+              "name": "CRF: Laboratory",
+              "children": [
+                {
+                  "name": "CRF Version: 1",
+                  "children": [
+                    {
+                      "name": "item2"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "name": "CRF: Medication",
+              "children": [
+                {
+                  "name": "CRF Version: 1",
+                  "children": [
+                    {
+                      "name": "item2"
+                    }
+                  ]
+                },
+                {
+                  "name": "CRF Version: 3",
+                  "children": [
+                    {
+                      "name": "item6"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "Event: VisitsD",
+          "children": [
+            {
+              "name": "CRF: Laboratory",
+              "children": [
+                {
+                  "name": "CRF Version: 1",
+                  "children": [
+                    {
+                      "name": "item4"
+                    },
+                    {
+                      "name": "item5"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "Event: VisitsB",
+          "children": [
+            {
+              "name": "CRF: Medication",
+              "children": [
+                {
+                  "name": "CRF Version: 2",
+                  "children": [
+                    {
+                      "name": "item1"
+                    },
+                    {
+                      "name": "item2"
+                    },
+                    {
+                      "name": "a_ver_very_very_very_very_very_long_item3"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

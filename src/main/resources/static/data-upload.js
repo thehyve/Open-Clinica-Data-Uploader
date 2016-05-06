@@ -118,7 +118,7 @@ function retrieveSessions() {
     // });
 
     //the code below is only for testing purpose
-    d3.json('test-sessions.json', function(sessions) {
+    d3.json('data/test-sessions.json', function(sessions) {
         handle_retrieval(sessions);
     });
 

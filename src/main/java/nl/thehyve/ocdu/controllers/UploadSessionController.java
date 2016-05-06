@@ -1,12 +1,17 @@
 package nl.thehyve.ocdu.controllers;
 
+import nl.thehyve.ocdu.OCEnvironmentsConfig;
 import nl.thehyve.ocdu.models.OcUser;
 import nl.thehyve.ocdu.models.UploadSession;
 import nl.thehyve.ocdu.repositories.UploadSessionRepository;
 import nl.thehyve.ocdu.repositories.OCUserRepository;
+import nl.thehyve.ocdu.services.OcUserService;
+import nl.thehyve.ocdu.services.UploadSessionService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -24,28 +29,30 @@ public class UploadSessionController {
 
     private static final Logger log = LoggerFactory.getLogger(UploadSessionController.class);
 
-    @RequestMapping(value="/username", method= RequestMethod.GET)
+    @RequestMapping(value = "/username", method = RequestMethod.GET)
     public String username() {
         Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         String username;
         if (principal instanceof UserDetails) {
-            username = ((UserDetails)principal).getUsername();
+            username = ((UserDetails) principal).getUsername();
         } else {
             username = principal.toString();
         }
-        return username; //TODO: FIX:does not return JSON
+        return username;
     }
 
     @Autowired
-    OCUserRepository OCUserRepository;
+    OcUserService ocUserService;
 
     @Autowired
     UploadSessionRepository uploadSessionRepository;
 
-    @RequestMapping(value="/unfinished-sessions", method= RequestMethod.GET)
+    @Autowired
+    UploadSessionService uploadSessionService;
+
+    @RequestMapping(value = "/unfinished-sessions", method = RequestMethod.GET)
     public List<UploadSession> unfinishedSessions(HttpSession session) {
-        String ocEnv = (String) session.getAttribute("ocEnvironment");
-        OcUser ocUser = getOcUser(ocEnv);
+        OcUser ocUser = ocUserService.getCurrentOcUser(session);
         List uploadSessions = uploadSessionRepository.findByOwner(ocUser);
         if (uploadSessions == null) {
             log.error("Attempted retrieving uploadedSessions before any was created.");
@@ -54,29 +61,29 @@ public class UploadSessionController {
         return uploadSessions;
     }
 
-    @RequestMapping(value = "/create-session",method = RequestMethod.POST) //TODO: add tests
-    public void createUploadSession(@RequestParam(value="name", defaultValue="newSession") String name,
+    @RequestMapping(value = "/create-session", method = RequestMethod.POST) //TODO: add tests
+    public void createUploadSession(@RequestParam(value = "name", defaultValue = "newSession") String name,
                                     HttpSession session) {
-        String ocEnv = (String) session.getAttribute("ocEnvironment");
-        OcUser usr = getOcUser(ocEnv);
+        OcUser usr = ocUserService.getCurrentOcUser(session);
         UploadSession uploadSession = new UploadSession(name, UploadSession.Step.MAPPING, new Date(), usr);//TODO: Add remaining steps
         uploadSessionRepository.save(uploadSession);
+        uploadSessionService.setCurrentUploadSession(session, uploadSession);
     }
 
-    private OcUser getOcUser(String ocEnv) { //TODO: Add tests
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        String username = auth.getName(); //get logged in username
-        List<OcUser> byUsername = OCUserRepository.findByUsername(username);
-        List<OcUser> matching = byUsername.stream().filter(usr -> usr.getOcEnvironment().equals( ocEnv))
-                .collect(Collectors.toList());
-        if (matching.size() == 1) {
-            return matching.get(0);
-        } else if (matching.size() > 1) {
-            log.error("More than one matching users sharing the same username and OcEnv: "+ matching.toString());
-            return null;
+    @RequestMapping(value = "/current-session", method = RequestMethod.GET)
+    public UploadSession currentSession(HttpSession session) {
+        return uploadSessionService.getCurrentUploadSession(session);
+    }
+
+    @RequestMapping(value = "/select-session", method = RequestMethod.GET)
+    public ResponseEntity<?> selectSession(@RequestParam(value = "name") Long sessionId, HttpSession session) {
+        UploadSession requested = uploadSessionRepository.findOne(sessionId);
+        if (requested.getOwner().getId() == ocUserService.getCurrentOcUser(session).getId()) {
+            uploadSessionService.setCurrentUploadSession(session, requested);
+            return new ResponseEntity<>(HttpStatus.OK);
         } else {
-            log.error("Attempted retrieving non-existent user, OcUser not correctly saved to the database?");
-            return null;
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST); //TODO: Make distinction between unauthorized and requested session not existent errors
         }
     }
+
 }

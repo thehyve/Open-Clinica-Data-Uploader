@@ -59,4 +59,20 @@ public class UploadSession {
     public void setSavedDate(Date savedDate) {
         this.savedDate = savedDate;
     }
+
+    public long getId() {
+        return id;
+    }
+
+    public void setId(long id) {
+        this.id = id;
+    }
+
+    public OcUser getOwner() {
+        return owner;
+    }
+
+    public void setOwner(OcUser owner) {
+        this.owner = owner;
+    }
 }

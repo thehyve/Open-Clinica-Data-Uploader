@@ -1,4 +1,4 @@
 StudySubjectID	Study	Site	EventName	CRFName	CRFVersion	EventRepeat	Item1	Item2_1	Item2_2
-ssid1	study1	site1	SE_NONREPEATINGEVENT	crf1	ver1	1	123	321	213
-ssid1	study1	site1	SE_NONREPEATINGEVENT	crf1	ver1	1	1231	3211	2131
-ssid1	study1	site1	non_existent_event	crf1	ver1	1	1231	3211	2131
+ssid1	study1	site1	SE_NONREPEATINGEVENT	F_DATATYPES_3	ver1	1	123	321	213
+ssid1	study1	site1	SE_NONREPEATINGEVENT	F_DATATYPES_3	ver1	1	1231	3211	2131
+ssid1	study1	site1	non_existent_event	F_DATATYPES_2	ver1	1	1231	3211	2131

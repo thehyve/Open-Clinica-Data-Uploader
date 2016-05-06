@@ -2,12 +2,12 @@ package nl.thehyve.ocdu.validators.crossChecks;
 
 import nl.thehyve.ocdu.models.*;
 import nl.thehyve.ocdu.models.OCEntities.ClinicalData;
+import nl.thehyve.ocdu.models.errors.ValidationErrorMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 /**

@@ -79,7 +79,7 @@ public class EventDefinition {
         this.mandatory = mandatory;
     }
 
-    public List getCrfDefinitions() {
+    public List<CRFDefinition> getCrfDefinitions() {
         return crfDefinitions;
     }
 

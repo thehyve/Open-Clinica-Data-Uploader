@@ -1,23 +1,18 @@
 package nl.thehyve.ocdu.controllers;
 
 import nl.thehyve.ocdu.models.OcUser;
-import nl.thehyve.ocdu.models.OcUserDetails;
 import nl.thehyve.ocdu.models.UploadSession;
 import nl.thehyve.ocdu.repositories.UploadSessionRepository;
-import nl.thehyve.ocdu.repositories.UserRepository;
+import nl.thehyve.ocdu.repositories.OCUserRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.session.Session;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpSession;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -42,7 +37,7 @@ public class UploadSessionController {
     }
 
     @Autowired
-    UserRepository userRepository;
+    OCUserRepository OCUserRepository;
 
     @Autowired
     UploadSessionRepository uploadSessionRepository;
@@ -71,7 +66,7 @@ public class UploadSessionController {
     private OcUser getOcUser(String ocEnv) { //TODO: Add tests
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         String username = auth.getName(); //get logged in username
-        List<OcUser> byUsername = userRepository.findByUsername(username);
+        List<OcUser> byUsername = OCUserRepository.findByUsername(username);
         List<OcUser> matching = byUsername.stream().filter(usr -> usr.getOcEnvironment().equals( ocEnv))
                 .collect(Collectors.toList());
         if (matching.size() == 1) {

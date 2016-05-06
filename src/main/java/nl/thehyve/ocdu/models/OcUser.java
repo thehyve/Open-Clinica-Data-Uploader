@@ -12,7 +12,7 @@ import java.util.List;
  */
 
 @Entity
-public class OcUser{
+public class OcUser {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)

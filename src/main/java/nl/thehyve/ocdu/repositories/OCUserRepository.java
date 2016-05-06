@@ -8,7 +8,7 @@ import java.util.List;
 /**
  * Created by piotrzakrzewski on 28/04/16.
  */
-public interface UserRepository extends CrudRepository<OcUser, Long> {
+public interface OCUserRepository extends CrudRepository<OcUser, Long> {
 
 
     List<OcUser> findByOcEnvironment(String ocEnvironment);

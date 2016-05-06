@@ -4,6 +4,7 @@ import nl.thehyve.ocdu.factories.ClinicalDataFactory;
 import nl.thehyve.ocdu.models.OCEntities.ClinicalData;
 import nl.thehyve.ocdu.models.OcUser;
 import nl.thehyve.ocdu.models.UploadSession;
+import nl.thehyve.ocdu.models.errors.FileFormatError;
 import nl.thehyve.ocdu.repositories.ClinicalDataRepository;
 import nl.thehyve.ocdu.repositories.EventRepository;
 import nl.thehyve.ocdu.repositories.SubjectRepository;
@@ -31,10 +32,10 @@ public class FileService {
     @Autowired
     SubjectRepository subjectRepository;
 
-    public List<String> depositDataFile(Path dataFile, OcUser user, UploadSession submission) {
+    public List<FileFormatError> depositDataFile(Path dataFile, OcUser user, UploadSession submission) {
         DataFileValidator validator = new DataFileValidator();
         validator.validateFile(dataFile);
-        List<String> errorMsgs = new ArrayList<>();
+        List<FileFormatError> errorMsgs = new ArrayList<>();
         if (validator.isValid()) {
             ClinicalDataFactory factory = new ClinicalDataFactory(user, submission);
             List<ClinicalData> newEntries = factory.createClinicalData(dataFile);

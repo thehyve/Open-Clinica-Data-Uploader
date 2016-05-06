@@ -90,7 +90,7 @@ public class ValidationTests {
         clinicalDataOcChecks = new ClinicalDataOcChecks(metaData, incorrectClinicalData);
         List<ValidationErrorMessage> errors = clinicalDataOcChecks.getErrors();
         assertEquals(2, errors.size()); // We expect one error because of Event which does
-                                        // not exist and one erorr for CRF
+                                        // not exist and one error for CRF
     }
 
     @Test

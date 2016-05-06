@@ -30,12 +30,12 @@ public class OcUserService {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         String username = auth.getName(); //get logged in username
         List<OcUser> byUsername = userRepository.findByUsername(username);
-        List<OcUser> matching = byUsername.stream().filter(usr -> usr.getOcEnvironment().equals( ocEnv))
+        List<OcUser> matching = byUsername.stream().filter(usr -> usr.getOcEnvironment().equals(ocEnv))
                 .collect(Collectors.toList());
         if (matching.size() == 1) {
             return matching.get(0);
         } else if (matching.size() > 1) {
-            log.error("More than one matching users sharing the same username and OcEnv: "+ matching.toString());
+            log.error("More than one matching users sharing the same username and OcEnv: " + matching.toString());
             return null;
         } else {
             log.error("Attempted retrieving non-existent user, OcUser not correctly saved to the database?");
@@ -43,4 +43,8 @@ public class OcUserService {
         }
     }
 
+    public String getOcwsHash(HttpSession session) {
+        String ocwsHash = (String) session.getAttribute("ocwsHash");
+        return ocwsHash;
+    }
 }

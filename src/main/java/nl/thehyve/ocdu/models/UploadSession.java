@@ -24,6 +24,15 @@ public class UploadSession {
 
     private Step step;
     private Date savedDate;
+    private String study;
+
+    public String getStudy() {
+        return study;
+    }
+
+    public void setStudy(String study) {
+        this.study = study;
+    }
 
     public UploadSession() {
         // needed by hibernate

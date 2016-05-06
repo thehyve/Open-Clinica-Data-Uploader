@@ -21,7 +21,12 @@ public class ExUsernamePasswordAuthenticationFilter extends UsernamePasswordAuth
     public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException {
         final String ocEnvironment = request.getParameter(OCEnvironmentsConfig.OC_ENV_ATTRIBUTE_NAME);
         log.info("Attempted authentication against: " + ocEnvironment);
+        String password = request.getParameter("password");
+        CustomPasswordEncoder encoder = new CustomPasswordEncoder();
+        password = encoder.encode(password);
+        request.getSession().setAttribute("ocwsHash", password);
         request.getSession().setAttribute(OCEnvironmentsConfig.OC_ENV_ATTRIBUTE_NAME, ocEnvironment);
+
         return super.attemptAuthentication(request, response);
     }
 

@@ -4,6 +4,7 @@ import nl.thehyve.ocdu.factories.ClinicalDataFactory;
 import nl.thehyve.ocdu.models.OCEntities.ClinicalData;
 import nl.thehyve.ocdu.models.OcUser;
 import nl.thehyve.ocdu.models.UploadSession;
+import nl.thehyve.ocdu.models.errors.FileFormatError;
 import nl.thehyve.ocdu.repositories.ClinicalDataRepository;
 import nl.thehyve.ocdu.repositories.UploadSessionRepository;
 import nl.thehyve.ocdu.repositories.OCUserRepository;
@@ -63,7 +64,7 @@ public class ClinicalDataFactoryTests {
 
     @Test
     public void depositionDataFileTest() throws Exception{
-        List<String> errorMessages = fileService.depositDataFile(testFile, testUser, testSubmission);
+        List<FileFormatError> errorMessages = fileService.depositDataFile(testFile, testUser, testSubmission);
         assertEquals(0, errorMessages.size());
     }
 

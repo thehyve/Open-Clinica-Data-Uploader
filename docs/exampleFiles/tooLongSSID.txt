@@ -1,0 +1,3 @@
+StudySubjectID	Study	Site	EventName	CRFName	CRFVersion	EventRepeat	Item1	Item2_1	Item2_2
+ssid1	study1	site1	SE_NONREPEATINGEVENT	F_DATATYPES_3	ver1	1	123	321	213
+ssid1whichistoolongbyopenclinicastandards	study1	site1	SE_NONREPEATINGEVENT	F_DATATYPES_3	ver1	1	1231	3211	2131

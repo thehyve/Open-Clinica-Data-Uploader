@@ -109,18 +109,39 @@ function retrieveSessions() {
         }
     });
 
-    $.ajax({
-        url: "/unfinished-sessions",
-        type: "get",
-        success: handle_retrieval,
-        error: handle_error
+    //this commented code is for retrieving the sessions in real situations
+    // $.ajax({
+    //     url: "/unfinished-sessions",
+    //     type: "get",
+    //     success: handle_retrieval,
+    //     error: handle_error
+    // });
+
+    //the code below is only for testing purpose
+    d3.json('data/test-sessions.json', function(sessions) {
+        handle_retrieval(sessions);
     });
+
 }
 
 function handle_retrieval(sessions) {
-    console.log("unfinished sessions: ");
-    console.log(sessions);
-    console.log(JSON.stringify(sessions));
+    var monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+    $('#old_upload_section').append('<div id="session_container" class="row-fluid"></div>');
+    for(var i=0; i<sessions.length; i++) {
+        var s = sessions[i];
+        var btnid = "s"+(i+1);
+        var d = new Date(s.savedDate);
+        var sessionHTML = '<div class="well">' +
+            '<button type="button" class="btn btn-primary" id="'+btnid+'" session_index='+i+'>'+s.name+'</button>'+
+            '<p><small>saved on: '+monthNames[d.getMonth()] +' '+ d.getDate()+', ' + d.getFullYear()+'</small></p></div>';
+        // $(sessionHTML).insertAfter("#old_upload_section_anchor");
+        $('#session_container').append(sessionHTML);
+        $('#'+btnid).click(function(){
+            var ind = $(this).attr('session_index');
+            console.log(sessions[ind]);
+        });
+        // console.log(s.name + ", " + s.step + ", " + d);
+    }//for
 }
 
 function handle_error() {

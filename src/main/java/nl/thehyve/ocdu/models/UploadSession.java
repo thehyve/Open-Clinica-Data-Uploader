@@ -15,7 +15,7 @@ public class UploadSession {
 
     private String name;
 
-    @ManyToOne
+    @ManyToOne()
     private OcUser owner;
 
     public enum Step {
@@ -25,10 +25,15 @@ public class UploadSession {
     private Step step;
     private Date savedDate;
 
-    public UploadSession(String name, Step step, Date savedDate) {
+    public UploadSession() {
+        // needed by hibernate
+    }
+
+    public UploadSession(String name, Step step, Date savedDate, OcUser owner) {
         this.name = name;
         this.step = step;
         this.savedDate = savedDate;
+        this.owner = owner;
     }
 
     public String getName() {

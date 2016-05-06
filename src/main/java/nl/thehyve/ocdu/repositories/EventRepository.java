@@ -1,7 +1,6 @@
 package nl.thehyve.ocdu.repositories;
 
-import nl.thehyve.ocdu.models.ClinicalData;
-import nl.thehyve.ocdu.models.Event;
+import nl.thehyve.ocdu.models.OCEntities.Event;
 import org.springframework.data.repository.CrudRepository;
 
 import java.util.List;

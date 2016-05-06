@@ -1,5 +1,6 @@
 package nl.thehyve.ocdu.soap.ResponseHandlers;
 
+import org.apache.commons.lang3.StringEscapeUtils;
 import org.w3c.dom.Document;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
@@ -54,8 +55,30 @@ public class SoapUtils {
         DocumentBuilder builder = factory.newDocumentBuilder();
         String xmlString = sw.toString();
         Document doc = builder.parse( new InputSource( new StringReader( xmlString ) ) );
-        System.out.println("Children:" + doc.getChildNodes().getLength());
         return doc;
+    }
+
+    public static Document unEscapeCDATAXML(String escapedXml) {
+        String xmlString = StringEscapeUtils.unescapeXml(escapedXml);
+        Document doc = simpleString2XmlDoc(xmlString);
+        return doc;
+    }
+
+    public static Document simpleString2XmlDoc(String xmlString) {
+        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+        DocumentBuilder builder = null;
+        try {
+            builder = factory.newDocumentBuilder();
+            Document doc = builder.parse( new InputSource( new StringReader( xmlString ) ) );
+            return doc;
+        } catch (ParserConfigurationException e) {
+            e.printStackTrace();
+        } catch (SAXException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
 }

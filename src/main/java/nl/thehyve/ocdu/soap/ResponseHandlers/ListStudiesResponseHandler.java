@@ -1,8 +1,7 @@
 package nl.thehyve.ocdu.soap.ResponseHandlers;
 
-import nl.thehyve.ocdu.models.Study;
+import nl.thehyve.ocdu.models.OCEntities.Study;
 import org.springframework.security.authentication.AuthenticationCredentialsNotFoundException;
-import org.springframework.security.core.AuthenticationException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;

@@ -1,4 +1,4 @@
-package nl.thehyve.ocdu.validators;
+package nl.thehyve.ocdu.validators.fileValidators;
 
 import java.io.File;
 import java.nio.file.Path;
@@ -7,7 +7,7 @@ import java.util.List;
 /**
  * Created by piotrzakrzewski on 11/04/16.
  */
-public interface FileValidator {
+public interface FileFormatValidator {
 
     boolean isValid();
 

@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <title>Data-Upload Feedback</title>
+</head>
+<body role="document">
+<div th:replace="header"></div>
+<div class="container" style="padding-top: 100px;">
+
+    <div>
+        <h3>Feedback of Data Upload</h3>
+    </div>
+
+    <div id="feedback-tables">
+
+    </div>
+
+    <button type="button" class="btn btn-primary" id="data-proceed-btn" onclick="feedbackDataNext()">Next</button>
+
+</div>
+
+<script th:src="@{/data-feedback.js}"></script>
+<div th:replace="footer :: footer"></div>
+</body>
+</html>
+
+

@@ -62,21 +62,24 @@ function uploadFile() {
         }, 3000);
 
         if (isMappingSelected) {
+            var upload_mapping_data = new FormData($("#upload-mapping-form")[0]); console.log(upload_mapping_data);
+            // var upload_mapping_data =  JSON.stringify($('#upload-mapping-form').serializeArray()); console.log(upload_mapping_data);
             $.ajax({
-                url: "/uploadMapping",
+                url: "/upload-mapping",
                 type: "POST",
-                data: new FormData($("#upload-mapping-form")[0]),
-                enctype: 'multipart/form-data',
-                processData: false,
-                contentType: false,
+                data: upload_mapping_data,
+                processData: false, // Don't process the files
+                // contentType: false,
                 cache: false,
-                success: function () {
+                dataType: 'json',
+                success: function (feedback) {
                     // Handle upload success
                     var info = '<span id="mapping-alert" class="alert alert-success">Mapping succesfully uploaded</span>';
                     $("#message-board").append(info);
                     isMappingUploaded = true;
                     if (!isDirected && isDataUploaded) {
-                        window.location.replace("/mapping");
+                        // window.location.replace("/mapping");
+                        console.log(feedback);
                         isDirected = true;
                     }
                 },
@@ -164,48 +167,6 @@ $(document).ready(function () {
             USERNAME = data;
         }
     });
-
-    //for testing
-    // $.ajax({
-    //     url: "/create-session",
-    //     type: "post",
-    //     data: {
-    //         name:"sessions1"
-    //     },
-    //     success: function (data) {
-    //         console.log('session1 created');
-    //         $.ajax({
-    //             url: "/create-session",
-    //             type: "post",
-    //             data: {
-    //                 name:"sessions2"
-    //             },
-    //             success: function (data) {
-    //                 console.log('session2 created');
-    //                 $.ajax({
-    //                     url: "/create-session",
-    //                     type: "post",
-    //                     data: {
-    //                         name:"sessions3"
-    //                     },
-    //                     success: function (data) {
-    //                         console.log('session3 created');
-    //                         retrieveSessions();
-    //                     },
-    //                     error: function () {
-    //                         console.log('Fail to load sessions.');
-    //                     }
-    //                 });
-    //             },
-    //             error: function () {
-    //                 console.log('Fail to load sessions.');
-    //             }
-    //         });
-    //     },
-    //     error: function () {
-    //         console.log('Fail to load sessions.');
-    //     }
-    // });
 
     retrieveSessions();
 });

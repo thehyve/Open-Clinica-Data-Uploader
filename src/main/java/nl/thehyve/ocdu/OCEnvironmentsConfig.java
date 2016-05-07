@@ -12,7 +12,7 @@ import java.util.List;
 @Configuration
 public class OCEnvironmentsConfig {
 
-
+    public final static String OC_ENV_ATTRIBUTE_NAME = "ocEnvironment";
     private List<OCEnvironment> ocEnvironments;
 
     public List<OCEnvironment> getOcEnvironments() {

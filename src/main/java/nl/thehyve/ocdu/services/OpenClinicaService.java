@@ -1,6 +1,6 @@
 package nl.thehyve.ocdu.services;
 
-import nl.thehyve.ocdu.models.MetaData;
+import nl.thehyve.ocdu.models.OcDefinitions.MetaData;
 import nl.thehyve.ocdu.models.OCEntities.Study;
 import nl.thehyve.ocdu.soap.ResponseHandlers.GetStudyMetadataResponseHandler;
 import nl.thehyve.ocdu.soap.ResponseHandlers.ListStudiesResponseHandler;

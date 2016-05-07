@@ -2,7 +2,7 @@ package nl.thehyve.ocdu.soap.ResponseHandlers;
 
 import nl.thehyve.ocdu.models.OcDefinitions.CRFDefinition;
 import nl.thehyve.ocdu.models.OcDefinitions.EventDefinition;
-import nl.thehyve.ocdu.models.MetaData;
+import nl.thehyve.ocdu.models.OcDefinitions.MetaData;
 import org.springframework.security.authentication.AuthenticationCredentialsNotFoundException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;

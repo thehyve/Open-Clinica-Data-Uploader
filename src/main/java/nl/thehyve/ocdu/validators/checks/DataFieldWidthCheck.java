@@ -1,7 +1,7 @@
 package nl.thehyve.ocdu.validators.checks;
 
 import nl.thehyve.ocdu.models.OCEntities.ClinicalData;
-import nl.thehyve.ocdu.models.MetaData;
+import nl.thehyve.ocdu.models.OcDefinitions.MetaData;
 import nl.thehyve.ocdu.models.OCEntities.OcEntity;
 import nl.thehyve.ocdu.models.errors.ValidationErrorMessage;
 

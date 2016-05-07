@@ -1,7 +1,7 @@
 package nl.thehyve.ocdu;
 
 import nl.thehyve.ocdu.models.OcDefinitions.EventDefinition;
-import nl.thehyve.ocdu.models.MetaData;
+import nl.thehyve.ocdu.models.OcDefinitions.MetaData;
 import nl.thehyve.ocdu.soap.ResponseHandlers.GetStudyMetadataResponseHandler;
 import org.junit.Before;
 import org.junit.Test;

@@ -1,7 +1,4 @@
-package nl.thehyve.ocdu.models;
-
-import nl.thehyve.ocdu.models.OcDefinitions.CodeListDefinition;
-import nl.thehyve.ocdu.models.OcDefinitions.EventDefinition;
+package nl.thehyve.ocdu.models.OcDefinitions;
 
 import javax.persistence.*;
 import java.util.ArrayList;

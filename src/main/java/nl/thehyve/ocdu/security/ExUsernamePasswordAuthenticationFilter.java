@@ -1,5 +1,6 @@
 package nl.thehyve.ocdu.security;
 
+import nl.thehyve.ocdu.OCEnvironmentsConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.core.Authentication;
@@ -18,9 +19,14 @@ public class ExUsernamePasswordAuthenticationFilter extends UsernamePasswordAuth
 
     @Override
     public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException {
-        final String ocEnvironment = request.getParameter("ocEnvironment");
-        log.error("attemptAuthentication called in custom UsrPassAuthFilter. Passed ocEnv: "+ ocEnvironment);
-        request.getSession().setAttribute("ocEnvironment", ocEnvironment);
+        final String ocEnvironment = request.getParameter(OCEnvironmentsConfig.OC_ENV_ATTRIBUTE_NAME);
+        log.info("Attempted authentication against: " + ocEnvironment);
+        String password = request.getParameter("password");
+        CustomPasswordEncoder encoder = new CustomPasswordEncoder();
+        password = encoder.encode(password);
+        request.getSession().setAttribute("ocwsHash", password);
+        request.getSession().setAttribute(OCEnvironmentsConfig.OC_ENV_ATTRIBUTE_NAME, ocEnvironment);
+
         return super.attemptAuthentication(request, response);
     }
 

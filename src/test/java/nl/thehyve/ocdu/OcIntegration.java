@@ -1,6 +1,6 @@
 package nl.thehyve.ocdu;
 
-import nl.thehyve.ocdu.models.MetaData;
+import nl.thehyve.ocdu.models.OcDefinitions.MetaData;
 import nl.thehyve.ocdu.models.OCEntities.Study;
 import nl.thehyve.ocdu.services.OpenClinicaService;
 import org.junit.Ignore;

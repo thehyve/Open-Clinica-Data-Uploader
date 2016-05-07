@@ -32,9 +32,8 @@ import java.util.stream.Collectors;
  * Created by piotrzakrzewski on 11/04/16.
  */
 @Controller
-public class DataUploadController {
+public class UploadController {
 
-    public static String TMPDIR = System.getProperty("java.io.tmpdir");
 
     @RequestMapping(value = "/", method = RequestMethod.GET)
     public String data() {
@@ -60,7 +59,7 @@ public class DataUploadController {
             OcUser user = ocUserService.getCurrentOcUser(session);
             Path locallySavedDataFile = saveFile(uploadfile);
             UploadSession currentUploadSession = uploadSessionService.getCurrentUploadSession(session);
-            fileService.depositDataFile(locallySavedDataFile, user, currentUploadSession );
+            fileService.depositDataFile(locallySavedDataFile, user, currentUploadSession);
         } catch (Exception e) {
             System.out.println(e.getMessage());
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);

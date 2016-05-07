@@ -27,11 +27,22 @@ public class OcduApplication {
         return (args) -> {
             log.info("Generating test data ...");
             OcUser bogusUser= new OcUser();
-            bogusUser.setUsername("Example user");
+            bogusUser.setUsername("bogao");
             bogusUser.setOcEnvironment("http://ocdu-openclinica-dev.thehyve.net/OpenClinica-ws");
             usrRepository.save(bogusUser);
             repository.save(new UploadSession("session1", UploadSession.Step.MAPPING, new Date(),
                     bogusUser));
+            repository.save(new UploadSession("session2", UploadSession.Step.EVENTS, new Date(),
+                    bogusUser));
+            repository.save(new UploadSession("session3", UploadSession.Step.MAPPING, new Date(),
+                    bogusUser));
+            repository.save(new UploadSession("session4", UploadSession.Step.PATIENTS, new Date(),
+                    bogusUser));
+            repository.save(new UploadSession("session5", UploadSession.Step.OVERVIEW, new Date(),
+                    bogusUser));
+            repository.save(new UploadSession("session6", UploadSession.Step.MAPPING, new Date(),
+                    bogusUser));
+
         };
     }
 

@@ -166,46 +166,46 @@ $(document).ready(function () {
     });
 
     //for testing
-    $.ajax({
-        url: "/create-session",
-        type: "post",
-        data: {
-            name:"sessions1"
-        },
-        success: function (data) {
-            console.log('session1 created');
-            $.ajax({
-                url: "/create-session",
-                type: "post",
-                data: {
-                    name:"sessions2"
-                },
-                success: function (data) {
-                    console.log('session2 created');
-                    $.ajax({
-                        url: "/create-session",
-                        type: "post",
-                        data: {
-                            name:"sessions3"
-                        },
-                        success: function (data) {
-                            console.log('session3 created');
-                            retrieveSessions();
-                        },
-                        error: function () {
-                            console.log('Fail to load sessions.');
-                        }
-                    });
-                },
-                error: function () {
-                    console.log('Fail to load sessions.');
-                }
-            });
-        },
-        error: function () {
-            console.log('Fail to load sessions.');
-        }
-    });
+    // $.ajax({
+    //     url: "/create-session",
+    //     type: "post",
+    //     data: {
+    //         name:"sessions1"
+    //     },
+    //     success: function (data) {
+    //         console.log('session1 created');
+    //         $.ajax({
+    //             url: "/create-session",
+    //             type: "post",
+    //             data: {
+    //                 name:"sessions2"
+    //             },
+    //             success: function (data) {
+    //                 console.log('session2 created');
+    //                 $.ajax({
+    //                     url: "/create-session",
+    //                     type: "post",
+    //                     data: {
+    //                         name:"sessions3"
+    //                     },
+    //                     success: function (data) {
+    //                         console.log('session3 created');
+    //                         retrieveSessions();
+    //                     },
+    //                     error: function () {
+    //                         console.log('Fail to load sessions.');
+    //                     }
+    //                 });
+    //             },
+    //             error: function () {
+    //                 console.log('Fail to load sessions.');
+    //             }
+    //         });
+    //     },
+    //     error: function () {
+    //         console.log('Fail to load sessions.');
+    //     }
+    // });
 
-    // retrieveSessions();
+    retrieveSessions();
 });

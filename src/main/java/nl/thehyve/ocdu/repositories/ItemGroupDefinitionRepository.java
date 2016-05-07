@@ -1,6 +1,6 @@
 package nl.thehyve.ocdu.repositories;
 
-import nl.thehyve.ocdu.models.ItemGroupDefinition;
+import nl.thehyve.ocdu.models.OcDefinitions.ItemGroupDefinition;
 import org.springframework.data.repository.CrudRepository;
 
 /**

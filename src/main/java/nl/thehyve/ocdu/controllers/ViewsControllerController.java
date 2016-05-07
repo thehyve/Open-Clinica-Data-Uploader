@@ -40,4 +40,9 @@ public class ViewsControllerController {
         return "events";
     }
 
+    @RequestMapping(value = "/", method = RequestMethod.GET)
+    public String data() {
+        return "data";
+    }
+
 }

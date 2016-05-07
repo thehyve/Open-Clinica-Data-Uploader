@@ -1,4 +1,4 @@
-package nl.thehyve.ocdu.models;
+package nl.thehyve.ocdu.models.OcDefinitions;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -9,7 +9,7 @@ import javax.persistence.Id;
  * Created by piotrzakrzewski on 01/05/16.
  */
 @Entity
-public class ItemDefinition {
+public class ItemGroupDefinition {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long id;

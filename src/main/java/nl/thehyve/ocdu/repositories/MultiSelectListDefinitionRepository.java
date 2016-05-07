@@ -1,6 +1,6 @@
 package nl.thehyve.ocdu.repositories;
 
-import nl.thehyve.ocdu.models.MultiSelectListDefinition;
+import nl.thehyve.ocdu.models.OcDefinitions.MultiSelectListDefinition;
 import org.springframework.data.repository.CrudRepository;
 
 /**

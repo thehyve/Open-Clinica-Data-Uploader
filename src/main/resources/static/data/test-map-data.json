@@ -1,1 +1,50 @@
-[{"Study_Site":"Study_Site_example","EventName":"Event: VisitsA","CRFname":"CRF: Medication","CRFversion":"CRF Version: 1","ocItemName":"item1","usrItemName":"item1"},{"Study_Site":"Study_Site_example","EventName":"Event: VisitsA","CRFname":"CRF: Medication","CRFversion":"CRF Version: 1","ocItemName":"item2","usrItemName":"item2"},{"Study_Site":"Study_Site_example","EventName":"Event: VisitsA","CRFname":"CRF: Medication","CRFversion":"CRF Version: 2","ocItemName":"a_ver_very_very_very_very_very_long_item3","usrItemName":"a_ver_very_very_very_very_very_long_item3"},{"Study_Site":"Study_Site_example","EventName":"Event: VisitsA","CRFname":"CRF: Laboratory","CRFversion":"CRF Version: 1","ocItemName":"item4","usrItemName":"usr_item4"},{"Study_Site":"Study_Site_example","EventName":"Event: VisitsA","CRFname":"CRF: Laboratory","CRFversion":"CRF Version: 1","ocItemName":"item5","usrItemName":"usr_item5"},{"Study_Site":"Study_Site_example","EventName":"Event: VisitsB","CRFname":"CRF: Medication","CRFversion":"CRF Version: 2","ocItemName":"item2","usrItemName":"item6"}]
+[
+  {
+    "Study_Site": "Study_Site_example",
+    "EventName": "Event: VisitsA",
+    "CRFname": "CRF: Medication",
+    "CRFversion": "CRF Version: 1",
+    "ocItemName": "item1",
+    "usrItemName": "item1"
+  },
+  {
+    "Study_Site": "Study_Site_example",
+    "EventName": "Event: VisitsA",
+    "CRFname": "CRF: Medication",
+    "CRFversion": "CRF Version: 1",
+    "ocItemName": "item2",
+    "usrItemName": "item2"
+  },
+  {
+    "Study_Site": "Study_Site_example",
+    "EventName": "Event: VisitsA",
+    "CRFname": "CRF: Medication",
+    "CRFversion": "CRF Version: 2",
+    "ocItemName": "a_ver_very_very_very_very_very_long_item3",
+    "usrItemName": "a_ver_very_very_very_very_very_long_item3"
+  },
+  {
+    "Study_Site": "Study_Site_example",
+    "EventName": "Event: VisitsA",
+    "CRFname": "CRF: Laboratory",
+    "CRFversion": "CRF Version: 1",
+    "ocItemName": "item4",
+    "usrItemName": "usr_item4"
+  },
+  {
+    "Study_Site": "Study_Site_example",
+    "EventName": "Event: VisitsA",
+    "CRFname": "CRF: Laboratory",
+    "CRFversion": "CRF Version: 1",
+    "ocItemName": "item5",
+    "usrItemName": "usr_item5"
+  },
+  {
+    "Study_Site": "Study_Site_example",
+    "EventName": "Event: VisitsB",
+    "CRFname": "CRF: Medication",
+    "CRFversion": "CRF Version: 2",
+    "ocItemName": "item2",
+    "usrItemName": "item6"
+  }
+]

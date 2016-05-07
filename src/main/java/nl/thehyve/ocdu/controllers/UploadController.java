@@ -35,10 +35,7 @@ import java.util.stream.Collectors;
 public class UploadController {
 
 
-    @RequestMapping(value = "/", method = RequestMethod.GET)
-    public String data() {
-        return "data";
-    }
+
 
 
     @Autowired
@@ -64,24 +61,10 @@ public class UploadController {
             System.out.println(e.getMessage());
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
-
-        return new ResponseEntity<>(HttpStatus.OK);
-    } // method uploadFile
-
-    @RequestMapping(value = "/uploadMapping", method = RequestMethod.POST)
-    @ResponseBody
-    public ResponseEntity<?> uploadMapping(
-            @RequestParam("uploadmapping") MultipartFile uploadmapping) {
-        System.out.println("mapping mapping");
-        try {
-            saveFile(uploadmapping);
-        } catch (Exception e) {
-            System.out.println(e.getMessage());
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        }
-
         return new ResponseEntity<>(HttpStatus.OK);
     }
+
+
 
     private Path saveFile(MultipartFile file) throws IOException {
         // Get the filename and build the local file path

@@ -35,6 +35,7 @@ public class GetStudyMetadataResponseHandler extends OCResponseHandler {
     public static final String eventDefSelector = "//MetaDataVersion/StudyEventDef";
     public static final String odmSelector = "//createResponse/odm";
     public static final String presentInEventSelector = ".//*[local-name()='PresentInEventDefinition']";
+    public static final String CRF_VERSION_SELECTOR = ".//*[local-name()='VersionDescription']/text()[1]";
 
     public static MetaData parseGetStudyMetadataResponse(SOAPMessage response) throws Exception { //TODO: handle exception
         Document odm = getOdm(response);
@@ -44,21 +45,21 @@ public class GetStudyMetadataResponseHandler extends OCResponseHandler {
         NodeList eventDefsNodes = (NodeList) xpath.evaluate(eventDefSelector, odm, XPathConstants.NODESET);
         Map eventMap = parseEvents(eventDefsNodes);
         List<CRFDefinition> crfDefs = parseCrfs(crfDefsNodes, eventMap);
-        addToEvent(crfDefs, eventMap ,eventDefsNodes); // Mandatory in event is defined in EventDef
+        addToEvent(crfDefs, eventMap, eventDefsNodes); // Mandatory in event is defined in EventDef
 
         List<EventDefinition> events = new ArrayList<>();
         events.addAll(eventMap.values());
 
-        metaData.setEventDefinitions( events);
+        metaData.setEventDefinitions(events);
         return metaData;
     }
 
-    private static void addToEvent(List<CRFDefinition> crfDefs,Map<String,EventDefinition> events ,NodeList eventDefsNodes) throws XPathExpressionException {
-        for(int i = 0; i < eventDefsNodes.getLength(); i++) {
+    private static void addToEvent(List<CRFDefinition> crfDefs, Map<String, EventDefinition> events, NodeList eventDefsNodes) throws XPathExpressionException {
+        for (int i = 0; i < eventDefsNodes.getLength(); i++) {
             Node item = eventDefsNodes.item(i);
             String oid = item.getAttributes().getNamedItem("OID").getTextContent();
             NodeList formRefs = (NodeList) xpath.evaluate("./FormRef", item, XPathConstants.NODESET);
-            for (int j = 0; j < formRefs.getLength() ; j++) {
+            for (int j = 0; j < formRefs.getLength(); j++) {
                 Node formRef = formRefs.item(j);
                 String formOID = formRef.getAttributes().getNamedItem("FormOID").getTextContent();
                 String mandatory = formRef.getAttributes().getNamedItem("Mandatory").getTextContent();
@@ -92,7 +93,7 @@ public class GetStudyMetadataResponseHandler extends OCResponseHandler {
 
     private static Map<String, EventDefinition> parseEvents(NodeList eventDefsNodes) {
         HashMap<String, EventDefinition> events = new HashMap<>();
-        for(int i = 0; i < eventDefsNodes.getLength(); i++) {
+        for (int i = 0; i < eventDefsNodes.getLength(); i++) {
             Node item = eventDefsNodes.item(i);
             String oid = item.getAttributes().getNamedItem("OID").getTextContent();
             String name = item.getAttributes().getNamedItem("Name").getTextContent();
@@ -109,7 +110,7 @@ public class GetStudyMetadataResponseHandler extends OCResponseHandler {
         return events;
     }
 
-    private static List<CRFDefinition> parseCrfs(NodeList crfDefsNodes, Map<String, EventDefinition> events) {
+    private static List<CRFDefinition> parseCrfs(NodeList crfDefsNodes, Map<String, EventDefinition> events) throws XPathExpressionException {
         List<CRFDefinition> crfs = new ArrayList<>();
         for (int i = 0; i < crfDefsNodes.getLength(); i++) {
             Node crfNode = crfDefsNodes.item(i);
@@ -120,13 +121,20 @@ public class GetStudyMetadataResponseHandler extends OCResponseHandler {
             if (repeatingText.equals("Yes")) {
                 repeating = true;
             }
+            String version = getCrfVersion(crfNode);
             CRFDefinition newCrf = new CRFDefinition();
             newCrf.setName(name);
             newCrf.setOid(oid);
             newCrf.setRepeating(repeating);
+            newCrf.setVersion(version);
             crfs.addAll(getCrfsInEvent(crfNode, newCrf, events)); // CRF Entity exists per Event
         }
         return crfs;
+    }
+
+
+    private static String getCrfVersion(Node crfNode) throws XPathExpressionException {
+        return (String) xpath.evaluate(CRF_VERSION_SELECTOR, crfNode, XPathConstants.STRING);
     }
 
     private static List<CRFDefinition> getCrfsInEvent(Node crfNode, CRFDefinition prototype, Map<String, EventDefinition> events) {
@@ -134,7 +142,7 @@ public class GetStudyMetadataResponseHandler extends OCResponseHandler {
         try {
             NodeList crfNodes = (NodeList) xpath.evaluate(presentInEventSelector,
                     crfNode, XPathConstants.NODESET);
-            for (int i = 0; i < crfNodes.getLength(); i ++) {
+            for (int i = 0; i < crfNodes.getLength(); i++) {
                 Node node = crfNodes.item(i);
                 CRFDefinition crf = new CRFDefinition(prototype);
                 String studyEventOID = node.getAttributes().getNamedItem("StudyEventOID").getTextContent();

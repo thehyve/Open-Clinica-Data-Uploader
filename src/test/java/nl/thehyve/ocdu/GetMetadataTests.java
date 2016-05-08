@@ -1,5 +1,6 @@
 package nl.thehyve.ocdu;
 
+import nl.thehyve.ocdu.models.OcDefinitions.CRFDefinition;
 import nl.thehyve.ocdu.models.OcDefinitions.EventDefinition;
 import nl.thehyve.ocdu.models.OcDefinitions.MetaData;
 import nl.thehyve.ocdu.soap.ResponseHandlers.GetStudyMetadataResponseHandler;
@@ -68,9 +69,20 @@ public class GetMetadataTests {
         String selector = GetStudyMetadataResponseHandler.presentInEventSelector;
         XPath xpath = XPathFactory.newInstance().newXPath();
         Document odm = GetStudyMetadataResponseHandler.getOdm(mockedResponseGetMetadata);
-        NodeList crfNodes = (NodeList) xpath.evaluate(selector ,
+        NodeList crfNodes = (NodeList) xpath.evaluate(selector,
                 odm, XPathConstants.NODESET);
         assertEquals(true, crfNodes.getLength() > 0);
+
+    }
+
+    @Test
+    public void xpathCRfVersion() throws Exception {
+        String selector = GetStudyMetadataResponseHandler.CRF_VERSION_SELECTOR;
+        XPath xpath = XPathFactory.newInstance().newXPath();
+        Document odm = GetStudyMetadataResponseHandler.getOdm(mockedResponseGetMetadata);
+        String  versions= (String) xpath.evaluate(selector,
+                odm, XPathConstants.STRING);
+        assertThat(versions, is(notNullValue()));
 
     }
 
@@ -83,15 +95,19 @@ public class GetMetadataTests {
         assertThat(eventDefinitions
                 ,
                 everyItem(is(allOf(notNullValue(), instanceOf(EventDefinition.class)))));
-        assertEquals(2 ,eventDefinitions.size());
+        assertEquals(2, eventDefinitions.size());
 
         EventDefinition eventDefinition = eventDefinitions.get(1);
-        assertEquals("SE_NONREPEATINGEVENT",eventDefinition.getStudyEventOID());
-        assertEquals("Non-repeating event",eventDefinition.getName());
+        assertEquals("SE_NONREPEATINGEVENT", eventDefinition.getStudyEventOID());
+        assertEquals("Non-repeating event", eventDefinition.getName());
 
-        List crfDefinitions = eventDefinition.getCrfDefinitions();
+        List<CRFDefinition> crfDefinitions = eventDefinition.getCrfDefinitions();
 
-        assertEquals(7,crfDefinitions.size());
+        assertEquals(7, crfDefinitions.size());
+        crfDefinitions.forEach(crDef -> {
+            assertThat(crDef.getVersion(), is(notNullValue()));
+                }
+        );
 
     }
 

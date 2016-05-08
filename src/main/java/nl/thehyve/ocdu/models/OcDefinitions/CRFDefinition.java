@@ -18,6 +18,15 @@ public class CRFDefinition {
     private String oid;
     private String name;
     private boolean repeating;
+    private String version;
+
+    public String getVersion() {
+        return version;
+    }
+
+    public void setVersion(String version) {
+        this.version = version;
+    }
 
     public String getOid() {
         return oid;
@@ -79,6 +88,7 @@ public class CRFDefinition {
         this.name = prototype.getName();
         this.oid = prototype.getOid();
         this.repeating = prototype.isRepeating();
+        this.version = prototype.getVersion();
     }
 
     public CRFDefinition() {

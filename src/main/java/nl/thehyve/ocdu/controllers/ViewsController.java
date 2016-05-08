@@ -11,9 +11,9 @@ import org.springframework.web.bind.annotation.RequestMethod;
  */
 
 @Controller
-public class ViewsControllerController {
+public class ViewsController {
 
-    private static final Logger log = LoggerFactory.getLogger(ViewsControllerController.class);
+    private static final Logger log = LoggerFactory.getLogger(ViewsController.class);
 
     @RequestMapping(value = "/login", method = RequestMethod.GET)
     public String login() {

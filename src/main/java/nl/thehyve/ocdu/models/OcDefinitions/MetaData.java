@@ -16,13 +16,13 @@ public class MetaData {
     private String studyIdentifier; //TODO: shouldn't it be Study entity? Should we serialize Study as well?
 
     @OneToMany(targetEntity = EventDefinition.class, cascade = CascadeType.ALL)
-    private List eventDefinitions;
+    private List<EventDefinition> eventDefinitions;
 
     @OneToMany(targetEntity = ItemGroupDefinition.class, cascade = CascadeType.ALL )
-    private List itemGroupDefinitions;
+    private List<ItemGroupDefinition> itemGroupDefinitions;
 
     @OneToMany(targetEntity = CodeListDefinition.class, cascade = CascadeType.ALL )
-    private List codeListDefinitions;
+    private List<CodeListDefinition> codeListDefinitions;
 
     public void addEventDefinition(EventDefinition eventDef) {
         eventDefinitions.add(eventDef);

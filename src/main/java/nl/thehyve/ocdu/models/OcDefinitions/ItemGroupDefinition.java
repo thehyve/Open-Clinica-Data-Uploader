@@ -21,6 +21,17 @@ public class ItemGroupDefinition {
 
     private boolean mandatoryInCrf;
 
+    public List<String> getMandatoryItems() {
+        return mandatoryItems;
+    }
+
+    public void setMandatoryItems(List<String> mandatoryItems) {
+        this.mandatoryItems = mandatoryItems;
+    }
+
+    @Transient
+    private List<String> mandatoryItems = new ArrayList<>();
+
     public boolean isMandatoryInCrf() {
         return mandatoryInCrf;
     }
@@ -30,7 +41,7 @@ public class ItemGroupDefinition {
     }
 
     @OneToMany(targetEntity = ItemDefinition.class, cascade = CascadeType.ALL)
-    private List<ItemDefinition> items;
+    private List<ItemDefinition> items = new ArrayList<>();
 
     public long getId() {
         return id;
@@ -80,6 +91,10 @@ public class ItemGroupDefinition {
         this.name = prototype.getName();
         this.oid = prototype.getOid();
         this.items = new ArrayList<>(prototype.getItems());
+        this.mandatoryItems = prototype.getMandatoryItems();
     }
 
+    public void addItem(ItemDefinition item) {
+        this.items.add(item);
+    }
 }

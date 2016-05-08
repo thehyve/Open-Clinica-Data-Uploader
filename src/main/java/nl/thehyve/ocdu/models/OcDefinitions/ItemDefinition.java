@@ -17,6 +17,15 @@ public class ItemDefinition {
     private String name;
     private String dataType;
     private int length;
+    private boolean mandatoryInGroup = false;
+
+    public boolean isMandatoryInGroup() {
+        return mandatoryInGroup;
+    }
+
+    public void setMandatoryInGroup(boolean mandatoryInGroup) {
+        this.mandatoryInGroup = mandatoryInGroup;
+    }
 
     public String getOid() {
         return oid;
@@ -56,5 +65,16 @@ public class ItemDefinition {
 
     public void setId(long id) {
         this.id = id;
+    }
+
+    public ItemDefinition() {
+    }
+
+    public ItemDefinition(ItemDefinition prototype) {
+        this.name = prototype.getName();
+        this.length = prototype.getLength();
+        this.oid = prototype.getOid();
+        this.mandatoryInGroup = prototype.isMandatoryInGroup();
+        this.dataType = prototype.getDataType();
     }
 }

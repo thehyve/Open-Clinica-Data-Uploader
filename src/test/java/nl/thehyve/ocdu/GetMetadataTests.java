@@ -1,8 +1,6 @@
 package nl.thehyve.ocdu;
 
-import nl.thehyve.ocdu.models.OcDefinitions.CRFDefinition;
-import nl.thehyve.ocdu.models.OcDefinitions.EventDefinition;
-import nl.thehyve.ocdu.models.OcDefinitions.MetaData;
+import nl.thehyve.ocdu.models.OcDefinitions.*;
 import nl.thehyve.ocdu.soap.ResponseHandlers.GetStudyMetadataResponseHandler;
 import org.junit.Before;
 import org.junit.Test;
@@ -22,6 +20,7 @@ import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathFactory;
 import java.io.File;
 import java.io.FileInputStream;
+import java.util.ArrayList;
 import java.util.List;
 
 import static org.hamcrest.CoreMatchers.is;
@@ -108,7 +107,20 @@ public class GetMetadataTests {
             assertThat(crDef.getVersion(), is(notNullValue()));
                 }
         );
+        List<ItemGroupDefinition> itemGroupDefinitions = metaData.getItemGroupDefinitions();
+        assertEquals(24, itemGroupDefinitions.size());
 
+        int totalExpectedItemDefs = 166;
+        List<ItemDefinition> allItemdefs = new ArrayList<>();
+        itemGroupDefinitions.forEach(itemGroupDefinition -> {
+            assertThat(itemGroupDefinition.getOid(), is(notNullValue()) );
+            assertThat(itemGroupDefinition.getName(), is(notNullValue()) );
+            assertThat(itemGroupDefinition.getItems(), is(notNullValue()) );
+            List<ItemDefinition> items = itemGroupDefinition.getItems();
+            assertTrue(items.size() > 0);
+            allItemdefs.addAll(items);
+        });
+        assertEquals(totalExpectedItemDefs, allItemdefs.size());
     }
 
 

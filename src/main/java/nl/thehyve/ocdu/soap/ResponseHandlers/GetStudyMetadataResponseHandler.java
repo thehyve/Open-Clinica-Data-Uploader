@@ -1,9 +1,6 @@
 package nl.thehyve.ocdu.soap.ResponseHandlers;
 
-import nl.thehyve.ocdu.models.OcDefinitions.CRFDefinition;
-import nl.thehyve.ocdu.models.OcDefinitions.EventDefinition;
-import nl.thehyve.ocdu.models.OcDefinitions.ItemGroupDefinition;
-import nl.thehyve.ocdu.models.OcDefinitions.MetaData;
+import nl.thehyve.ocdu.models.OcDefinitions.*;
 import org.springframework.security.authentication.AuthenticationCredentialsNotFoundException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
@@ -34,9 +31,15 @@ public class GetStudyMetadataResponseHandler extends OCResponseHandler {
 
     public static final String crfDefSelector = "//MetaDataVersion/FormDef";
     public static final String eventDefSelector = "//MetaDataVersion/StudyEventDef";
+    public static final String itemGroupDefSelector = "//MetaDataVersion/ItemGroupDef";
+    public static final String ITEM_DEFINITION_SELECTOR = "//MetaDataVersion/ItemDef";
     public static final String odmSelector = "//createResponse/odm";
     public static final String presentInEventSelector = ".//*[local-name()='PresentInEventDefinition']";
+    public static final String presentInCrfsSelector = ".//*[local-name()='PresentInForm']";
     public static final String CRF_VERSION_SELECTOR = ".//*[local-name()='VersionDescription']/text()[1]";
+    public static final String itemGroupRefSelector = ".//*[local-name()='ItemGroupRef']";
+    public static final String itemRefSelector = ".//*[local-name()='ItemRef']";
+
 
     public static MetaData parseGetStudyMetadataResponse(SOAPMessage response) throws Exception { //TODO: handle exception
         Document odm = getOdm(response);
@@ -44,6 +47,9 @@ public class GetStudyMetadataResponseHandler extends OCResponseHandler {
         MetaData metaData = new MetaData();
         NodeList crfDefsNodes = (NodeList) xpath.evaluate(crfDefSelector, odm, XPathConstants.NODESET);
         NodeList eventDefsNodes = (NodeList) xpath.evaluate(eventDefSelector, odm, XPathConstants.NODESET);
+        NodeList itemGroupDefNodes = (NodeList) xpath.evaluate(itemGroupDefSelector, odm, XPathConstants.NODESET);
+        NodeList itemDefNodes = (NodeList) xpath.evaluate(ITEM_DEFINITION_SELECTOR, odm, XPathConstants.NODESET);
+
         Map eventMap = parseEvents(eventDefsNodes);
         List<CRFDefinition> crfDefs = parseCrfs(crfDefsNodes, eventMap);
         addToEvent(crfDefs, eventMap, eventDefsNodes); // Mandatory in event is defined in EventDef
@@ -51,7 +57,11 @@ public class GetStudyMetadataResponseHandler extends OCResponseHandler {
         List<EventDefinition> events = new ArrayList<>();
         events.addAll(eventMap.values());
 
+        List<ItemDefinition> items = parseItemDefinitions(itemDefNodes);
+        List<ItemGroupDefinition> itemGroups = parseItemGroupDefinitions(itemGroupDefNodes, crfDefs, items);
+
         metaData.setEventDefinitions(events);
+        metaData.setItemGroupDefinitions(itemGroups);
         return metaData;
     }
 
@@ -128,14 +138,78 @@ public class GetStudyMetadataResponseHandler extends OCResponseHandler {
             newCrf.setOid(oid);
             newCrf.setRepeating(repeating);
             newCrf.setVersion(version);
+            List<String> mandatoryItemGroups = getMandatory(crfNode, itemGroupRefSelector, "ItemGroupOID");
+            newCrf.setMandatoryItemGroups(mandatoryItemGroups);
             crfs.addAll(getCrfsInEvent(crfNode, newCrf, events)); // CRF Entity exists per Event
         }
         return crfs;
     }
 
+    /*private static List<String> getMandatoryItemGroups(Node crfDefNode) throws XPathExpressionException {
+        NodeList itemGroupRefs = (NodeList) xpath.evaluate(itemGroupRefSelector, crfDefNode, XPathConstants.NODESET);
+        List<String> mandatoryGroups = new ArrayList<>();
+        for (int i = 0; i < itemGroupRefs.getLength(); i++) {
+            Node ref = itemGroupRefs.item(i);
+            String itemGroupOID = ref.getAttributes().getNamedItem("ItemGroupOID").getTextContent();
+            String mandatoryText = ref.getAttributes().getNamedItem("Mandatory").getTextContent();
+            if (mandatoryText.equals("Yes")) {
+                mandatoryGroups.add(itemGroupOID);
+            }
+        }
+        return mandatoryGroups;
+    }*/
+
+    private static List<String> getMandatory(Node node, String xpathSelector, String attributeName) throws XPathExpressionException {
+        NodeList itemRefs = (NodeList) xpath.evaluate(xpathSelector, node, XPathConstants.NODESET);
+        List<String> mandatoryGroups = new ArrayList<>();
+        for (int i = 0; i < itemRefs.getLength(); i++) {
+            Node ref = itemRefs.item(i);
+            String itemOID = ref.getAttributes().getNamedItem(attributeName).getTextContent();
+            String mandatoryText = ref.getAttributes().getNamedItem("Mandatory").getTextContent();
+            if (mandatoryText.equals("Yes")) {
+                mandatoryGroups.add(itemOID);
+            }
+        }
+        return mandatoryGroups;
+    }
+
+    private static List<String> getItems(Node node, String xpathSelector, String attributeName) throws XPathExpressionException {
+        NodeList itemRefs = (NodeList) xpath.evaluate(xpathSelector, node, XPathConstants.NODESET);
+        List<String> items = new ArrayList<>();
+        for (int i = 0; i < itemRefs.getLength(); i++) {
+            Node ref = itemRefs.item(i);
+            String itemOID = ref.getAttributes().getNamedItem(attributeName).getTextContent();
+            items.add(itemOID);
+        }
+        return items;
+    }
+
+    private static List<ItemDefinition> parseItemDefinitions(NodeList itemDefNodes) {
+        List<ItemDefinition> items = new ArrayList<>();
+        for (int i = 0; i < itemDefNodes.getLength(); i++) {
+            Node item = itemDefNodes.item(i);
+            String oid = item.getAttributes().getNamedItem("OID").getTextContent();
+            String name = item.getAttributes().getNamedItem("Name").getTextContent();
+            String dataType = item.getAttributes().getNamedItem("DataType").getTextContent();
+            Node length1 = item.getAttributes().getNamedItem("Length");
+            String length= "0"; // Can be empty, zero means no restriction on length
+            if (length1 != null){
+                length = length1.getTextContent();
+            }
+            ItemDefinition itemDef = new ItemDefinition();
+            itemDef.setOid(oid);
+            itemDef.setName(name);
+            itemDef.setDataType(dataType);
+            itemDef.setLength(Integer.parseInt(length));
+            items.add(itemDef);
+        }
+        return items;
+    }
 
     private static List<ItemGroupDefinition> parseItemGroupDefinitions(NodeList itemGroupDefNodes,
-                                                                       List<CRFDefinition> crfs) {
+                                                                       List<CRFDefinition> crfs,
+                                                                       List<ItemDefinition> items)
+            throws XPathExpressionException {
         List<ItemGroupDefinition> itemGroupDefs = new ArrayList<>();
         for (int i = 0; i < itemGroupDefNodes.getLength(); i++) {
             Node itemGroupDefNode = itemGroupDefNodes.item(i);
@@ -151,15 +225,51 @@ public class GetStudyMetadataResponseHandler extends OCResponseHandler {
             groupDef.setName(name);
             groupDef.setRepeating(repeating);
             groupDef.setOid(oid);
-            itemGroupDefs.add(groupDef);
+            List<String> mandatoryItems = getMandatory(itemGroupDefNode, itemRefSelector, "ItemOID");
+            List<String> allItems = getMandatory(itemGroupDefNode, itemRefSelector, "ItemOID");
+            addItems(groupDef, mandatoryItems, allItems, items);
+            List<ItemGroupDefinition> itemGroupInCrf = getItemGroupInCrf(itemGroupDefNode, groupDef, crfs);
+            itemGroupDefs.addAll(itemGroupInCrf);
         }
         return itemGroupDefs;
     }
 
+    private static void addItems(ItemGroupDefinition groupDef,
+                                 List<String> mandatoryItems,
+                                 List<String> allItems,
+                                 List<ItemDefinition> allDefinedItems) {
+        allDefinedItems.stream().filter(itemDefinition -> allItems.contains(itemDefinition.getOid()))
+                .forEach(itemDefinition -> {
+                    ItemDefinition item = new ItemDefinition(itemDefinition);
+                    if (mandatoryItems.contains(itemDefinition.getOid())) {
+                        item.setMandatoryInGroup(true);
+                    }
+                    groupDef.addItem(item);
+                });
+    }
+
     private static List<ItemGroupDefinition> getItemGroupInCrf(Node itemGroupDefNode,
                                                                ItemGroupDefinition prototype,
-                                                               List<CRFDefinition> crfs) {
-        return null;
+                                                               List<CRFDefinition> crfs) throws XPathExpressionException {
+        ArrayList<ItemGroupDefinition> itemGroupDefs = new ArrayList<>();
+        NodeList itemGroupNodes = (NodeList) xpath.evaluate(presentInCrfsSelector,
+                itemGroupDefNode, XPathConstants.NODESET);
+        for (int i = 0; i < itemGroupNodes.getLength(); i++) {
+            Node node = itemGroupNodes.item(i);
+            String formOID = node.getAttributes().getNamedItem("FormOID").getTextContent();
+            crfs.stream()
+                    .filter(crfDefinition -> crfDefinition.getOid().equals(formOID))
+                    .forEach(crfDefinition -> {
+                        ItemGroupDefinition groupDef = new ItemGroupDefinition(prototype);
+                        if (crfDefinition.getMandatoryItemGroups().contains(prototype.getOid())) {
+                            groupDef.setMandatoryInCrf(true);
+                        }
+                        crfDefinition.addItemGroupDef(groupDef);
+                        itemGroupDefs.add(groupDef);
+                    });
+
+        }
+        return itemGroupDefs;
     }
 
 

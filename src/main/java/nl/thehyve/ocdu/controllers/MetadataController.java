@@ -1,8 +1,8 @@
 package nl.thehyve.ocdu.controllers;
 
-import nl.thehyve.ocdu.models.OcDefinitions.MetaData;
 import nl.thehyve.ocdu.models.UploadSession;
 import nl.thehyve.ocdu.services.DataService;
+import nl.thehyve.ocdu.services.OcUserService;
 import nl.thehyve.ocdu.services.UploadSessionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -27,6 +27,9 @@ public class MetadataController {
     @Autowired
     UploadSessionService uploadSessionService;
 
+    @Autowired
+    OcUserService ocUserService;
+
     @RequestMapping(value = "/data-info", method = RequestMethod.GET)
     public ResponseEntity<DataService.FieldsDetermined> getFieldsInfo(HttpSession session) {
         UploadSession submission = uploadSessionService.getCurrentUploadSession(session);
@@ -39,10 +42,16 @@ public class MetadataController {
     }
 
     @RequestMapping(value = "/metadata-tree", method = RequestMethod.GET)
-    public ResponseEntity<MetaData> getMetadata(HttpSession session) {
-        /*returns tree needed for mapping view*/
-        return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED); //TODO implement returning metadata
-        // return new ResponseEntity<>(metadata, HttpStatus.OK);
+    public ResponseEntity<DataService.MetaDataTree> getMetadata(HttpSession session) {
+        UploadSession currentUploadSession = uploadSessionService.getCurrentUploadSession(session);
+        String pwd = ocUserService.getOcwsHash(session);
+        try {
+            DataService.MetaDataTree tree = dataService.getMetadataTree(currentUploadSession, pwd );
+            return new ResponseEntity<>(tree, HttpStatus.OK);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);
+        }
     }
 
 

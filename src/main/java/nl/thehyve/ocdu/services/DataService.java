@@ -3,6 +3,7 @@ package nl.thehyve.ocdu.services;
 import nl.thehyve.ocdu.models.OCEntities.ClinicalData;
 import nl.thehyve.ocdu.models.OCEntities.Study;
 import nl.thehyve.ocdu.models.OcDefinitions.EventDefinition;
+import nl.thehyve.ocdu.models.OcDefinitions.ItemDefinition;
 import nl.thehyve.ocdu.models.OcDefinitions.MetaData;
 import nl.thehyve.ocdu.models.OcUser;
 import nl.thehyve.ocdu.models.UploadSession;
@@ -43,25 +44,37 @@ public class DataService {
     private MetaDataTree buildTree(MetaData metaData) {
         String studyIdentifier = metaData.getStudyIdentifier();
         MetaDataTree root = new MetaDataTree();
-        root.setValue(studyIdentifier);
+        root.setName(studyIdentifier);
         List<EventDefinition> eventDefinitions = metaData.getEventDefinitions();
         List<MetaDataTree> studyChildren = new ArrayList<>();
         eventDefinitions.stream().forEach(eventDefinition -> {
             String studyEventOID = eventDefinition.getStudyEventOID();
             MetaDataTree eventNode = new MetaDataTree();
-            eventNode.setValue(studyEventOID);
+            eventNode.setName(studyEventOID);
             studyChildren.add(eventNode);
 
             List<MetaDataTree> eventChildren = new ArrayList<>();
             eventNode.setChildren(eventChildren);
             eventDefinition.getCrfDefinitions().stream().forEach(crfDefinition -> {
                 MetaDataTree crfNode = new MetaDataTree();
-                crfNode.setValue(crfDefinition.getOid());
+                crfNode.setName(crfDefinition.getOid());
                 eventChildren.add(crfNode);
                 List<MetaDataTree> crfChildren = new ArrayList<>();
                 crfNode.setChildren(crfChildren);
-                //crfDefinition.g
 
+                String version = crfDefinition.getVersion();
+                MetaDataTree versionNode = new MetaDataTree();
+                versionNode.setName(version);
+                crfChildren.add(versionNode);
+                List<ItemDefinition> items = new ArrayList<>();
+                crfDefinition.getItemGroups().stream().forEach(itemGroupDefinition -> {
+                    items.addAll(itemGroupDefinition.getItems());
+                });
+
+                List<MetaDataTree> itemNodes = items.stream()
+                        .map(itemDefinition -> new MetaDataTree(itemDefinition.getOid()))
+                        .collect(Collectors.toList());
+                versionNode.setChildren(itemNodes);
             });
 
         });
@@ -119,16 +132,23 @@ public class DataService {
     }
 
     public class MetaDataTree {
-        private String value;
-        private MetaDataTree parent;
+        private String name;
+        //private MetaDataTree parent;
         private List<MetaDataTree> children;
 
-        public String getValue() {
-            return value;
+        public MetaDataTree(String name) {
+            this.name = name;
         }
 
-        public void setValue(String value) {
-            this.value = value;
+        public MetaDataTree() {
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public void setName(String name) {
+            this.name = name;
         }
 
         public List<MetaDataTree> getChildren() {

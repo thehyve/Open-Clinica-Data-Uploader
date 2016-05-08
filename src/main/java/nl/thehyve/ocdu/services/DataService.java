@@ -47,6 +47,7 @@ public class DataService {
         root.setName(studyIdentifier);
         List<EventDefinition> eventDefinitions = metaData.getEventDefinitions();
         List<MetaDataTree> studyChildren = new ArrayList<>();
+        root.setChildren(studyChildren );
         eventDefinitions.stream().forEach(eventDefinition -> {
             String studyEventOID = eventDefinition.getStudyEventOID();
             MetaDataTree eventNode = new MetaDataTree();
@@ -93,10 +94,10 @@ public class DataService {
 
 
     public class FieldsDetermined {
-        private String study;
-        private String eventname;
-        private String crfName;
-        private String crfVersion;
+        private String study = "";
+        private String eventname = "";
+        private String crfName = "";
+        private String crfVersion = "";
 
         public String getStudy() {
             return study;

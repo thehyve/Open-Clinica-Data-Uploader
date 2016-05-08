@@ -9,7 +9,7 @@ var sessionNames = [];
 var isSessionNameDefined = false;
 $('#upload-session-input').change(function () {
     var name = $('#upload-session-input').val();
-    if(name !== "") isSessionNameDefined = true;
+    if (name !== "") isSessionNameDefined = true;
 });
 var isDataSelected = false;
 $('#upload-file-input').change(function () {
@@ -30,31 +30,41 @@ function uploadFile() {
     if (isSessionNameDefined && isDataSelected) {
         SESSIONNAME = $('#upload-session-input').val();
 
-        $.ajax({
-            url: "/uploadFile",
-            type: "POST",
-            data: new FormData($("#upload-file-form")[0]),
-            enctype: 'multipart/form-data',
-            processData: false,
-            contentType: false,
-            cache: false,
-            success: function () {
-                // Handle upload success
-                var info = '<span id="data-alert" class="alert alert-success">Data succesfully uploaded</span>';
-                $("#message-board").append(info);
-                isDataUploaded = true;
-                if (!isDirected && ((isMappingSelected && isMappingUploaded) || !isMappingSelected)) {
-                    window.location.replace("/feedback-data");
-                    isDirected = true;
+        var dataFileUpload = function () {
+            $.ajax({
+                url: "/uploadFile",
+                type: "POST",
+                data: new FormData($("#upload-file-form")[0]),
+                enctype: 'multipart/form-data',
+                processData: false,
+                contentType: false,
+                cache: false,
+                success: function () {
+                    // Handle upload success
+                    var info = '<span id="data-alert" class="alert alert-success">Data succesfully uploaded</span>';
+                    $("#message-board").append(info);
+                    isDataUploaded = true;
+                    if (!isDirected && ((isMappingSelected && isMappingUploaded) || !isMappingSelected)) {
+                        window.location.replace("/feedback-data");
+                        isDirected = true;
+                    }
+                },
+                error: function () {
+                    // Handle upload error
+                    var info = '<span id="data-alert" class="alert alert-danger">Data not uploaded</span>';
+                    $("#message-board").append(info);
+                    isDataUploaded = false;
                 }
-            },
-            error: function () {
-                // Handle upload error
-                var info = '<span id="data-alert" class="alert alert-danger">Data not uploaded</span>';
-                $("#message-board").append(info);
-                isDataUploaded = false;
-            }
+            });
+        };
+        $.ajax({
+            url: "/create-session",
+            type: "post",
+            data: {name: SESSIONNAME},
+            success: dataFileUpload,
+            error: handle_error
         });
+
         window.setTimeout(function () {
             $("#data-alert").fadeTo(500, 0).slideUp(500, function () {
                 $(this).empty();
@@ -99,13 +109,13 @@ function uploadFile() {
 
     }
 
-    if(!isSessionNameDefined || !isDataSelected) {
+    if (!isSessionNameDefined || !isDataSelected) {
         $("#message-board").empty();
-        if(!isSessionNameDefined) {
+        if (!isSessionNameDefined) {
             var info = '<span id="message-alert" class="alert alert-danger">Session name needs to be specified</span>';
             $("#message-board").append(info);
         }
-        if(!isDataSelected) {
+        if (!isDataSelected) {
             var info = '<span id="message-alert" class="alert alert-danger">Data file needs to be specified</span>';
             $("#message-board").append(info);
         }
@@ -132,7 +142,7 @@ function retrieveSessions() {
 
 function handle_retrieval(sessions) {
     console.log('retrieve sessions...');
-    $("#data-proceed-btn").attr("disabled",false);
+    $("#data-proceed-btn").attr("disabled", false);
     var monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
     $('#old_upload_section').append('<div id="session_container" class="row-fluid"></div>');
     for (var i = 0; i < sessions.length; i++) {
@@ -154,11 +164,11 @@ function handle_retrieval(sessions) {
 }
 
 function handle_error() {
-    console.log('Fail to load sessions.');
+    console.log('Failed to load sessions.');
 }
 
 $(document).ready(function () {
-    $("#data-proceed-btn").attr("disabled","disabled");
+    $("#data-proceed-btn").attr("disabled", "disabled");
 
     $.ajax({
         url: "/username",

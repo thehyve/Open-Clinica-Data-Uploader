@@ -45,6 +45,7 @@ public class GetStudyMetadataResponseHandler extends OCResponseHandler {
         Document odm = getOdm(response);
 
         MetaData metaData = new MetaData();
+        metaData.setStudyIdentifier("Study");
         NodeList crfDefsNodes = (NodeList) xpath.evaluate(crfDefSelector, odm, XPathConstants.NODESET);
         NodeList eventDefsNodes = (NodeList) xpath.evaluate(eventDefSelector, odm, XPathConstants.NODESET);
         NodeList itemGroupDefNodes = (NodeList) xpath.evaluate(itemGroupDefSelector, odm, XPathConstants.NODESET);
@@ -96,7 +97,7 @@ public class GetStudyMetadataResponseHandler extends OCResponseHandler {
             throw new AuthenticationCredentialsNotFoundException("Authentication against OpenClinica unsuccessfull");
         }
         Node odmCDATANode = (Node) xpath.evaluate(odmSelector, document, XPathConstants.NODE);
-        String textContent = odmCDATANode.getTextContent();
+        String textContent = odmCDATANode.getTextContent(); //TODO: Add handling case when no ODM is served by PC
         Document odm = SoapUtils.unEscapeCDATAXML(textContent);
         return odm;
     }
@@ -144,20 +145,6 @@ public class GetStudyMetadataResponseHandler extends OCResponseHandler {
         }
         return crfs;
     }
-
-    /*private static List<String> getMandatoryItemGroups(Node crfDefNode) throws XPathExpressionException {
-        NodeList itemGroupRefs = (NodeList) xpath.evaluate(itemGroupRefSelector, crfDefNode, XPathConstants.NODESET);
-        List<String> mandatoryGroups = new ArrayList<>();
-        for (int i = 0; i < itemGroupRefs.getLength(); i++) {
-            Node ref = itemGroupRefs.item(i);
-            String itemGroupOID = ref.getAttributes().getNamedItem("ItemGroupOID").getTextContent();
-            String mandatoryText = ref.getAttributes().getNamedItem("Mandatory").getTextContent();
-            if (mandatoryText.equals("Yes")) {
-                mandatoryGroups.add(itemGroupOID);
-            }
-        }
-        return mandatoryGroups;
-    }*/
 
     private static List<String> getMandatory(Node node, String xpathSelector, String attributeName) throws XPathExpressionException {
         NodeList itemRefs = (NodeList) xpath.evaluate(xpathSelector, node, XPathConstants.NODESET);

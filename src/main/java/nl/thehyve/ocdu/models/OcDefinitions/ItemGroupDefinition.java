@@ -1,6 +1,7 @@
 package nl.thehyve.ocdu.models.OcDefinitions;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -17,6 +18,16 @@ public class ItemGroupDefinition {
     private String oid;
 
     private String name;
+
+    private boolean mandatoryInCrf;
+
+    public boolean isMandatoryInCrf() {
+        return mandatoryInCrf;
+    }
+
+    public void setMandatoryInCrf(boolean mandatoryInCrf) {
+        this.mandatoryInCrf = mandatoryInCrf;
+    }
 
     @OneToMany(targetEntity = ItemDefinition.class, cascade = CascadeType.ALL)
     private List<ItemDefinition> items;
@@ -60,4 +71,15 @@ public class ItemGroupDefinition {
     public void setName(String name) {
         this.name = name;
     }
+
+    public ItemGroupDefinition() {
+    }
+
+    public ItemGroupDefinition(ItemGroupDefinition prototype) {
+        this.repeating = prototype.isRepeating();
+        this.name = prototype.getName();
+        this.oid = prototype.getOid();
+        this.items = new ArrayList<>(prototype.getItems());
+    }
+
 }

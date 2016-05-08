@@ -2,6 +2,7 @@ package nl.thehyve.ocdu.soap.ResponseHandlers;
 
 import nl.thehyve.ocdu.models.OcDefinitions.CRFDefinition;
 import nl.thehyve.ocdu.models.OcDefinitions.EventDefinition;
+import nl.thehyve.ocdu.models.OcDefinitions.ItemGroupDefinition;
 import nl.thehyve.ocdu.models.OcDefinitions.MetaData;
 import org.springframework.security.authentication.AuthenticationCredentialsNotFoundException;
 import org.w3c.dom.Document;
@@ -133,6 +134,35 @@ public class GetStudyMetadataResponseHandler extends OCResponseHandler {
     }
 
 
+    private static List<ItemGroupDefinition> parseItemGroupDefinitions(NodeList itemGroupDefNodes,
+                                                                       List<CRFDefinition> crfs) {
+        List<ItemGroupDefinition> itemGroupDefs = new ArrayList<>();
+        for (int i = 0; i < itemGroupDefNodes.getLength(); i++) {
+            Node itemGroupDefNode = itemGroupDefNodes.item(i);
+            String oid = itemGroupDefNode.getAttributes().getNamedItem("OID").getTextContent();
+            String name = itemGroupDefNode.getAttributes().getNamedItem("Name").getTextContent();
+            String repeatingText = itemGroupDefNode.getAttributes().getNamedItem("Repeating").getTextContent();
+            boolean repeating = false;
+            if (repeatingText.equals("Yes")) {
+                repeating = true;
+            }
+
+            ItemGroupDefinition groupDef = new ItemGroupDefinition();
+            groupDef.setName(name);
+            groupDef.setRepeating(repeating);
+            groupDef.setOid(oid);
+            itemGroupDefs.add(groupDef);
+        }
+        return itemGroupDefs;
+    }
+
+    private static List<ItemGroupDefinition> getItemGroupInCrf(Node itemGroupDefNode,
+                                                               ItemGroupDefinition prototype,
+                                                               List<CRFDefinition> crfs) {
+        return null;
+    }
+
+
     private static String getCrfVersion(Node crfNode) throws XPathExpressionException {
         return (String) xpath.evaluate(CRF_VERSION_SELECTOR, crfNode, XPathConstants.STRING);
     }
@@ -147,7 +177,7 @@ public class GetStudyMetadataResponseHandler extends OCResponseHandler {
                 CRFDefinition crf = new CRFDefinition(prototype);
                 String studyEventOID = node.getAttributes().getNamedItem("StudyEventOID").getTextContent();
                 crf.setEvent(events.get(studyEventOID));
-                String hidden = node.getAttributes().getNamedItem("StudyEventOID").getTextContent();
+                String hidden = node.getAttributes().getNamedItem("StudyEventOID").getTextContent();//TODO: replace with XPATH selector
                 crf.setHidden(Boolean.parseBoolean(hidden));
                 crfs.add(crf);
             }

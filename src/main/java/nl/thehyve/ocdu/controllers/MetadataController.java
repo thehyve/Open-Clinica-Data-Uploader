@@ -38,9 +38,11 @@ public class MetadataController {
         }
     }
 
+    @RequestMapping(value = "/metadata-tree", method = RequestMethod.GET)
     public ResponseEntity<MetaData> getMetadata(HttpSession session) {
+        /*returns tree needed for mapping view*/
         return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED); //TODO implement returning metadata
-       // return new ResponseEntity<>(metadata, HttpStatus.OK);
+        // return new ResponseEntity<>(metadata, HttpStatus.OK);
     }
 
 

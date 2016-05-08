@@ -40,5 +40,5 @@ d3.json("data/test-feedback-data.json", function (data) {
 });
 
 function feedbackDataNext() {
-    console.log("next");
+    window.location.replace("/mapping");
 }

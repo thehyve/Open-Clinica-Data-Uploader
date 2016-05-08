@@ -48,9 +48,9 @@ $(document).ready(function() {
         clearMapping();
         for(var i=0; i<map_data.length; i++) {
             var pair = map_data[i];
-            var ocd = findOCitem(pair['Study_Site'], pair['EventName'], pair['CRFname'], pair['CRFversion'], pair['ocItemName']);
+            var ocd = findOCitem(pair['study'], pair['eventName'], pair['crfName'], pair['crfVersion'], pair['ocItemName']);
             var usritem_obj = findUsrItem(pair['usrItemName']);
-            // console.log(ocd);
+            //console.log(pair); console.log(ocd);
 
             if(ocd !== null && usritem_obj !== null) {
                 var ocname = ocd.name;
@@ -77,19 +77,19 @@ $(document).ready(function() {
 
         function findOCitem(study, event, crf, crfv, itemname) {
             for(var _study in oc_data.children) {
-                _study = oc_data.children[_study];
+                _study = oc_data.children[_study]; //console.log(_study);
                 if(_study.name == study) {
                     for(var _event in _study.children) {
-                        _event = _study.children[_event];
+                        _event = _study.children[_event]; //console.log(_event);
                         if(_event.name == event) {
                             for(var _crf in _event.children) {
-                                _crf = _event.children[_crf];
+                                _crf = _event.children[_crf]; //console.log(_crf);
                                 if(_crf.name == crf) {
                                     for(var _crfv in _crf.children) {
-                                        _crfv = _crf.children[_crfv];
+                                        _crfv = _crf.children[_crfv]; //console.log(_crfv);
                                         if(_crfv.name == crfv) {
                                             for(var _item in _crfv.children) {
-                                                _item = _crfv.children[_item];
+                                                _item = _crfv.children[_item]; //console.log(_item);
                                                 if(_item.name == itemname) {
                                                     return _item;
                                                 }
@@ -146,10 +146,10 @@ $(document).ready(function() {
             var d = usr_item_data[i];
             if(d.mapped) {
                 var item = {};
-                item['Study_Site'] = d.ocStudy;
-                item['EventName'] = d.ocEventName;
-                item['CRFname'] = d.ocCRF;
-                item['CRFversion'] = d.ocCRFv;
+                item['study'] = d.ocStudy;
+                item['eventName'] = d.ocEventName;
+                item['crfName'] = d.ocCRF;
+                item['crfVersion'] = d.ocCRFv;
                 item['ocItemName'] = d.ocItemName;
                 item['usrItemName'] = d.usrItemName;
                 output.push(item);
@@ -551,7 +551,7 @@ function visualizeOCTree(treeData) {
 function visualizeUsrList(usrData) {
     listg = d3.select('#baseSvg').append('g').attr('id', 'listg');
     usr_item_data = [];
-    var usr_path_names = ['CRFNAME', 'CRFVERSION', 'EVENTNAME', 'EVENTREPEAT', 'STUDYSUBJECTID', 'STUDY_SITE'];
+    var usr_path_names = ['CRFNAME', 'CRFVERSION', 'EVENTNAME', 'EVENTREPEAT', 'STUDYSUBJECTID', 'STUDY'];
     var usr_item_names = [];
     for(var i=0; i<usrData.length; i++) {
         for(var key in usrData[i]) {
@@ -609,7 +609,7 @@ function visualizeUsrList(usrData) {
 
     function usrItemMouseOver(d) {
         d3.select(this).select('rect').style('fill','Orange');
-        var len = d3.select(this).select('text').getComputedTextLength();
+        var len = computeTextLength(d3.select(this).select('text'));
         if(d.shortTexted) {
             tipDiv.transition()
                 .duration(200)

@@ -25,9 +25,9 @@ public class ViewsControllerController {
         return "final";
     }
 
-    @RequestMapping(value = "/patients", method = RequestMethod.GET)
+    @RequestMapping(value = "/subjects", method = RequestMethod.GET)
     public String patients() {
-        return "patients";
+        return "subjects";
     }
 
     @RequestMapping(value = "/mapping", method = RequestMethod.GET)
@@ -43,6 +43,21 @@ public class ViewsControllerController {
     @RequestMapping(value = "/", method = RequestMethod.GET)
     public String data() {
         return "data";
+    }
+
+    @RequestMapping(value = "/feedback-data", method = RequestMethod.GET)
+    public String feedbackData() {
+        return "feedback-data";
+    }
+
+    @RequestMapping(value = "/feedback-subjects", method = RequestMethod.GET)
+    public String feedbackSubjects() {
+        return "feedback-subjects";
+    }
+
+    @RequestMapping(value = "/feedback-events", method = RequestMethod.GET)
+    public String feedbackEvents() {
+        return "feedback-events";
     }
 
 }

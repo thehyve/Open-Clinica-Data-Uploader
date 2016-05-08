@@ -44,7 +44,7 @@ function uploadFile() {
                 $("#message-board").append(info);
                 isDataUploaded = true;
                 if (!isDirected && ((isMappingSelected && isMappingUploaded) || !isMappingSelected)) {
-                    window.location.replace("/mapping");
+                    window.location.replace("/feedback-data");
                     isDirected = true;
                 }
             },
@@ -62,37 +62,40 @@ function uploadFile() {
         }, 3000);
 
         if (isMappingSelected) {
-            $.ajax({
-                url: "/uploadMapping",
-                type: "POST",
-                data: new FormData($("#upload-mapping-form")[0]),
-                enctype: 'multipart/form-data',
-                processData: false,
-                contentType: false,
-                cache: false,
-                success: function () {
-                    // Handle upload success
-                    var info = '<span id="mapping-alert" class="alert alert-success">Mapping succesfully uploaded</span>';
-                    $("#message-board").append(info);
-                    isMappingUploaded = true;
-                    if (!isDirected && isDataUploaded) {
-                        window.location.replace("/mapping");
-                        isDirected = true;
-                    }
-                },
-                error: function () {
-                    // Handle upload error
-                    var info = '<span id="mapping-alert" class="alert alert-danger">Mapping not uploaded</span>';
-                    $("#message-board").append(info);
-                    isMappingUploaded = false;
-                }
-            });
-            window.setTimeout(function () {
-                $("#mapping-alert").fadeTo(500, 0).slideUp(500, function () {
-                    $(this).empty();
-                });
-            }, 3000);
-        }
+            //TODO: resolve uploading-mapping issue
+            // var upload_mapping_data = new FormData($("#upload-mapping-form")[0]); console.log(upload_mapping_data);
+            // $.ajax({
+            //     url: "/upload-mapping",
+            //     type: "POST",
+            //     data: upload_mapping_data,
+            //     processData: false, // Don't process the files
+            //     // contentType: false,
+            //     cache: false,
+            //     dataType: 'json',
+            //     success: function (feedback) {
+            //         // Handle upload success
+            //         var info = '<span id="mapping-alert" class="alert alert-success">Mapping succesfully uploaded</span>';
+            //         $("#message-board").append(info);
+            //         isMappingUploaded = true;
+            //         if (!isDirected && isDataUploaded) {
+            //             // window.location.replace("/mapping");
+            //             console.log(feedback);
+            //             isDirected = true;
+            //         }
+            //     },
+            //     error: function () {
+            //         // Handle upload error
+            //         var info = '<span id="mapping-alert" class="alert alert-danger">Mapping not uploaded</span>';
+            //         $("#message-board").append(info);
+            //         isMappingUploaded = false;
+            //     }
+            // });
+            // window.setTimeout(function () {
+            //     $("#mapping-alert").fadeTo(500, 0).slideUp(500, function () {
+            //         $(this).empty();
+            //     });
+            // }, 3000);
+        }//if isMappingSelected
 
     }
 
@@ -165,47 +168,5 @@ $(document).ready(function () {
         }
     });
 
-    //for testing
-    $.ajax({
-        url: "/create-session",
-        type: "post",
-        data: {
-            name:"sessions1"
-        },
-        success: function (data) {
-            console.log('session1 created');
-            $.ajax({
-                url: "/create-session",
-                type: "post",
-                data: {
-                    name:"sessions2"
-                },
-                success: function (data) {
-                    console.log('session2 created');
-                    $.ajax({
-                        url: "/create-session",
-                        type: "post",
-                        data: {
-                            name:"sessions3"
-                        },
-                        success: function (data) {
-                            console.log('session3 created');
-                            retrieveSessions();
-                        },
-                        error: function () {
-                            console.log('Fail to load sessions.');
-                        }
-                    });
-                },
-                error: function () {
-                    console.log('Fail to load sessions.');
-                }
-            });
-        },
-        error: function () {
-            console.log('Fail to load sessions.');
-        }
-    });
-
-    // retrieveSessions();
+    retrieveSessions();
 });

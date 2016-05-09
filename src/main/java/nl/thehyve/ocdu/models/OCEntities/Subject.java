@@ -86,5 +86,16 @@ public class Subject implements OcEntity, UserSubmitted {
         return study;
     }
 
-
+    @Override
+    public String toString() {
+        return "Subject{" +
+                "study='" + study + '\'' +
+                ", ssid='" + ssid + '\'' +
+                ", gender='" + gender + '\'' +
+                ", dateOfBirth=" + dateOfBirth +
+                ", personId='" + personId + '\'' +
+                ", dateOfEnrollment=" + dateOfEnrollment +
+                ", secondaryId='" + secondaryId + '\'' +
+                '}';
+    }
 }

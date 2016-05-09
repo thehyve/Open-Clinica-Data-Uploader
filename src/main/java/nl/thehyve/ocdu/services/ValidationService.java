@@ -3,12 +3,14 @@ package nl.thehyve.ocdu.services;
 import nl.thehyve.ocdu.models.OCEntities.ClinicalData;
 import nl.thehyve.ocdu.models.OCEntities.OcEntity;
 import nl.thehyve.ocdu.models.OCEntities.Study;
+import nl.thehyve.ocdu.models.OcDefinitions.MetaData;
 import nl.thehyve.ocdu.models.OcUser;
 import nl.thehyve.ocdu.models.UploadSession;
 import nl.thehyve.ocdu.models.errors.ValidationErrorMessage;
 import nl.thehyve.ocdu.repositories.ClinicalDataRepository;
 import nl.thehyve.ocdu.repositories.EventRepository;
 import nl.thehyve.ocdu.repositories.SubjectRepository;
+import nl.thehyve.ocdu.validators.ClinicalDataOcChecks;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,10 +46,10 @@ public class ValidationService {
         List<ClinicalData> bySubmission = clinicalDataRepository.findBySubmission(submission);
         determineStudy(bySubmission, submission);
         OcUser submitter = submission.getOwner();
-        ArrayList<ValidationErrorMessage> validationErrorMessages = new ArrayList<>();
-        Study study = new Study("",submission.getStudy(),"");
-        openClinicaService.getMetadata(submitter.getUsername(), wsPwdHash, submitter.getOcEnvironment(), study);
-        return validationErrorMessages;
+        Study study = new Study(submission.getStudy(),submission.getStudy(),submission.getStudy());
+        MetaData metadata = openClinicaService.getMetadata(submitter.getUsername(), wsPwdHash, submitter.getOcEnvironment(), study);
+        ClinicalDataOcChecks checksRunner = new ClinicalDataOcChecks(metadata, bySubmission);
+        return checksRunner.getErrors();
     }
 
     public List<ValidationErrorMessage> getEventsErrors(UploadSession submission) {

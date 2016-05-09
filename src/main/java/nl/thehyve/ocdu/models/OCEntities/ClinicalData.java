@@ -160,9 +160,24 @@ public class ClinicalData implements OcEntity, UserSubmitted, EventReference {
         return crfVersion;
     }
 
-    ;
 
     public Integer getGroupRepeat() {
         return groupRepeat;
+    }
+
+    @Override
+    public String toString() {
+        return "ClinicalData{" +
+                "study='" + study + '\'' +
+                ", site='" + site + '\'' +
+                ", item='" + item + '\'' +
+                ", ssid='" + ssid + '\'' +
+                ", eventName='" + eventName + '\'' +
+                ", eventRepeat=" + eventRepeat +
+                ", crfName='" + crfName + '\'' +
+                ", crfVersion='" + crfVersion + '\'' +
+                ", groupRepeat=" + groupRepeat +
+                ", value='" + value + '\'' +
+                '}';
     }
 }

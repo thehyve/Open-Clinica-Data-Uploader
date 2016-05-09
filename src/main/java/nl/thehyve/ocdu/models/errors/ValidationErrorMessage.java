@@ -11,7 +11,7 @@ import java.util.List;
 
 public class ValidationErrorMessage {
 
-    private String generalMessage;
+    private String message;
     private List<String> offendingValues = new ArrayList<String>();
     private boolean isError = true; // Error by default
 
@@ -23,8 +23,8 @@ public class ValidationErrorMessage {
         isError = error;
     }
 
-    public ValidationErrorMessage(String generalMessage) {
-        this.generalMessage = generalMessage;
+    public ValidationErrorMessage(String message) {
+        this.message = message;
     }
 
     public void addOffendingValue(String value) {
@@ -41,7 +41,7 @@ public class ValidationErrorMessage {
         return "Value: " + value + " in: "+ data.toString();
     }
 
-    public String getGeneralMessage() {
-        return generalMessage;
+    public String getMessage() {
+        return message;
     }
 }

@@ -6,6 +6,7 @@ import nl.thehyve.ocdu.models.OCEntities.Study;
 import nl.thehyve.ocdu.models.OcDefinitions.MetaData;
 import nl.thehyve.ocdu.models.OcUser;
 import nl.thehyve.ocdu.models.UploadSession;
+import nl.thehyve.ocdu.models.errors.StudyDoesNotExist;
 import nl.thehyve.ocdu.models.errors.ValidationErrorMessage;
 import nl.thehyve.ocdu.repositories.ClinicalDataRepository;
 import nl.thehyve.ocdu.repositories.EventRepository;
@@ -46,10 +47,18 @@ public class ValidationService {
         List<ClinicalData> bySubmission = clinicalDataRepository.findBySubmission(submission);
         determineStudy(bySubmission, submission);
         OcUser submitter = submission.getOwner();
-        Study study = new Study(submission.getStudy(),submission.getStudy(),submission.getStudy());
+        Study study = new Study(submission.getStudy(), submission.getStudy(), submission.getStudy());
         MetaData metadata = openClinicaService.getMetadata(submitter.getUsername(), wsPwdHash, submitter.getOcEnvironment(), study);
-        ClinicalDataOcChecks checksRunner = new ClinicalDataOcChecks(metadata, bySubmission);
-        return checksRunner.getErrors();
+        List<ValidationErrorMessage> errors = new ArrayList<>();
+        if (metadata == null) {
+            StudyDoesNotExist studyError = new StudyDoesNotExist();
+            studyError.addOffendingValue(submission.getStudy());
+            errors.add(studyError);
+        } else {
+            ClinicalDataOcChecks checksRunner = new ClinicalDataOcChecks(metadata, bySubmission);
+            errors.addAll(checksRunner.getErrors());
+        }
+        return errors;
     }
 
     public List<ValidationErrorMessage> getEventsErrors(UploadSession submission) {

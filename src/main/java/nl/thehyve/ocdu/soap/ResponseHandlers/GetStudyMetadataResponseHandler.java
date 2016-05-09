@@ -1,8 +1,6 @@
 package nl.thehyve.ocdu.soap.ResponseHandlers;
 
-import nl.thehyve.ocdu.models.OcDefinitions.CRFDefinition;
-import nl.thehyve.ocdu.models.OcDefinitions.EventDefinition;
-import nl.thehyve.ocdu.models.OcDefinitions.MetaData;
+import nl.thehyve.ocdu.models.OcDefinitions.*;
 import org.springframework.security.authentication.AuthenticationCredentialsNotFoundException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
@@ -33,32 +31,47 @@ public class GetStudyMetadataResponseHandler extends OCResponseHandler {
 
     public static final String crfDefSelector = "//MetaDataVersion/FormDef";
     public static final String eventDefSelector = "//MetaDataVersion/StudyEventDef";
+    public static final String itemGroupDefSelector = "//MetaDataVersion/ItemGroupDef";
+    public static final String ITEM_DEFINITION_SELECTOR = "//MetaDataVersion/ItemDef";
     public static final String odmSelector = "//createResponse/odm";
     public static final String presentInEventSelector = ".//*[local-name()='PresentInEventDefinition']";
+    public static final String presentInCrfsSelector = ".//*[local-name()='PresentInForm']";
+    public static final String CRF_VERSION_SELECTOR = ".//*[local-name()='VersionDescription']/text()[1]";
+    public static final String itemGroupRefSelector = ".//*[local-name()='ItemGroupRef']";
+    public static final String itemRefSelector = ".//*[local-name()='ItemRef']";
+
 
     public static MetaData parseGetStudyMetadataResponse(SOAPMessage response) throws Exception { //TODO: handle exception
         Document odm = getOdm(response);
 
         MetaData metaData = new MetaData();
+        metaData.setStudyIdentifier("Study");
         NodeList crfDefsNodes = (NodeList) xpath.evaluate(crfDefSelector, odm, XPathConstants.NODESET);
         NodeList eventDefsNodes = (NodeList) xpath.evaluate(eventDefSelector, odm, XPathConstants.NODESET);
+        NodeList itemGroupDefNodes = (NodeList) xpath.evaluate(itemGroupDefSelector, odm, XPathConstants.NODESET);
+        NodeList itemDefNodes = (NodeList) xpath.evaluate(ITEM_DEFINITION_SELECTOR, odm, XPathConstants.NODESET);
+
         Map eventMap = parseEvents(eventDefsNodes);
         List<CRFDefinition> crfDefs = parseCrfs(crfDefsNodes, eventMap);
-        addToEvent(crfDefs, eventMap ,eventDefsNodes); // Mandatory in event is defined in EventDef
+        addToEvent(crfDefs, eventMap, eventDefsNodes); // Mandatory in event is defined in EventDef
 
         List<EventDefinition> events = new ArrayList<>();
         events.addAll(eventMap.values());
 
-        metaData.setEventDefinitions( events);
+        List<ItemDefinition> items = parseItemDefinitions(itemDefNodes);
+        List<ItemGroupDefinition> itemGroups = parseItemGroupDefinitions(itemGroupDefNodes, crfDefs, items);
+
+        metaData.setEventDefinitions(events);
+        metaData.setItemGroupDefinitions(itemGroups);
         return metaData;
     }
 
-    private static void addToEvent(List<CRFDefinition> crfDefs,Map<String,EventDefinition> events ,NodeList eventDefsNodes) throws XPathExpressionException {
-        for(int i = 0; i < eventDefsNodes.getLength(); i++) {
+    private static void addToEvent(List<CRFDefinition> crfDefs, Map<String, EventDefinition> events, NodeList eventDefsNodes) throws XPathExpressionException {
+        for (int i = 0; i < eventDefsNodes.getLength(); i++) {
             Node item = eventDefsNodes.item(i);
             String oid = item.getAttributes().getNamedItem("OID").getTextContent();
             NodeList formRefs = (NodeList) xpath.evaluate("./FormRef", item, XPathConstants.NODESET);
-            for (int j = 0; j < formRefs.getLength() ; j++) {
+            for (int j = 0; j < formRefs.getLength(); j++) {
                 Node formRef = formRefs.item(j);
                 String formOID = formRef.getAttributes().getNamedItem("FormOID").getTextContent();
                 String mandatory = formRef.getAttributes().getNamedItem("Mandatory").getTextContent();
@@ -84,7 +97,7 @@ public class GetStudyMetadataResponseHandler extends OCResponseHandler {
             throw new AuthenticationCredentialsNotFoundException("Authentication against OpenClinica unsuccessfull");
         }
         Node odmCDATANode = (Node) xpath.evaluate(odmSelector, document, XPathConstants.NODE);
-        String textContent = odmCDATANode.getTextContent();
+        String textContent = odmCDATANode.getTextContent(); //TODO: Add handling case when no ODM is served by PC
         Document odm = SoapUtils.unEscapeCDATAXML(textContent);
         return odm;
     }
@@ -92,7 +105,7 @@ public class GetStudyMetadataResponseHandler extends OCResponseHandler {
 
     private static Map<String, EventDefinition> parseEvents(NodeList eventDefsNodes) {
         HashMap<String, EventDefinition> events = new HashMap<>();
-        for(int i = 0; i < eventDefsNodes.getLength(); i++) {
+        for (int i = 0; i < eventDefsNodes.getLength(); i++) {
             Node item = eventDefsNodes.item(i);
             String oid = item.getAttributes().getNamedItem("OID").getTextContent();
             String name = item.getAttributes().getNamedItem("Name").getTextContent();
@@ -109,7 +122,7 @@ public class GetStudyMetadataResponseHandler extends OCResponseHandler {
         return events;
     }
 
-    private static List<CRFDefinition> parseCrfs(NodeList crfDefsNodes, Map<String, EventDefinition> events) {
+    private static List<CRFDefinition> parseCrfs(NodeList crfDefsNodes, Map<String, EventDefinition> events) throws XPathExpressionException {
         List<CRFDefinition> crfs = new ArrayList<>();
         for (int i = 0; i < crfDefsNodes.getLength(); i++) {
             Node crfNode = crfDefsNodes.item(i);
@@ -120,13 +133,135 @@ public class GetStudyMetadataResponseHandler extends OCResponseHandler {
             if (repeatingText.equals("Yes")) {
                 repeating = true;
             }
+            String version = getCrfVersion(crfNode);
             CRFDefinition newCrf = new CRFDefinition();
             newCrf.setName(name);
             newCrf.setOid(oid);
             newCrf.setRepeating(repeating);
+            newCrf.setVersion(version);
+            List<String> mandatoryItemGroups = getMandatory(crfNode, itemGroupRefSelector, "ItemGroupOID");
+            newCrf.setMandatoryItemGroups(mandatoryItemGroups);
             crfs.addAll(getCrfsInEvent(crfNode, newCrf, events)); // CRF Entity exists per Event
         }
         return crfs;
+    }
+
+    private static List<String> getMandatory(Node node, String xpathSelector, String attributeName) throws XPathExpressionException {
+        NodeList itemRefs = (NodeList) xpath.evaluate(xpathSelector, node, XPathConstants.NODESET);
+        List<String> mandatoryGroups = new ArrayList<>();
+        for (int i = 0; i < itemRefs.getLength(); i++) {
+            Node ref = itemRefs.item(i);
+            String itemOID = ref.getAttributes().getNamedItem(attributeName).getTextContent();
+            String mandatoryText = ref.getAttributes().getNamedItem("Mandatory").getTextContent();
+            if (mandatoryText.equals("Yes")) {
+                mandatoryGroups.add(itemOID);
+            }
+        }
+        return mandatoryGroups;
+    }
+
+    private static List<String> getItems(Node node, String xpathSelector, String attributeName) throws XPathExpressionException {
+        NodeList itemRefs = (NodeList) xpath.evaluate(xpathSelector, node, XPathConstants.NODESET);
+        List<String> items = new ArrayList<>();
+        for (int i = 0; i < itemRefs.getLength(); i++) {
+            Node ref = itemRefs.item(i);
+            String itemOID = ref.getAttributes().getNamedItem(attributeName).getTextContent();
+            items.add(itemOID);
+        }
+        return items;
+    }
+
+    private static List<ItemDefinition> parseItemDefinitions(NodeList itemDefNodes) {
+        List<ItemDefinition> items = new ArrayList<>();
+        for (int i = 0; i < itemDefNodes.getLength(); i++) {
+            Node item = itemDefNodes.item(i);
+            String oid = item.getAttributes().getNamedItem("OID").getTextContent();
+            String name = item.getAttributes().getNamedItem("Name").getTextContent();
+            String dataType = item.getAttributes().getNamedItem("DataType").getTextContent();
+            Node length1 = item.getAttributes().getNamedItem("Length");
+            String length= "0"; // Can be empty, zero means no restriction on length
+            if (length1 != null){
+                length = length1.getTextContent();
+            }
+            ItemDefinition itemDef = new ItemDefinition();
+            itemDef.setOid(oid);
+            itemDef.setName(name);
+            itemDef.setDataType(dataType);
+            itemDef.setLength(Integer.parseInt(length));
+            items.add(itemDef);
+        }
+        return items;
+    }
+
+    private static List<ItemGroupDefinition> parseItemGroupDefinitions(NodeList itemGroupDefNodes,
+                                                                       List<CRFDefinition> crfs,
+                                                                       List<ItemDefinition> items)
+            throws XPathExpressionException {
+        List<ItemGroupDefinition> itemGroupDefs = new ArrayList<>();
+        for (int i = 0; i < itemGroupDefNodes.getLength(); i++) {
+            Node itemGroupDefNode = itemGroupDefNodes.item(i);
+            String oid = itemGroupDefNode.getAttributes().getNamedItem("OID").getTextContent();
+            String name = itemGroupDefNode.getAttributes().getNamedItem("Name").getTextContent();
+            String repeatingText = itemGroupDefNode.getAttributes().getNamedItem("Repeating").getTextContent();
+            boolean repeating = false;
+            if (repeatingText.equals("Yes")) {
+                repeating = true;
+            }
+
+            ItemGroupDefinition groupDef = new ItemGroupDefinition();
+            groupDef.setName(name);
+            groupDef.setRepeating(repeating);
+            groupDef.setOid(oid);
+            List<String> mandatoryItems = getMandatory(itemGroupDefNode, itemRefSelector, "ItemOID");
+            List<String> allItems = getMandatory(itemGroupDefNode, itemRefSelector, "ItemOID");
+            addItems(groupDef, mandatoryItems, allItems, items);
+            List<ItemGroupDefinition> itemGroupInCrf = getItemGroupInCrf(itemGroupDefNode, groupDef, crfs);
+            itemGroupDefs.addAll(itemGroupInCrf);
+        }
+        return itemGroupDefs;
+    }
+
+    private static void addItems(ItemGroupDefinition groupDef,
+                                 List<String> mandatoryItems,
+                                 List<String> allItems,
+                                 List<ItemDefinition> allDefinedItems) {
+        allDefinedItems.stream().filter(itemDefinition -> allItems.contains(itemDefinition.getOid()))
+                .forEach(itemDefinition -> {
+                    ItemDefinition item = new ItemDefinition(itemDefinition);
+                    if (mandatoryItems.contains(itemDefinition.getOid())) {
+                        item.setMandatoryInGroup(true);
+                    }
+                    groupDef.addItem(item);
+                });
+    }
+
+    private static List<ItemGroupDefinition> getItemGroupInCrf(Node itemGroupDefNode,
+                                                               ItemGroupDefinition prototype,
+                                                               List<CRFDefinition> crfs) throws XPathExpressionException {
+        ArrayList<ItemGroupDefinition> itemGroupDefs = new ArrayList<>();
+        NodeList itemGroupNodes = (NodeList) xpath.evaluate(presentInCrfsSelector,
+                itemGroupDefNode, XPathConstants.NODESET);
+        for (int i = 0; i < itemGroupNodes.getLength(); i++) {
+            Node node = itemGroupNodes.item(i);
+            String formOID = node.getAttributes().getNamedItem("FormOID").getTextContent();
+            crfs.stream()
+                    .filter(crfDefinition -> crfDefinition.getOid().equals(formOID))
+                    .forEach(crfDefinition -> {
+                        ItemGroupDefinition groupDef = new ItemGroupDefinition(prototype);
+                        if (crfDefinition.getMandatoryItemGroups().contains(prototype.getOid())) {
+                            groupDef.setMandatoryInCrf(true);
+                        }
+                        crfDefinition.addItemGroupDef(groupDef);
+                        itemGroupDefs.add(groupDef);
+                    });
+
+        }
+        return itemGroupDefs;
+    }
+
+
+    private static String getCrfVersion(Node crfNode) throws XPathExpressionException {
+        return (String) xpath.evaluate(CRF_VERSION_SELECTOR, crfNode, XPathConstants.STRING);
     }
 
     private static List<CRFDefinition> getCrfsInEvent(Node crfNode, CRFDefinition prototype, Map<String, EventDefinition> events) {
@@ -134,12 +269,12 @@ public class GetStudyMetadataResponseHandler extends OCResponseHandler {
         try {
             NodeList crfNodes = (NodeList) xpath.evaluate(presentInEventSelector,
                     crfNode, XPathConstants.NODESET);
-            for (int i = 0; i < crfNodes.getLength(); i ++) {
+            for (int i = 0; i < crfNodes.getLength(); i++) {
                 Node node = crfNodes.item(i);
                 CRFDefinition crf = new CRFDefinition(prototype);
                 String studyEventOID = node.getAttributes().getNamedItem("StudyEventOID").getTextContent();
                 crf.setEvent(events.get(studyEventOID));
-                String hidden = node.getAttributes().getNamedItem("StudyEventOID").getTextContent();
+                String hidden = node.getAttributes().getNamedItem("StudyEventOID").getTextContent();//TODO: replace with XPATH selector
                 crf.setHidden(Boolean.parseBoolean(hidden));
                 crfs.add(crf);
             }

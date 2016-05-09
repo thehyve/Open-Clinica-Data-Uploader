@@ -26,4 +26,13 @@ public class Study {
     public String getName() {
         return name;
     }
+
+    @Override
+    public String toString() {
+        return "Study{" +
+                "identifier='" + identifier + '\'' +
+                ", oid='" + oid + '\'' +
+                ", name='" + name + '\'' +
+                '}';
+    }
 }

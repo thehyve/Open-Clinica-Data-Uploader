@@ -1,6 +1,8 @@
 package nl.thehyve.ocdu.models.OcDefinitions;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by piotrzakrzewski on 01/05/16.
@@ -18,6 +20,37 @@ public class CRFDefinition {
     private String oid;
     private String name;
     private boolean repeating;
+    private String version;
+
+    @Transient
+    private List<String> mandatoryItemGroups = new ArrayList<>();
+
+    @OneToMany(targetEntity = ItemGroupDefinition.class)
+    private List<ItemGroupDefinition> itemGroups = new ArrayList<>();
+
+    public List<ItemGroupDefinition> getItemGroups() {
+        return itemGroups;
+    }
+
+    public void setItemGroups(List<ItemGroupDefinition> itemGroups) {
+        this.itemGroups = itemGroups;
+    }
+
+    public List<String> getMandatoryItemGroups() {
+        return mandatoryItemGroups;
+    }
+
+    public void setMandatoryItemGroups(List<String> mandatoryItemGroups) {
+        this.mandatoryItemGroups = mandatoryItemGroups;
+    }
+
+    public String getVersion() {
+        return version;
+    }
+
+    public void setVersion(String version) {
+        this.version = version;
+    }
 
     public String getOid() {
         return oid;
@@ -79,8 +112,15 @@ public class CRFDefinition {
         this.name = prototype.getName();
         this.oid = prototype.getOid();
         this.repeating = prototype.isRepeating();
+        this.version = prototype.getVersion();
+        this.mandatoryItemGroups = prototype.getMandatoryItemGroups();
+        this.itemGroups = prototype.getItemGroups();
     }
 
     public CRFDefinition() {
+    }
+
+    public void addItemGroupDef(ItemGroupDefinition groupDef) {
+        this.itemGroups.add(groupDef);
     }
 }

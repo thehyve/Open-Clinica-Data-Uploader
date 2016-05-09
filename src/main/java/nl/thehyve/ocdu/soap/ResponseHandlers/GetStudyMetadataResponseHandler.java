@@ -43,9 +43,12 @@ public class GetStudyMetadataResponseHandler extends OCResponseHandler {
 
     public static MetaData parseGetStudyMetadataResponse(SOAPMessage response) throws Exception { //TODO: handle exception
         Document odm = getOdm(response);
+        if (odm == null) {
+            return null;
+        }
 
         MetaData metaData = new MetaData();
-        metaData.setStudyIdentifier("Study");
+        metaData.setStudyIdentifier("Study");//TODO: add retrieving study identifier from the metadata
         NodeList crfDefsNodes = (NodeList) xpath.evaluate(crfDefSelector, odm, XPathConstants.NODESET);
         NodeList eventDefsNodes = (NodeList) xpath.evaluate(eventDefSelector, odm, XPathConstants.NODESET);
         NodeList itemGroupDefNodes = (NodeList) xpath.evaluate(itemGroupDefSelector, odm, XPathConstants.NODESET);
@@ -97,6 +100,9 @@ public class GetStudyMetadataResponseHandler extends OCResponseHandler {
             throw new AuthenticationCredentialsNotFoundException("Authentication against OpenClinica unsuccessfull");
         }
         Node odmCDATANode = (Node) xpath.evaluate(odmSelector, document, XPathConstants.NODE);
+        if (odmCDATANode == null) {
+            return null;
+        }
         String textContent = odmCDATANode.getTextContent(); //TODO: Add handling case when no ODM is served by PC
         Document odm = SoapUtils.unEscapeCDATAXML(textContent);
         return odm;

@@ -51,7 +51,7 @@ public class DataService {
         studyNode.setName(studyIdentifier);
         List<EventDefinition> eventDefinitions = metaData.getEventDefinitions();
         List<MetaDataTree> studyChildren = new ArrayList<>();
-        studyNode.setChildren(studyChildren );
+        studyNode.setChildren(studyChildren);
         eventDefinitions.stream().forEach(eventDefinition -> {
             String studyEventOID = eventDefinition.getStudyEventOID();
             MetaDataTree eventNode = new MetaDataTree();
@@ -77,7 +77,9 @@ public class DataService {
                 });
 
                 List<MetaDataTree> itemNodes = items.stream()
-                        .map(itemDefinition -> new MetaDataTree(itemDefinition.getOid()))
+                        .map(itemDefinition -> itemDefinition.getOid())
+                        .collect(Collectors.toSet())
+                        .stream().map(s -> new MetaDataTree(s))
                         .collect(Collectors.toList());
                 versionNode.setChildren(itemNodes);
             });
@@ -164,7 +166,7 @@ public class DataService {
             this.children = children;
         }
 
-        public  void addChild(MetaDataTree node) {
+        public void addChild(MetaDataTree node) {
             this.children.add(node);
         }
     }

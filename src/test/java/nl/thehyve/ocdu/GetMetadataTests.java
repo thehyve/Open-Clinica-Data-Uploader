@@ -119,9 +119,15 @@ public class GetMetadataTests {
             List<ItemDefinition> items = itemGroupDefinition.getItems();
             assertTrue(items.size() > 0);
             allItemdefs.addAll(items);
+            items.stream().forEach(item -> assertTrue(isUnique(item, items)));
         });
         assertEquals(totalExpectedItemDefs, allItemdefs.size());
     }
 
+
+    private boolean isUnique(ItemDefinition item, List<ItemDefinition> collection ) {
+        long count = collection.stream().filter(itemDefinition -> itemDefinition.getOid().equals(item.getOid())).count();
+        return count == 1;
+    }
 
 }

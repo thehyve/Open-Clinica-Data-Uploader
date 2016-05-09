@@ -6,7 +6,7 @@
 
 var displayMessages = function displayMessages(data) {
     if(data.length == 0) {
-        var html = '<h2>Data valiation is successful!</h2>';
+        var html = '<h2>Data validation is successful!</h2>';
         $('#feedback-tables').append(html);
     }//if
     else {

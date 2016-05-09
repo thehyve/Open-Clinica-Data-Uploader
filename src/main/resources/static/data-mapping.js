@@ -14,7 +14,8 @@ var treeg, listg;
 var tipDiv;
 var leaf_depth = 5;
 var zoomListener;
-var rect_w = 100, rect_h = 15;//default rect size
+var rect_w = 150, rect_h = 18;//default rect size
+var text_cut_index = 13;
 // update and store mouse position
 var mousepos = {x: 0, y: 0};
 $(document).on("mousemove", function (event) {
@@ -44,7 +45,7 @@ $(document).ready(function () {
         $.ajax({
             url: "/metadata-tree",
             type: "GET",
-            cache: false,
+            // cache: false,
             success: metadataCallSuccess,
             error: function () {
                 console.log("Fetching metadata from the server failed.");
@@ -61,12 +62,14 @@ $(document).ready(function () {
         collapseLeaves(root);
         updateOCTree(root);
         handleOCItemInteraction();
+        positionUsrList(usr_item_data, _duration);
     });
 
     $('#expand-all-btn').click(function () {
         expandLeaves(root);
         updateOCTree(root);
         handleOCItemInteraction();
+        positionUsrList(usr_item_data, _duration);
     });
 
     function collapseLeaves(d) {
@@ -82,8 +85,8 @@ $(document).ready(function () {
     }
 
     function expandLeaves(d) {
-        for(var i=0; i<d._children.length; i++) {
-            var child = d._children[i];
+        for(var i=0; i<d.children.length; i++) {
+            var child = d.children[i];
             if(child.depth == leaf_depth-1) {
                 expand(child);
             }
@@ -265,7 +268,10 @@ function visualizeOCTree(treeData) {
     viewerWidth = $(window).width();
     viewerHeight = 800; // $(document).height();
     tree = d3.layout.tree()
-        .size([viewerHeight, viewerWidth]);
+        .size([viewerHeight, viewerWidth])
+        .separation(function (a,b) {
+            return 50;
+        });
 
     // define a d3 diagonal projection for use by the node paths later on.
     diagonal = d3.svg.diagonal()
@@ -417,7 +423,9 @@ function updateOCTree(source) {
             var len = this.getComputedTextLength();
             if (len > rect_w) {
                 d.shortTexted = true;
-                return d.name.substring(0, 9) + "...";
+                //rect_w = 100, index = 9
+                //rect_w = 150, index = 12
+                return d.name.substring(0, text_cut_index) + "...";
             }
             return d.name;
         });
@@ -611,6 +619,14 @@ function handleOCItemInteraction() {
 
 function visualizeUsrList(usrData) {
     listg = d3.select('#baseSvg').append('g').attr('id', 'listg');
+    listg.append('line')
+        .attr('x1', 700 + 3*rect_w - 2)
+        .attr('y1', 0)
+        .attr('x2', 700 + 3*rect_w - 2)
+        .attr('y2', 20000)
+        .style('stroke', 'grey')
+        .style('stroke-width', 1);
+
     usr_item_data = [];
     var usr_path_names = ['CRFNAME', 'CRFVERSION', 'EVENTNAME', 'EVENTREPEAT', 'STUDYSUBJECTID', 'STUDY'];
     var usr_item_names = [];
@@ -652,7 +668,7 @@ function visualizeUsrList(usrData) {
             var len = this.getComputedTextLength();
             if (len > rect_w) {
                 d.shortTexted = true;
-                return d.usrItemName.substring(0, 9) + "...";
+                return d.usrItemName.substring(0, text_cut_index) + "...";
             }
             return d.usrItemName;
         });
@@ -696,7 +712,7 @@ function visualizeUsrList(usrData) {
             d.shortTexted = false;
             if (len > rect_w) {
                 d.shortTexted = true;
-                return d.usrItemName.substring(0, 9) + "...";
+                return d.usrItemName.substring(0, text_cut_index) + "...";
             }
             return d.usrItemName;
         });
@@ -766,7 +782,7 @@ function positionUsrList(usr_item_data, time) {
         var uitem = usr_item_data[i];
         //position the usr items when they are not mapped
         if (!uitem.mapped) {
-            uitem.x = 1000;
+            uitem.x = 700 + 3*rect_w;
             uitem.y = 15 + i * (rect_h + 5);
         }
         //position the usr items when they are mapped

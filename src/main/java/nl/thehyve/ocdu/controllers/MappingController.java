@@ -2,6 +2,7 @@ package nl.thehyve.ocdu.controllers;
 
 import nl.thehyve.ocdu.models.OcItemMapping;
 import nl.thehyve.ocdu.models.UploadSession;
+import nl.thehyve.ocdu.services.DataService;
 import nl.thehyve.ocdu.services.MappingService;
 import nl.thehyve.ocdu.services.OcUserService;
 import nl.thehyve.ocdu.services.UploadSessionService;
@@ -29,6 +30,16 @@ public class MappingController {
 
     @Autowired
     UploadSessionService uploadSessionService;
+
+    @Autowired
+    DataService dataService;
+
+    @RequestMapping(value = "/user-items")
+    public ResponseEntity<List<String>> getUserItems(HttpSession session) {
+        UploadSession currentUploadSession = uploadSessionService.getCurrentUploadSession(session);
+        List<String> userItems = dataService.getUserItems(currentUploadSession);
+        return new ResponseEntity<>(userItems,HttpStatus.OK);
+    }
 
     @RequestMapping(value = "/upload-mapping", method = RequestMethod.POST)
     public ResponseEntity<List<OcItemMapping>> acceptMapping(HttpSession session, @RequestBody List<OcItemMapping> mappings) {

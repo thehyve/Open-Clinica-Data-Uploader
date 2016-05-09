@@ -36,20 +36,25 @@ $(document).ready(function () {
         usr_data = data;
         visualizeUsrList(usr_data);
 
-        var metadataCallSuccess = function (data) {
-            console.log('metadataTree call successful');
+        // var metadataCallSuccess = function (data) {
+        //     console.log('metadataTree call successful');
+        //     oc_data = data;
+        //     visualizeOCTree(data);
+        // };
+        //
+        // $.ajax({
+        //     url: "/metadata-tree",
+        //     type: "GET",
+        //     // cache: false,
+        //     success: metadataCallSuccess,
+        //     error: function () {
+        //         console.log("Fetching metadata from the server failed.");
+        //     }
+        // });
+
+        d3.json('data/test-oc-data.json', function (data) {
             oc_data = data;
             visualizeOCTree(data);
-        };
-
-        $.ajax({
-            url: "/metadata-tree",
-            type: "GET",
-            // cache: false,
-            success: metadataCallSuccess,
-            error: function () {
-                console.log("Fetching metadata from the server failed.");
-            }
         });
 
 

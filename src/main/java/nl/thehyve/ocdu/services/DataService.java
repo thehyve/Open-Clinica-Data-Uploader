@@ -43,11 +43,15 @@ public class DataService {
 
     private MetaDataTree buildTree(MetaData metaData) {
         String studyIdentifier = metaData.getStudyIdentifier();
-        MetaDataTree root = new MetaDataTree();
-        root.setName(studyIdentifier);
+
+        MetaDataTree root = new MetaDataTree("root");
+
+        MetaDataTree studyNode = new MetaDataTree();
+        root.addChild(studyNode);
+        studyNode.setName(studyIdentifier);
         List<EventDefinition> eventDefinitions = metaData.getEventDefinitions();
         List<MetaDataTree> studyChildren = new ArrayList<>();
-        root.setChildren(studyChildren );
+        studyNode.setChildren(studyChildren );
         eventDefinitions.stream().forEach(eventDefinition -> {
             String studyEventOID = eventDefinition.getStudyEventOID();
             MetaDataTree eventNode = new MetaDataTree();
@@ -135,7 +139,7 @@ public class DataService {
     public class MetaDataTree {
         private String name;
         //private MetaDataTree parent;
-        private List<MetaDataTree> children;
+        private List<MetaDataTree> children = new ArrayList<>();
 
         public MetaDataTree(String name) {
             this.name = name;
@@ -158,6 +162,10 @@ public class DataService {
 
         public void setChildren(List<MetaDataTree> children) {
             this.children = children;
+        }
+
+        public  void addChild(MetaDataTree node) {
+            this.children.add(node);
         }
     }
 }

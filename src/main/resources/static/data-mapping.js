@@ -16,51 +16,64 @@ var leaf_depth = 5;
 var zoomListener;
 var rect_w = 100, rect_h = 15;//default rect size
 // update and store mouse position
-var mousepos = {x:0, y:0};
-$( document ).on( "mousemove", function( event ) {
+var mousepos = {x: 0, y: 0};
+$(document).on("mousemove", function (event) {
     var offset = $('#tree-container').offset();
     mousepos.x = event.pageX - offset.left;
     mousepos.y = event.pageY - offset.top; //console.log(mousepos);
 });
-$( window ).on('resize', function() {
+$(window).on('resize', function () {
     //resize base svg
-    baseSvg.attr('width', $( window ).width());
+    baseSvg.attr('width', $(window).width());
 })
 
 // initializing and button listeners
-$(document).ready(function() {
+$(document).ready(function () {
 
-    d3.json('data/test-usr-data.json', function(data) {
+    d3.json('data/test-usr-data.json', function (data) {
         initialize();
         usr_data = data;
         visualizeUsrList(usr_data);
-        d3.json('data/test-oc-data.json', function (data) {
-            oc_data = data;
-            visualizeOCTree(oc_data);
+
+        var metadataCallSuccess = function (data) {
+            console.log('metadataTree call successful');
+            visualizeOCTree(data);
+        };
+
+        $.ajax({
+            url: "/metadata-tree",
+            type: "GET",
+            cache: false,
+            success: metadataCallSuccess,
+            error: function () {
+                console.log("Fetching metadata from the server failed.");
+            }
         });
-        d3.json('data/test-map-data.json', function(data) {
+
+
+        d3.json('data/test-map-data.json', function (data) {
             map_data = data;
         });
     });
 
     //for testing: mapping data
-    $('#auto-map-btn').click(function(){
+    $('#auto-map-btn').click(function () {
         clearMapping();
-        for(var i=0; i<map_data.length; i++) {
+        for (var i = 0; i < map_data.length; i++) {
             var pair = map_data[i];
             var ocd = findOCitem(pair['study'], pair['eventName'], pair['crfName'], pair['crfVersion'], pair['ocItemName']);
             var usritem_obj = findUsrItem(pair['usrItemName']);
             //console.log(pair); console.log(ocd);
 
-            if(ocd !== null && usritem_obj !== null) {
+            if (ocd !== null && usritem_obj !== null) {
                 var ocname = ocd.name;
                 var ocCRFv = ocd.parent.name;
                 var ocCRF = ocd.parent.parent.name;
                 var ocEventName = ocd.parent.parent.parent.name;
                 var ocStudy = ocd.parent.parent.parent.parent.name;
-                var path = ocStudy+"\t"+ocEventName+"\t"+ocCRF+"\t"+ocCRFv+"\t"+ocname;
+                var path = ocStudy + "\t" + ocEventName + "\t" + ocCRF + "\t" + ocCRFv + "\t" + ocname;
                 var d = usritem_obj.datum();
-                if(mapped_ocitems.indexOf(path) == -1) {
+                if (mapped_ocitems.indexOf(path) == -1) {
                     mapped_ocitems.push(path);
                     d.mapped = true;
                     d.ocItemName = ocname;
@@ -76,21 +89,21 @@ $(document).ready(function() {
         }
 
         function findOCitem(study, event, crf, crfv, itemname) {
-            for(var _study in oc_data.children) {
+            for (var _study in oc_data.children) {
                 _study = oc_data.children[_study]; //console.log(_study);
-                if(_study.name == study) {
-                    for(var _event in _study.children) {
+                if (_study.name == study) {
+                    for (var _event in _study.children) {
                         _event = _study.children[_event]; //console.log(_event);
-                        if(_event.name == event) {
-                            for(var _crf in _event.children) {
+                        if (_event.name == event) {
+                            for (var _crf in _event.children) {
                                 _crf = _event.children[_crf]; //console.log(_crf);
-                                if(_crf.name == crf) {
-                                    for(var _crfv in _crf.children) {
+                                if (_crf.name == crf) {
+                                    for (var _crfv in _crf.children) {
                                         _crfv = _crf.children[_crfv]; //console.log(_crfv);
-                                        if(_crfv.name == crfv) {
-                                            for(var _item in _crfv.children) {
+                                        if (_crfv.name == crfv) {
+                                            for (var _item in _crfv.children) {
                                                 _item = _crfv.children[_item]; //console.log(_item);
-                                                if(_item.name == itemname) {
+                                                if (_item.name == itemname) {
                                                     return _item;
                                                 }
                                             }
@@ -107,8 +120,8 @@ $(document).ready(function() {
 
         function findUsrItem(itemname) {
             var item = null;
-            d3.selectAll('.usritem').each(function(d) {
-                if(d.usrItemName == itemname) {
+            d3.selectAll('.usritem').each(function (d) {
+                if (d.usrItemName == itemname) {
                     item = d3.select(this);
                 }
             });
@@ -117,9 +130,9 @@ $(document).ready(function() {
     });//auto-map-btn click
 
     function clearMapping() {
-        for(var i=0; i<usr_item_data.length; i++) {
+        for (var i = 0; i < usr_item_data.length; i++) {
             var d = usr_item_data[i];
-            if(d.mapped) {
+            if (d.mapped) {
                 var idx = mapped_ocitems.indexOf(d.ocPath);
                 mapped_ocitems.splice(idx, 1);
                 d.mapped = false;
@@ -135,16 +148,16 @@ $(document).ready(function() {
         positionUsrList(usr_item_data);
     }
 
-    $('#clear-map-btn').click(function() {
+    $('#clear-map-btn').click(function () {
         clearMapping();
     });
 
-    $('#download-map-btn').click(function() {
+    $('#download-map-btn').click(function () {
         var output = [];
 
-        for(var i=0; i<usr_item_data.length; i++) {
+        for (var i = 0; i < usr_item_data.length; i++) {
             var d = usr_item_data[i];
-            if(d.mapped) {
+            if (d.mapped) {
                 var item = {};
                 item['study'] = d.ocStudy;
                 item['eventName'] = d.ocEventName;
@@ -158,13 +171,13 @@ $(document).ready(function() {
 
         var zip = new JSZip();
         zip.file("my_mapping.json", JSON.stringify(output));
-        var content = zip.generate({type:"blob"});
+        var content = zip.generate({type: "blob"});
         saveAs(content, "my_mapping.zip");
     });
 
-    $('#map-proceed-btn').click(function() {
+    $('#map-proceed-btn').click(function () {
         var isValid = true;
-        if(isValid) {
+        if (isValid) {
             window.location.replace(baseApp + "/patients");
         }
     })
@@ -173,13 +186,14 @@ $(document).ready(function() {
 
 
 function initialize() {
-    var viewerWidth = $( window ).width();
+    var viewerWidth = $(window).width();
     var viewerHeight = 800; // $(document).height();
     // Define the zoom function for the zoomable tree
     function zoom() {
         treeg.attr("transform", "translate(" + d3.event.translate + ")scale(" + d3.event.scale + ")");
         listg.attr("transform", "translate(" + d3.event.translate + ")scale(" + d3.event.scale + ")");
     }
+
     // define the zoomListener which calls the zoom function on the "zoom" event constrained within the scaleExtents
     zoomListener = d3.behavior.zoom().scaleExtent([0.1, 3]).on("zoom", zoom);
 
@@ -187,7 +201,7 @@ function initialize() {
     baseSvg = d3.select("#tree-container")
         .append("svg")
         .attr("class", "overlay")
-        .attr('id','baseSvg')
+        .attr('id', 'baseSvg')
         .attr("width", viewerWidth)
         .attr("height", viewerHeight)
         .call(zoomListener)
@@ -208,14 +222,14 @@ function visualizeOCTree(treeData) {
     var root;
 
     // size of the diagram
-    var viewerWidth = $( window ).width();
+    var viewerWidth = $(window).width();
     var viewerHeight = 800; // $(document).height();
     var tree = d3.layout.tree()
         .size([viewerHeight, viewerWidth]);
 
     // define a d3 diagonal projection for use by the node paths later on.
     var diagonal = d3.svg.diagonal()
-        .projection(function(d) {
+        .projection(function (d) {
             return [d.y, d.x];
         });
 
@@ -235,11 +249,11 @@ function visualizeOCTree(treeData) {
     }
 
     // Call visit function to establish maxLabelLength
-    visit(treeData, function(d) {
+    visit(treeData, function (d) {
         totalNodes++;
         maxLabelLength = Math.max(d.name.length, maxLabelLength);
 
-    }, function(d) {
+    }, function (d) {
         return d.children && d.children.length > 0 ? d.children : null;
     });
 
@@ -247,10 +261,11 @@ function visualizeOCTree(treeData) {
     // sort the tree according to the node names
 
     function sortTree() {
-        tree.sort(function(a, b) {
+        tree.sort(function (a, b) {
             return b.name.toLowerCase() < a.name.toLowerCase() ? 1 : -1;
         });
     }
+
     // Sort the tree initially incase the JSON isn't in a sorted order.
     sortTree();
 
@@ -263,6 +278,7 @@ function visualizeOCTree(treeData) {
             d.children = null;
         }
     }
+
     function expand(d) {
         d.collapsed = false;
         if (d._children) {
@@ -271,6 +287,7 @@ function visualizeOCTree(treeData) {
             d._children = null;
         }
     }
+
     // Toggle children function
     function toggleChildren(d) {
         if (d.children) {
@@ -283,14 +300,15 @@ function visualizeOCTree(treeData) {
 
     // Toggle children on click.
     var ready_for_second_click = true;
+
     function click(d) {
         var event = d3.event;
-        window.setTimeout(function() {
+        window.setTimeout(function () {
             ready_for_second_click = true;
         }, 1000);
         if (d3.event.defaultPrevented) return; // click suppressed
 
-        if(ready_for_second_click) {
+        if (ready_for_second_click) {
             d = toggleChildren(d);
             update(d);
             interactWithItems();
@@ -305,13 +323,13 @@ function visualizeOCTree(treeData) {
         // This prevents the layout appearing squashed when new nodes are made visible or appearing sparse when nodes are removed
         // This makes the layout more consistent.
         var levelWidth = [1];
-        var childCount = function(level, n) {
+        var childCount = function (level, n) {
 
             if (n.children && n.children.length > 0) {
                 if (levelWidth.length <= level + 1) levelWidth.push(0);
 
                 levelWidth[level + 1] += n.children.length;
-                n.children.forEach(function(d) {
+                n.children.forEach(function (d) {
                     childCount(level + 1, d);
                 });
             }
@@ -325,7 +343,7 @@ function visualizeOCTree(treeData) {
             links = tree.links(nodes);
 
         // Set widths between levels based on maxLabelLength.
-        nodes.forEach(function(d) {
+        nodes.forEach(function (d) {
             // d.y = (d.depth * (maxLabelLength * 10)); //maxLabelLength * 10px
             // alternatively to keep a fixed scale one can set a fixed depth per level
             // Normalize for fixed-depth by commenting out below line
@@ -334,22 +352,22 @@ function visualizeOCTree(treeData) {
 
         // Update the nodes…
         node = treeg.selectAll("g.node")
-            .data(nodes, function(d) {
+            .data(nodes, function (d) {
                 return d.id || (d.id = ++i);
             });
 
         // Enter any new nodes at the parent's previous position.
         var nodeEnter = node.enter().append("g")
             .attr("class", "node")
-            .attr("transform", function(d) {
+            .attr("transform", function (d) {
                 return "translate(" + source.y0 + "," + source.x0 + ")";
             })
             .on('click', click);
 
-        nodeEnter.each(function(d,i){
+        nodeEnter.each(function (d, i) {
             var node = d3.select(this);
-            if((d.children == null && d._children) || d.children) {
-                node.append('circle').attr('class', 'nodeCircle').attr('r',0);
+            if ((d.children == null && d._children) || d.children) {
+                node.append('circle').attr('class', 'nodeCircle').attr('r', 0);
             }
             else {
                 node.append('rect').attr('class', 'itemRect')
@@ -362,39 +380,41 @@ function visualizeOCTree(treeData) {
         });
 
         nodeEnter.append("text")
-            .attr("x", function(d) {
+            .attr("x", function (d) {
                 return d.children || d._children ? -10 : 10;
             })
             .attr("dy", ".35em")
             .attr('class', 'nodeText')
-            .attr("text-anchor", function(d) {
+            .attr("text-anchor", function (d) {
                 return d.children || d._children ? "end" : "start";
             })
-            .text(function(d) {
+            .text(function (d) {
                 return d.name;
             });
 
-        node.select('text').text(function(d) {return d.name;});
+        node.select('text').text(function (d) {
+            return d.name;
+        });
 
 
         // Update the text to reflect whether node has children or not.
         node.select('text')
-            .attr("x", function(d) {
+            .attr("x", function (d) {
                 return d.children || d._children ? -10 : 10;
             })
-            .attr('dy', function(d) {
-                return d.children || d._children ? 5 : rect_h/1.2;
+            .attr('dy', function (d) {
+                return d.children || d._children ? 5 : rect_h / 1.2;
             })
-            .attr("text-anchor", function(d) {
+            .attr("text-anchor", function (d) {
                 return d.children || d._children ? "end" : "start";
             })
-            .text(function(d) {
-                if(d.depth == leaf_depth ) {
+            .text(function (d) {
+                if (d.depth == leaf_depth) {
                     d.shortTexted = false;
                     var len = this.getComputedTextLength();
-                    if(len > rect_w)  {
+                    if (len > rect_w) {
                         d.shortTexted = true;
-                        return d.name.substring(0,9) + "...";
+                        return d.name.substring(0, 9) + "...";
                     }
                 }
                 return d.name;
@@ -405,17 +425,17 @@ function visualizeOCTree(treeData) {
         node.select("circle").attr("r", 5);
 
         node.select('.nodeCircle')
-            .style("fill", function(d) {
+            .style("fill", function (d) {
                 return d._children ? "lightsteelblue" : "#fff";
             });
 
         // Transition nodes to their new position.
         var nodeUpdate = node.transition()
             .duration(duration)
-            .attr("transform", function(d) {
+            .attr("transform", function (d) {
                 d.y -= 50;
-                if(d.depth == leaf_depth) {
-                    return "translate(" + d.y + "," + (d.x-rect_h/2) + ")";
+                if (d.depth == leaf_depth) {
+                    return "translate(" + d.y + "," + (d.x - rect_h / 2) + ")";
                 }
                 else return "translate(" + d.y + "," + d.x + ")";
             });
@@ -426,7 +446,7 @@ function visualizeOCTree(treeData) {
         // Transition exiting nodes to the parent's new position.
         var nodeExit = node.exit().transition()
             .duration(duration)
-            .attr("transform", function(d) {
+            .attr("transform", function (d) {
                 return "translate(" + source.y + "," + source.x + ")";
             })
             .remove();
@@ -439,14 +459,14 @@ function visualizeOCTree(treeData) {
 
         // Update the links…
         var link = treeg.selectAll("path.link")
-            .data(links, function(d) {
+            .data(links, function (d) {
                 return d.target.id;
             });
 
         // Enter any new links at the parent's previous position.
         link.enter().insert("path", "g")
             .attr("class", "link")
-            .attr("d", function(d) {
+            .attr("d", function (d) {
                 var o = {
                     x: source.x0,
                     y: source.y0
@@ -465,7 +485,7 @@ function visualizeOCTree(treeData) {
         // Transition exiting nodes to the parent's new position.
         link.exit().transition()
             .duration(duration)
-            .attr("d", function(d) {
+            .attr("d", function (d) {
                 var o = {
                     x: source.x,
                     y: source.y
@@ -478,7 +498,7 @@ function visualizeOCTree(treeData) {
             .remove();
 
         // Stash the old positions for transition.
-        nodes.forEach(function(d) {
+        nodes.forEach(function (d) {
             d.x0 = d.x;
             d.y0 = d.y;
         });
@@ -489,43 +509,47 @@ function visualizeOCTree(treeData) {
          * ------ item mouse over/out behavior ------
          */
         function itemover(d) {
-            if(d.shortTexted) {
+            if (d.shortTexted) {
                 tipDiv.transition()
                     .duration(200)
                     .style("opacity", .95);
-                tipDiv.html('<span style="font-size:18px;">'+d.name+'</span>')
+                tipDiv.html('<span style="font-size:18px;">' + d.name + '</span>')
                     .style("left", (d3.event.pageX) + "px")
                     .style("top", (d3.event.pageY - 28) + "px");
             }
             adjustColors(d, true);
             selectedOCItem = d3.select(this);
         }
+
         function itemout(d) {
             tipDiv.transition()
                 .style("opacity", 0);
             adjustColors(d, false);
             selectedOCItem = null;
         }
+
         function adjustColors(d, highlight) {
             traceBackward(d, highlight);
             traceForward(d, highlight);
-            d3.selectAll('.node').each(function(d){
+            d3.selectAll('.node').each(function (d) {
                 d3.select(this).select('circle')
                     .classed('highlighted', d.highlight);
                 d3.select(this).select('rect')
                     .classed('highlighted', d.highlight);
             });
         }
+
         function traceBackward(d, highlight) {
             d.highlight = highlight;
-            if(d.depth > 0 && d.parent) {
+            if (d.depth > 0 && d.parent) {
                 traceBackward(d.parent, highlight);
             }
         }
+
         function traceForward(d, highlight) {
             d.highlight = highlight;
-            if(d.depth < leaf_depth && d.children) {
-                for(var i=0; i<d.children.length; i++) {
+            if (d.depth < leaf_depth && d.children) {
+                for (var i = 0; i < d.children.length; i++) {
                     traceForward(d.children[i], highlight);
                 }
             }
@@ -553,10 +577,10 @@ function visualizeUsrList(usrData) {
     usr_item_data = [];
     var usr_path_names = ['CRFNAME', 'CRFVERSION', 'EVENTNAME', 'EVENTREPEAT', 'STUDYSUBJECTID', 'STUDY'];
     var usr_item_names = [];
-    for(var i=0; i<usrData.length; i++) {
-        for(var key in usrData[i]) {
+    for (var i = 0; i < usrData.length; i++) {
+        for (var key in usrData[i]) {
             var upper_key = key.toUpperCase();
-            if(usr_path_names.indexOf(upper_key) == -1 && usr_item_names.indexOf(key) == -1) {
+            if (usr_path_names.indexOf(upper_key) == -1 && usr_item_names.indexOf(key) == -1) {
                 var listitem = {};
                 listitem.usrItemName = key;
                 listitem.mapped = false;
@@ -580,18 +604,18 @@ function visualizeUsrList(usrData) {
         .attr('width', rect_w).attr('height', rect_h);
     usritem.append('text')
         .attr('dx', 10)
-        .attr('dy', rect_h/1.2)
+        .attr('dy', rect_h / 1.2)
         .attr('text-anchor', 'start')
-        .text(function(d) {
+        .text(function (d) {
             return d.usrItemName;
         });
     usritem.select('text')
-        .text(function(d) {
+        .text(function (d) {
             d.shortTexted = false;
             var len = this.getComputedTextLength();
-            if(len > rect_w)  {
+            if (len > rect_w) {
                 d.shortTexted = true;
-                return d.usrItemName.substring(0,9) + "...";
+                return d.usrItemName.substring(0, 9) + "...";
             }
             return d.usrItemName;
         });
@@ -608,13 +632,13 @@ function visualizeUsrList(usrData) {
     positionUsrList(usr_item_data);
 
     function usrItemMouseOver(d) {
-        d3.select(this).select('rect').style('fill','Orange');
+        d3.select(this).select('rect').style('fill', 'Orange');
         var len = computeTextLength(d3.select(this).select('text'));
-        if(d.shortTexted) {
+        if (d.shortTexted) {
             tipDiv.transition()
                 .duration(200)
                 .style("opacity", .95);
-            tipDiv.html('<span style="font-size:18px;">'+d.usrItemName+'</span>')
+            tipDiv.html('<span style="font-size:18px;">' + d.usrItemName + '</span>')
                 .style("left", (d3.event.pageX - len) + "px")
                 .style("top", (d3.event.pageY - 30) + "px");
         }
@@ -624,18 +648,18 @@ function visualizeUsrList(usrData) {
 
     function usrItemMouseOut() {
         tipDiv.transition().style("opacity", 0);
-        d3.select(this).select('rect').style('fill','LightSteelBlue');
+        d3.select(this).select('rect').style('fill', 'LightSteelBlue');
         selectedUsrItem = null;
     }
 
     function computeTextLength(selection) {
         selection.text(selection.datum().usrItemName);
         var len = selection[0][0].getComputedTextLength();
-        selection.text(function(d) {
+        selection.text(function (d) {
             d.shortTexted = false;
-            if(len > rect_w)  {
+            if (len > rect_w) {
                 d.shortTexted = true;
-                return d.usrItemName.substring(0,9) + "...";
+                return d.usrItemName.substring(0, 9) + "...";
             }
             return d.usrItemName;
         });
@@ -643,7 +667,7 @@ function visualizeUsrList(usrData) {
     }
 
     function usrItemClick(d) {
-        if(d.mapped) {
+        if (d.mapped) {
             var idx = mapped_ocitems.indexOf(d.ocPath);
             mapped_ocitems.splice(idx, 1);
             d.mapped = false;
@@ -663,14 +687,16 @@ function visualizeUsrList(usrData) {
         d.offsetX = d3.mouse(this)[0] - d3.select(this).select('rect').attr('x');
         d.offsetY = d3.mouse(this)[1] - d3.select(this).select('rect').attr('y');
     }
+
     function usrItemDragging(d) {
-        var coord  = d3.mouse(this);
-        var x = coord[0]-d.offsetX, y = coord[1]-d.offsetY;
+        var coord = d3.mouse(this);
+        var x = coord[0] - d.offsetX, y = coord[1] - d.offsetY;
         d3.select(this).select('rect').attr('x', x).attr('y', y);
         d3.select(this).select('text').attr('x', x).attr('y', y);
     }
+
     function usrItemDragend(d) {
-        if(selectedOCItem !== null) {
+        if (selectedOCItem !== null) {
             usrItemClick(d);
             var ocd = selectedOCItem.datum();
             var ocname = ocd.name;
@@ -678,9 +704,9 @@ function visualizeUsrList(usrData) {
             var ocCRF = ocd.parent.parent.name;
             var ocEventName = ocd.parent.parent.parent.name;
             var ocStudy = ocd.parent.parent.parent.parent.name;
-            var path = ocStudy+"\t"+ocEventName+"\t"+ocCRF+"\t"+ocCRFv+"\t"+ocname;
+            var path = ocStudy + "\t" + ocEventName + "\t" + ocCRF + "\t" + ocCRFv + "\t" + ocname;
 
-            if(mapped_ocitems.indexOf(path) == -1) {
+            if (mapped_ocitems.indexOf(path) == -1) {
                 mapped_ocitems.push(path);
                 d.mapped = true;
                 d.ocItemName = ocname;
@@ -698,31 +724,32 @@ function visualizeUsrList(usrData) {
 }//function visualizeUsrList
 
 function positionUsrList(usr_item_data, time) {
-    if(!time) time = 250;
-    for(var i=0; i<usr_item_data.length; i++) {
+    if (!time) time = 250;
+    for (var i = 0; i < usr_item_data.length; i++) {
         var uitem = usr_item_data[i];
         //position the usr items when they are not mapped
-        if(!uitem.mapped) {
-            uitem.x = 1000; uitem.y = 15 + i*(rect_h + 5);
+        if (!uitem.mapped) {
+            uitem.x = 1000;
+            uitem.y = 15 + i * (rect_h + 5);
         }
         //position the usr items when they are mapped
-        else{
+        else {
             var head = uitem.ocItemData;
             uitem.x = head.y + rect_w + 2;
             uitem.y = head.x - rect_h / 2;
 
-            if(head.parent.collapsed) {
+            if (head.parent.collapsed) {
                 head = head.parent;
-                if(head.parent.collapsed) head = head.parent;
-                if(head.parent.collapsed) head = head.parent;
-                if(head.parent.collapsed) head = head.parent;
+                if (head.parent.collapsed) head = head.parent;
+                if (head.parent.collapsed) head = head.parent;
+                if (head.parent.collapsed) head = head.parent;
                 uitem.x = head.y + 9;
                 uitem.y = head.x - 7;
             }
         }
     }
 
-    d3.selectAll('.usritem').each(function(d,i) {
+    d3.selectAll('.usritem').each(function (d, i) {
         var rect = d3.select(this).select('rect');
         var text = d3.select(this).select('text');
         rect.transition().duration(time).attr('x', d.x).attr('y', d.y);

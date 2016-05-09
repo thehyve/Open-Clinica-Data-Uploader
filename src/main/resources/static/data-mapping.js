@@ -16,6 +16,8 @@ var leaf_depth = 5;
 var zoomListener;
 var rect_w = 150, rect_h = 18;//default rect size
 var text_cut_index = 13;
+var usr_list_y = 30;
+var usr_list_h = 500;
 // update and store mouse position
 var mousepos = {x: 0, y: 0};
 $(document).on("mousemove", function (event) {
@@ -35,7 +37,7 @@ $(document).ready(function () {
         initialize();
         usr_data = data;
         visualizeUsrList(usr_data);
-
+        
         // var metadataCallSuccess = function (data) {
         //     console.log('metadataTree call successful');
         //     oc_data = data;
@@ -55,7 +57,22 @@ $(document).ready(function () {
         d3.json('data/test-oc-data.json', function (data) {
             oc_data = data;
             visualizeOCTree(data);
+        };
+        
+        $.ajax({
+            url: "/metadata-tree",
+            type: "GET",
+            // cache: false,
+            success: metadataCallSuccess,
+            error: function () {
+                console.log("Fetching metadata from the server failed.");
+            }
         });
+
+        // d3.json('data/test-oc-data.json', function (data) {
+        //     oc_data = data;
+        //     visualizeOCTree(data);
+        // });
 
 
         d3.json('data/test-map-data.json', function (data) {
@@ -67,14 +84,14 @@ $(document).ready(function () {
         collapseLeaves(root);
         updateOCTree(root);
         handleOCItemInteraction();
-        positionUsrList(usr_item_data, _duration);
+        positionUsrList(usr_item_data, _duration, usr_list_y);
     });
 
     $('#expand-all-btn').click(function () {
         expandLeaves(root);
         updateOCTree(root);
         handleOCItemInteraction();
-        positionUsrList(usr_item_data, _duration);
+        positionUsrList(usr_item_data, _duration, usr_list_y);
     });
 
     function collapseLeaves(d) {
@@ -128,7 +145,7 @@ $(document).ready(function () {
                     d.ocItemData = ocd;
                     d.ocPath = path;
                 }
-                positionUsrList(usr_item_data, 800);
+                positionUsrList(usr_item_data, 800, usr_list_y);
             }
         }
 
@@ -189,7 +206,7 @@ $(document).ready(function () {
                 d.ocPath = "";
             }
         }
-        positionUsrList(usr_item_data);
+        positionUsrList(usr_item_data, 250, usr_list_y);
     }
 
     $('#clear-map-btn').click(function () {
@@ -564,7 +581,7 @@ function handleOCItemInteraction() {
             updateOCTree(d);
             handleOCItemInteraction();
             ready_for_second_click = false;
-            positionUsrList(usr_item_data, _duration);
+            positionUsrList(usr_item_data, _duration, usr_list_y);
         }
         tipDiv.style("opacity", 0);
     }
@@ -623,14 +640,20 @@ function handleOCItemInteraction() {
 }//function handleOCItemInteraction
 
 function visualizeUsrList(usrData) {
+    var _x0 = 700 + 3*rect_w - 5;
+    var _y0 = 15;
     listg = d3.select('#baseSvg').append('g').attr('id', 'listg');
     listg.append('line')
-        .attr('x1', 700 + 3*rect_w - 5)
-        .attr('y1', 0)
-        .attr('x2', 700 + 3*rect_w - 5)
+        .attr('x1', _x0)
+        .attr('y1', -20000)
+        .attr('x2', _x0)
         .attr('y2', 20000)
         .style('stroke', 'grey')
         .style('stroke-width', 1);
+    listg.append('text')
+        .attr('x', _x0 + 5).attr('y', _y0)
+        .style('font-size', 20)
+        .text('Data file items');
 
     usr_item_data = [];
     var usr_path_names = ['CRFNAME', 'CRFVERSION', 'EVENTNAME', 'EVENTREPEAT', 'STUDYSUBJECTID', 'STUDY'];
@@ -670,7 +693,7 @@ function visualizeUsrList(usrData) {
     usritem.select('text')
         .text(function (d) {
             d.shortTexted = false;
-            var len = this.getComputedTextLength();
+            var len = +this.getComputedTextLength();
             if (len > rect_w) {
                 d.shortTexted = true;
                 return d.usrItemName.substring(0, text_cut_index) + "...";
@@ -687,12 +710,12 @@ function visualizeUsrList(usrData) {
         .on('drag', usrItemDragging)
         .on('dragend', usrItemDragend);
     usritem.call(usrItemDrag);
-    positionUsrList(usr_item_data);
+    positionUsrList(usr_item_data, 250, usr_list_y);
 
     function usrItemMouseOver(d) {
         d3.select(this).select('rect').style('fill', 'Orange');
         if (d.shortTexted) {
-            var len = computeTextLength(d3.select(this).select('text'));
+            var len = +computeTextLength(d3.select(this).select('text'));
             tipDiv.transition()
                 .duration(200)
                 .style("opacity", .95);
@@ -736,7 +759,7 @@ function visualizeUsrList(usrData) {
             d.ocStudy = "";
             d.ocItemData = null;
             d.ocPath = "";
-            positionUsrList(usr_item_data);
+            positionUsrList(usr_item_data, 250, usr_list_y);
         }
     }
 
@@ -776,19 +799,44 @@ function visualizeUsrList(usrData) {
                 d.ocPath = path;
             }
         }
-        positionUsrList(usr_item_data);
+        positionUsrList(usr_item_data, 250, usr_list_y);
     }
 
+    $(document).on('mousewheel', '#baseSvg', function (e) {
+        if(isMouseInUserItemArea()) {
+            var s = zoomListener.scale();
+            zoomListener.scaleExtent([s, s]);
+
+            var shift = e.originalEvent.wheelDelta / 8;
+            usr_list_y += shift;
+            if(usr_list_y < -usr_list_h + 60) usr_list_y = -usr_list_h + 60;
+            if(usr_list_y > +d3.select('#baseSvg').attr('height') - 60) {
+                usr_list_y = +d3.select('#baseSvg').attr('height') - 60;
+            }
+            positionUsrList(usr_item_data, 100, usr_list_y);
+        }
+        else {
+            zoomListener.scaleExtent([0.1, 3]);
+        }
+    });
+    
+    function  isMouseInUserItemArea() {
+        var bcr = d3.select('.usritem').select('rect')[0][0].getBoundingClientRect();
+        var x1 = bcr.left - 5;
+        if(mousepos.x > x1) return true;
+        else return false;
+    }
 }//function visualizeUsrList
 
-function positionUsrList(usr_item_data, time) {
-    if (!time) time = 250;
+function positionUsrList(usr_item_data, time, _y0) {
+    usr_list_h = 0;
     for (var i = 0; i < usr_item_data.length; i++) {
         var uitem = usr_item_data[i];
         //position the usr items when they are not mapped
         if (!uitem.mapped) {
             uitem.x = 700 + 3*rect_w;
-            uitem.y = 15 + i * (rect_h + 5);
+            uitem.y = +_y0 + i * (rect_h + 5);
+            usr_list_h += rect_h + 5;
         }
         //position the usr items when they are mapped
         else {

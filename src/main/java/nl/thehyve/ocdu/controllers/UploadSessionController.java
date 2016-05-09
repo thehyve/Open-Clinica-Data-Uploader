@@ -76,7 +76,7 @@ public class UploadSessionController {
     }
 
     @RequestMapping(value = "/select-session", method = RequestMethod.GET)
-    public ResponseEntity<?> selectSession(@RequestParam(value = "name") Long sessionId, HttpSession session) {
+    public ResponseEntity<?> selectSession(@RequestParam(value = "sessionId") Long sessionId, HttpSession session) {
         UploadSession requested = uploadSessionRepository.findOne(sessionId);
         if (requested.getOwner().getId() == ocUserService.getCurrentOcUser(session).getId()) {
             uploadSessionService.setCurrentUploadSession(session, requested);

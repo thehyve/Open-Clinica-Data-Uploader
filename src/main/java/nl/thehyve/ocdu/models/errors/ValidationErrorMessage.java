@@ -40,4 +40,8 @@ public class ValidationErrorMessage {
     public static String generateOffendingValueString(OcEntity data, String value) {
         return "Value: " + value + " in: "+ data.toString();
     }
+
+    public String getGeneralMessage() {
+        return generalMessage;
+    }
 }

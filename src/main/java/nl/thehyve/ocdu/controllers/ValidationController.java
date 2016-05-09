@@ -6,6 +6,8 @@ import nl.thehyve.ocdu.services.OcUserService;
 import nl.thehyve.ocdu.services.UploadSessionService;
 import nl.thehyve.ocdu.services.ValidationService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
@@ -29,14 +31,16 @@ public class ValidationController {
     OcUserService ocUserService;
 
     @RequestMapping(value = "/validate-data", method = RequestMethod.GET)
-    public List<ValidationErrorMessage> validateData(HttpSession session) {
+    public ResponseEntity<List<ValidationErrorMessage>> validateData(HttpSession session) {
+
         UploadSession currentUploadSession = uploadSessionService.getCurrentUploadSession(session);
         String pwdHash = ocUserService.getOcwsHash(session);
         try {
-            return validationService.getDataErrors(currentUploadSession, pwdHash);
+            List<ValidationErrorMessage> dataErrors = validationService.getDataErrors(currentUploadSession, pwdHash);
+            return new ResponseEntity<>(dataErrors, HttpStatus.OK);
         } catch (Exception e) {
             e.printStackTrace();
-            return null; //TODO: find a better way to handle errors.
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
     }
 

@@ -3,7 +3,6 @@
  */
 
 
-
 var displayMessages = function displayMessages(data) {
     if(data.length == 0) {
         var html = '<h2>Data validation is successful!</h2>';

@@ -620,9 +620,9 @@ function handleOCItemInteraction() {
 function visualizeUsrList(usrData) {
     listg = d3.select('#baseSvg').append('g').attr('id', 'listg');
     listg.append('line')
-        .attr('x1', 700 + 3*rect_w - 2)
+        .attr('x1', 700 + 3*rect_w - 5)
         .attr('y1', 0)
-        .attr('x2', 700 + 3*rect_w - 2)
+        .attr('x2', 700 + 3*rect_w - 5)
         .attr('y2', 20000)
         .style('stroke', 'grey')
         .style('stroke-width', 1);

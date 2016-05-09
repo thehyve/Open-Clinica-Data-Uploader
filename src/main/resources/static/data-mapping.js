@@ -62,14 +62,20 @@ $(document).ready(function () {
         collapseLeaves(root);
         updateOCTree(root);
         handleOCItemInteraction();
+<<<<<<< HEAD
         positionUsrList(usr_item_data, _duration);
+=======
+>>>>>>> e68aaa5200782be0b42f7472fb3d1a049b6bd6b2
     });
 
     $('#expand-all-btn').click(function () {
         expandLeaves(root);
         updateOCTree(root);
         handleOCItemInteraction();
+<<<<<<< HEAD
         positionUsrList(usr_item_data, _duration);
+=======
+>>>>>>> e68aaa5200782be0b42f7472fb3d1a049b6bd6b2
     });
 
     function collapseLeaves(d) {
@@ -85,8 +91,13 @@ $(document).ready(function () {
     }
 
     function expandLeaves(d) {
+<<<<<<< HEAD
         for(var i=0; i<d.children.length; i++) {
             var child = d.children[i];
+=======
+        for(var i=0; i<d._children.length; i++) {
+            var child = d._children[i];
+>>>>>>> e68aaa5200782be0b42f7472fb3d1a049b6bd6b2
             if(child.depth == leaf_depth-1) {
                 expand(child);
             }

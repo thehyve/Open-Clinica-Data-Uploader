@@ -37,6 +37,7 @@ $(document).ready(function () {
 
         var metadataCallSuccess = function (data) {
             console.log('metadataTree call successful');
+            oc_data = data;
             visualizeOCTree(data);
         };
 
@@ -409,13 +410,11 @@ function visualizeOCTree(treeData) {
                 return d.children || d._children ? "end" : "start";
             })
             .text(function (d) {
-                if (d.depth == leaf_depth) {
-                    d.shortTexted = false;
-                    var len = this.getComputedTextLength();
-                    if (len > rect_w) {
-                        d.shortTexted = true;
-                        return d.name.substring(0, 9) + "...";
-                    }
+                d.shortTexted = false;
+                var len = this.getComputedTextLength();
+                if (len > rect_w) {
+                    d.shortTexted = true;
+                    return d.name.substring(0, 9) + "...";
                 }
                 return d.name;
             });
@@ -518,14 +517,14 @@ function visualizeOCTree(treeData) {
                     .style("top", (d3.event.pageY - 28) + "px");
             }
             adjustColors(d, true);
-            selectedOCItem = d3.select(this);
+            if(d.depth = leaf_depth) selectedOCItem = d3.select(this);
         }
 
         function itemout(d) {
             tipDiv.transition()
                 .style("opacity", 0);
             adjustColors(d, false);
-            selectedOCItem = null;
+            if(d.depth = leaf_depth) selectedOCItem = null;
         }
 
         function adjustColors(d, highlight) {
@@ -633,8 +632,8 @@ function visualizeUsrList(usrData) {
 
     function usrItemMouseOver(d) {
         d3.select(this).select('rect').style('fill', 'Orange');
-        var len = computeTextLength(d3.select(this).select('text'));
         if (d.shortTexted) {
+            var len = computeTextLength(d3.select(this).select('text'));
             tipDiv.transition()
                 .duration(200)
                 .style("opacity", .95);

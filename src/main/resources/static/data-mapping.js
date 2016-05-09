@@ -57,7 +57,42 @@ $(document).ready(function () {
         });
     });
 
-    //for testing: mapping data
+    $('#collapse-all-btn').click(function () {
+        collapseLeaves(root);
+        updateOCTree(root);
+        handleOCItemInteraction();
+    });
+
+    $('#expand-all-btn').click(function () {
+        expandLeaves(root);
+        updateOCTree(root);
+        handleOCItemInteraction();
+    });
+
+    function collapseLeaves(d) {
+        for(var i=0; i<d.children.length; i++) {
+            var child = d.children[i];
+            if(child.depth == leaf_depth-1) {
+                collapse(child);
+            }
+            else{
+                collapseLeaves(child);
+            }
+        }
+    }
+
+    function expandLeaves(d) {
+        for(var i=0; i<d._children.length; i++) {
+            var child = d._children[i];
+            if(child.depth == leaf_depth-1) {
+                expand(child);
+            }
+            else{
+                expandLeaves(child);
+            }
+        }
+    }
+    
     $('#auto-map-btn').click(function () {
         clearMapping();
         for (var i = 0; i < map_data.length; i++) {

@@ -37,6 +37,7 @@ $(document).ready(function () {
 
         var metadataCallSuccess = function (data) {
             console.log('metadataTree call successful');
+            oc_data = data;
             visualizeOCTree(data);
         };
 

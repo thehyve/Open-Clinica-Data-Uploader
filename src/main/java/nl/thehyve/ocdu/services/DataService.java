@@ -35,6 +35,15 @@ public class DataService {
         return info;
     }
 
+    public List<String> getUserItems(UploadSession submission) {
+        List<ClinicalData> bySubmission = clinicalDataRepository.findBySubmission(submission);
+        return bySubmission.stream()
+                .map(clinicalData -> clinicalData.getItem())
+                .collect(Collectors.toSet())
+                .stream()
+                .collect(Collectors.toList());
+    }
+
     public MetaDataTree getMetadataTree(UploadSession submission, String ocwsHash) throws Exception {
         MetaData metaData = getMetaData(submission, ocwsHash);
         MetaDataTree tree = buildTree(metaData);
@@ -74,7 +83,7 @@ public class DataService {
                 List<ItemDefinition> items = new ArrayList<>();
                 crfDefinition.getItemGroups().stream().forEach(itemGroupDefinition -> {
                     items.addAll(itemGroupDefinition.getItems());
-                });
+                }); //TODO: investigate why items contain duplicated items. GroupDefinitions should not overlap.
 
                 List<MetaDataTree> itemNodes = items.stream()
                         .map(itemDefinition -> itemDefinition.getOid())

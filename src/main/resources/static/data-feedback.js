@@ -38,7 +38,7 @@ function feedbackDataNext() {
 }
 
 $.ajax({
-    url: "/validate/data",
+    url: baseApp+"/validate/data",
     type: "GET",
     cache: false,
     success: displayMessages,

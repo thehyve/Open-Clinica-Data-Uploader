@@ -85,7 +85,7 @@ public class UploadController {
     }
 
 
-    @RequestMapping(value = "/upload-mapping", method = RequestMethod.POST)
+    @RequestMapping(value = "/mapping", method = RequestMethod.POST)
     public ResponseEntity<List<OcItemMapping>> acceptMapping(HttpSession session, @RequestBody List<OcItemMapping> mappings) {
         if (!isValid(mappings)) {
             log.error("Incorrect mapping JSON provided.");

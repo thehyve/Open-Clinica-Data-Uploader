@@ -4,6 +4,7 @@ import nl.thehyve.ocdu.OCEnvironmentsConfig;
 import nl.thehyve.ocdu.models.OcItemMapping;
 import nl.thehyve.ocdu.models.OcUser;
 import nl.thehyve.ocdu.models.UploadSession;
+import nl.thehyve.ocdu.models.errors.FileFormatError;
 import nl.thehyve.ocdu.services.FileService;
 import nl.thehyve.ocdu.services.MappingService;
 import nl.thehyve.ocdu.services.OcUserService;
@@ -53,19 +54,20 @@ public class UploadController {
 
     @RequestMapping(value = "/data", method = RequestMethod.POST)
     @ResponseBody
-    public ResponseEntity<?> uploadFile(
+    public ResponseEntity<List<FileFormatError>> uploadFile(
             @RequestParam("uploadfile") MultipartFile uploadfile, HttpSession session) {
 
         try {
             OcUser user = ocUserService.getCurrentOcUser(session);
             Path locallySavedDataFile = saveFile(uploadfile);
             UploadSession currentUploadSession = uploadSessionService.getCurrentUploadSession(session);
-            fileService.depositDataFile(locallySavedDataFile, user, currentUploadSession);
+            List<FileFormatError> fileFormatErrors = fileService.depositDataFile(locallySavedDataFile, user, currentUploadSession);
+            return new ResponseEntity<>(fileFormatErrors,HttpStatus.OK);
         } catch (Exception e) {
             System.out.println(e.getMessage());
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
-        return new ResponseEntity<>(HttpStatus.OK);
+
     }
 
 

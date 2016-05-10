@@ -25,7 +25,7 @@ public class OcUserService {
     @Autowired
     OCUserRepository userRepository;
 
-    public OcUser getCurrentOcUser(HttpSession session) { //TODO: Add tests
+    public OcUser getCurrentOcUser(HttpSession session) throws UploadSessionNotFoundException { //TODO: Add tests
         String ocEnv = (String) session.getAttribute(OCEnvironmentsConfig.OC_ENV_ATTRIBUTE_NAME);
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         String username = auth.getName(); //get logged in username
@@ -38,8 +38,7 @@ public class OcUserService {
             log.error("More than one matching users sharing the same username and OcEnv: " + matching.toString());
             return null;
         } else {
-            log.error("Attempted retrieving non-existent user, OcUser not correctly saved to the database?");
-            return null;
+            throw new UploadSessionNotFoundException();
         }
     }
 

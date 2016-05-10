@@ -39,14 +39,14 @@ public class MetadataController {
 
     @RequestMapping(value = "/tree", method = RequestMethod.GET)
     public ResponseEntity<DataService.MetaDataTree> getMetadata(HttpSession session) {
-        UploadSession currentUploadSession = uploadSessionService.getCurrentUploadSession(session);
-        String pwd = ocUserService.getOcwsHash(session);
         try {
+            UploadSession currentUploadSession = uploadSessionService.getCurrentUploadSession(session);
+            String pwd = ocUserService.getOcwsHash(session);
             DataService.MetaDataTree tree = dataService.getMetadataTree(currentUploadSession, pwd );
             return new ResponseEntity<>(tree, HttpStatus.OK);
         } catch (Exception e) {
             e.printStackTrace();
-            return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
     }
 

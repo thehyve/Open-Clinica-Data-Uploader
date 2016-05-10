@@ -1,32 +1,26 @@
 package nl.thehyve.ocdu.controllers;
 
-import nl.thehyve.ocdu.OCEnvironmentsConfig;
 import nl.thehyve.ocdu.models.OcItemMapping;
 import nl.thehyve.ocdu.models.OcUser;
 import nl.thehyve.ocdu.models.UploadSession;
 import nl.thehyve.ocdu.models.errors.FileFormatError;
-import nl.thehyve.ocdu.services.FileService;
-import nl.thehyve.ocdu.services.MappingService;
-import nl.thehyve.ocdu.services.OcUserService;
-import nl.thehyve.ocdu.services.UploadSessionService;
+import nl.thehyve.ocdu.services.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.util.FileCopyUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.servlet.http.HttpSession;
-import java.io.*;
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Arrays;
-import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -70,7 +64,6 @@ public class UploadController {
 
     }
 
-
     private Path saveFile(MultipartFile file) throws IOException {
         // Get the filename and build the local file path
         String filename = file.getOriginalFilename();
@@ -92,9 +85,15 @@ public class UploadController {
             log.error("Incorrect mapping JSON provided.");
             return new ResponseEntity<>(mappings, HttpStatus.BAD_REQUEST);
         }
-        UploadSession submission = uploadSessionService.getCurrentUploadSession(session);
-        mappingService.applyMapping(mappings, submission);
-        return new ResponseEntity<>(mappings, HttpStatus.OK);
+        try {
+            UploadSession submission = uploadSessionService.getCurrentUploadSession(session);
+            mappingService.applyMapping(mappings, submission);
+            return new ResponseEntity<>(mappings, HttpStatus.OK);
+        } catch (UploadSessionNotFoundException e) {
+            e.printStackTrace();
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+
     }
 
     private boolean isValid(List<OcItemMapping> mappings) {

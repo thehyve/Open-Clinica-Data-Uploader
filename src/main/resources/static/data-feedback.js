@@ -46,7 +46,7 @@ var displayMessages = function displayMessages(data) {
 };
 
 function feedbackDataNext() {
-    window.location.replace(baseApp + "/mapping");
+    window.location.replace(baseApp + "/views/mapping");
 }
 
 $.ajax({

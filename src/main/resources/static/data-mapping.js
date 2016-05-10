@@ -43,7 +43,7 @@ $(document).ready(function () {
         // };
         //
         // $.ajax({
-        //     url: "/metadata-tree",
+        //     url: "/metadata/tree",
         //     type: "GET",
         //     // cache: false,
         //     success: metadataCallSuccess,
@@ -222,7 +222,7 @@ $(document).ready(function () {
     $('#map-proceed-btn').click(function () {
         var isValid = true;
         if (isValid) {
-            window.location.replace(baseApp + "/patients");
+            window.location.replace(baseApp + "/views/patients");
         }
     })
 

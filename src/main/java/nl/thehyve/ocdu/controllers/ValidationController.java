@@ -19,6 +19,7 @@ import java.util.List;
  * Created by piotrzakrzewski on 06/05/16.
  */
 @RestController
+@RequestMapping("/validate")
 public class ValidationController {
 
     @Autowired
@@ -30,7 +31,7 @@ public class ValidationController {
     @Autowired
     OcUserService ocUserService;
 
-    @RequestMapping(value = "/validate-data", method = RequestMethod.GET)
+    @RequestMapping(value = "/data", method = RequestMethod.GET)
     public ResponseEntity<List<ValidationErrorMessage>> validateData(HttpSession session) {
 
         UploadSession currentUploadSession = uploadSessionService.getCurrentUploadSession(session);
@@ -44,13 +45,13 @@ public class ValidationController {
         }
     }
 
-    @RequestMapping(value = "/validate-patients", method = RequestMethod.GET)
+    @RequestMapping(value = "/patients", method = RequestMethod.GET)
     public List<ValidationErrorMessage> validatePatients(HttpSession session) {
         UploadSession currentUploadSession = uploadSessionService.getCurrentUploadSession(session);
         return validationService.getPatientsErrors(currentUploadSession);
     }
 
-    @RequestMapping(value = "/validate-events", method = RequestMethod.GET)
+    @RequestMapping(value = "/events", method = RequestMethod.GET)
     public List<ValidationErrorMessage> validateEvents(HttpSession session) {
         UploadSession currentUploadSession = uploadSessionService.getCurrentUploadSession(session);
         return validationService.getEventsErrors(currentUploadSession);

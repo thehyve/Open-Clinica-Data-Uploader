@@ -5,6 +5,7 @@ import nl.thehyve.ocdu.models.OcUser;
 import nl.thehyve.ocdu.models.UploadSession;
 import nl.thehyve.ocdu.repositories.UploadSessionRepository;
 import nl.thehyve.ocdu.repositories.OCUserRepository;
+import nl.thehyve.ocdu.services.DataService;
 import nl.thehyve.ocdu.services.OcUserService;
 import nl.thehyve.ocdu.services.UploadSessionService;
 import org.slf4j.Logger;
@@ -21,10 +22,13 @@ import javax.servlet.http.HttpSession;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static org.springframework.http.HttpStatus.OK;
+
 /**
  * Created by bo on 4/26/16.
  */
 @RestController
+@RequestMapping("/submission")
 public class UploadSessionController {
 
     private static final Logger log = LoggerFactory.getLogger(UploadSessionController.class);
@@ -41,6 +45,21 @@ public class UploadSessionController {
         return username;
     }
 
+
+    @RequestMapping(value = "/info", method = RequestMethod.GET)
+    public ResponseEntity<DataService.FieldsDetermined> getFieldsInfo(HttpSession session) {
+        UploadSession submission = uploadSessionService.getCurrentUploadSession(session);
+        DataService.FieldsDetermined info = dataService.getInfo(submission);
+        if (info == null) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        } else {
+            return new ResponseEntity<>(info, OK);
+        }
+    }
+
+    @Autowired
+    DataService dataService;
+
     @Autowired
     OcUserService ocUserService;
 
@@ -50,7 +69,7 @@ public class UploadSessionController {
     @Autowired
     UploadSessionService uploadSessionService;
 
-    @RequestMapping(value = "/unfinished-sessions", method = RequestMethod.GET)
+    @RequestMapping(value = "/all", method = RequestMethod.GET)
     public List<UploadSession> unfinishedSessions(HttpSession session) {
         OcUser ocUser = ocUserService.getCurrentOcUser(session);
         List uploadSessions = uploadSessionRepository.findByOwner(ocUser);
@@ -61,7 +80,7 @@ public class UploadSessionController {
         return uploadSessions;
     }
 
-    @RequestMapping(value = "/create-session", method = RequestMethod.POST) //TODO: add tests
+    @RequestMapping(value = "/create", method = RequestMethod.POST) //TODO: add tests
     public void createUploadSession(@RequestParam(value = "name", defaultValue = "newSession") String name,
                                     HttpSession session) {
         OcUser usr = ocUserService.getCurrentOcUser(session);
@@ -70,12 +89,12 @@ public class UploadSessionController {
         uploadSessionService.setCurrentUploadSession(session, uploadSession);
     }
 
-    @RequestMapping(value = "/current-session", method = RequestMethod.GET)
+    @RequestMapping(value = "/current", method = RequestMethod.GET)
     public UploadSession currentSession(HttpSession session) {
         return uploadSessionService.getCurrentUploadSession(session);
     }
 
-    @RequestMapping(value = "/select-session", method = RequestMethod.GET)
+    @RequestMapping(value = "/select", method = RequestMethod.GET)
     public ResponseEntity<?> selectSession(@RequestParam(value = "sessionId") Long sessionId, HttpSession session) {
         UploadSession requested = uploadSessionRepository.findOne(sessionId);
         if (requested.getOwner().getId() == ocUserService.getCurrentOcUser(session).getId()) {

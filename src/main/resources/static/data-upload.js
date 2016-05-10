@@ -32,7 +32,7 @@ function uploadFile() {
 
         var dataFileUpload = function () {
             $.ajax({
-                url: "/uploadFile",
+                url: "/upload/data",
                 type: "POST",
                 data: new FormData($("#upload-file-form")[0]),
                 enctype: 'multipart/form-data',
@@ -45,7 +45,7 @@ function uploadFile() {
                     $("#message-board").append(info);
                     isDataUploaded = true;
                     if (!isDirected && ((isMappingSelected && isMappingUploaded) || !isMappingSelected)) {
-                        window.location.replace("/feedback-data");
+                        window.location.replace("/views/feedback-data");
                         isDirected = true;
                     }
                 },
@@ -58,7 +58,7 @@ function uploadFile() {
             });
         };
         $.ajax({
-            url: "/create-session",
+            url: "/submission/create",
             type: "post",
             data: {name: SESSIONNAME},
             success: dataFileUpload,
@@ -75,7 +75,7 @@ function uploadFile() {
             //TODO: resolve uploading-mapping issue
             // var upload_mapping_data = new FormData($("#upload-mapping-form")[0]); console.log(upload_mapping_data);
             // $.ajax({
-            //     url: "/upload-mapping",
+            //     url: "/upload/mapping",
             //     type: "POST",
             //     data: upload_mapping_data,
             //     processData: false, // Don't process the files
@@ -125,7 +125,7 @@ function uploadFile() {
 
 function retrieveSessions() {
     $.ajax({
-        url: "/unfinished-sessions",
+        url: "/submission/all",
         type: "get",
         success: handle_retrieval,
         error: handle_error
@@ -171,7 +171,7 @@ $(document).ready(function () {
     $("#data-proceed-btn").attr("disabled", "disabled");
 
     $.ajax({
-        url: "/username",
+        url: "/submission/username",
         type: "get",
         success: function (data) {
             USERNAME = data;

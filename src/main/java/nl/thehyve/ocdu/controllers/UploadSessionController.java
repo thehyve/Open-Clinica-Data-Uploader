@@ -105,4 +105,11 @@ public class UploadSessionController {
         }
     }
 
+    @RequestMapping(value = "/user-items")
+    public ResponseEntity<List<String>> getUserItems(HttpSession session) {
+        UploadSession currentUploadSession = uploadSessionService.getCurrentUploadSession(session);
+        List<String> userItems = dataService.getUserItems(currentUploadSession);
+        return new ResponseEntity<>(userItems,HttpStatus.OK);
+    }
+
 }

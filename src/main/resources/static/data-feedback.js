@@ -50,7 +50,7 @@ function feedbackDataNext() {
 }
 
 $.ajax({
-    url: "/validate-data",
+    url: "/validate/data",
     type: "GET",
     cache: false,
     success: displayMessages,

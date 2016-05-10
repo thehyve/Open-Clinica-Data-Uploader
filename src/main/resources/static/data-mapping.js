@@ -67,14 +67,14 @@ $(document).ready(function () {
 
     $('#collapse-all-btn').click(function () {
         collapseLeaves(root);
-        updateOCTree(root);
+        updateOCTree(root, 750);
         handleOCItemInteraction();
         positionUsrList(usr_item_data, _duration, usr_list_y);
     });
 
     $('#expand-all-btn').click(function () {
         expandLeaves(root);
-        updateOCTree(root);
+        updateOCTree(root, 750);
         handleOCItemInteraction();
         positionUsrList(usr_item_data, _duration, usr_list_y);
     });
@@ -175,25 +175,6 @@ $(document).ready(function () {
         }
     });//auto-map-btn click
 
-    function clearMapping() {
-        for (var i = 0; i < usr_item_data.length; i++) {
-            var d = usr_item_data[i];
-            if (d.mapped) {
-                var idx = mapped_ocitems.indexOf(d.ocPath);
-                mapped_ocitems.splice(idx, 1);
-                d.mapped = false;
-                d.ocItemName = "";
-                d.ocCRFv = "";
-                d.ocCRF = "";
-                d.ocEventName = "";
-                d.ocStudy = "";
-                d.ocItemData = null;
-                d.ocPath = "";
-            }
-        }
-        positionUsrList(usr_item_data, 250, usr_list_y);
-    }
-
     $('#clear-map-btn').click(function () {
         clearMapping();
     });
@@ -230,6 +211,24 @@ $(document).ready(function () {
 
 });//end of the function $(document).ready...
 
+function clearMapping() {
+    for (var i = 0; i < usr_item_data.length; i++) {
+        var d = usr_item_data[i];
+        if (d.mapped) {
+            var idx = mapped_ocitems.indexOf(d.ocPath);
+            mapped_ocitems.splice(idx, 1);
+            d.mapped = false;
+            d.ocItemName = "";
+            d.ocCRFv = "";
+            d.ocCRF = "";
+            d.ocEventName = "";
+            d.ocStudy = "";
+            d.ocItemData = null;
+            d.ocPath = "";
+        }
+    }
+    positionUsrList(usr_item_data, 250, usr_list_y);
+}
 
 function initialize() {
     var viewerWidth = $(window).width();
@@ -331,11 +330,11 @@ function visualizeOCTree(treeData) {
     root.x0 = viewerHeight / 2;
 
     // Layout the tree initially and center on the root node.
-    updateOCTree(root);
+    updateOCTree(root, 750);
     handleOCItemInteraction();
 }//visualizeOCTree
 
-function updateOCTree(source) {
+function updateOCTree(source, _duration) {
     // Compute the new height, function counts total children of root node and sets tree height accordingly.
     // This prevents the layout appearing squashed when new nodes are made visible or appearing sparse when nodes are removed
     // This makes the layout more consistent.
@@ -444,7 +443,11 @@ function updateOCTree(source) {
     node.select('.nodeCircle')
         .style("fill", function (d) {
             return d._children ? "lightsteelblue" : "#fff";
-        });
+        })
+        .style('stroke-width', function (d) {
+            if(d.depth == leaf_depth - 1) return "5px";
+            else return "2px";
+        })
 
     // Transition nodes to their new position.
     var nodeUpdate = node.transition()
@@ -550,25 +553,36 @@ function toggleChildren(d) {
     return d;
 }
 
+
+// var ready_for_second_click = true;
+var double_clicked = false;
+
 function handleOCItemInteraction() {
     // Toggle children on click.
-    var ready_for_second_click = true;
 
     function click(d) {
-        var event = d3.event;
+        double_clicked = false;
         window.setTimeout(function () {
-            ready_for_second_click = true;
-        }, 1000);
+            // ready_for_second_click = true;
+            // console.log(double_clicked);
+            if(!double_clicked) {
+                d = toggleChildren(d);
+                updateOCTree(d, 500);
+                handleOCItemInteraction();
+                // ready_for_second_click = false;
+                positionUsrList(usr_item_data, _duration, usr_list_y);
+            }
+        }, 300);
         if (d3.event.defaultPrevented) return; // click suppressed
 
-        if (ready_for_second_click) {
-            d = toggleChildren(d);
-            updateOCTree(d);
-            handleOCItemInteraction();
-            ready_for_second_click = false;
-            positionUsrList(usr_item_data, _duration, usr_list_y);
-        }
         tipDiv.style("opacity", 0);
+    }
+
+    function dblclick(d) {
+        double_clicked = true;
+        if(d.depth == leaf_depth - 1) {
+            mapUsrAndOCItemNames(d);
+        }
     }
 
     /*
@@ -621,8 +635,33 @@ function handleOCItemInteraction() {
     d3.selectAll('.node')
         .on('mouseover', itemover)
         .on('mouseout', itemout)
-        .on('click', click);
+        .on('click', click)
+        .on('dblclick', dblclick);
 }//function handleOCItemInteraction
+
+function mapUsrAndOCItemNames(ocd) {
+    if(ocd.children) {
+        for(var i=0; i<ocd.children.length; i++) {
+            var child = ocd.children[i];
+            for(var j=0; j<usr_item_data.length; j++) {
+                var usrname = usr_item_data[j].usrItemName;
+                if(child.name == usrname) {
+                    usr_item_data[j].mapped = true;
+                    usr_item_data[j].ocItemName = child.name;
+                    usr_item_data[j].ocCRFv = child.parent.name;
+                    usr_item_data[j].ocCRF = child.parent.parent.name;
+                    usr_item_data[j].ocEventName = child.parent.parent.parent.name;
+                    usr_item_data[j].ocStudy = child.parent.parent.parent.parent.name;
+                    usr_item_data[j].ocItemData = child;
+                    usr_item_data[j].ocPath = usr_item_data[j].ocStudy + "\t" + usr_item_data[j].ocEventName + "\t" + usr_item_data[j].ocCRF + "\t" + usr_item_data[j].ocCRFv + "\t" + usr_item_data[j].ocItemName;
+                    break;
+                }
+            }//for
+        }//for
+
+        positionUsrList(usr_item_data, 250, usr_list_y);
+    }
+}
 
 function visualizeUsrList(usrData) {
     var _x0 = 700 + 3*rect_w - 5;
@@ -792,12 +831,12 @@ function visualizeUsrList(usrData) {
             var s = zoomListener.scale();
             zoomListener.scaleExtent([s, s]);
 
-            var shift = e.originalEvent.wheelDelta / 8;
+            var shift = -e.originalEvent.wheelDelta / 8;
             usr_list_y += shift;
             if(usr_list_y < -usr_list_h + 60) usr_list_y = -usr_list_h + 60;
-            if(usr_list_y > +d3.select('#baseSvg').attr('height') - 60) {
-                usr_list_y = +d3.select('#baseSvg').attr('height') - 60;
-            }
+            // if(usr_list_y > +d3.select('#baseSvg').attr('height') - 60) {
+            //     usr_list_y = +d3.select('#baseSvg').attr('height') - 60;
+            // }
             positionUsrList(usr_item_data, 100, usr_list_y);
         }
         else {

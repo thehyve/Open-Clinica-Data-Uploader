@@ -21,8 +21,7 @@ public class OcduApplication {
     }
 
     private static final Logger log = LoggerFactory.getLogger(OcduApplication.class);
-
-   /* @Bean
+    /*@Bean
     public CommandLineRunner testData(UploadSessionRepository repository, OCUserRepository usrRepository) {
         return (args) -> {
             log.info("Generating test data ...");

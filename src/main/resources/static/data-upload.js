@@ -4,7 +4,7 @@
 /**
  * Upload the file sending it via Ajax at the Spring Boot server.
  */
-var sessionNames = [];
+var sessions = [];
 
 var isSessionNameDefined = false;
 $('#upload-session-input').change(function () {
@@ -138,27 +138,19 @@ function retrieveSessions() {
     $.ajax({
         url: baseApp+"/submission/all",
         type: "get",
-        success: handle_retrieval,
+        success: handle_session_retrieval_all,
         error: handle_error
     });
 
-    // $.ajax({
-    //     url: baseApp+"/create-session",
-    //     type: "post",
-    //     data: {name:"newestSession"},
-    //     success: _sessionAjax,
-    //     error: handle_error
-    // });
 }
 
-function handle_retrieval(sessions) {
-    console.log('retrieve sessions...');
+function handle_session_retrieval_all(_sessions) {
+    sessions = _sessions;
     $("#data-proceed-btn").attr("disabled", false);
     var monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
     $('#old_upload_section').append('<div id="session_container" class="row-fluid"></div>');
-    for (var i = 0; i < sessions.length; i++) {
-        var s = sessions[i];
-        sessionNames.push(s.name);
+    for (var i = 0; i < _sessions.length; i++) {
+        var s = _sessions[i];
         var btnid = "s" + (i + 1);
         var d = new Date(s.savedDate);
         var sessionHTML = '<div class="well">' +
@@ -166,13 +158,45 @@ function handle_retrieval(sessions) {
             '<p><small>saved on: ' + monthNames[d.getMonth()] + ' ' + d.getDate() + ', ' + d.getFullYear() + '</small></p></div>';
         // $(sessionHTML).insertAfter("#old_upload_section_anchor");
         $('#session_container').append(sessionHTML);
-        $('#' + btnid).click(function () {
-            var ind = $(this).attr('session_index');
-            console.log(sessions[ind]);
-        });
-        // console.log(s.name + ", " + s.step + ", " + d);
+        $('#' + btnid).click(handle_session_retrieval);
     }//for
+    // console.log(sessions);
 }
+
+function handle_session_retrieval() {
+    var ind = $(this).attr('session_index');
+    var session = sessions[ind];
+    var sid = session.id;
+    //set the current session
+    $.ajax({
+        url: baseApp+"/submission/select",
+        type: "get",
+        data:{sessionId:sid},
+        success: function (data) {
+            //direct user to the selected session
+            if(session.step == "MAPPING") {
+                window.location.replace(baseApp+"/views/mapping");
+            }
+            else if(session.step == "PATIENTS") {
+                window.location.replace(baseApp+"/views/subjects");
+            }
+            else if(session.step == "EVENTS") {
+                window.location.replace(baseApp+"/views/events");
+            }
+            else if(session.step = "OVERVIEW") {
+                window.location.replace(baseApp+"/views/overview");
+            }
+            else {
+                console.log('Session step is not recognized.');
+            }
+        },
+        error: function (err) {
+            console.log(err);
+        }
+    });
+    console.log(sessions[ind]);
+}
+
 
 function handle_error() {
     console.log('Failed to load sessions.');
@@ -181,6 +205,7 @@ function handle_error() {
 $(document).ready(function () {
     $("#data-proceed-btn").attr("disabled", "disabled");
 
+    //retrieve user name
     $.ajax({
         url: baseApp+"/submission/username",
         type: "get",

@@ -37,7 +37,7 @@ $(document).ready(function () {
         initialize();
         usr_data = data;
         visualizeUsrList(usr_data);
-        
+
         // var metadataCallSuccess = function (data) {
         //     console.log('metadataTree call successful');
         //     oc_data = data;

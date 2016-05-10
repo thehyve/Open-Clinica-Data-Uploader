@@ -4,11 +4,8 @@ import nl.thehyve.ocdu.models.OCEntities.ClinicalData;
 import nl.thehyve.ocdu.models.OcDefinitions.MetaData;
 import nl.thehyve.ocdu.models.errors.ValidationErrorMessage;
 import nl.thehyve.ocdu.validators.checks.DataFieldWidthCheck;
-import nl.thehyve.ocdu.validators.crossChecks.CrfExistsCrossCheck;
-import nl.thehyve.ocdu.validators.crossChecks.EventExistsCrossCheck;
+import nl.thehyve.ocdu.validators.crossChecks.*;
 import nl.thehyve.ocdu.validators.checks.OcEntityCheck;
-import nl.thehyve.ocdu.validators.crossChecks.ClinicalDataCrossCheck;
-import nl.thehyve.ocdu.validators.crossChecks.DataFieldWidthCrossCheck;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,6 +31,7 @@ public class ClinicalDataOcChecks {
         crossChecks.add(new EventExistsCrossCheck());
         crossChecks.add(new DataFieldWidthCrossCheck());
         crossChecks.add(new CrfExistsCrossCheck());
+        crossChecks.add(new CrfCouldNotBeVerifiedCrossCheck());
     }
 
     public List<ValidationErrorMessage> getErrors() {

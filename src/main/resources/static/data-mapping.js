@@ -33,34 +33,19 @@ $(window).on('resize', function () {
 // initializing and button listeners
 $(document).ready(function () {
 
-    d3.json('data/test-usr-data.json', function (data) {
+    d3.json('/data/test-usr-data.json', function (data) {
         initialize();
         usr_data = data;
         visualizeUsrList(usr_data);
 
-        // var metadataCallSuccess = function (data) {
-        //     console.log('metadataTree call successful');
-        //     oc_data = data;
-        //     visualizeOCTree(data);
-        // };
-        //
-        // $.ajax({
-        //     url: "/metadata/tree",
-        //     type: "GET",
-        //     // cache: false,
-        //     success: metadataCallSuccess,
-        //     error: function () {
-        //         console.log("Fetching metadata from the server failed.");
-        //     }
-        // });
-
-        d3.json('data/test-oc-data.json', function (data) {
+        var metadataCallSuccess = function (data) {
+            console.log('metadataTree call successful');
             oc_data = data;
             visualizeOCTree(data);
         };
-        
+
         $.ajax({
-            url: "/metadata-tree",
+            url: "/metadata/tree",
             type: "GET",
             // cache: false,
             success: metadataCallSuccess,
@@ -69,13 +54,13 @@ $(document).ready(function () {
             }
         });
 
-        // d3.json('data/test-oc-data.json', function (data) {
+        // d3.json('/data/test-oc-data.json', function (data) {
         //     oc_data = data;
         //     visualizeOCTree(data);
         // });
 
 
-        d3.json('data/test-map-data.json', function (data) {
+        d3.json('/data/test-map-data.json', function (data) {
             map_data = data;
         });
     });

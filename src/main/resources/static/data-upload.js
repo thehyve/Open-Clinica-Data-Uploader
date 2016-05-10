@@ -32,33 +32,44 @@ function uploadFile() {
 
         var dataFileUpload = function () {
             $.ajax({
-                url: baseApp+"/upload/data",
+                url: baseApp + "/upload/data",
                 type: "POST",
                 data: new FormData($("#upload-file-form")[0]),
                 enctype: 'multipart/form-data',
                 processData: false,
                 contentType: false,
-                cache: false,
-                success: function () {
-                    // Handle upload success
-                    var info = '<span id="data-alert" class="alert alert-success">Data succesfully uploaded</span>';
-                    $("#message-board").append(info);
-                    isDataUploaded = true;
-                    if (!isDirected && ((isMappingSelected && isMappingUploaded) || !isMappingSelected)) {
-                        window.location.replace("/views/feedback-data");
-                        isDirected = true;
+                success: function (fileFormatErrors) {
+                    if (fileFormatErrors.length === 0) {
+                        // Handle upload success
+                        var info = '<span id="data-alert" class="alert alert-success">Data succesfully uploaded</span>';
+                        $("#message-board").append(info);
+                        isDataUploaded = true;
+                        if (!isDirected && ((isMappingSelected && isMappingUploaded) || !isMappingSelected)) {
+                            window.location.replace("/views/feedback-data");
+                            isDirected = true;
+                        }
+                    } else {
+                        var info = '<div><ul>';
+                        fileFormatErrors.forEach(function (error) {
+                            var errDiv = '<li><span>' + error.message + '</span></li>';
+                            console.log(JSON.stringify(error));
+                            info += errDiv;
+                        });
+                        info += '</div></ul>';
+                        $("#message-board").append(info);
                     }
                 },
-                error: function () {
+                error: function (error) {
                     // Handle upload error
-                    var info = '<span id="data-alert" class="alert alert-danger">Data not uploaded</span>';
+                    var info = '<span id="data-alert" class="alert alert-danger">Data not uploaded, either due to exceeding file size limit or server error</span>';
+                    console.log(JSON.stringify(error));
                     $("#message-board").append(info);
                     isDataUploaded = false;
                 }
             });
         };
         $.ajax({
-            url: baseApp+"/submission/create",
+            url: baseApp + "/submission/create",
             type: "post",
             data: {name: SESSIONNAME},
             success: dataFileUpload,
@@ -125,7 +136,7 @@ function uploadFile() {
 
 function retrieveSessions() {
     $.ajax({
-        url: baseApp+"/submission/all",
+        url: baseApp + "/submission/all",
         type: "get",
         success: handle_retrieval,
         error: handle_error
@@ -171,7 +182,7 @@ $(document).ready(function () {
     $("#data-proceed-btn").attr("disabled", "disabled");
 
     $.ajax({
-        url: baseApp+"/submission/username",
+        url: baseApp + "/submission/username",
         type: "get",
         success: function (data) {
             USERNAME = data;

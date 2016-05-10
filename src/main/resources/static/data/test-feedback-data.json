@@ -7,5 +7,14 @@
         "another",
         "but sometimes there is only error message without any offending values"
       ]
+  },
+  {
+    "message":"Another Error message",
+    "offendingValues":
+    [
+      "string of text sometimes long",
+      "another",
+      "but sometimes there is only error message without any offending values"
+    ]
   }
 ]

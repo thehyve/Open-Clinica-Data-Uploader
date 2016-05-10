@@ -9,35 +9,26 @@ var displayMessages = function displayMessages(data) {
         $('#feedback-tables').append(html);
     }//if
     else {
+        $('#feedback-tables').empty();
+        var html_title = '<h3><span> <strong>'+data.length +' errors found. </strong> </span></h3>';
+        $('#feedback-tables').append(html_title);
+
         for (var i = 0; i < data.length; i++) {
             var fb = data[i];
             var msg = fb['message'];
             var vals = fb['offendingValues'];
-
-            var msgRow = '<span><strong>Validation Error --- '+msg+'</strong></span>';
             var errorid = "error"+i;
-
-            var valRows = '<div class="container"><a href="#'+errorid+'" data-toggle="collapse"><strong>Erroneous Values:</strong></a>';
-            valRows += '<div class="collapse in" id='+errorid+'>';
+            var middlepart = '<div class="panel-heading"><h4 class="panel-title"><a data-toggle="collapse" href="#'+errorid+'">Validation Error: '+msg+'</a></h4></div>';
+            var listpart = '<ul class="list-group">';
 
             for (var j = 0; j < vals.length; j++) {
-                valRows +=
-                    '<tr>' +
-                    vals[j] +
-                    '</tr>';
+                listpart += '<li class="list-group-item">'+vals[j]+'</li>'
             }
-            valRows += "</div></div>";
-            var html =
-                '<div class="table-responsive well">' +
-                '<table class="table table-striped table-hover">' +
-                '<tbody>' +
-                msgRow +
-                valRows +
-                '</tbody>' +
-                '</table>' +
-                '</div>';
+            listpart += '</ul>';
+            middlepart += '<div id="'+errorid+'" class="panel-collapse collapse in">'+listpart+'</div>';
+            var html = '<div class="panel-group"><div class="panel panel-default">'+middlepart+'</div></div>'
             $('#feedback-tables').append(html);
-        }
+        }//for
     }//else
 };
 
@@ -54,3 +45,8 @@ $.ajax({
         console.log("Fetching validation errors from the server failed.");
     }
 });
+
+//for testing
+// d3.json('/data/test-feedback-data.json', function (data) {
+//     displayMessages(data);
+// });

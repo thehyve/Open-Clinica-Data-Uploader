@@ -45,7 +45,7 @@ $(document).ready(function () {
         };
 
         $.ajax({
-            url: baseApp+"/metadata/tree",
+            url: "/metadata/tree",
             type: "GET",
             // cache: false,
             success: metadataCallSuccess,

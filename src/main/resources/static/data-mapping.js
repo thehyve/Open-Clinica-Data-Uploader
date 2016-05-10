@@ -80,13 +80,15 @@ $(document).ready(function () {
     });
 
     function collapseLeaves(d) {
-        for(var i=0; i<d.children.length; i++) {
-            var child = d.children[i];
-            if(child.depth == leaf_depth-1) {
-                collapse(child);
-            }
-            else{
-                collapseLeaves(child);
+        if(d.children) {
+            for(var i=0; i<d.children.length; i++) {
+                var child = d.children[i];
+                if(child.depth == leaf_depth-1) {
+                    collapse(child);
+                }
+                else{
+                    collapseLeaves(child);
+                }
             }
         }
     }

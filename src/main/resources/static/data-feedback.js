@@ -10,7 +10,8 @@ var displayMessages = function displayMessages(data) {
     }//if
     else {
         $('#feedback-tables').empty();
-        var html_title = '<h3><span> <strong>'+data.length +' errors found. </strong> </span></h3>';
+        var error_word = 'errors'; if(data.length == 1) error_word = 'error';
+        var html_title = '<h3><span> <strong>'+data.length +' '+error_word+' found... </strong> </span></h3>';
         $('#feedback-tables').append(html_title);
 
         for (var i = 0; i < data.length; i++) {
@@ -18,7 +19,7 @@ var displayMessages = function displayMessages(data) {
             var msg = fb['message'];
             var vals = fb['offendingValues'];
             var errorid = "error"+i;
-            var middlepart = '<div class="panel-heading"><h4 class="panel-title"><a data-toggle="collapse" href="#'+errorid+'">Validation Error: '+msg+'</a></h4></div>';
+            var middlepart = '<div class="panel-heading"><h4 class="panel-title"><a data-toggle="collapse" href="#'+errorid+'"> '+msg+'</a></h4></div>';
             var listpart = '<ul class="list-group">';
 
             for (var j = 0; j < vals.length; j++) {
@@ -50,3 +51,4 @@ $.ajax({
 // d3.json('/data/test-feedback-data.json', function (data) {
 //     displayMessages(data);
 // });
+

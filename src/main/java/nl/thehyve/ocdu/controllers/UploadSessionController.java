@@ -7,6 +7,7 @@ import nl.thehyve.ocdu.repositories.UploadSessionRepository;
 import nl.thehyve.ocdu.repositories.OCUserRepository;
 import nl.thehyve.ocdu.services.DataService;
 import nl.thehyve.ocdu.services.OcUserService;
+import nl.thehyve.ocdu.services.UploadSessionNotFoundException;
 import nl.thehyve.ocdu.services.UploadSessionService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -48,12 +49,17 @@ public class UploadSessionController {
 
     @RequestMapping(value = "/info", method = RequestMethod.GET)
     public ResponseEntity<DataService.FieldsDetermined> getFieldsInfo(HttpSession session) {
-        UploadSession submission = uploadSessionService.getCurrentUploadSession(session);
-        DataService.FieldsDetermined info = dataService.getInfo(submission);
-        if (info == null) {
+        try {
+            UploadSession submission = uploadSessionService.getCurrentUploadSession(session);
+            DataService.FieldsDetermined info = dataService.getInfo(submission);
+            if (info == null) {
+                return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            } else {
+                return new ResponseEntity<>(info, OK);
+            }
+        } catch (UploadSessionNotFoundException e) {
+            e.printStackTrace();
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        } else {
-            return new ResponseEntity<>(info, OK);
         }
     }
 
@@ -70,46 +76,70 @@ public class UploadSessionController {
     UploadSessionService uploadSessionService;
 
     @RequestMapping(value = "/all", method = RequestMethod.GET)
-    public List<UploadSession> unfinishedSessions(HttpSession session) {
-        OcUser ocUser = ocUserService.getCurrentOcUser(session);
-        List uploadSessions = uploadSessionRepository.findByOwner(ocUser);
-        if (uploadSessions == null) {
-            log.error("Attempted retrieving uploadedSessions before any was created.");
-            return new ArrayList<>();
+    public ResponseEntity<List<UploadSession>> unfinishedSessions(HttpSession session) {
+        try {
+            OcUser ocUser = ocUserService.getCurrentOcUser(session);
+            List uploadSessions = uploadSessionRepository.findByOwner(ocUser);
+
+            return new ResponseEntity<>(uploadSessions, OK);
+        } catch (UploadSessionNotFoundException ex) {
+            System.out.println(ex);
+            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
         }
-        return uploadSessions;
     }
 
     @RequestMapping(value = "/create", method = RequestMethod.POST) //TODO: add tests
-    public void createUploadSession(@RequestParam(value = "name", defaultValue = "newSession") String name,
-                                    HttpSession session) {
-        OcUser usr = ocUserService.getCurrentOcUser(session);
-        UploadSession uploadSession = new UploadSession(name, UploadSession.Step.MAPPING, new Date(), usr);//TODO: Add remaining steps
-        uploadSessionRepository.save(uploadSession);
-        uploadSessionService.setCurrentUploadSession(session, uploadSession);
+    public ResponseEntity<?> createUploadSession(@RequestParam(value = "name", defaultValue = "newSession") String name,
+                                                 HttpSession session) {
+        try {
+            OcUser usr = ocUserService.getCurrentOcUser(session);
+            UploadSession uploadSession = new UploadSession(name, UploadSession.Step.MAPPING, new Date(), usr);//TODO: Add remaining steps
+            uploadSessionRepository.save(uploadSession);
+            uploadSessionService.setCurrentUploadSession(session, uploadSession);
+            return new ResponseEntity<>(OK);
+        } catch (UploadSessionNotFoundException ex) {
+            System.out.println(ex);
+            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        }
     }
 
     @RequestMapping(value = "/current", method = RequestMethod.GET)
-    public UploadSession currentSession(HttpSession session) {
-        return uploadSessionService.getCurrentUploadSession(session);
+    public ResponseEntity<UploadSession> currentSession(HttpSession session) {
+        try {
+            UploadSession currentUploadSession = uploadSessionService.getCurrentUploadSession(session);
+            return new ResponseEntity<>(currentUploadSession, OK);
+        } catch (UploadSessionNotFoundException e) {
+            e.printStackTrace();
+            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        }
     }
 
     @RequestMapping(value = "/select", method = RequestMethod.GET)
     public ResponseEntity<?> selectSession(@RequestParam(value = "sessionId") Long sessionId, HttpSession session) {
-        UploadSession requested = uploadSessionRepository.findOne(sessionId);
-        if (requested.getOwner().getId() == ocUserService.getCurrentOcUser(session).getId()) {
-            uploadSessionService.setCurrentUploadSession(session, requested);
-            return new ResponseEntity<>(HttpStatus.OK);
-        } else {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST); //TODO: Make distinction between unauthorized and requested session not existent errors
+        try {
+            UploadSession requested = uploadSessionRepository.findOne(sessionId);
+            if (requested.getOwner().getId() == ocUserService.getCurrentOcUser(session).getId()) {
+                uploadSessionService.setCurrentUploadSession(session, requested);
+                return new ResponseEntity<>(OK);
+            } else {
+                return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            }
+        } catch (UploadSessionNotFoundException ex) {
+            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
         }
     }
 
     @RequestMapping(value = "/user-items")
     public ResponseEntity<List<String>> getUserItems(HttpSession session) {
-        UploadSession currentUploadSession = uploadSessionService.getCurrentUploadSession(session);
-        List<String> userItems = dataService.getUserItems(currentUploadSession);
-        return new ResponseEntity<>(userItems,HttpStatus.OK);
+        try {
+            UploadSession currentUploadSession = uploadSessionService.getCurrentUploadSession(session);
+            List<String> userItems = dataService.getUserItems(currentUploadSession);
+            return new ResponseEntity<>(userItems, OK);
+        } catch (UploadSessionNotFoundException e) {
+            e.printStackTrace();
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+
     }
 
 }

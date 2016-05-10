@@ -18,8 +18,11 @@ public class UploadSessionService {
 
     private static final String CURRENT_SESSION_ATTRIBUTE = "currentOcUploadSession";
 
-    public UploadSession getCurrentUploadSession(HttpSession session) {
+    public UploadSession getCurrentUploadSession(HttpSession session) throws UploadSessionNotFoundException {
         UploadSession curUploadSession = (UploadSession) session.getAttribute(CURRENT_SESSION_ATTRIBUTE);
+        if (curUploadSession == null || curUploadSession.getOwner() == null) {
+            throw new UploadSessionNotFoundException();
+        }
         return curUploadSession;
     }
 

@@ -3,6 +3,7 @@ package nl.thehyve.ocdu.controllers;
 import nl.thehyve.ocdu.models.UploadSession;
 import nl.thehyve.ocdu.models.errors.ValidationErrorMessage;
 import nl.thehyve.ocdu.services.OcUserService;
+import nl.thehyve.ocdu.services.UploadSessionNotFoundException;
 import nl.thehyve.ocdu.services.UploadSessionService;
 import nl.thehyve.ocdu.services.ValidationService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,10 +34,9 @@ public class ValidationController {
 
     @RequestMapping(value = "/data", method = RequestMethod.GET)
     public ResponseEntity<List<ValidationErrorMessage>> validateData(HttpSession session) {
-
-        UploadSession currentUploadSession = uploadSessionService.getCurrentUploadSession(session);
-        String pwdHash = ocUserService.getOcwsHash(session);
         try {
+            UploadSession currentUploadSession = uploadSessionService.getCurrentUploadSession(session);
+            String pwdHash = ocUserService.getOcwsHash(session);
             List<ValidationErrorMessage> dataErrors = validationService.getDataErrors(currentUploadSession, pwdHash);
             return new ResponseEntity<>(dataErrors, HttpStatus.OK);
         } catch (Exception e) {
@@ -46,15 +46,27 @@ public class ValidationController {
     }
 
     @RequestMapping(value = "/patients", method = RequestMethod.GET)
-    public List<ValidationErrorMessage> validatePatients(HttpSession session) {
-        UploadSession currentUploadSession = uploadSessionService.getCurrentUploadSession(session);
-        return validationService.getPatientsErrors(currentUploadSession);
+    public ResponseEntity<List<ValidationErrorMessage>> validatePatients(HttpSession session) {
+        try {
+            UploadSession currentUploadSession = uploadSessionService.getCurrentUploadSession(session);
+            List<ValidationErrorMessage> patientsErrors = validationService.getPatientsErrors(currentUploadSession);
+            return new ResponseEntity<>(patientsErrors, HttpStatus.OK);
+        } catch (UploadSessionNotFoundException e) {
+            e.printStackTrace();
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
     }
 
     @RequestMapping(value = "/events", method = RequestMethod.GET)
-    public List<ValidationErrorMessage> validateEvents(HttpSession session) {
-        UploadSession currentUploadSession = uploadSessionService.getCurrentUploadSession(session);
-        return validationService.getEventsErrors(currentUploadSession);
+    public ResponseEntity<List<ValidationErrorMessage>> validateEvents(HttpSession session) {
+        try {
+            UploadSession currentUploadSession = uploadSessionService.getCurrentUploadSession(session);
+            List<ValidationErrorMessage> eventsErrors = validationService.getEventsErrors(currentUploadSession);
+            return new ResponseEntity<>(eventsErrors,HttpStatus.OK);
+        } catch (UploadSessionNotFoundException e) {
+            e.printStackTrace();
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
     }
 
 }

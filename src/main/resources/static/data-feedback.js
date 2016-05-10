@@ -13,29 +13,25 @@ var displayMessages = function displayMessages(data) {
             var fb = data[i];
             var msg = fb['message'];
             var vals = fb['offendingValues'];
-            var msgRow =
-                '<tr>' +
-                '<th scope="row">Message: </th>' +
-                '<td>  </td>' +
-                '</tr>' +
-                '<tr>' +
-                '<th scope="row">  </th>' +
-                '<td>' + msg + '</td>' +
-                '</tr>';
-            var valRows = '<tr><th scope="row">Offending Values: </th><td></td></tr>';
+
+            var msgRow = '<span><strong>Validation Error --- '+msg+'</strong></span>';
+            var errorid = "error"+i;
+
+            var valRows = '<div class="container"><a href="#'+errorid+'" data-toggle="collapse"><strong>Erroneous Values:</strong></a>';
+            valRows += '<div class="collapse in" id='+errorid+'>';
 
             for (var j = 0; j < vals.length; j++) {
                 valRows +=
                     '<tr>' +
-                    '<th scope="row"> </th>' +
-                    '<td>' + vals[j] + '</td>' +
+                    vals[j] +
                     '</tr>';
             }
+            valRows += "</div></div>";
             var html =
-                '<div class="table-responsive">' +
+                '<div class="table-responsive well">' +
                 '<table class="table table-striped table-hover">' +
                 '<tbody>' +
-                msgRow + '<hr>' +
+                msgRow +
                 valRows +
                 '</tbody>' +
                 '</table>' +
@@ -50,7 +46,7 @@ function feedbackDataNext() {
 }
 
 $.ajax({
-    url: "/validate/data",
+    url: baseApp+"/validate/data",
     type: "GET",
     cache: false,
     success: displayMessages,

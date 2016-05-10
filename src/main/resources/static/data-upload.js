@@ -32,7 +32,7 @@ function uploadFile() {
 
         var dataFileUpload = function () {
             $.ajax({
-                url: "/upload/data",
+                url: baseApp+"/upload/data",
                 type: "POST",
                 data: new FormData($("#upload-file-form")[0]),
                 enctype: 'multipart/form-data',
@@ -58,7 +58,7 @@ function uploadFile() {
             });
         };
         $.ajax({
-            url: "/submission/create",
+            url: baseApp+"/submission/create",
             type: "post",
             data: {name: SESSIONNAME},
             success: dataFileUpload,
@@ -75,7 +75,7 @@ function uploadFile() {
             //TODO: resolve uploading-mapping issue
             // var upload_mapping_data = new FormData($("#upload-mapping-form")[0]); console.log(upload_mapping_data);
             // $.ajax({
-            //     url: "/upload/mapping",
+            //     url: baseApp+"/upload/mapping",
             //     type: "POST",
             //     data: upload_mapping_data,
             //     processData: false, // Don't process the files
@@ -125,14 +125,14 @@ function uploadFile() {
 
 function retrieveSessions() {
     $.ajax({
-        url: "/submission/all",
+        url: baseApp+"/submission/all",
         type: "get",
         success: handle_retrieval,
         error: handle_error
     });
 
     // $.ajax({
-    //     url: "/create-session",
+    //     url: baseApp+"/create-session",
     //     type: "post",
     //     data: {name:"newestSession"},
     //     success: _sessionAjax,
@@ -171,7 +171,7 @@ $(document).ready(function () {
     $("#data-proceed-btn").attr("disabled", "disabled");
 
     $.ajax({
-        url: "/submission/username",
+        url: baseApp+"/submission/username",
         type: "get",
         success: function (data) {
             USERNAME = data;

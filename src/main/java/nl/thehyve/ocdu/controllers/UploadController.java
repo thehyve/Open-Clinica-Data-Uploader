@@ -62,14 +62,13 @@ public class UploadController {
             Path locallySavedDataFile = saveFile(uploadfile);
             UploadSession currentUploadSession = uploadSessionService.getCurrentUploadSession(session);
             List<FileFormatError> fileFormatErrors = fileService.depositDataFile(locallySavedDataFile, user, currentUploadSession);
-            return new ResponseEntity<>(fileFormatErrors,HttpStatus.OK);
+            return new ResponseEntity<>(fileFormatErrors, HttpStatus.OK);
         } catch (Exception e) {
             System.out.println(e.getMessage());
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
 
     }
-
 
 
     private Path saveFile(MultipartFile file) throws IOException {

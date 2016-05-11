@@ -45,6 +45,7 @@ public class ValidationTests {
     Path testFileNonExistentCRF;
     Path testFileNonExistentStudy;
     Path testFileItemLengthExceeded;
+    Path testFileNonExistentItem;
 
     @Before
     public void setUp() throws Exception {
@@ -60,6 +61,7 @@ public class ValidationTests {
             this.testFileNonExistentCRF = Paths.get("docs/exampleFiles/nonExistentCrf.txt");
             this.testFileNonExistentStudy = Paths.get("docs/exampleFiles/nonexistentStudy.txt");
             this.testFileItemLengthExceeded = Paths.get("docs/exampleFiles/itemLengthExceeded.txt");
+            this.testFileNonExistentItem = Paths.get("docs/exampleFiles/nonExistentItem.txt");
 
             MessageFactory messageFactory = MessageFactory.newInstance();
             File testFile = new File("docs/responseExamples/getStudyMetadata.xml"); //TODO: Replace File with Path
@@ -108,6 +110,14 @@ public class ValidationTests {
     @Test
     public void itemLengthExceeded() throws Exception {
         List<ClinicalData> incorrectClinicalData = factory.createClinicalData(testFileItemLengthExceeded);
+        clinicalDataOcChecks = new ClinicalDataOcChecks(metaData, incorrectClinicalData);
+        List<ValidationErrorMessage> errors = clinicalDataOcChecks.getErrors();
+        assertEquals(1, errors.size());
+    }
+
+    @Test
+    public void nonExistentItem() throws Exception {
+        List<ClinicalData> incorrectClinicalData = factory.createClinicalData(testFileNonExistentItem);
         clinicalDataOcChecks = new ClinicalDataOcChecks(metaData, incorrectClinicalData);
         List<ValidationErrorMessage> errors = clinicalDataOcChecks.getErrors();
         assertEquals(1, errors.size());

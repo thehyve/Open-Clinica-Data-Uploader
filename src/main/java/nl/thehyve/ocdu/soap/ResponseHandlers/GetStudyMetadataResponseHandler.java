@@ -219,7 +219,7 @@ public class GetStudyMetadataResponseHandler extends OCResponseHandler {
             groupDef.setRepeating(repeating);
             groupDef.setOid(oid);
             List<String> mandatoryItems = getMandatory(itemGroupDefNode, itemRefSelector, "ItemOID");
-            List<String> allItems = getMandatory(itemGroupDefNode, itemRefSelector, "ItemOID");
+            List<String> allItems = getItems(itemGroupDefNode, itemRefSelector, "ItemOID");
             addItems(groupDef, mandatoryItems, allItems, items);
             List<ItemGroupDefinition> itemGroupInCrf = getItemGroupInCrf(itemGroupDefNode, groupDef, crfs);
             itemGroupDefs.addAll(itemGroupInCrf);

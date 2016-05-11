@@ -182,48 +182,41 @@ $(document).ready(function () {
     });
 
     $('#download-map-btn').click(function () {
-        var output = [];
-
-        for (var i = 0; i < usr_item_data.length; i++) {
-            var d = usr_item_data[i];
-            if (d.mapped) {
-                var item = {};
-                item['study'] = d.ocStudy;
-                item['eventName'] = d.ocEventName;
-                item['crfName'] = d.ocCRF;
-                item['crfVersion'] = d.ocCRFv;
-                item['ocItemName'] = d.ocItemName;
-                item['usrItemName'] = d.usrItemName;
-                output.push(item);
-            }
+        var output = constructUserMapping();
+        if(output.length > 0) {
+            var zip = new JSZip();
+            zip.file("my_mapping.json", JSON.stringify(output));
+            var content = zip.generate({type: "blob"});
+            saveAs(content, "my_mapping.zip");
         }
-
-        var zip = new JSZip();
-        zip.file("my_mapping.json", JSON.stringify(output));
-        var content = zip.generate({type: "blob"});
-        saveAs(content, "my_mapping.zip");
+        else {
+            console.log('The user has not mapped the items.');
+        }
     });
 
     $('#map-proceed-btn').click(function () {
         var isValid = true; // TODO: implement validation ?
 
         var uploadMappingAjax = function uploadMappingAjax() {
-            $.ajax({
-                headers: {
-                    'Accept': 'application/json',
-                    'Content-Type': 'application/json'
-                },
-                url: baseApp + "/upload/mapping",
-                type: "POST",
-                dataType: 'json',
-                data: JSON.stringify(map_data),
-                success: function () {
-                    window.location.replace(baseApp + "/views/patients");
-                },
-                error: function (jqXHR, textStatus, errorThrown) {
-                    console.log("Mapping upload to the server failed. HTTP status code:" + jqXHR.status + " " + errorThrown);
-                }
-            });
+            var output = constructUserMapping();
+            if(output.length > 0) {
+                $.ajax({
+                    headers: {
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json'
+                    },
+                    url: baseApp + "/upload/mapping",
+                    type: "POST",
+                    dataType: 'json',
+                    data: JSON.stringify(output),
+                    success: function () {
+                        window.location.replace(baseApp + "/views/patients");
+                    },
+                    error: function (jqXHR, textStatus, errorThrown) {
+                        console.log("Mapping upload to the server failed. HTTP status code:" + jqXHR.status + " " + errorThrown);
+                    }
+                });//ajax call
+            }//if output is not empty
         };
         if (isValid) {
             uploadMappingAjax();
@@ -231,6 +224,24 @@ $(document).ready(function () {
     })
 
 });//end of the function $(document).ready...
+
+function constructUserMapping() {
+    var output = [];
+    for (var i = 0; i < usr_item_data.length; i++) {
+        var d = usr_item_data[i];
+        if (d.mapped) {
+            var item = {};
+            item['study'] = d.ocStudy;
+            item['eventName'] = d.ocEventName;
+            item['crfName'] = d.ocCRF;
+            item['crfVersion'] = d.ocCRFv;
+            item['ocItemName'] = d.ocItemName;
+            item['usrItemName'] = d.usrItemName;
+            output.push(item);
+        }
+    }
+    return output;
+}
 
 function clearMapping() {
     for (var i = 0; i < usr_item_data.length; i++) {

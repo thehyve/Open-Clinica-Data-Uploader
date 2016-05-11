@@ -79,7 +79,7 @@ public class ClinicalDataFactoryTests {
         assertThat(
                 clinicalData,
                 everyItem(is(allOf(notNullValue(), instanceOf(ClinicalData.class)))));
-        assertEquals(6, clinicalData.size());
+        assertEquals(14, clinicalData.size());
     }
 
     @Before

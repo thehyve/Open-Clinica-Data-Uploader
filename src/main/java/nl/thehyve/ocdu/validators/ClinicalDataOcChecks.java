@@ -36,6 +36,7 @@ public class ClinicalDataOcChecks {
         crossChecks.add(new MultipleStudiesCrossCheck());
         crossChecks.add(new ItemLengthCrossCheck());
         crossChecks.add(new ItemExistenceCrossCheck());
+        crossChecks.add(new MandatoryInCrfCrossCheck());
     }
 
     public List<ValidationErrorMessage> getErrors() {

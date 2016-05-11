@@ -1,3 +1,3 @@
-StudySubjectID	Study	Site	EventName	CRFName	CRFVersion	EventRepeat	MyInt	MyDate	MyReal
-ssid1	Test Study 1	site1	Non-repeating event	DataTypes - 3	ver1	1	123	321	213
-ssid123456789012345678901234567890	Test Study 1	site1	Non-repeating event	DataTypes - 2	ver1	1	1231	3211	2131
+StudySubjectID	Study	Site	EventName	CRFName	CRFVersion	EventRepeat	MyInt	MyDate	MyReal	MyString	MySingleSelect1	MyPDate	MySingleSelect2
+ssid1	Test Study 1	site1	Non-repeating event	SuperSimpleCRF - 0.1	ver1	1	123	321	213	string	s	string	s
+ssid123456789012345678901234567890	Test Study 1	site1	Non-repeating event	SuperSimpleCRF - 0.1	ver1	1	1231	3211	2131	string	s	string	s

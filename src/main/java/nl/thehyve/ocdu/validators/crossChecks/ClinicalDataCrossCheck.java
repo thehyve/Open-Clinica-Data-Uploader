@@ -54,4 +54,20 @@ public interface ClinicalDataCrossCheck {
         );
         return allItems;
     }
+
+    default List<CRFDefinition> getAllCRFDefinitions(MetaData metaData) {
+        List<CRFDefinition> allCrfs = new ArrayList<>();
+        metaData.getEventDefinitions().stream().forEach(eventDefinition -> {
+            allCrfs.addAll(eventDefinition.getCrfDefinitions());
+        });
+        return allCrfs;
+    }
+
+    /*default List<ItemDefinition> getAllItemDefinitions(MetaData metaData) {
+        List<CRFDefinition> allCRFDefinitions = getAllCRFDefinitions(metaData);
+        List<ItemDefinition> allItems = new ArrayList<>();
+        allCRFDefinitions.stream().forEach(crfDefinition -> {
+            crfDefinition.get
+        });
+    }*/ //TODO: finish this method
 }

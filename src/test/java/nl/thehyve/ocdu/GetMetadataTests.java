@@ -20,8 +20,7 @@ import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathFactory;
 import java.io.File;
 import java.io.FileInputStream;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.core.AllOf.allOf;
@@ -110,7 +109,9 @@ public class GetMetadataTests {
         List<ItemGroupDefinition> itemGroupDefinitions = metaData.getItemGroupDefinitions();
         assertEquals(24, itemGroupDefinitions.size());
 
-        int totalExpectedItemDefs = 166;
+        int totalExpectedItemDefs = 282;
+        int totalExpectedItemNames = 57; // only items that are assigned to an ItemGroup are counted
+        Set<String> allItemNames = new HashSet<>();
         List<ItemDefinition> allItemdefs = new ArrayList<>();
         itemGroupDefinitions.forEach(itemGroupDefinition -> {
             assertThat(itemGroupDefinition.getOid(), is(notNullValue()) );
@@ -119,9 +120,13 @@ public class GetMetadataTests {
             List<ItemDefinition> items = itemGroupDefinition.getItems();
             assertTrue(items.size() > 0);
             allItemdefs.addAll(items);
-            items.stream().forEach(item -> assertTrue(isUnique(item, items)));
+            items.stream().forEach(item -> {
+                allItemNames.add(item.getName());
+                assertTrue(isUnique(item, items));
+            });
         });
         assertEquals(totalExpectedItemDefs, allItemdefs.size());
+        assertEquals(totalExpectedItemNames, allItemNames.size());
     }
 
 

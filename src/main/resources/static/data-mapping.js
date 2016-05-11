@@ -45,7 +45,7 @@ $(document).ready(function () {
         };
 
         $.ajax({
-            url: baseApp+"/metadata/tree",
+            url: baseApp + "/metadata/tree",
             type: "GET",
             // cache: false,
             success: metadataCallSuccess,
@@ -80,13 +80,13 @@ $(document).ready(function () {
     });
 
     function collapseLeaves(d) {
-        if(d.children) {
-            for(var i=0; i<d.children.length; i++) {
+        if (d.children) {
+            for (var i = 0; i < d.children.length; i++) {
                 var child = d.children[i];
-                if(child.depth == leaf_depth-1) {
+                if (child.depth == leaf_depth - 1) {
                     collapse(child);
                 }
-                else{
+                else {
                     collapseLeaves(child);
                 }
             }
@@ -94,17 +94,17 @@ $(document).ready(function () {
     }
 
     function expandLeaves(d) {
-        for(var i=0; i<d.children.length; i++) {
+        for (var i = 0; i < d.children.length; i++) {
             var child = d.children[i];
-            if(child.depth == leaf_depth-1) {
+            if (child.depth == leaf_depth - 1) {
                 expand(child);
             }
-            else{
+            else {
                 expandLeaves(child);
             }
         }
     }
-    
+
     $('#auto-map-btn').click(function () {
         clearMapping();
         for (var i = 0; i < map_data.length; i++) {
@@ -205,9 +205,28 @@ $(document).ready(function () {
     });
 
     $('#map-proceed-btn').click(function () {
-        var isValid = true;
+        var isValid = true; // TODO: implement validation ?
+
+        var uploadMappingAjax = function uploadMappingAjax() {
+            $.ajax({
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                },
+                url: baseApp + "/upload/mapping",
+                type: "POST",
+                dataType: 'json',
+                data: JSON.stringify(map_data),
+                success: function () {
+                    window.location.replace(baseApp + "/views/patients");
+                },
+                error: function (jqXHR, textStatus, errorThrown) {
+                    console.log("Mapping upload to the server failed. HTTP status code:" + jqXHR.status + " " + errorThrown);
+                }
+            });
+        };
         if (isValid) {
-            window.location.replace(baseApp + "/views/patients");
+            uploadMappingAjax();
         }
     })
 
@@ -277,7 +296,7 @@ function visualizeOCTree(treeData) {
     viewerHeight = 800; // $(document).height();
     tree = d3.layout.tree()
         .size([viewerHeight, viewerWidth])
-        .separation(function (a,b) {
+        .separation(function (a, b) {
             return 50;
         });
 
@@ -321,7 +340,6 @@ function visualizeOCTree(treeData) {
 
     // Sort the tree initially incase the JSON isn't in a sorted order.
     sortTree();
-
 
 
     treeg = baseSvg.append("g").attr('id', 'treeg');
@@ -447,7 +465,7 @@ function updateOCTree(source, _duration) {
             return d._children ? "lightsteelblue" : "#fff";
         })
         .style('stroke-width', function (d) {
-            if(d.depth == leaf_depth - 1) return "5px";
+            if (d.depth == leaf_depth - 1) return "5px";
             else return "2px";
         })
 
@@ -567,7 +585,7 @@ function handleOCItemInteraction() {
         window.setTimeout(function () {
             // ready_for_second_click = true;
             // console.log(double_clicked);
-            if(!double_clicked) {
+            if (!double_clicked) {
                 d = toggleChildren(d);
                 updateOCTree(d, 500);
                 handleOCItemInteraction();
@@ -582,7 +600,7 @@ function handleOCItemInteraction() {
 
     function dblclick(d) {
         double_clicked = true;
-        if(d.depth == leaf_depth - 1) {
+        if (d.depth == leaf_depth - 1) {
             mapUsrAndOCItemNames(d);
         }
     }
@@ -598,13 +616,13 @@ function handleOCItemInteraction() {
                 .style("top", (d3.event.pageY - 28) + "px");
         }
         adjustColors(d, true);
-        if(d.depth == leaf_depth) selectedOCItem = d3.select(this);
+        if (d.depth == leaf_depth) selectedOCItem = d3.select(this);
     }
 
     function itemout(d) {
         tipDiv.transition().style("opacity", 0);
         adjustColors(d, false);
-        if(d.depth == leaf_depth) selectedOCItem = null;
+        if (d.depth == leaf_depth) selectedOCItem = null;
     }
 
     function adjustColors(d, highlight) {
@@ -642,12 +660,12 @@ function handleOCItemInteraction() {
 }//function handleOCItemInteraction
 
 function mapUsrAndOCItemNames(ocd) {
-    if(ocd.children) {
-        for(var i=0; i<ocd.children.length; i++) {
+    if (ocd.children) {
+        for (var i = 0; i < ocd.children.length; i++) {
             var child = ocd.children[i];
-            for(var j=0; j<usr_item_data.length; j++) {
+            for (var j = 0; j < usr_item_data.length; j++) {
                 var usrname = usr_item_data[j].usrItemName;
-                if(child.name == usrname) {
+                if (child.name == usrname) {
                     usr_item_data[j].mapped = true;
                     usr_item_data[j].ocItemName = child.name;
                     usr_item_data[j].ocCRFv = child.parent.name;
@@ -666,7 +684,7 @@ function mapUsrAndOCItemNames(ocd) {
 }
 
 function visualizeUsrList(usrData) {
-    var _x0 = 700 + 3*rect_w - 5;
+    var _x0 = 700 + 3 * rect_w - 5;
     var _y0 = 15;
     listg = d3.select('#baseSvg').append('g').attr('id', 'listg');
     listg.append('line')
@@ -829,13 +847,13 @@ function visualizeUsrList(usrData) {
     }
 
     $(document).on('mousewheel', '#baseSvg', function (e) {
-        if(isMouseInUserItemArea()) {
+        if (isMouseInUserItemArea()) {
             var s = zoomListener.scale();
             zoomListener.scaleExtent([s, s]);
 
             var shift = -e.originalEvent.wheelDelta / 8;
             usr_list_y += shift;
-            if(usr_list_y < -usr_list_h + 60) usr_list_y = -usr_list_h + 60;
+            if (usr_list_y < -usr_list_h + 60) usr_list_y = -usr_list_h + 60;
             // if(usr_list_y > +d3.select('#baseSvg').attr('height') - 60) {
             //     usr_list_y = +d3.select('#baseSvg').attr('height') - 60;
             // }
@@ -845,11 +863,11 @@ function visualizeUsrList(usrData) {
             zoomListener.scaleExtent([0.1, 3]);
         }
     });
-    
-    function  isMouseInUserItemArea() {
+
+    function isMouseInUserItemArea() {
         var bcr = d3.select('.usritem').select('rect')[0][0].getBoundingClientRect();
         var x1 = bcr.left - 5;
-        if(mousepos.x > x1) return true;
+        if (mousepos.x > x1) return true;
         else return false;
     }
 }//function visualizeUsrList
@@ -860,7 +878,7 @@ function positionUsrList(usr_item_data, time, _y0) {
         var uitem = usr_item_data[i];
         //position the usr items when they are not mapped
         if (!uitem.mapped) {
-            uitem.x = 700 + 3*rect_w;
+            uitem.x = 700 + 3 * rect_w;
             uitem.y = +_y0 + i * (rect_h + 5);
             usr_list_h += rect_h + 5;
         }

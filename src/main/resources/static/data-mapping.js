@@ -49,8 +49,10 @@ $(document).ready(function () {
             type: "GET",
             // cache: false,
             success: metadataCallSuccess,
-            error: function () {
-                console.log("Fetching metadata from the server failed.");
+            error: function(jqXHR, textStatus, errorThrown) {
+                if(jqXHR.status == 401) {
+                    window.location.href = baseApp+"/views/data";
+                }
             }
         });
 
@@ -210,10 +212,12 @@ $(document).ready(function () {
                     dataType: 'json',
                     data: JSON.stringify(output),
                     success: function () {
-                        window.location.replace(baseApp + "/views/patients");
+                        window.location.href = baseApp + "/views/patients";
                     },
-                    error: function (jqXHR, textStatus, errorThrown) {
-                        console.log("Mapping upload to the server failed. HTTP status code:" + jqXHR.status + " " + errorThrown);
+                    error: function(jqXHR, textStatus, errorThrown) {
+                        if(jqXHR.status == 401) {
+                            window.location.href = baseApp+"/views/data";
+                        }
                     }
                 });//ajax call
             }//if output is not empty
@@ -221,7 +225,11 @@ $(document).ready(function () {
         if (isValid) {
             uploadMappingAjax();
         }
-    })
+    });
+
+    $('#map-back-btn').click(function() {
+        window.history.back();
+    });
 
 });//end of the function $(document).ready...
 

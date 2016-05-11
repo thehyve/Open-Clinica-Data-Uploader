@@ -34,7 +34,11 @@ var displayMessages = function displayMessages(data) {
 };
 
 function feedbackDataNext() {
-    window.location.replace(baseApp + "/views/mapping");
+    window.location.href = baseApp + "/views/mapping";
+}
+
+function backBtnHandler() {
+    window.history.back();
 }
 
 $.ajax({
@@ -42,8 +46,10 @@ $.ajax({
     type: "GET",
     cache: false,
     success: displayMessages,
-    error: function () {
-        console.log("Fetching validation errors from the server failed.");
+    error: function(jqXHR, textStatus, errorThrown) {
+        if(jqXHR.status == 401) {
+            window.location.href = baseApp+"/views/data";
+        }
     }
 });
 

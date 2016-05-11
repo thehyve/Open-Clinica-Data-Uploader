@@ -51,7 +51,7 @@ $(document).ready(function () {
             success: metadataCallSuccess,
             error: function(jqXHR, textStatus, errorThrown) {
                 if(jqXHR.status == 401) {
-                    window.location.replace(baseApp+"/views/data");
+                    window.location.href = baseApp+"/views/data";
                 }
             }
         });
@@ -212,11 +212,11 @@ $(document).ready(function () {
                     dataType: 'json',
                     data: JSON.stringify(output),
                     success: function () {
-                        window.location.replace(baseApp + "/views/patients");
+                        window.location.href = baseApp + "/views/patients";
                     },
                     error: function(jqXHR, textStatus, errorThrown) {
                         if(jqXHR.status == 401) {
-                            window.location.replace(baseApp+"/views/data");
+                            window.location.href = baseApp+"/views/data";
                         }
                     }
                 });//ajax call

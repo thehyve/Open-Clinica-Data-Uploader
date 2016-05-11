@@ -45,7 +45,7 @@ function uploadFile() {
                         $("#message-board").append(info);
                         isDataUploaded = true;
                         if (!isDirected && ((isMappingSelected && isMappingUploaded) || !isMappingSelected)) {
-                            window.location.replace(baseApp+"/views/feedback-data");
+                            // window.location.replace(baseApp+"/views/feedback-data");
                             isDirected = true;
                         }
                     } else {
@@ -59,12 +59,14 @@ function uploadFile() {
                         $("#message-board").append(info);
                     }
                 },
-                error: function (error) {
+                error: function (jqXHR, textStatus, errorThrown) {
                     // Handle upload error
                     var info = '<span id="data-alert" class="alert alert-danger">Data not uploaded, either due to exceeding file size limit or server error</span>';
-                    console.log(JSON.stringify(error));
                     $("#message-board").append(info);
                     isDataUploaded = false;
+                    if(jqXHR.status == 401) {
+                        window.location.replace(baseApp+"/views/data");
+                    }
                 }
             });
         };
@@ -73,7 +75,11 @@ function uploadFile() {
             type: "post",
             data: {name: SESSIONNAME},
             success: dataFileUpload,
-            error: handle_error
+            error: function(jqXHR, textStatus, errorThrown) {
+                if(jqXHR.status == 401) {
+                    window.location.replace(baseApp+"/views/data");
+                }
+            }
         });
 
         window.setTimeout(function () {
@@ -83,39 +89,43 @@ function uploadFile() {
         }, 3000);
 
         if (isMappingSelected) {
-            //TODO: resolve uploading-mapping issue
-            // var upload_mapping_data = new FormData($("#upload-mapping-form")[0]); console.log(upload_mapping_data);
-            // $.ajax({
-            //     url: baseApp+"/upload/mapping",
-            //     type: "POST",
-            //     data: upload_mapping_data,
-            //     processData: false, // Don't process the files
-            //     // contentType: false,
-            //     cache: false,
-            //     dataType: 'json',
-            //     success: function (feedback) {
-            //         // Handle upload success
-            //         var info = '<span id="mapping-alert" class="alert alert-success">Mapping succesfully uploaded</span>';
-            //         $("#message-board").append(info);
-            //         isMappingUploaded = true;
-            //         if (!isDirected && isDataUploaded) {
-            //             // window.location.replace("/mapping");
-            //             console.log(feedback);
-            //             isDirected = true;
-            //         }
-            //     },
-            //     error: function () {
-            //         // Handle upload error
-            //         var info = '<span id="mapping-alert" class="alert alert-danger">Mapping not uploaded</span>';
-            //         $("#message-board").append(info);
-            //         isMappingUploaded = false;
-            //     }
-            // });
-            // window.setTimeout(function () {
-            //     $("#mapping-alert").fadeTo(500, 0).slideUp(500, function () {
-            //         $(this).empty();
-            //     });
-            // }, 3000);
+            var upload_mapping_data = new FormData($("#upload-mapping-form")[0]);
+            $.ajax({
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                },
+                url: baseApp+"/upload/mapping",
+                type: "POST",
+                data: upload_mapping_data,
+                processData: false, // Don't process the files
+                // contentType: false,
+                cache: false,
+                dataType: 'json',
+                success: function (feedback) {
+                    // Handle upload success
+                    var info = '<span id="mapping-alert" class="alert alert-success">Mapping succesfully uploaded</span>';
+                    $("#message-board").append(info);
+                    isMappingUploaded = true;
+                    if (!isDirected && isDataUploaded) {
+                        // window.location.replace("/mapping");
+                        console.log(feedback);
+                        isDirected = true;
+                    }
+                },
+                error: function (jqXHR, textStatus, errorThrown) {
+                    console.log("Mapping upload to the server failed. HTTP status code:" + jqXHR.status + " " + errorThrown);
+                    // Handle upload error
+                    var info = '<span id="mapping-alert" class="alert alert-danger">Mapping not uploaded</span>';
+                    $("#message-board").append(info);
+                    isMappingUploaded = false;
+                }
+            });
+            window.setTimeout(function () {
+                $("#mapping-alert").fadeTo(500, 0).slideUp(500, function () {
+                    $(this).empty();
+                });
+            }, 3000);
         }//if isMappingSelected
 
     }
@@ -139,7 +149,11 @@ function retrieveSessions() {
         url: baseApp+"/submission/all",
         type: "get",
         success: handle_session_retrieval_all,
-        error: handle_error
+        error: function(jqXHR, textStatus, errorThrown) {
+            if(jqXHR.status == 401) {
+                window.location.replace(baseApp+"/views/data");
+            }
+        }
     });
 
 }
@@ -190,17 +204,15 @@ function handle_session_retrieval() {
                 console.log('Session step is not recognized.');
             }
         },
-        error: function (err) {
-            console.log(err);
+        error: function(jqXHR, textStatus, errorThrown) {
+            if(jqXHR.status == 401) {
+                window.location.replace(baseApp+"/views/data");
+            }
         }
     });
     console.log(sessions[ind]);
 }
 
-
-function handle_error() {
-    console.log('Failed to load sessions.');
-}
 
 $(document).ready(function () {
     $("#data-proceed-btn").attr("disabled", "disabled");
@@ -211,6 +223,11 @@ $(document).ready(function () {
         type: "get",
         success: function (data) {
             USERNAME = data;
+        },
+        error: function(jqXHR, textStatus, errorThrown) {
+            if(jqXHR.status == 401) {
+                window.location.replace(baseApp+"/views/data");
+            }
         }
     });
 

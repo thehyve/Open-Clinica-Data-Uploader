@@ -42,8 +42,10 @@ $.ajax({
     type: "GET",
     cache: false,
     success: displayMessages,
-    error: function () {
-        console.log("Fetching validation errors from the server failed.");
+    error: function(jqXHR, textStatus, errorThrown) {
+        if(jqXHR.status == 401) {
+            window.location.replace(baseApp+"/views/data");
+        }
     }
 });
 

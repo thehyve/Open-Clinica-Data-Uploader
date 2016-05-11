@@ -83,6 +83,9 @@ public  class GenericFileValidator implements FileFormatValidator {
         if (index == -1) return;
         for (String line : body) {
             List<String> split = splitLine(line);
+            if (index >= split.size()) {
+                continue; // cannot be verified due to column number mismatch
+            }
             String field = split.get(index);
             if (!isInteger(field)) {
                 errors.add(new FileFormatError("Repeat number must be an integer, offending value: " + field));

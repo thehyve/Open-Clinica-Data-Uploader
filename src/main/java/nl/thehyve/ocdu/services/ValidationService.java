@@ -43,14 +43,17 @@ public class ValidationService {
     @Autowired
     OpenClinicaService openClinicaService;
 
+    @Autowired
+    DataService dataService;
+
     public List<ValidationErrorMessage> getDataErrors(UploadSession submission, String wsPwdHash) throws Exception {
         List<ClinicalData> bySubmission = clinicalDataRepository.findBySubmission(submission);
         determineStudy(bySubmission, submission);
         OcUser submitter = submission.getOwner();
-        Study study = new Study(submission.getStudy(), submission.getStudy(), submission.getStudy());
+        Study study = dataService.findStudy(submission.getStudy(), submitter, wsPwdHash);
         MetaData metadata = openClinicaService.getMetadata(submitter.getUsername(), wsPwdHash, submitter.getOcEnvironment(), study);
         List<ValidationErrorMessage> errors = new ArrayList<>();
-        if (metadata == null) {
+        if (study == null || metadata == null) {
             StudyDoesNotExist studyError = new StudyDoesNotExist();
             studyError.addOffendingValue(submission.getStudy());
             errors.add(studyError);
@@ -82,7 +85,7 @@ public class ValidationService {
     private void determineStudy(Collection<ClinicalData> entries, UploadSession submission) {
         Set<String> usedStudyOIDs = entries.stream().map(ocEntity -> ocEntity.getStudy()).collect(Collectors.toSet());
         if (usedStudyOIDs.size() > 1) log.error("Attempted validation of file referencing multiple studies");
-        submission.setStudy(usedStudyOIDs.stream().findFirst().get());
+        submission.setStudy(usedStudyOIDs.stream().findFirst().get()); // Multiple studies not allowed, checked by a validator
     }
 
 }

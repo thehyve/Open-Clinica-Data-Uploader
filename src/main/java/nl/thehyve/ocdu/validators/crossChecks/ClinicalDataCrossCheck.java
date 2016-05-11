@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * Created by piotrzakrzewski on 04/05/16.
@@ -20,11 +21,10 @@ public interface ClinicalDataCrossCheck {
         Map<String, List<String>> eventMap = new HashMap<>();
         metaData.getEventDefinitions().stream().forEach(eventDefinition ->
                 {
-                    List<String> crfNames = new ArrayList<String>();
-                    for (CRFDefinition crf : eventDefinition.getCrfDefinitions()) {
-                        crfNames.add(crf.getOid());
-                    }
-                    eventMap.put(eventDefinition.getStudyEventOID(), crfNames);
+                    List<String> crfNames = eventDefinition.getCrfDefinitions()
+                            .stream().map(CRFDefinition::getName)
+                            .collect(Collectors.toList());
+                    eventMap.put(eventDefinition.getName(), crfNames);
                 }
         );
         return eventMap;

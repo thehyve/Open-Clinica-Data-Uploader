@@ -22,7 +22,7 @@ public class EventExistsCrossCheck implements ClinicalDataCrossCheck {
         List<String> validEventNames = new ArrayList<>();
         metaData
                 .getEventDefinitions().stream()
-                .forEach(eventDefinition -> validEventNames.add(eventDefinition.getStudyEventOID()));
+                .forEach(eventDefinition -> validEventNames.add(eventDefinition.getName()));
         List<ClinicalData> violators = data.stream()
                 .filter(clinicalData -> !validEventNames.contains(clinicalData.getEventName()))
                 .collect(Collectors.toList());

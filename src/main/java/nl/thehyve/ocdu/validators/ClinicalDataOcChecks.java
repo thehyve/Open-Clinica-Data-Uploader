@@ -32,6 +32,8 @@ public class ClinicalDataOcChecks {
         crossChecks.add(new DataFieldWidthCrossCheck());
         crossChecks.add(new CrfExistsCrossCheck());
         crossChecks.add(new CrfCouldNotBeVerifiedCrossCheck());
+        crossChecks.add(new MultipleEventsCrossCheck());
+        crossChecks.add(new MultipleStudiesCrossCheck());
     }
 
     public List<ValidationErrorMessage> getErrors() {

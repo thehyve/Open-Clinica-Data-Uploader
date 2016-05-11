@@ -43,6 +43,7 @@ public class ValidationTests {
     Path testFileInCorrectSsidLength;
     Path testFileNonExistentEvent;
     Path testFileNonExistentCRF;
+    Path testFileNonExistentStudy;
 
     @Before
     public void setUp() throws Exception {
@@ -56,6 +57,7 @@ public class ValidationTests {
             this.testFileInCorrectSsidLength = Paths.get("docs/exampleFiles/tooLongSSID.txt");
             this.testFileNonExistentEvent = Paths.get("docs/exampleFiles/nonExistentEvent.txt");
             this.testFileNonExistentCRF = Paths.get("docs/exampleFiles/nonExistentCrf.txt");
+            this.testFileNonExistentStudy = Paths.get("docs/exampleFiles/nonexistentStudy.txt");
 
             MessageFactory messageFactory = MessageFactory.newInstance();
             File testFile = new File("docs/responseExamples/getStudyMetadata.xml"); //TODO: Replace File with Path

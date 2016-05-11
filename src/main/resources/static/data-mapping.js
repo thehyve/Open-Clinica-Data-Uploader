@@ -707,6 +707,7 @@ function visualizeUsrList(usrData) {
     var _y0 = 15;
     listg = d3.select('#baseSvg').append('g').attr('id', 'listg');
     listg.append('line')
+        .attr('id', 'seperationline')
         .attr('x1', _x0)
         .attr('y1', -20000)
         .attr('x2', _x0)
@@ -884,8 +885,10 @@ function visualizeUsrList(usrData) {
     });
 
     function isMouseInUserItemArea() {
-        var bcr = d3.select('.usritem').select('rect')[0][0].getBoundingClientRect();
-        var x1 = bcr.left - 5;
+        var line = d3.select('#seperationline');
+        // var bcr = d3.select('.usritem').select('rect')[0][0].getBoundingClientRect();
+        // var x1 = bcr.left - 5;
+        var x1 =   +line.attr('x1') - 1;
         if (mousepos.x > x1) return true;
         else return false;
     }

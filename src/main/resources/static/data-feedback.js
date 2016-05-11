@@ -34,7 +34,7 @@ var displayMessages = function displayMessages(data) {
 };
 
 function feedbackDataNext() {
-    window.location.href = baseApp + "/views/mapping";
+    // window.location.href = baseApp + "/views/feedback-data";
 }
 
 function backBtnHandler() {

@@ -212,7 +212,7 @@ $(document).ready(function () {
                     dataType: 'json',
                     data: JSON.stringify(output),
                     success: function () {
-                        window.location.href = baseApp + "/views/patients";
+                        window.location.href = baseApp + "/views/feedback-data";
                     },
                     error: function(jqXHR, textStatus, errorThrown) {
                         if(jqXHR.status == 401) {
@@ -221,6 +221,9 @@ $(document).ready(function () {
                     }
                 });//ajax call
             }//if output is not empty
+            else {
+                window.location.href = baseApp + "/views/feedback-data";
+            }//if output is empty
         };
         if (isValid) {
             uploadMappingAjax();

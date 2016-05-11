@@ -35,14 +35,14 @@ function uploadFile() {
                         $("#message-board").append(info);
                         isDataUploaded = true;
                         if (!isDirected && ((isMappingSelected && isMappingUploaded) || !isMappingSelected)) {
-                            window.location.href = baseApp+"/views/feedback-data";
+                            window.location.href = baseApp+"/views/mapping";
                             isDirected = true;
                         }
                     } else {
-                        var info = '<div><ul>';
+                        var info = '<div class="alert alert-danger"><ul>';
                         fileFormatErrors.forEach(function (error) {
                             var errDiv = '<li><span>' + error.message + '</span></li>';
-                            console.log(JSON.stringify(error));
+                            // console.log(error);
                             info += errDiv;
                         });
                         info += '</div></ul>';

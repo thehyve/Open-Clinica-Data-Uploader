@@ -63,6 +63,37 @@ public class UploadSessionController {
         }
     }
 
+    @RequestMapping(value = "/update", method=RequestMethod.POST)
+    public ResponseEntity<?> updateSubmission(@RequestParam(value = "name") String step  ,HttpSession session) {
+        try {
+            UploadSession currentUploadSession = uploadSessionService.getCurrentUploadSession(session);
+            UploadSession.Step step1 = UploadSession.Step.valueOf(step);
+            if (step1 != null) {
+                currentUploadSession.setStep(step1);
+                return new ResponseEntity<>(HttpStatus.OK);
+            } else {
+                return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            }
+        } catch (UploadSessionNotFoundException e) {
+            e.printStackTrace();
+            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        }
+    }
+
+    @RequestMapping(value = "/delete", method=RequestMethod.POST)
+    public ResponseEntity<?> deleteSubmission(HttpSession session) {
+        try {
+            UploadSession currentUploadSession = uploadSessionService.getCurrentUploadSession(session);
+            uploadSessionRepository.delete(currentUploadSession);
+            uploadSessionService.setCurrentUploadSession(session, null);
+            return new ResponseEntity<>(HttpStatus.OK);
+        } catch (UploadSessionNotFoundException e) {
+            e.printStackTrace();
+            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        }
+    }
+
+
     @Autowired
     DataService dataService;
 

@@ -37,6 +37,10 @@ function feedbackDataNext() {
     window.location.href = baseApp + "/views/mapping";
 }
 
+function backBtnHandler() {
+    window.history.back();
+}
+
 $.ajax({
     url: baseApp+"/validate/data",
     type: "GET",

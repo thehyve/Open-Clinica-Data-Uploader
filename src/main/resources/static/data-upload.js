@@ -6,21 +6,11 @@
  */
 var sessions = [];
 
-var isSessionNameDefined = false;
-$('#upload-session-input').change(function () {
-    var name = $('#upload-session-input').val();
-    if (name !== "") isSessionNameDefined = true;
-});
-var isDataSelected = false;
-$('#upload-file-input').change(function () {
-    isDataSelected = true;
-});
-var isMappingSelected = false;
-$('#upload-mapping-input').change(function () {
-    isMappingSelected = true;
-});
-
 function uploadFile() {
+
+    var isSessionNameDefined = ($('#upload-session-input').val() !== "");
+    var isDataSelected = ($('#upload-file-input').val() !== "");
+    var isMappingSelected = ($('#upload-mapping-input').val() !== "");
 
     var isDataUploaded = false;
     var isMappingUploaded = false;
@@ -45,7 +35,7 @@ function uploadFile() {
                         $("#message-board").append(info);
                         isDataUploaded = true;
                         if (!isDirected && ((isMappingSelected && isMappingUploaded) || !isMappingSelected)) {
-                            // window.location.href = baseApp+"/views/feedback-data");
+                            window.location.href = baseApp+"/views/feedback-data";
                             isDirected = true;
                         }
                     } else {
@@ -64,9 +54,9 @@ function uploadFile() {
                     var info = '<span id="data-alert" class="alert alert-danger">Data not uploaded, either due to exceeding file size limit or server error</span>';
                     $("#message-board").append(info);
                     isDataUploaded = false;
-                    if(jqXHR.status == 401) {
-                        window.location.href = baseApp+"/views/data";
-                    }
+                    // if(jqXHR.status == 401) {
+                    //     window.location.href = baseApp+"/views/data";
+                    // }
                 }
             });
         };
@@ -142,7 +132,7 @@ function uploadFile() {
         }
     }
 
-} // function uploadFile
+} //function uploadFile
 
 function retrieveSessions() {
     $.ajax({
@@ -150,9 +140,9 @@ function retrieveSessions() {
         type: "get",
         success: handle_session_retrieval_all,
         error: function(jqXHR, textStatus, errorThrown) {
-            if(jqXHR.status == 401) {
-                window.location.href = baseApp+"/views/data";
-            }
+            // if(jqXHR.status == 401) {
+            //     window.location.href = baseApp+"/views/data";
+            // }
         }
     });
 
@@ -174,8 +164,7 @@ function handle_session_retrieval_all(_sessions) {
         $('#session_container').append(sessionHTML);
         $('#' + btnid).click(handle_session_retrieval);
     }//for
-    // console.log(sessions);
-}
+}//function handle_session_retrieval_all
 
 function handle_session_retrieval() {
     var ind = $(this).attr('session_index');
@@ -205,14 +194,17 @@ function handle_session_retrieval() {
             }
         },
         error: function(jqXHR, textStatus, errorThrown) {
-            if(jqXHR.status == 401) {
-                window.location.href = baseApp+"/views/data";
-            }
+            // if(jqXHR.status == 401) {
+            //     window.location.href = baseApp+"/views/data";
+            // }
         }
     });
     console.log(sessions[ind]);
-}
+}//function handle_session_retrieval
 
+function backBtnHandler() {
+    window.history.back();
+}
 
 $(document).ready(function () {
     $("#data-proceed-btn").attr("disabled", "disabled");
@@ -225,9 +217,9 @@ $(document).ready(function () {
             USERNAME = data;
         },
         error: function(jqXHR, textStatus, errorThrown) {
-            if(jqXHR.status == 401) {
-                window.location.href = baseApp+"/views/data";
-            }
+            // if(jqXHR.status == 401) {
+            //     window.location.href = baseApp+"/views/data";
+            // }
         }
     });
 

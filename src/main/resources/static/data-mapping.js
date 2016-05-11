@@ -225,7 +225,11 @@ $(document).ready(function () {
         if (isValid) {
             uploadMappingAjax();
         }
-    })
+    });
+
+    $('#map-back-btn').click(function() {
+        window.history.back();
+    });
 
 });//end of the function $(document).ready...
 

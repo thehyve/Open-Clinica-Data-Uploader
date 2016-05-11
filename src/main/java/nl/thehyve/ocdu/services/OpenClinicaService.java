@@ -40,6 +40,9 @@ public class OpenClinicaService {
 
     public MetaData getMetadata(String username, String passwordHash, String url, Study study) throws Exception {
         log.info("Get metadata initiated by: "+username+" on: "+url+" study: "+study);
+        if (study == null || username == null || passwordHash == null || url == null) {
+            return null;
+        }
         SOAPConnectionFactory soapConnectionFactory = SOAPConnectionFactory.newInstance();
         SOAPConnection soapConnection = soapConnectionFactory.createConnection();
         SOAPMessage message = responseFactory.createGetStudyMetadataRequest(username, passwordHash, study);

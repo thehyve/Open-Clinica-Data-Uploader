@@ -19,14 +19,14 @@ public class DataFileValidator extends GenericFileValidator {
     @Override
     public void validateFile(Path file) {
         super.validateFile(file);
-        try {
-            String header = getHeader(file);
-            columnNamesWellFormed(header);
+        /*try {
+            //String header = getHeader(file);
+            //columnNamesWellFormed(header);
         } catch (IOException e) {
             setValid(false);
             addError(new FileFormatError("Internal Server Error prevented parsing the file. Contact administrator."));
             e.printStackTrace();
-        }
+        }*/
     }
 
     private void columnNamesWellFormed(String header) {

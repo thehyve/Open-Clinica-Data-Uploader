@@ -103,8 +103,24 @@ public class DataService {
     public MetaData getMetaData(UploadSession submission, String ocwsHash) throws Exception {
         OcUser owner = submission.getOwner();
         FieldsDetermined info = getInfo(submission);
-        Study study = new Study(info.getStudy(), info.getStudy(), info.getStudy());
+        Study study = findStudy(info.getStudy(), owner, ocwsHash);
+        if (study == null) {
+            return null;
+        }
         return openClinicaService.getMetadata(owner.getUsername(), ocwsHash, owner.getOcEnvironment(), study);
+    }
+
+    public Study findStudy(String studyName, OcUser owner, String ocwsHash) throws Exception {
+        //TODO: implement caching of studies instead of looking it up each time by WS call
+        List<Study> studies = openClinicaService.listStudies(owner.getUsername(), ocwsHash, owner.getOcEnvironment());
+        List<Study> matching = studies.stream().filter(study -> study.getName().equals(studyName)).collect(Collectors.toList());
+        if (matching.size() == 1) {
+            return matching.get(0);
+        } else if (matching.size() == 0){
+            return null;
+        } else {
+          throw new Exception("Multiple studies match name: " +studyName+" fatal data inconsistency.");
+        }
     }
 
 

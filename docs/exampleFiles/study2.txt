@@ -1,0 +1,5 @@
+StudySubjectID	Study	Site	EventName	EventRepeat	CRFName	CRFVersion	MyString	MyInt	MyReal	MyDate	MyPDate	MySingleSelect1	MySingleSelect2
+Subject1	Study 2	My First Site	Non-repeating event	1	SuperSimpleCRF	0.1	String Subject 1	1	1.0	1-Apr-2010	2012	1	1
+Subject2	Study 2	My First Site	Non-repeating event	1	SuperSimpleCRF	0.1	String Subject 2	2	2.0	4-Jun-2012	2000	0	2
+Subject3	Study 2	My First Site	Non-repeating event	1	SuperSimpleCRF	0.1	String Subject 3	-1	-200	1-Apr-2010	Dec-2013	2	3
+Subject4	Study 2	My First Site	Non-repeating event	1	SuperSimpleCRF	0.1	String Subject 4	-2	350	4-Jun-2012	Jun-1999	0	0

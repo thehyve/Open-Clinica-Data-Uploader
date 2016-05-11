@@ -3,6 +3,7 @@ package nl.thehyve.ocdu.factories;
 import nl.thehyve.ocdu.models.OCEntities.ClinicalData;
 import nl.thehyve.ocdu.models.OcUser;
 import nl.thehyve.ocdu.models.UploadSession;
+import org.springframework.security.access.method.P;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -100,6 +101,8 @@ public class ClinicalDataFactory extends UserSubmittedDataFactory {
         for (String colName : headerMap.keySet()) {
             String item = parseItem(colName);
             Integer groupRepeat = parseGroupRepeat(colName);
+            if (groupRepeat == null) item = colName; // Consequences of encoding group repeat in the column name
+
             String value = split[headerMap.get(colName)];
             ClinicalData dat = new ClinicalData(study, item, ssid, eventName, eventRepeat, crf,
                     getSubmission(), crfVer, groupRepeat, getUser(), value);
@@ -110,15 +113,23 @@ public class ClinicalDataFactory extends UserSubmittedDataFactory {
     }
 
     private String parseItem(String columnToken) {
-        String[] splt = columnToken.split("_");
-        return splt[0];
+        int last = columnToken.lastIndexOf("_");
+        if (last > 0 ) {
+            return columnToken.substring(0, last);
+        } else {
+            return columnToken;
+        }
     }
 
     private Integer parseGroupRepeat(String columnToken) {
         String[] splt = columnToken.split("_");
         Integer gRep = null;
         if (splt.length > 1) {
-            gRep = Integer.parseInt(splt[1]);
+            try {
+                gRep = Integer.parseInt(splt[1]);
+            } catch (NumberFormatException e) {
+                gRep = null; // Do nothing
+            }
         }
         return gRep;
     }

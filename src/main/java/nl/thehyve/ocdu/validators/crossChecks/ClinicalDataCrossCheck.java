@@ -1,6 +1,7 @@
 package nl.thehyve.ocdu.validators.crossChecks;
 
 import nl.thehyve.ocdu.models.OcDefinitions.CRFDefinition;
+import nl.thehyve.ocdu.models.OcDefinitions.ItemDefinition;
 import nl.thehyve.ocdu.models.OcDefinitions.MetaData;
 import nl.thehyve.ocdu.models.OCEntities.ClinicalData;
 import nl.thehyve.ocdu.models.errors.ValidationErrorMessage;
@@ -17,6 +18,7 @@ import java.util.stream.Collectors;
 public interface ClinicalDataCrossCheck {
 
     ValidationErrorMessage getCorrespondingError(List<ClinicalData> data, MetaData metaData);
+
      default Map<String, List<String>> buildEventMap(MetaData metaData) {
         Map<String, List<String>> eventMap = new HashMap<>();
         metaData.getEventDefinitions().stream().forEach(eventDefinition ->
@@ -28,5 +30,18 @@ public interface ClinicalDataCrossCheck {
                 }
         );
         return eventMap;
+    }
+
+    default Map<String, Integer> buildFieldLengthMap(MetaData metaData) {
+        Map<String, Integer> lengthMap = new HashMap<>();
+        metaData.getItemGroupDefinitions().stream().forEach(itemGroupDefinition->
+        {
+            List<ItemDefinition> items = itemGroupDefinition.getItems();
+            items.stream().forEach(itemDefinition -> {
+                lengthMap.put(itemDefinition.getName(), itemDefinition.getLength());
+            });
+        }
+        );
+        return lengthMap;
     }
 }

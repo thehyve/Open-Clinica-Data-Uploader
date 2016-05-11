@@ -33,7 +33,7 @@ $(window).on('resize', function () {
 // initializing and button listeners
 $(document).ready(function () {
 
-    d3.json('/data/test-usr-data.json', function (data) {
+    d3.json(baseApp + '/data/test-usr-data.json', function (data) {
         initialize();
         usr_data = data;
         visualizeUsrList(usr_data);
@@ -49,9 +49,10 @@ $(document).ready(function () {
             type: "GET",
             // cache: false,
             success: metadataCallSuccess,
-            error: function(jqXHR, textStatus, errorThrown) {
-                if(jqXHR.status == 401) {
-                    window.location.href = baseApp+"/views/data";
+            error: function (jqXHR, textStatus, errorThrown) {
+                if (jqXHR.status == 401) {
+                    console.log('No submission selected: '+ errorThrown);
+                    window.location.href = baseApp + "/views/data";
                 }
             }
         });
@@ -62,7 +63,7 @@ $(document).ready(function () {
         // });
 
 
-        d3.json('/data/test-map-data.json', function (data) {
+        d3.json(baseApp+'/data/test-map-data.json', function (data) {
             map_data = data;
         });
     });
@@ -185,7 +186,7 @@ $(document).ready(function () {
 
     $('#download-map-btn').click(function () {
         var output = constructUserMapping();
-        if(output.length > 0) {
+        if (output.length > 0) {
             var zip = new JSZip();
             zip.file("my_mapping.json", JSON.stringify(output));
             var content = zip.generate({type: "blob"});
@@ -201,7 +202,7 @@ $(document).ready(function () {
 
         var uploadMappingAjax = function uploadMappingAjax() {
             var output = constructUserMapping();
-            if(output.length > 0) {
+            if (output.length > 0) {
                 $.ajax({
                     headers: {
                         'Accept': 'application/json',
@@ -214,9 +215,9 @@ $(document).ready(function () {
                     success: function () {
                         window.location.href = baseApp + "/views/feedback-data";
                     },
-                    error: function(jqXHR, textStatus, errorThrown) {
-                        if(jqXHR.status == 401) {
-                            window.location.href = baseApp+"/views/data";
+                    error: function (jqXHR, textStatus, errorThrown) {
+                        if (jqXHR.status == 401) {
+                            window.location.href = baseApp + "/views/data";
                         }
                     }
                 });//ajax call
@@ -230,7 +231,7 @@ $(document).ready(function () {
         }
     });
 
-    $('#map-back-btn').click(function() {
+    $('#map-back-btn').click(function () {
         window.history.back();
     });
 
@@ -891,7 +892,7 @@ function visualizeUsrList(usrData) {
         var line = d3.select('#seperationline');
         // var bcr = d3.select('.usritem').select('rect')[0][0].getBoundingClientRect();
         // var x1 = bcr.left - 5;
-        var x1 =   +line.attr('x1') - 1;
+        var x1 = +line.attr('x1') - 1;
         if (mousepos.x > x1) return true;
         else return false;
     }

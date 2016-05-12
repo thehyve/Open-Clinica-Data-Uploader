@@ -27,28 +27,29 @@ $(document).ready(function () {
 });
 
 function notify_user_that_additional_patient_info_is_required() {
-    var html = '<span class="alert-danger"><h3>Additional subject information is required.</h3></span>';
+    var html = '<span class="alert-danger"><h3>Additional subject information is required.</h3></span><hr>';
     $('#subject-registration-div').append(html);
 }
 
 function ask_whether_patients_should_be_registered_at_sites() {
     var html = '<h4>Choose if subjects should be registered at sites:</h4>';
-    html += '<form role="form"><label class="radio-inline"><input type="radio">Yes</label><label class="radio-inline"><input type="radio">No</label></form>';
+    html += '<form role="form"><label class="radio-inline"><input type="radio" name="optradio" checked>Yes</label><label class="radio-inline"><input type="radio" name="optradio">No</label></form><hr>';
     $('#subject-registration-div').append(html);
 }
 
 function provide_template_download() {
-    var html = '<button id="download-subject-template-btn" type="button" class="btn btn-success">Download template</button>';
+    var html = '<button id="download-subject-template-btn" type="button" class="btn btn-success">Download template</button><hr>';
     $('#subject-registration-div').append(html);
 }
 
 function provide_filled_template_upload() {
-    var html = '<form id="upload-subject-template-form" class="form-horizontal"><div class="form-group"><label for="upload-subject-template-input">Upload subject template:</label><input id="upload-subject-template-input" type="text" name="upload-subject-template" accept="*" /></div></form>';
+    var html = '<form id="upload-subject-template-form" class="form-horizontal"><div class="form-group"><label for="upload-subject-template-input">Upload subject template:</label><input id="upload-subject-template-input" type="file" name="upload-subject-template" accept="*" /></div></form><hr>';
     $('#subject-registration-div').append(html);
 }
 
 function next_btn() {
-    var html = '<button type="button" class="btn btn-primary" id="subject-back-btn">Back</button><button type="button" class="btn btn-primary" id="subject-next-btn">Next</button>';
+    var html = '<button type="button" class="btn btn-primary" id="subject-back-btn">Back</button>&nbsp;' +
+        '<button type="button" class="btn btn-primary" id="subject-next-btn">Next</button>';
     $('#subject-registration-div').append(html);
     $('#subject-back-btn').click(function () {
         window.history.back();

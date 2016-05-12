@@ -76,7 +76,7 @@ public class UploadSessionController {
             }
         } catch (UploadSessionNotFoundException e) {
             e.printStackTrace();
-            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
     }
 
@@ -89,7 +89,7 @@ public class UploadSessionController {
             return new ResponseEntity<>(HttpStatus.OK);
         } catch (UploadSessionNotFoundException e) {
             e.printStackTrace();
-            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
     }
 
@@ -115,7 +115,7 @@ public class UploadSessionController {
             return new ResponseEntity<>(uploadSessions, OK);
         } catch (UploadSessionNotFoundException ex) {
             System.out.println(ex);
-            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
     }
 
@@ -130,7 +130,7 @@ public class UploadSessionController {
             return new ResponseEntity<>(OK);
         } catch (UploadSessionNotFoundException ex) {
             System.out.println(ex);
-            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
     }
 
@@ -141,7 +141,7 @@ public class UploadSessionController {
             return new ResponseEntity<>(currentUploadSession, OK);
         } catch (UploadSessionNotFoundException e) {
             e.printStackTrace();
-            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
     }
 
@@ -156,7 +156,7 @@ public class UploadSessionController {
                 return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
             }
         } catch (UploadSessionNotFoundException ex) {
-            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
     }
 

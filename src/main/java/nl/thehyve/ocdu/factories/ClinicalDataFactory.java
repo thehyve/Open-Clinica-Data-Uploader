@@ -94,8 +94,11 @@ public class ClinicalDataFactory extends UserSubmittedDataFactory {
         Integer eventRepeat = Integer.parseInt(split[coreColumns.get(EventRepeat)]);
         String crf = split[coreColumns.get(CRFName)];
         String crfVer = split[coreColumns.get(CRFVersion)];
-        String site = split[coreColumns.get(SITE)];
-
+        Integer siteInd = coreColumns.get(SITE);
+        String site = null;
+        if (siteInd != null){
+            site = split[siteInd];
+        }
 
         List<ClinicalData> aggregation = new ArrayList<>();
         for (String colName : headerMap.keySet()) {

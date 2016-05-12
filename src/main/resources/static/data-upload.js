@@ -54,9 +54,7 @@ function uploadFile() {
                     var info = '<span id="data-alert" class="alert alert-danger">Data not uploaded, either due to exceeding file size limit or server error</span>';
                     $("#message-board").append(info);
                     isDataUploaded = false;
-                    // if(jqXHR.status == 401) {
-                    //     window.location.href = baseApp+"/views/data";
-                    // }
+                    console.log(jqXHR.status+" "+textStatus+" "+errorThrown);
                 }
             });
         };
@@ -65,10 +63,8 @@ function uploadFile() {
             type: "post",
             data: {name: SESSIONNAME},
             success: dataFileUpload,
-            error: function(jqXHR, textStatus, errorThrown) {
-                if(jqXHR.status == 401) {
-                    window.location.href = baseApp+"/views/data";
-                }
+            error: function (jqXHR, textStatus, errorThrown) {
+                console.log(jqXHR.status+" "+textStatus+" "+errorThrown);
             }
         });
 
@@ -140,6 +136,7 @@ function retrieveSessions() {
         type: "get",
         success: handle_session_retrieval_all,
         error: function(jqXHR, textStatus, errorThrown) {
+            console.log(jqXHR.status+" "+textStatus+" "+errorThrown);
             // if(jqXHR.status == 401) {
             //     window.location.href = baseApp+"/views/data";
             // }
@@ -194,9 +191,7 @@ function handle_session_retrieval() {
             }
         },
         error: function(jqXHR, textStatus, errorThrown) {
-            // if(jqXHR.status == 401) {
-            //     window.location.href = baseApp+"/views/data";
-            // }
+            console.log(jqXHR.status+" "+textStatus+" "+errorThrown);
         }
     });
     console.log(sessions[ind]);
@@ -217,9 +212,7 @@ $(document).ready(function () {
             USERNAME = data;
         },
         error: function(jqXHR, textStatus, errorThrown) {
-            // if(jqXHR.status == 401) {
-            //     window.location.href = baseApp+"/views/data";
-            // }
+            console.log(jqXHR.status+" "+textStatus+" "+errorThrown);
         }
     });
 

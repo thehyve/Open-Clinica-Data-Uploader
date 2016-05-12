@@ -46,10 +46,8 @@ $.ajax({
     type: "GET",
     cache: false,
     success: displayMessages,
-    error: function(jqXHR, textStatus, errorThrown) {
-        if(jqXHR.status == 401) {
-            window.location.href = baseApp+"/views/data";
-        }
+    error: function (jqXHR, textStatus, errorThrown) {
+        window.location.href = baseApp + "/views/data";
     }
 });
 

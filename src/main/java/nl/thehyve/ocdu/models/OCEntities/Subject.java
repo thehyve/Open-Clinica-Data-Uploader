@@ -16,9 +16,12 @@ public class Subject implements OcEntity, UserSubmitted {
     private String ssid;
     private String gender;
     private Date dateOfBirth;
+    @Column(columnDefinition = "TEXT")
     private String personId;
     private Date dateOfEnrollment;
+    @Column(columnDefinition = "TEXT")
     private String secondaryId;
+    @Column(columnDefinition = "TEXT")
     private String study;
 
     @ManyToOne()

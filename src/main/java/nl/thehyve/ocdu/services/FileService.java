@@ -2,6 +2,7 @@ package nl.thehyve.ocdu.services;
 
 import nl.thehyve.ocdu.factories.ClinicalDataFactory;
 import nl.thehyve.ocdu.models.OCEntities.ClinicalData;
+import nl.thehyve.ocdu.models.OCEntities.Study;
 import nl.thehyve.ocdu.models.OcUser;
 import nl.thehyve.ocdu.models.UploadSession;
 import nl.thehyve.ocdu.models.errors.FileFormatError;
@@ -32,8 +33,12 @@ public class FileService {
     @Autowired
     SubjectRepository subjectRepository;
 
-    public List<FileFormatError> depositDataFile(Path dataFile, OcUser user, UploadSession submission) {
-        DataFileValidator validator = new DataFileValidator();
+    @Autowired
+    OpenClinicaService openClinicaService;
+
+    public List<FileFormatError> depositDataFile(Path dataFile, OcUser user, UploadSession submission, String pwd) throws Exception {
+        List<Study> studies = openClinicaService.listStudies(user.getUsername(), pwd, user.getOcEnvironment());
+        DataFileValidator validator = new DataFileValidator(studies);
         validator.validateFile(dataFile);
         List<FileFormatError> errorMsgs = new ArrayList<>();
         if (validator.isValid()) {

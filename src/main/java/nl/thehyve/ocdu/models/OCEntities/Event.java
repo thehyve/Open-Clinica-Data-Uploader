@@ -12,9 +12,13 @@ import java.util.Date;
 @Entity
 public class Event implements OcEntity, UserSubmitted, EventReference {
 
+    @Column(columnDefinition = "TEXT")
     private String eventName;
+
     private String ssid;
+    @Column(columnDefinition = "TEXT")
     private String study;
+    @Column(columnDefinition = "TEXT")
     private String location;
     private Date startDate;
     private Date startTime;

@@ -12,12 +12,24 @@
     stroke-width: 2px;
 }
 
+.nodeRect {
+    stroke: steelblue;
+    stroke-width: 2px;
+}
+
+.nodeShape {
+    stroke: steelblue;
+    stroke-width: 2px;
+    stroke-opacity: .3;
+    fill-opacity: .7;
+}
+
 .itemRect {
     fill: white;
-    fill-opacity: .2;
+    fill-opacity: .9;
     stroke: steelblue ;
     stroke-width: 1.5px;
-    stroke-opacity: .7;
+    stroke-opacity: .3;
     /*font-family: "Courier";*/
 }
 

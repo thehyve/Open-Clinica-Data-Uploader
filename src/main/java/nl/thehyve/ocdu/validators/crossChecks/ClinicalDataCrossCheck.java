@@ -16,12 +16,12 @@ public interface ClinicalDataCrossCheck {
 
     ValidationErrorMessage getCorrespondingError(List<ClinicalData> data, MetaData metaData);
 
-    default Map<String, List<String>> buildEventMap(MetaData metaData) {
-        Map<String, List<String>> eventMap = new HashMap<>();
+    default Map<String, List<CRFDefinition>> buildEventMap(MetaData metaData) {
+        Map<String, List<CRFDefinition>> eventMap = new HashMap<>();
         metaData.getEventDefinitions().stream().forEach(eventDefinition ->
                 {
-                    List<String> crfNames = eventDefinition.getCrfDefinitions()
-                            .stream().map(CRFDefinition::getName)
+                    List<CRFDefinition> crfNames = eventDefinition.getCrfDefinitions()
+                            .stream()
                             .collect(Collectors.toList());
                     eventMap.put(eventDefinition.getName(), crfNames);
                 }

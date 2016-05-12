@@ -37,7 +37,7 @@ public class DataTypeCrossCheck implements ClinicalDataCrossCheck {
     }
 
     private boolean matchType(String value, String expectedType) {
-        if (expectedType.equals(TEXT_DATA_TYPE)) {
+        if (expectedType == null || expectedType.equals(TEXT_DATA_TYPE)) {
             return true;
         } else if (expectedType.equals(INTEGER_DATA_TYPE)) {
             return isInteger(value);

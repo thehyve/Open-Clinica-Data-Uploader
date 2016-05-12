@@ -11,6 +11,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * Created by piotrzakrzewski on 04/05/16.
@@ -18,15 +19,18 @@ import java.util.stream.Collectors;
 public class CrfExistsCrossCheck implements ClinicalDataCrossCheck {
     @Override
     public ValidationErrorMessage getCorrespondingError(List<ClinicalData> data, MetaData metaData) {
-        Map<String, List<String>> eventMap = buildEventMap(metaData);
+        Map<String, List<CRFDefinition>> eventMap = buildEventMap(metaData);
         List<ClinicalData> crfNotExistsOffenders = getCrfNotExistsOffenders(data, eventMap);
 
         if (crfNotExistsOffenders.size() > 0) {
-            CRFDoesNotExist error = new CRFDoesNotExist("One or more CRFs you used in your data file is not present in the referenced event");
+            CRFDoesNotExist error = new CRFDoesNotExist();
             List<String> offendingNames = new ArrayList<>();
             crfNotExistsOffenders.stream().forEach(clinicalData -> {
                 String crf = clinicalData.getCrfName();
-                if (!offendingNames.contains(crf)) offendingNames.add(crf);
+                String eventName = clinicalData.getEventName();
+                String version = clinicalData.getCrfVersion();
+                String msg = "CRF: " + crf + " version: " + version + " in event: " + eventName;
+                if (!offendingNames.contains(msg)) offendingNames.add(msg);
             });
             error.addAllOffendingValues(offendingNames);
             return error;
@@ -34,15 +38,15 @@ public class CrfExistsCrossCheck implements ClinicalDataCrossCheck {
     }
 
 
-
-    private List<ClinicalData> getCrfNotExistsOffenders(List<ClinicalData> data, Map<String, List<String>> eventMap) {
+    private List<ClinicalData> getCrfNotExistsOffenders(List<ClinicalData> data, Map<String, List<CRFDefinition>> eventMap) {
         return data.stream().filter(clinicalData -> {
-            List<String> valid = eventMap.get(clinicalData.getEventName());
+            List<CRFDefinition> valid = eventMap.get(clinicalData.getEventName());
             if (valid == null) return false; // CRF Could not be verified is a separate class
             String crf = clinicalData.getCrfName();
-            if (!valid.contains(crf))
-                return true;
-            else return false;
+            String version = clinicalData.getCrfVersion();
+            List<CRFDefinition> matching = valid.stream()
+                    .filter(crfDefinition -> crfDefinition.getName().equals(crf) && crfDefinition.getVersion().equals(version)).collect(Collectors.toList());
+            return matching.size() == 0;
         }).collect(Collectors.toList());
     }
 

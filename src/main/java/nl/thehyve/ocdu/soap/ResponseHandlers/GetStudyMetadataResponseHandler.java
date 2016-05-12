@@ -134,12 +134,14 @@ public class GetStudyMetadataResponseHandler extends OCResponseHandler {
             Node crfNode = crfDefsNodes.item(i);
             String oid = crfNode.getAttributes().getNamedItem("OID").getTextContent();
             String name = crfNode.getAttributes().getNamedItem("Name").getTextContent();
+            String version = getCrfVersion(name);
+            name = parseCrfName(name);
             String repeatingText = crfNode.getAttributes().getNamedItem("Repeating").getTextContent();
             boolean repeating = false;
             if (repeatingText.equals("Yes")) {
                 repeating = true;
             }
-            String version = getCrfVersion(crfNode);
+
             CRFDefinition newCrf = new CRFDefinition();
             newCrf.setName(name);
             newCrf.setOid(oid);
@@ -150,6 +152,11 @@ public class GetStudyMetadataResponseHandler extends OCResponseHandler {
             crfs.addAll(getCrfsInEvent(crfNode, newCrf, events)); // CRF Entity exists per Event
         }
         return crfs;
+    }
+
+    private static String parseCrfName(String name) {
+        int cutIndex = name.lastIndexOf(" - ");
+        return name.substring(0, cutIndex);
     }
 
     private static List<String> getMandatory(Node node, String xpathSelector, String attributeName) throws XPathExpressionException {
@@ -185,8 +192,8 @@ public class GetStudyMetadataResponseHandler extends OCResponseHandler {
             String name = item.getAttributes().getNamedItem("Name").getTextContent();
             String dataType = item.getAttributes().getNamedItem("DataType").getTextContent();
             Node length1 = item.getAttributes().getNamedItem("Length");
-            String length= "0"; // Can be empty, zero means no restriction on length
-            if (length1 != null){
+            String length = "0"; // Can be empty, zero means no restriction on length
+            if (length1 != null) {
                 length = length1.getTextContent();
             }
             ItemDefinition itemDef = new ItemDefinition();
@@ -266,8 +273,13 @@ public class GetStudyMetadataResponseHandler extends OCResponseHandler {
     }
 
 
-    private static String getCrfVersion(Node crfNode) throws XPathExpressionException {
-        return (String) xpath.evaluate(CRF_VERSION_SELECTOR, crfNode, XPathConstants.STRING);
+    private static String getCrfVersion(String name) {
+        String version = "";
+        String[] split = name.split(" - "); // Open clinica encodes version inside name ...
+        if (split.length > 1) {
+            version = split[split.length - 1];
+        }
+        return version;
     }
 
     private static List<CRFDefinition> getCrfsInEvent(Node crfNode, CRFDefinition prototype, Map<String, EventDefinition> events) {

@@ -47,6 +47,7 @@ public class ValidationTests {
     Path testFileItemLengthExceeded;
     Path testFileNonExistentItem;
     Path testFileCorrectNoSite;
+    Path testFileNonExistentVersion;
 
     @Before
     public void setUp() throws Exception {
@@ -64,6 +65,8 @@ public class ValidationTests {
             this.testFileItemLengthExceeded = Paths.get("docs/exampleFiles/itemLengthExceeded.txt");
             this.testFileNonExistentItem = Paths.get("docs/exampleFiles/nonExistentItem.txt");
             this.testFileCorrectNoSite = Paths.get("docs/exampleFiles/data_no_site.txt");
+            this.testFileNonExistentVersion = Paths.get("docs/exampleFiles/nonExistentVersion.txt");
+
 
             MessageFactory messageFactory = MessageFactory.newInstance();
             File testFile = new File("docs/responseExamples/getStudyMetadata.xml"); //TODO: Replace File with Path
@@ -131,5 +134,14 @@ public class ValidationTests {
         clinicalDataOcChecks = new ClinicalDataOcChecks(metaData, correctClinicalData);
         List<ValidationErrorMessage> errors = clinicalDataOcChecks.getErrors();
         assertEquals(0, errors.size());
+    }
+
+
+    @Test
+    public void nonExistentVersion() throws Exception {
+        List<ClinicalData> incorrectClinicalData = factory.createClinicalData(testFileNonExistentVersion);
+        clinicalDataOcChecks = new ClinicalDataOcChecks(metaData, incorrectClinicalData);
+        List<ValidationErrorMessage> errors = clinicalDataOcChecks.getErrors();
+        assertEquals(1, errors.size());
     }
 }

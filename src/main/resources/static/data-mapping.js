@@ -449,17 +449,20 @@ function updateOCTree(source, _duration) {
         }
     });
 
-    nodeEnter.append("text")
-        .attr("x", 5)
-        .attr("dy", ".35em")
-        .attr('class', 'nodeText')
-        .attr("text-anchor", function (d) {
-            if(d.depth == leaf_depth) return "start";
-            else return "end";
-        })
-        .text(function (d) {
-            return d.name;
-        });
+    nodeEnter.each(function (d) {
+        var node = d3.select(this);
+        node.append("text")
+            .attr("x", 5)
+            .attr("dy", ".35em")
+            .attr('class', 'nodeText')
+            .attr("text-anchor", function (d) {
+                if(d.depth == leaf_depth) return "start";
+                else return "end";
+            })
+            .text(function (d) {
+                return d.name;
+            });
+    });
 
     node.select('text').text(function (d) {
         return d.name;
@@ -497,7 +500,7 @@ function updateOCTree(source, _duration) {
     var nodeUpdate = node.transition()
         .duration(_duration)
         .attr("transform", function (d) {
-            d.y -= 50;
+            // d.y -= 50;
             return "translate(" + (d.y)  + "," + (d.x-rect_h / 2) + ")";
         });
 

@@ -25,7 +25,9 @@ $(document).on("mousemove", function (event) {
 });
 $(window).on('resize', function () {
     //resize base svg
-    baseSvg.attr('width', $(window).width());
+    viewerWidth = +$(window).width();
+    viewerHeight = +$(window).height() - height_offset;
+    baseSvg.attr('width', viewerWidth).attr('height', viewerHeight);
 })
 
 // initializing and button listeners
@@ -74,32 +76,6 @@ $(document).ready(function () {
         handleOCItemInteraction();
         positionUsrList(usr_item_data, _duration, usr_list_y);
     });
-
-    function collapseLeaves(d) {
-        if (d.children) {
-            for (var i = 0; i < d.children.length; i++) {
-                var child = d.children[i];
-                if (child.depth == leaf_depth - 1) {
-                    collapse(child);
-                }
-                else {
-                    collapseLeaves(child);
-                }
-            }
-        }
-    }
-
-    function expandLeaves(d) {
-        for (var i = 0; i < d.children.length; i++) {
-            var child = d.children[i];
-            if (child.depth == leaf_depth - 1) {
-                expand(child);
-            }
-            else {
-                expandLeaves(child);
-            }
-        }
-    }
 
     $('#auto-map-btn').click(function () {
         clearMapping();
@@ -228,6 +204,32 @@ $(document).ready(function () {
 
 });//end of the function $(document).ready...
 
+function collapseLeaves(d) {
+    if (d.children) {
+        for (var i = 0; i < d.children.length; i++) {
+            var child = d.children[i];
+            if (child.depth == leaf_depth - 1) {
+                collapse(child);
+            }
+            else {
+                collapseLeaves(child);
+            }
+        }
+    }
+}
+
+function expandLeaves(d) {
+    for (var i = 0; i < d.children.length; i++) {
+        var child = d.children[i];
+        if (child.depth == leaf_depth - 1) {
+            expand(child);
+        }
+        else {
+            expandLeaves(child);
+        }
+    }
+}
+
 function constructUserMapping() {
     var output = [];
     for (var i = 0; i < usr_item_data.length; i++) {
@@ -265,9 +267,10 @@ function clearMapping() {
     positionUsrList(usr_item_data, 250, usr_list_y);
 }
 
+var height_offset = 150;
 function initialize() {
-    var viewerWidth = $(window).width();
-    var viewerHeight = 800; // $(document).height();
+    var viewerWidth = +$(window).width();
+    var viewerHeight = +$(window).height() - height_offset;
     // Define the zoom function for the zoomable tree
     function zoom() {
         treeg.attr("transform", "translate(" + d3.event.translate + ")scale(" + d3.event.scale + ")");
@@ -306,8 +309,8 @@ function visualizeOCTree(treeData) {
     var totalNodes = 0;
 
     // size of the diagram
-    viewerWidth = $(window).width();
-    viewerHeight = 800; // $(document).height();
+    viewerWidth = +$(window).width();
+    viewerHeight = +$(window).height() - height_offset;
     tree = d3.layout.tree()
         .size([viewerHeight, viewerWidth])
         .separation(function (a, b) {
@@ -366,6 +369,12 @@ function visualizeOCTree(treeData) {
     // Layout the tree initially and center on the root node.
     updateOCTree(root, 750);
     handleOCItemInteraction();
+
+    //collapse all
+    collapseLeaves(root);
+    updateOCTree(root, 750);
+    handleOCItemInteraction();
+    positionUsrList(usr_item_data, _duration, usr_list_y);
 }//visualizeOCTree
 
 function updateOCTree(source, _duration) {
@@ -715,25 +724,39 @@ function visualizeUsrList(usrData) {
         .text('Data file items');
 
     usr_item_data = [];
-    var usr_path_names = ['CRFNAME', 'CRFVERSION', 'EVENTNAME', 'EVENTREPEAT', 'STUDYSUBJECTID', 'STUDY'];
-    var usr_item_names = [];
-    for (var i = 0; i < usrData.length; i++) {
-        for (var key in usrData[i]) {
-            var upper_key = key.toUpperCase();
-            if (usr_path_names.indexOf(upper_key) == -1 && usr_item_names.indexOf(key) == -1) {
-                var listitem = {};
-                listitem.usrItemName = key;
-                listitem.mapped = false;
-                listitem.ocStudy = "";
-                listitem.ocEventName = "";
-                listitem.ocCRF = "";
-                listitem.ocCRFv = "";
-                listitem.ocItemName = "";
-                listitem.ocItemData = null;
-                usr_item_data.push(listitem);
-                usr_item_names.push(key);
-            }
-        }
+
+    // var usr_item_names = [];
+    //var usr_path_names = ['CRFNAME', 'CRFVERSION', 'EVENTNAME', 'EVENTREPEAT', 'STUDYSUBJECTID', 'STUDY'];
+    // for (var i = 0; i < usrData.length; i++) {
+    //     for (var key in usrData[i]) {
+    //         var upper_key = key.toUpperCase();
+    //         if (usr_path_names.indexOf(upper_key) == -1 && usr_item_names.indexOf(key) == -1) {
+    //             var listitem = {};
+    //             listitem.usrItemName = key;
+    //             listitem.mapped = false;
+    //             listitem.ocStudy = "";
+    //             listitem.ocEventName = "";
+    //             listitem.ocCRF = "";
+    //             listitem.ocCRFv = "";
+    //             listitem.ocItemName = "";
+    //             listitem.ocItemData = null;
+    //             usr_item_data.push(listitem);
+    //             usr_item_names.push(key);
+    //         }
+    //     }
+    // }
+
+    for(var i=0; i<usrData.length; i++) {
+        var listitem = {};
+        listitem.usrItemName = usrData[i];
+        listitem.mapped = false;
+        listitem.ocStudy = "";
+        listitem.ocEventName = "";
+        listitem.ocCRF = "";
+        listitem.ocCRFv = "";
+        listitem.ocItemName = "";
+        listitem.ocItemData = null;
+        usr_item_data.push(listitem);
     }
 
     var usritem = listg.selectAll('.listitem').data(usr_item_data);

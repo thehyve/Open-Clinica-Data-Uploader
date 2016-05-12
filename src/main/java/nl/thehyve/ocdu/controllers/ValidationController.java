@@ -41,7 +41,7 @@ public class ValidationController {
             return new ResponseEntity<>(dataErrors, HttpStatus.OK);
         } catch (UploadSessionNotFoundException e) {
             e.printStackTrace();
-            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         } catch (Exception e) {
             e.printStackTrace();
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);

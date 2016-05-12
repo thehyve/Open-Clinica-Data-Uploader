@@ -91,7 +91,7 @@ public class UploadController {
             return new ResponseEntity<>(mappings, HttpStatus.OK);
         } catch (UploadSessionNotFoundException e) {
             e.printStackTrace();
-            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
 
     }

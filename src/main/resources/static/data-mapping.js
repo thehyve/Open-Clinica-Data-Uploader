@@ -50,10 +50,7 @@ $(document).ready(function () {
             // cache: false,
             success: metadataCallSuccess,
             error: function (jqXHR, textStatus, errorThrown) {
-                if (jqXHR.status == 401) {
-                    console.log('No submission selected: '+ errorThrown);
                     window.location.href = baseApp + "/views/data";
-                }
             }
         });
 
@@ -216,9 +213,7 @@ $(document).ready(function () {
                         window.location.href = baseApp + "/views/feedback-data";
                     },
                     error: function (jqXHR, textStatus, errorThrown) {
-                        if (jqXHR.status == 401) {
-                            window.location.href = baseApp + "/views/data";
-                        }
+                        window.location.href = baseApp + "/views/data";
                     }
                 });//ajax call
             }//if output is not empty

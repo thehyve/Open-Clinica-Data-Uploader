@@ -39,7 +39,7 @@ public class MetadataController {
 
 
     @RequestMapping(value = "/tree", method = RequestMethod.GET)
-    public ResponseEntity<DataService.MetaDataTree> getMetadata(HttpSession session) {
+    public ResponseEntity<?> getMetadata(HttpSession session) {
         try {
             UploadSession currentUploadSession = uploadSessionService.getCurrentUploadSession(session);
             String pwd = ocUserService.getOcwsHash(session);
@@ -47,7 +47,8 @@ public class MetadataController {
             return new ResponseEntity<>(tree, HttpStatus.OK);
         } catch (UploadSessionNotFoundException e) {
             e.printStackTrace();
-            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+            String errorMessage = "no submission active";
+            return new ResponseEntity<>(errorMessage, HttpStatus.BAD_REQUEST);
         } catch (Exception e) {
             e.printStackTrace();
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);

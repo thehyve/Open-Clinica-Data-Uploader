@@ -63,13 +63,35 @@ public interface ClinicalDataCrossCheck {
         return allCrfs;
     }
 
-    default List<ItemDefinition> getAllItemDefinitions(MetaData metaData) {
+    default Map<String, String> buildDataTypeMap(MetaData metaData) {
         List<CRFDefinition> allCRFDefinitions = getAllCRFDefinitions(metaData);
-        List<ItemDefinition> allItems = new ArrayList<>();
+        Map<String, String> dataTypeMap = new HashMap<>();
         allCRFDefinitions.stream().forEach(crfDefinition -> {
             crfDefinition.getItemGroups().stream().forEach(itemGroupDefinition -> {
-
+                itemGroupDefinition.getItems().stream().forEach(itemDefinition -> {
+                    dataTypeMap.put(itemDefinition.getName(), itemDefinition.getDataType());
+                });
             });
         });
+        return dataTypeMap;
     }
+
+    default boolean isInteger(String input) {
+        try {
+            Integer.parseInt(input);
+            return true;
+        } catch (NumberFormatException e) {
+            return false;
+        }
+    }
+
+    default boolean isFloat(String input) {
+        try {
+            Float.parseFloat(input);
+            return true;
+        } catch (NumberFormatException e) {
+            return false;
+        }
+    }
+
 }

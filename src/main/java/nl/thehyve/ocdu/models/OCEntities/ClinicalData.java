@@ -20,19 +20,25 @@ public class ClinicalData implements OcEntity, UserSubmitted, EventReference {
 
     @ManyToOne
     private OcUser owner;
+    @Column(columnDefinition = "TEXT")
     private String study;
+    @Column(columnDefinition = "TEXT")
     private String site;
+    @Column(columnDefinition = "TEXT")
     private String item;
     private String ssid;
+    @Column(columnDefinition = "TEXT")
     private String eventName;
     private Integer eventRepeat;
+    @Column(columnDefinition = "TEXT")
     private String crfName;
 
 
+    @Column(columnDefinition = "TEXT")
     private String crfVersion;
     private Integer groupRepeat;
 
-
+    @Column(columnDefinition = "TEXT")
     private String value;
 
     public ClinicalData(String study, String item, String ssid, String eventName, Integer eventRepeat, String crfName, UploadSession submission, String crfVersion, Integer groupRepeat, OcUser owner, String value) {

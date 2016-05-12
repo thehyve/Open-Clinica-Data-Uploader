@@ -16,12 +16,12 @@ public interface ClinicalDataCrossCheck {
 
     ValidationErrorMessage getCorrespondingError(List<ClinicalData> data, MetaData metaData);
 
-    default Map<String, List<String>> buildEventMap(MetaData metaData) {
-        Map<String, List<String>> eventMap = new HashMap<>();
+    default Map<String, List<CRFDefinition>> buildEventMap(MetaData metaData) {
+        Map<String, List<CRFDefinition>> eventMap = new HashMap<>();
         metaData.getEventDefinitions().stream().forEach(eventDefinition ->
                 {
-                    List<String> crfNames = eventDefinition.getCrfDefinitions()
-                            .stream().map(CRFDefinition::getName)
+                    List<CRFDefinition> crfNames = eventDefinition.getCrfDefinitions()
+                            .stream()
                             .collect(Collectors.toList());
                     eventMap.put(eventDefinition.getName(), crfNames);
                 }
@@ -63,11 +63,35 @@ public interface ClinicalDataCrossCheck {
         return allCrfs;
     }
 
-    /*default List<ItemDefinition> getAllItemDefinitions(MetaData metaData) {
+    default Map<String, String> buildDataTypeMap(MetaData metaData) {
         List<CRFDefinition> allCRFDefinitions = getAllCRFDefinitions(metaData);
-        List<ItemDefinition> allItems = new ArrayList<>();
+        Map<String, String> dataTypeMap = new HashMap<>();
         allCRFDefinitions.stream().forEach(crfDefinition -> {
-            crfDefinition.get
+            crfDefinition.getItemGroups().stream().forEach(itemGroupDefinition -> {
+                itemGroupDefinition.getItems().stream().forEach(itemDefinition -> {
+                    dataTypeMap.put(itemDefinition.getName(), itemDefinition.getDataType());
+                });
+            });
         });
-    }*/ //TODO: finish this method
+        return dataTypeMap;
+    }
+
+    default boolean isInteger(String input) {
+        try {
+            Integer.parseInt(input);
+            return true;
+        } catch (NumberFormatException e) {
+            return false;
+        }
+    }
+
+    default boolean isFloat(String input) {
+        try {
+            Float.parseFloat(input);
+            return true;
+        } catch (NumberFormatException e) {
+            return false;
+        }
+    }
+
 }

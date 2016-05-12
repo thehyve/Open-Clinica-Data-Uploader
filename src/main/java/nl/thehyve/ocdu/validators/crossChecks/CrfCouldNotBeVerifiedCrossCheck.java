@@ -1,6 +1,7 @@
 package nl.thehyve.ocdu.validators.crossChecks;
 
 import nl.thehyve.ocdu.models.OCEntities.ClinicalData;
+import nl.thehyve.ocdu.models.OcDefinitions.CRFDefinition;
 import nl.thehyve.ocdu.models.OcDefinitions.MetaData;
 import nl.thehyve.ocdu.models.errors.CRFDoesNotExist;
 import nl.thehyve.ocdu.models.errors.CrfCouldNotBeVerified;
@@ -17,7 +18,7 @@ import java.util.stream.Collectors;
 public class CrfCouldNotBeVerifiedCrossCheck implements ClinicalDataCrossCheck {
     @Override
     public ValidationErrorMessage getCorrespondingError(List<ClinicalData> data, MetaData metaData) {
-        Map<String, List<String>> eventMap = buildEventMap(metaData);
+        Map<String, List<CRFDefinition>> eventMap = buildEventMap(metaData);
         List<ClinicalData> crfCouldNotBeVerifiedOffenders = getcrfCouldNotBeVerifiedOffenders(data, eventMap);
         if (crfCouldNotBeVerifiedOffenders.size() > 0) {
             CrfCouldNotBeVerified error = new CrfCouldNotBeVerified();
@@ -31,9 +32,9 @@ public class CrfCouldNotBeVerifiedCrossCheck implements ClinicalDataCrossCheck {
         } else return null;
     }
 
-    private List<ClinicalData> getcrfCouldNotBeVerifiedOffenders(List<ClinicalData> data, Map<String, List<String>> eventMap) {
+    private List<ClinicalData> getcrfCouldNotBeVerifiedOffenders(List<ClinicalData> data, Map<String, List<CRFDefinition>> eventMap) {
         return data.stream().filter(clinicalData -> {
-            List<String> valid = eventMap.get(clinicalData.getEventName());
+            List<CRFDefinition> valid = eventMap.get(clinicalData.getEventName());
             if (valid == null) return true;
             else return false;
         }).collect(Collectors.toList());

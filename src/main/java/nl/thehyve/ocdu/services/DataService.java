@@ -62,16 +62,16 @@ public class DataService {
         List<MetaDataTree> studyChildren = new ArrayList<>();
         studyNode.setChildren(studyChildren);
         eventDefinitions.stream().forEach(eventDefinition -> {
-            String studyEventOID = eventDefinition.getStudyEventOID();
+            String studyEventName = eventDefinition.getName();
             MetaDataTree eventNode = new MetaDataTree();
-            eventNode.setName(studyEventOID);
+            eventNode.setName(studyEventName);
             studyChildren.add(eventNode);
 
             List<MetaDataTree> eventChildren = new ArrayList<>();
             eventNode.setChildren(eventChildren);
             eventDefinition.getCrfDefinitions().stream().forEach(crfDefinition -> {
                 MetaDataTree crfNode = new MetaDataTree();
-                crfNode.setName(crfDefinition.getOid());
+                crfNode.setName(crfDefinition.getName());
                 eventChildren.add(crfNode);
                 List<MetaDataTree> crfChildren = new ArrayList<>();
                 crfNode.setChildren(crfChildren);
@@ -86,7 +86,7 @@ public class DataService {
                 }); //TODO: investigate why items contain duplicated items. GroupDefinitions should not overlap.
 
                 List<MetaDataTree> itemNodes = items.stream()
-                        .map(itemDefinition -> itemDefinition.getOid())
+                        .map(itemDefinition -> itemDefinition.getName())
                         .collect(Collectors.toSet())
                         .stream().map(s -> new MetaDataTree(s))
                         .collect(Collectors.toList());

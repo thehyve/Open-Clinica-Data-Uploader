@@ -1,8 +1,8 @@
 var baseApp = "";
 
-var usr_data;//store user-uploaded tabular data in JSON
-var oc_data;//store oc tree data in JSON
-var map_data;//store user-uploaded mapping data
+var usr_data=[];//store user-uploaded tabular data in JSON
+var oc_data={};//store oc tree data in JSON
+var map_data=[];//store user-uploaded mapping data
 var usr_item_data;//store user-edited mapping data
 var selectedOCItem = null;//the selected OC item in the tree
 var selectedUsrItem = null;//the selected Usr item in the list
@@ -33,36 +33,34 @@ $(window).on('resize', function () {
 // initializing and button listeners
 $(document).ready(function () {
 
-    d3.json(baseApp + '/data/test-usr-data.json', function (data) {
+
+    var usrDataCallSuccess = function (data) {
         initialize();
         usr_data = data;
         visualizeUsrList(usr_data);
-
-        var metadataCallSuccess = function (data) {
-            console.log('metadataTree call successful');
-            oc_data = data;
-            visualizeOCTree(data);
-        };
 
         $.ajax({
             url: baseApp + "/metadata/tree",
             type: "GET",
             // cache: false,
-            success: metadataCallSuccess,
+            success: ocDataCallSuccess,
             error: function (jqXHR, textStatus, errorThrown) {
                 window.location.href = baseApp + "/views/data";
             }
         });
+    }
+    var ocDataCallSuccess = function (data) {
+        oc_data = data;
+        visualizeOCTree(data);
+    }
 
-        // d3.json('/data/test-oc-data.json', function (data) {
-        //     oc_data = data;
-        //     visualizeOCTree(data);
-        // });
-
-
-        d3.json(baseApp+'/data/test-map-data.json', function (data) {
-            map_data = data;
-        });
+    $.ajax({
+        url: baseApp + "/submission/user-items",
+        type: "GET",
+        success: usrDataCallSuccess,
+        error: function (jqXHR, textStatus, errorThrown) {
+            window.location.href = baseApp + "/views/data";
+        }
     });
 
     $('#collapse-all-btn').click(function () {
@@ -885,9 +883,8 @@ function visualizeUsrList(usrData) {
 
     function isMouseInUserItemArea() {
         var line = d3.select('#seperationline');
-        // var bcr = d3.select('.usritem').select('rect')[0][0].getBoundingClientRect();
-        // var x1 = bcr.left - 5;
-        var x1 = +line.attr('x1') - 1;
+        var bcr = line[0][0].getBoundingClientRect();
+        var x1 = bcr.left;
         if (mousepos.x > x1) return true;
         else return false;
     }

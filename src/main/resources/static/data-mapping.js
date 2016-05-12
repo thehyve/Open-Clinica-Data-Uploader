@@ -1,5 +1,3 @@
-var baseApp = "";
-
 var usr_data=[];//store user-uploaded tabular data in JSON
 var oc_data={};//store oc tree data in JSON
 var map_data=[];//store user-uploaded mapping data

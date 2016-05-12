@@ -77,6 +77,10 @@ $(document).ready(function () {
         positionUsrList(usr_item_data, _duration, usr_list_y);
     });
 
+    $('#reset-btn').click(function () {
+            reCenterLayout();
+    });
+
     $('#auto-map-btn').click(function () {
         clearMapping();
         for (var i = 0; i < map_data.length; i++) {
@@ -230,6 +234,12 @@ function expandLeaves(d) {
     }
 }
 
+function reCenterLayout() {
+    // $('#baseSvg').empty();
+    // visualizeUsrList(usr_data);
+    // visualizeOCTree(oc_data);
+}
+
 function constructUserMapping() {
     var output = [];
     for (var i = 0; i < usr_item_data.length; i++) {
@@ -267,7 +277,7 @@ function clearMapping() {
     positionUsrList(usr_item_data, 250, usr_list_y);
 }
 
-var height_offset = 150;
+var height_offset = 120;
 function initialize() {
     var viewerWidth = +$(window).width();
     var viewerHeight = +$(window).height() - height_offset;
@@ -317,11 +327,10 @@ function visualizeOCTree(treeData) {
             return 50;
         });
 
-    // define a d3 diagonal projection for use by the node paths later on.
     diagonal = d3.svg.diagonal()
-        .projection(function (d) {
-            return [d.y, d.x];
-        });
+        .source(function(d) { return {"x":d.source.x, "y":d.source.y+rect_w}; })
+        .target(function(d) { return {"x":d.target.x, "y":d.target.y}; })
+        .projection(function(d) { return [d.y, d.x]; });
 
     // A recursive helper function for performing some setup by walking through all nodes
     function visit(parent, visitFn, childrenFn) {
@@ -406,7 +415,7 @@ function updateOCTree(source, _duration) {
         // d.y = (d.depth * (maxLabelLength * 10)); //maxLabelLength * 10px
         // alternatively to keep a fixed scale one can set a fixed depth per level
         // Normalize for fixed-depth by commenting out below line
-        d.y = (d.depth * 150); //150px per level.
+        d.y = (d.depth * 200); //150px per level.
     });
 
     // Update the nodes…
@@ -422,30 +431,28 @@ function updateOCTree(source, _duration) {
             return "translate(" + source.y0 + "," + source.x0 + ")";
         });
 
-
     nodeEnter.each(function (d, i) {
         var node = d3.select(this);
         if ((d.children == null && d._children) || d.children) {
-            node.append('circle').attr('class', 'nodeCircle').attr('r', 0);
+            // node.append('circle').attr('class', 'nodeShape').attr('r', 0);
+            node.append('rect').attr('class', 'nodeShape')
+                .attr('rx', 2).attr('ry', 2)
+                .attr('width', rect_w).attr('height', rect_h);
         }
         else {
             node.append('rect').attr('class', 'itemRect')
                 .attr('rx', 4).attr('ry', 4)
                 .attr('width', rect_w).attr('height', rect_h);
-            // node.append('rect').attr('class', 'itemRect')
-            //     .attr('rx', 4).attr('ry', 4)
-            //     .attr('width', rect_w).attr('height', rect_h);
         }
     });
 
     nodeEnter.append("text")
-        .attr("x", function (d) {
-            return d.children || d._children ? -10 : 10;
-        })
+        .attr("x", 5)
         .attr("dy", ".35em")
         .attr('class', 'nodeText')
         .attr("text-anchor", function (d) {
-            return d.children || d._children ? "end" : "start";
+            if(d.depth == leaf_depth) return "start";
+            else return "end";
         })
         .text(function (d) {
             return d.name;
@@ -458,32 +465,23 @@ function updateOCTree(source, _duration) {
 
     // Update the text to reflect whether node has children or not.
     node.select('text')
-        .attr("x", function (d) {
-            return d.children || d._children ? -10 : 10;
-        })
-        .attr('dy', function (d) {
-            return d.children || d._children ? 5 : rect_h / 1.2;
-        })
-        .attr("text-anchor", function (d) {
-            return d.children || d._children ? "end" : "start";
-        })
+        .attr("x", 5)
+        .attr('dy', rect_h / 1.2)
+        .attr("text-anchor", "start")
         .text(function (d) {
             d.shortTexted = false;
             var len = this.getComputedTextLength();
             if (len > rect_w) {
                 d.shortTexted = true;
-                //rect_w = 100, index = 9
-                //rect_w = 150, index = 12
                 return d.name.substring(0, text_cut_index) + "...";
             }
             return d.name;
         });
     tree = tree.size([newHeight, 10]);
 
-    // Change the circle fill depending on whether it has children and is collapsed
-    node.select("circle").attr("r", 5);
+    // node.select(".nodeShape").attr("r", 5);
 
-    node.select('.nodeCircle')
+    node.select('.nodeShape')
         .style("fill", function (d) {
             return d._children ? "lightsteelblue" : "#fff";
         })
@@ -497,10 +495,7 @@ function updateOCTree(source, _duration) {
         .duration(_duration)
         .attr("transform", function (d) {
             d.y -= 50;
-            if (d.depth == leaf_depth) {
-                return "translate(" + d.y + "," + (d.x - rect_h / 2) + ")";
-            }
-            else return "translate(" + d.y + "," + d.x + ")";
+            return "translate(" + (d.y)  + "," + (d.x-rect_h / 2) + ")";
         });
 
     // Fade the text in
@@ -514,12 +509,6 @@ function updateOCTree(source, _duration) {
         })
         .remove();
 
-    nodeExit.select("circle")
-        .attr("r", 0);
-
-    nodeExit.select("text")
-        .style("fill-opacity", 0);
-
     // Update the links…
     var link = treeg.selectAll("path.link")
         .data(links, function (d) {
@@ -529,35 +518,27 @@ function updateOCTree(source, _duration) {
     // Enter any new links at the parent's previous position.
     link.enter().insert("path", "g")
         .attr("class", "link")
-        .attr("d", function (d) {
-            var o = {
-                x: source.x0,
-                y: source.y0
-            };
-            return diagonal({
-                source: o,
-                target: o
-            });
+        .transition().duration(_duration)
+        .attr("d", myDiagonal);
+
+    var myDiagonal = function (d) {
+        var obj = {
+            x: source.x0,
+            y: source.y0
+        };
+        return diagonal({
+            source: obj,
+            target: obj
         });
+    }
 
     // Transition links to their new position.
-    link.transition()
-        .duration(_duration)
+    link.transition().duration(_duration)
         .attr("d", diagonal);
 
     // Transition exiting nodes to the parent's new position.
-    link.exit().transition()
-        .duration(_duration)
-        .attr("d", function (d) {
-            var o = {
-                x: source.x,
-                y: source.y
-            };
-            return diagonal({
-                source: o,
-                target: o
-            });
-        })
+    link.exit().transition().duration(_duration)
+        .attr("d", myDiagonal)
         .remove();
 
     // Stash the old positions for transition.
@@ -588,10 +569,17 @@ function expand(d) {
 
 // Toggle children function
 function toggleChildren(d) {
+    // if (d.children) {
+    //     collapse(d);
+    // } else if (d._children) {
+    //     expand(d);
+    // }
     if (d.children) {
-        collapse(d);
+        d._children = d.children;
+        d.children = null;
     } else if (d._children) {
-        expand(d);
+        d.children = d._children;
+        d._children = null;
     }
     return d;
 }
@@ -652,7 +640,7 @@ function handleOCItemInteraction() {
         traceBackward(d, highlight);
         traceForward(d, highlight);
         d3.selectAll('.node').each(function (d) {
-            d3.select(this).select('circle')
+            d3.select(this).select('.nodeShape')
                 .classed('highlighted', d.highlight);
             d3.select(this).select('rect')
                 .classed('highlighted', d.highlight);

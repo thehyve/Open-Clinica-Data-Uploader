@@ -50,7 +50,7 @@ $(document).ready(function () {
             // cache: false,
             success: metadataCallSuccess,
             error: function (jqXHR, textStatus, errorThrown) {
-                    window.location.href = baseApp + "/views/data";
+                window.location.href = baseApp + "/views/data";
             }
         });
 

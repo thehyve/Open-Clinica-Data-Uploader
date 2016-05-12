@@ -63,11 +63,13 @@ public interface ClinicalDataCrossCheck {
         return allCrfs;
     }
 
-    /*default List<ItemDefinition> getAllItemDefinitions(MetaData metaData) {
+    default List<ItemDefinition> getAllItemDefinitions(MetaData metaData) {
         List<CRFDefinition> allCRFDefinitions = getAllCRFDefinitions(metaData);
         List<ItemDefinition> allItems = new ArrayList<>();
         allCRFDefinitions.stream().forEach(crfDefinition -> {
-            crfDefinition.get
+            crfDefinition.getItemGroups().stream().forEach(itemGroupDefinition -> {
+
+            });
         });
-    }*/ //TODO: finish this method
+    }
 }

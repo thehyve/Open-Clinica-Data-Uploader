@@ -39,6 +39,9 @@ public class ValidationController {
             String pwdHash = ocUserService.getOcwsHash(session);
             List<ValidationErrorMessage> dataErrors = validationService.getDataErrors(currentUploadSession, pwdHash);
             return new ResponseEntity<>(dataErrors, HttpStatus.OK);
+        } catch (UploadSessionNotFoundException e) {
+            e.printStackTrace();
+            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
         } catch (Exception e) {
             e.printStackTrace();
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);

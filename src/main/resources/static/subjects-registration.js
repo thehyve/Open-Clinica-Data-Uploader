@@ -21,8 +21,8 @@ $(document).ready(function () {
         next_btn();
     }
     else{
-        //go to the event view
-        window.location.href = baseApp + "/views/events";
+        //go to the feedback view
+        window.location.href = baseApp + "/views/feedback-subjects";
     }
 });
 
@@ -38,12 +38,12 @@ function ask_whether_patients_should_be_registered_at_sites() {
 }
 
 function provide_template_download() {
-    var html = '<button id="download-subject-template-btn" type="button" class="btn btn-success">Download template</button><hr>';
+    var html = '<button id="download-subject-template-btn" type="button" class="btn btn-success">Download Subject Template</button><hr>';
     $('#subject-registration-div').append(html);
 }
 
 function provide_filled_template_upload() {
-    var html = '<form id="upload-subject-template-form" class="form-horizontal"><div class="form-group"><label for="upload-subject-template-input">Upload subject template:</label><input id="upload-subject-template-input" type="file" name="upload-subject-template" accept="*" /></div></form><hr>';
+    var html = '<form id="upload-subject-template-form" class="form-horizontal"><div class="form-group"><label for="upload-subject-template-input">Upload Subject Template:</label><input id="upload-subject-template-input" type="file" name="upload-subject-template" accept="*" /></div></form><hr>';
     $('#subject-registration-div').append(html);
 }
 
@@ -56,6 +56,6 @@ function next_btn() {
     });
     $('#subject-next-btn').click(function () {
         //handle subject file upload
-        window.location.href = baseApp + "/views/events";
+        window.location.href = baseApp + "/views/feedback-subjects";
     });
 }

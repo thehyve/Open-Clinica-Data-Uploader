@@ -1,8 +1,8 @@
 package nl.thehyve.ocdu.models.OcDefinitions;
 
 import javax.persistence.*;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Created by piotrzakrzewski on 01/05/16.
@@ -24,9 +24,32 @@ public class CRFDefinition {
 
     @Transient
     private List<String> mandatoryItemGroups = new ArrayList<>();
+    @Transient
+    private List<String> mandatoryUngroupedItems = new ArrayList<>();
 
     @OneToMany(targetEntity = ItemGroupDefinition.class)
     private List<ItemGroupDefinition> itemGroups = new ArrayList<>();
+
+    @OneToMany(targetEntity = ItemDefinition.class)
+    private List<ItemDefinition> ungroupedItems = new ArrayList<>();
+
+    public List<ItemDefinition> allItems() {
+        List<ItemDefinition> all = new ArrayList<>();
+        itemGroups.stream().forEach(itemGroupDefinition -> {
+            all.addAll(itemGroupDefinition.getItems());
+        });
+        all.addAll(ungroupedItems);
+        return all;
+    }
+
+
+    public List<ItemDefinition> getUngroupedItems() {
+        return ungroupedItems;
+    }
+
+    public void setUngroupedItems(List<ItemDefinition> ungroupedItems) {
+        this.ungroupedItems = ungroupedItems;
+    }
 
     public List<ItemGroupDefinition> getItemGroups() {
         return itemGroups;
@@ -115,12 +138,49 @@ public class CRFDefinition {
         this.version = prototype.getVersion();
         this.mandatoryItemGroups = prototype.getMandatoryItemGroups();
         this.itemGroups = prototype.getItemGroups();
+        this.mandatoryUngroupedItems = prototype.getMandatoryUngroupedItems();
+        this.ungroupedItems = prototype.getUngroupedItems();
     }
 
     public CRFDefinition() {
     }
 
+    public List<String> getMandatoryUngroupedItems() {
+        return mandatoryUngroupedItems;
+    }
+
+    public void setMandatoryUngroupedItems(List<String> mandatoryUngroupedItems) {
+        this.mandatoryUngroupedItems = mandatoryUngroupedItems;
+    }
+
     public void addItemGroupDef(ItemGroupDefinition groupDef) {
         this.itemGroups.add(groupDef);
+    }
+
+    public void addAllUngroupedItems(Collection<String> itemNames) {
+        mandatoryUngroupedItems.addAll(itemNames);
+    }
+
+    public void addUngroupedItem(ItemDefinition ungroupedItem) {
+        ungroupedItems.add(ungroupedItem);
+    }
+
+    public Set<String> getMandatoryItemNames() {
+        Set<String> allMandatoryInCRF = new HashSet<>();
+        itemGroups
+                .stream()
+                .filter(itemGroupDefinition -> itemGroupDefinition.isMandatoryInCrf())
+                .forEach(mandatoryGroup -> {
+                    List<ItemDefinition> items = mandatoryGroup.getItems();
+                    items.stream()
+                            .filter(itemDefinition -> itemDefinition.isMandatoryInGroup())
+                            .map(ItemDefinition::getName).forEach(itemName -> {
+                                allMandatoryInCRF.add(itemName);
+                            }
+                    );
+                });
+        Set<String> ungrouped = ungroupedItems.stream().map(ItemDefinition::getName).collect(Collectors.toSet());
+        allMandatoryInCRF.addAll(ungrouped);
+        return ungrouped;
     }
 }

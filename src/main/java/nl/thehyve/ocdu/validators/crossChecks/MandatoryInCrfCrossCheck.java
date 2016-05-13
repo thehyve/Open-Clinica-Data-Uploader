@@ -55,29 +55,14 @@ public class MandatoryInCrfCrossCheck implements ClinicalDataCrossCheck {
             String crfVersion = clinicalData.getCrfVersion();
             CRFDefinition matching = getMatching(eventName, crfName, crfVersion, eventMap);
             if (matching != null) { // Missing CRF or Event are  separate errors
-                Set<String> expected = getExpectedItems(matching);
+                Set<String> expected = matching.getMandatoryItemNames();
                 mandatoryMap.put(crfName + crfVersion, expected);
             }
         });
         return mandatoryMap;
     }
 
-    private Set<String> getExpectedItems(CRFDefinition crfDefinition) {
-        Set<String> allMandatoryInCRF = new HashSet<>();
-        crfDefinition.getItemGroups()
-                .stream()
-                .filter(itemGroupDefinition -> itemGroupDefinition.isMandatoryInCrf())
-                .forEach(mandatoryGroup -> {
-                    List<ItemDefinition> items = mandatoryGroup.getItems();
-                    items.stream()
-                            .filter(itemDefinition -> itemDefinition.isMandatoryInGroup())
-                            .map(ItemDefinition::getName).forEach(itemName -> {
-                                allMandatoryInCRF.add(itemName);
-                            }
-                    );
-                });
-        return allMandatoryInCRF;
-    }
+
 
 
 }

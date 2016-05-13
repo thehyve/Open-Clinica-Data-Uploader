@@ -21,6 +21,16 @@ public class ItemGroupDefinition {
 
     private boolean mandatoryInCrf;
 
+    private boolean ungrouped = false;
+
+    public boolean isUngrouped() {
+        return ungrouped;
+    }
+
+    public void setUngrouped(boolean ungrouped) {
+        this.ungrouped = ungrouped;
+    }
+
     public List<String> getMandatoryItems() {
         return mandatoryItems;
     }
@@ -92,6 +102,7 @@ public class ItemGroupDefinition {
         this.oid = prototype.getOid();
         this.items = new ArrayList<>(prototype.getItems());
         this.mandatoryItems = prototype.getMandatoryItems();
+        this.ungrouped = prototype.isUngrouped();
     }
 
     public void addItem(ItemDefinition item) {

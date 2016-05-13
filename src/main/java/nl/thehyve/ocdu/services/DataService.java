@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -53,10 +54,7 @@ public class DataService {
     private MetaDataTree buildTree(MetaData metaData) {
         String studyIdentifier = metaData.getStudyIdentifier();
 
-        MetaDataTree root = new MetaDataTree("root");
-
         MetaDataTree studyNode = new MetaDataTree();
-        root.addChild(studyNode);
         studyNode.setName(studyIdentifier);
         List<EventDefinition> eventDefinitions = metaData.getEventDefinitions();
         List<MetaDataTree> studyChildren = new ArrayList<>();
@@ -68,22 +66,29 @@ public class DataService {
             studyChildren.add(eventNode);
 
             List<MetaDataTree> eventChildren = new ArrayList<>();
-            eventNode.setChildren(eventChildren);
-            eventDefinition.getCrfDefinitions().stream().forEach(crfDefinition -> {
-                MetaDataTree crfNode = new MetaDataTree();
-                crfNode.setName(crfDefinition.getName());
-                eventChildren.add(crfNode);
-                List<MetaDataTree> crfChildren = new ArrayList<>();
-                crfNode.setChildren(crfChildren);
 
+            eventNode.setChildren(eventChildren);
+            HashMap<String, MetaDataTree> crfNodes = new HashMap<>();
+            eventDefinition.getCrfDefinitions().stream().forEach(crfDefinition -> {
+                String crfName = crfDefinition.getName();
+                MetaDataTree crfNode;
+                List<MetaDataTree> crfChildren;
+                if (!crfNodes.containsKey(crfName)) {
+                    crfNode = new MetaDataTree();
+                    crfNode.setName(crfName);
+                    eventChildren.add(crfNode);
+                    crfChildren = new ArrayList<>();
+                    crfNode.setChildren(crfChildren);
+                    crfNodes.put(crfName, crfNode);
+                } else {
+                    crfNode = crfNodes.get(crfName);
+                    crfChildren = crfNode.getChildren();
+                }
                 String version = crfDefinition.getVersion();
                 MetaDataTree versionNode = new MetaDataTree();
                 versionNode.setName(version);
                 crfChildren.add(versionNode);
-                List<ItemDefinition> items = new ArrayList<>();
-                crfDefinition.getItemGroups().stream().forEach(itemGroupDefinition -> {
-                    items.addAll(itemGroupDefinition.getItems());
-                }); //TODO: investigate why items contain duplicated items. GroupDefinitions should not overlap.
+                List<ItemDefinition> items = crfDefinition.allItems();
 
                 List<MetaDataTree> itemNodes = items.stream()
                         .map(itemDefinition -> itemDefinition.getName())
@@ -94,7 +99,7 @@ public class DataService {
             });
 
         });
-        return root;
+        return studyNode;
     }
 
     @Autowired
@@ -116,10 +121,10 @@ public class DataService {
         List<Study> matching = studies.stream().filter(study -> study.getName().equals(studyName)).collect(Collectors.toList());
         if (matching.size() == 1) {
             return matching.get(0);
-        } else if (matching.size() == 0){
+        } else if (matching.size() == 0) {
             return null;
         } else {
-          throw new Exception("Multiple studies match name: " +studyName+" fatal data inconsistency.");
+            throw new Exception("Multiple studies match name: " + studyName + " fatal data inconsistency.");
         }
     }
 

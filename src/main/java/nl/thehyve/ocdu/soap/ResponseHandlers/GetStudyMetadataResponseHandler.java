@@ -16,10 +16,7 @@ import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static nl.thehyve.ocdu.soap.ResponseHandlers.SoapUtils.toDocument;
@@ -28,7 +25,7 @@ import static nl.thehyve.ocdu.soap.ResponseHandlers.SoapUtils.toDocument;
  * Created by piotrzakrzewski on 29/04/16.
  */
 public class GetStudyMetadataResponseHandler extends OCResponseHandler {
-
+    //TODO: break down this monolith ...
     public static final String crfDefSelector = "//MetaDataVersion/FormDef";
     public static final String eventDefSelector = "//MetaDataVersion/StudyEventDef";
     public static final String itemGroupDefSelector = "//MetaDataVersion/ItemGroupDef";
@@ -58,6 +55,7 @@ public class GetStudyMetadataResponseHandler extends OCResponseHandler {
         List<CRFDefinition> crfDefs = parseCrfs(crfDefsNodes, eventMap);
         addToEvent(crfDefs, eventMap, eventDefsNodes); // Mandatory in event is defined in EventDef
 
+        assignUngroupedItems(itemDefNodes, crfDefs);
         List<EventDefinition> events = new ArrayList<>();
         events.addAll(eventMap.values());
 
@@ -67,6 +65,35 @@ public class GetStudyMetadataResponseHandler extends OCResponseHandler {
         metaData.setEventDefinitions(events);
         metaData.setItemGroupDefinitions(itemGroups);
         return metaData;
+    }
+
+
+    private static void assignUngroupedItems(NodeList itemDefNodes, List<CRFDefinition> crfs) {
+        HashMap<String, CRFDefinition> crfMap = new HashMap<>();
+        crfs.stream().forEach(crfDefinition -> crfMap.put(crfDefinition.getOid(), crfDefinition));
+        for (int i = 0; i < itemDefNodes.getLength(); i++) {
+            Node item = itemDefNodes.item(i);
+            String oid = item.getAttributes().getNamedItem("OID").getTextContent();
+            String formOIDs = item.getAttributes().getNamedItem("OpenClinica:FormOIDs").getTextContent();
+            for (String crfOID : parseFromOIDs(formOIDs)) {
+                CRFDefinition crfDefinition = crfMap.get(crfOID);
+                List<String> mandatoryUngroupedItems = crfDefinition.getMandatoryUngroupedItems();
+                ItemDefinition ungroupedItem = getItem(item);
+                if (mandatoryUngroupedItems.contains(oid)) {
+                    ungroupedItem.setMandatoryInGroup(true);
+                } else ungroupedItem.setMandatoryInGroup(false);
+                crfDefinition.addUngroupedItem(ungroupedItem);
+            }
+        }
+    }
+
+    private static Collection<String> parseFromOIDs(String formOIDs) {
+        String[] split = formOIDs.split(",");
+        List<String> crfsOids = new ArrayList<>();
+        for (int i = 0; i < split.length; i++) {
+            crfsOids.add(split[i]);
+        }
+        return crfsOids;
     }
 
     private static void addToEvent(List<CRFDefinition> crfDefs, Map<String, EventDefinition> events, NodeList eventDefsNodes) throws XPathExpressionException {
@@ -103,7 +130,7 @@ public class GetStudyMetadataResponseHandler extends OCResponseHandler {
         if (odmCDATANode == null) {
             return null;
         }
-        String textContent = odmCDATANode.getTextContent(); //TODO: Add handling case when no ODM is served by PC
+        String textContent = odmCDATANode.getTextContent(); //TODO: Add handling case when no ODM is served by OC
         Document odm = SoapUtils.unEscapeCDATAXML(textContent);
         return odm;
     }
@@ -188,22 +215,27 @@ public class GetStudyMetadataResponseHandler extends OCResponseHandler {
         List<ItemDefinition> items = new ArrayList<>();
         for (int i = 0; i < itemDefNodes.getLength(); i++) {
             Node item = itemDefNodes.item(i);
-            String oid = item.getAttributes().getNamedItem("OID").getTextContent();
-            String name = item.getAttributes().getNamedItem("Name").getTextContent();
-            String dataType = item.getAttributes().getNamedItem("DataType").getTextContent();
-            Node length1 = item.getAttributes().getNamedItem("Length");
-            String length = "0"; // Can be empty, zero means no restriction on length
-            if (length1 != null) {
-                length = length1.getTextContent();
-            }
-            ItemDefinition itemDef = new ItemDefinition();
-            itemDef.setOid(oid);
-            itemDef.setName(name);
-            itemDef.setDataType(dataType);
-            itemDef.setLength(Integer.parseInt(length));
+            ItemDefinition itemDef = getItem(item);
             items.add(itemDef);
         }
         return items;
+    }
+
+    private static ItemDefinition getItem(Node item) {
+        String oid = item.getAttributes().getNamedItem("OID").getTextContent();
+        String name = item.getAttributes().getNamedItem("Name").getTextContent();
+        String dataType = item.getAttributes().getNamedItem("DataType").getTextContent();
+        Node length1 = item.getAttributes().getNamedItem("Length");
+        String length = "0"; // Can be empty, zero means no restriction on length
+        if (length1 != null) {
+            length = length1.getTextContent();
+        }
+        ItemDefinition itemDef = new ItemDefinition();
+        itemDef.setOid(oid);
+        itemDef.setName(name);
+        itemDef.setDataType(dataType);
+        itemDef.setLength(Integer.parseInt(length));
+        return itemDef;
     }
 
     private static List<ItemGroupDefinition> parseItemGroupDefinitions(NodeList itemGroupDefNodes,
@@ -220,8 +252,10 @@ public class GetStudyMetadataResponseHandler extends OCResponseHandler {
             if (repeatingText.equals("Yes")) {
                 repeating = true;
             }
-
             ItemGroupDefinition groupDef = new ItemGroupDefinition();
+            if (oid.endsWith("UNGROUPED")) {
+                groupDef.setUngrouped(true);
+            }
             groupDef.setName(name);
             groupDef.setRepeating(repeating);
             groupDef.setOid(oid);
@@ -264,12 +298,16 @@ public class GetStudyMetadataResponseHandler extends OCResponseHandler {
                         if (crfDefinition.getMandatoryItemGroups().contains(prototype.getOid())) {
                             groupDef.setMandatoryInCrf(true);
                         }
-                        crfDefinition.addItemGroupDef(groupDef);
+                        if (!groupDef.isUngrouped()) crfDefinition.addItemGroupDef(groupDef);
+                        else crfDefinition.addAllUngroupedItems(getItemNames(groupDef));
                         itemGroupDefs.add(groupDef);
                     });
-
         }
         return itemGroupDefs;
+    }
+
+    private static Set<String> getItemNames(ItemGroupDefinition groupDef) {
+        return groupDef.getItems().stream().map(ItemDefinition::getOid).collect(Collectors.toSet());
     }
 
 
@@ -292,8 +330,12 @@ public class GetStudyMetadataResponseHandler extends OCResponseHandler {
                 CRFDefinition crf = new CRFDefinition(prototype);
                 String studyEventOID = node.getAttributes().getNamedItem("StudyEventOID").getTextContent();
                 crf.setEvent(events.get(studyEventOID));
-                String hidden = node.getAttributes().getNamedItem("StudyEventOID").getTextContent();//TODO: replace with XPATH selector
-                crf.setHidden(Boolean.parseBoolean(hidden));
+                String hiddenText = node.getAttributes().getNamedItem("HideCRF").getTextContent();//TODO: replace with XPATH selector
+                boolean hidden = false;
+                if (hiddenText.equals("Yes")) {
+                    hidden = true;
+                }
+                crf.setHidden(hidden);
                 crfs.add(crf);
             }
         } catch (XPathExpressionException e) {

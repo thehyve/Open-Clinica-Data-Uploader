@@ -55,7 +55,7 @@ public interface ClinicalDataCrossCheck {
         return allItems;
     }
 
-    default  Set<String> getAllItemNames(List<ClinicalData> data) {
+    default Set<String> getAllItemNames(List<ClinicalData> data) {
         return null;
     }
 
@@ -71,12 +71,13 @@ public interface ClinicalDataCrossCheck {
         List<CRFDefinition> allCRFDefinitions = getAllCRFDefinitions(metaData);
         Map<String, String> dataTypeMap = new HashMap<>();
         allCRFDefinitions.stream().forEach(crfDefinition -> {
-            crfDefinition.getItemGroups().stream().forEach(itemGroupDefinition -> {
-                itemGroupDefinition.getItems().stream().forEach(itemDefinition -> {
-                    dataTypeMap.put(itemDefinition.getName(), itemDefinition.getDataType());
-                });
-            });
+            crfDefinition.allItems().stream().forEach(itemDefinition -> {
+                        dataTypeMap.put(itemDefinition.getName(), itemDefinition.getDataType());
+                    }
+            );
         });
+
+
         return dataTypeMap;
     }
 

@@ -55,6 +55,10 @@ public interface ClinicalDataCrossCheck {
         return allItems;
     }
 
+    default  Set<String> getAllItemNames(List<ClinicalData> data) {
+        return null;
+    }
+
     default List<CRFDefinition> getAllCRFDefinitions(MetaData metaData) {
         List<CRFDefinition> allCrfs = new ArrayList<>();
         metaData.getEventDefinitions().stream().forEach(eventDefinition -> {
@@ -75,6 +79,22 @@ public interface ClinicalDataCrossCheck {
         });
         return dataTypeMap;
     }
+
+
+    default CRFDefinition getMatching(String eventName, String CRFName, String CRfVersion, Map<String, List<CRFDefinition>> eventMap) {
+        List<CRFDefinition> crfInEvents = eventMap.get(eventName);
+        if (crfInEvents == null) {
+            return null;
+        }
+        List<CRFDefinition> matching = crfInEvents.stream()
+                .filter(crfDefinition -> crfDefinition.getName().equals(CRFName) && crfDefinition.getVersion().equals(CRfVersion)).collect(Collectors.toList());
+        if (matching.size() == 0) {
+            return null;
+        } else {
+            return matching.get(0);
+        }
+    }
+
 
     default boolean isInteger(String input) {
         try {

@@ -78,7 +78,7 @@ $(document).ready(function () {
     });
 
     $('#reset-btn').click(function () {
-            reCenterLayout();
+        reCenterLayout();
     });
 
     $('#auto-map-btn').click(function () {
@@ -238,6 +238,9 @@ function reCenterLayout() {
     // $('#baseSvg').empty();
     // visualizeUsrList(usr_data);
     // visualizeOCTree(oc_data);
+
+    zoomListener.translate([0,0]).scale(1);
+    updateOCTree(root, 750);
 }
 
 function constructUserMapping() {
@@ -446,17 +449,20 @@ function updateOCTree(source, _duration) {
         }
     });
 
-    nodeEnter.append("text")
-        .attr("x", 5)
-        .attr("dy", ".35em")
-        .attr('class', 'nodeText')
-        .attr("text-anchor", function (d) {
-            if(d.depth == leaf_depth) return "start";
-            else return "end";
-        })
-        .text(function (d) {
-            return d.name;
-        });
+    nodeEnter.each(function (d) {
+        var node = d3.select(this);
+        node.append("text")
+            .attr("x", 5)
+            .attr("dy", ".35em")
+            .attr('class', 'nodeText')
+            .attr("text-anchor", function (d) {
+                if(d.depth == leaf_depth) return "start";
+                else return "end";
+            })
+            .text(function (d) {
+                return d.name;
+            });
+    });
 
     node.select('text').text(function (d) {
         return d.name;
@@ -494,7 +500,7 @@ function updateOCTree(source, _duration) {
     var nodeUpdate = node.transition()
         .duration(_duration)
         .attr("transform", function (d) {
-            d.y -= 50;
+            // d.y -= 50;
             return "translate(" + (d.y)  + "," + (d.x-rect_h / 2) + ")";
         });
 
@@ -577,9 +583,11 @@ function toggleChildren(d) {
     if (d.children) {
         d._children = d.children;
         d.children = null;
+        d.collapsed = true;
     } else if (d._children) {
         d.children = d._children;
         d._children = null;
+        d.collapsed = false;
     }
     return d;
 }
@@ -695,11 +703,11 @@ function mapUsrAndOCItemNames(ocd) {
 }
 
 function visualizeUsrList(usrData) {
-    var _x0 = 700 + 3 * rect_w - 5;
+    var _x0 = 700 + 4 * rect_w - 5;
     var _y0 = 15;
     listg = d3.select('#baseSvg').append('g').attr('id', 'listg');
     listg.append('line')
-        .attr('id', 'seperationline')
+        .attr('id', 'separationline')
         .attr('x1', _x0)
         .attr('y1', -20000)
         .attr('x2', _x0)
@@ -891,7 +899,7 @@ function visualizeUsrList(usrData) {
     });
 
     function isMouseInUserItemArea() {
-        var line = d3.select('#seperationline');
+        var line = d3.select('#separationline');
         var bcr = line[0][0].getBoundingClientRect();
         var x1 = bcr.left;
         if (mousepos.x > x1) return true;
@@ -905,7 +913,7 @@ function positionUsrList(usr_item_data, time, _y0) {
         var uitem = usr_item_data[i];
         //position the usr items when they are not mapped
         if (!uitem.mapped) {
-            uitem.x = 700 + 3 * rect_w;
+            uitem.x = 700 + 4 * rect_w;
             uitem.y = +_y0 + i * (rect_h + 5);
             usr_list_h += rect_h + 5;
         }

@@ -1,8 +1,10 @@
 package nl.thehyve.ocdu.controllers;
 
 import nl.thehyve.ocdu.OCEnvironmentsConfig;
+import nl.thehyve.ocdu.models.OCEntities.ClinicalData;
 import nl.thehyve.ocdu.models.OcUser;
 import nl.thehyve.ocdu.models.UploadSession;
+import nl.thehyve.ocdu.repositories.ClinicalDataRepository;
 import nl.thehyve.ocdu.repositories.UploadSessionRepository;
 import nl.thehyve.ocdu.repositories.OCUserRepository;
 import nl.thehyve.ocdu.services.DataService;
@@ -80,10 +82,16 @@ public class UploadSessionController {
         }
     }
 
+
+    @Autowired
+    ClinicalDataRepository clinicalDataRepository;
+
     @RequestMapping(value = "/delete", method=RequestMethod.POST)
     public ResponseEntity<?> deleteSubmission(HttpSession session) {
         try {
             UploadSession currentUploadSession = uploadSessionService.getCurrentUploadSession(session);
+            List<ClinicalData> bySubmission = clinicalDataRepository.findBySubmission(currentUploadSession);
+            clinicalDataRepository.delete(bySubmission);
             uploadSessionRepository.delete(currentUploadSession);
             uploadSessionService.setCurrentUploadSession(session, null);
             return new ResponseEntity<>(HttpStatus.OK);

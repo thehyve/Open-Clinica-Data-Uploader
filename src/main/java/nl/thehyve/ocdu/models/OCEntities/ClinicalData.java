@@ -1,8 +1,11 @@
 package nl.thehyve.ocdu.models.OCEntities;
 
 import nl.thehyve.ocdu.models.*;
+import org.hibernate.annotations.*;
+import org.hibernate.annotations.CascadeType;
 
 import javax.persistence.*;
+import javax.persistence.Entity;
 
 /**
  * Created by piotrzakrzewski on 16/04/16.

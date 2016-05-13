@@ -32,19 +32,6 @@ var displayMessages = function displayMessages(data) {
             $('#feedback-tables').append(html);
         }//for
 
-        //since this is some error, we delete the just created submission
-        $.ajax({
-            url: baseApp+"/submission/delete",
-            type: "post",
-            data: {},
-            success: function () {
-                console.log('submission deleted');
-            },
-            error: function (jqXHR, textStatus, errorThrown) {
-                console.log(jqXHR.status+" "+textStatus+" "+errorThrown);
-            }
-        });
-
     }//else
 };
 

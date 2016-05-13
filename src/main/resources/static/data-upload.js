@@ -16,9 +16,17 @@ function uploadFile() {
     var isMappingUploaded = false;
     var isDirected = false;
 
+    SESSIONNAME = $('#upload-session-input').val();
+    var sessionnames = [];
+    for(var i=0; i<sessions.length; i++) {
+        sessionnames.push(sessions[i].name);
+    }
+
+    if(sessionnames.indexOf(SESSIONNAME) !== -1) isSessionNameDefined = false;
+
+
     $("#message-board").empty();
     if (isSessionNameDefined && isDataSelected) {
-        SESSIONNAME = $('#upload-session-input').val();
 
         var dataFileUpload = function () {
             $.ajax({
@@ -119,11 +127,11 @@ function uploadFile() {
     if (!isSessionNameDefined || !isDataSelected) {
         $("#message-board").empty();
         if (!isSessionNameDefined) {
-            var info = '<span id="message-alert" class="alert alert-danger">Session name needs to be specified</span>';
+            var info = '<span id="message-alert" class="alert alert-danger">Pleaes give your new submission a unique name. </span>';
             $("#message-board").append(info);
         }
         if (!isDataSelected) {
-            var info = '<span id="message-alert" class="alert alert-danger">Data file needs to be specified</span>';
+            var info = '<span id="message-alert" class="alert alert-danger">Please select a data file to upload. </span>';
             $("#message-board").append(info);
         }
     }

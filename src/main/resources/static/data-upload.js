@@ -16,9 +16,17 @@ function uploadFile() {
     var isMappingUploaded = false;
     var isDirected = false;
 
+    SESSIONNAME = $('#upload-session-input').val();
+    var sessionnames = [];
+    for(var i=0; i<sessions.length; i++) {
+        sessionnames.push(sessions[i].name);
+    }
+
+    if(sessionnames.indexOf(SESSIONNAME) !== -1) isSessionNameDefined = false;
+
+
     $("#message-board").empty();
     if (isSessionNameDefined && isDataSelected) {
-        SESSIONNAME = $('#upload-session-input').val();
 
         var dataFileUpload = function () {
             $.ajax({
@@ -47,6 +55,19 @@ function uploadFile() {
                         });
                         info += '</div></ul>';
                         $("#message-board").append(info);
+
+                        //since this is format error, we delete the just created submission
+                        $.ajax({
+                            url: baseApp+"/submission/delete",
+                            type: "post",
+                            data: {},
+                            success: function () {
+                                console.log('submission deleted');
+                            },
+                            error: function (jqXHR, textStatus, errorThrown) {
+                                console.log(jqXHR.status+" "+textStatus+" "+errorThrown);
+                            }
+                        });
                     }
                 },
                 error: function (jqXHR, textStatus, errorThrown) {
@@ -58,6 +79,7 @@ function uploadFile() {
                 }
             });
         };
+
         $.ajax({
             url: baseApp+"/submission/create",
             type: "post",
@@ -119,11 +141,11 @@ function uploadFile() {
     if (!isSessionNameDefined || !isDataSelected) {
         $("#message-board").empty();
         if (!isSessionNameDefined) {
-            var info = '<span id="message-alert" class="alert alert-danger">Session name needs to be specified</span>';
+            var info = '<span id="message-alert" class="alert alert-danger">Pleaes give your new submission a unique name. </span>';
             $("#message-board").append(info);
         }
         if (!isDataSelected) {
-            var info = '<span id="message-alert" class="alert alert-danger">Data file needs to be specified</span>';
+            var info = '<span id="message-alert" class="alert alert-danger">Please select a data file to upload. </span>';
             $("#message-board").append(info);
         }
     }
@@ -156,10 +178,12 @@ function handle_session_retrieval_all(_sessions) {
         var d = new Date(s.savedDate);
         var sessionHTML = '<div class="well">' +
             '<button type="button" class="btn btn-primary" id="' + btnid + '" session_index=' + i + '>' + s.name + '</button>' +
-            '<p><small>saved on: ' + monthNames[d.getMonth()] + ' ' + d.getDate() + ', ' + d.getFullYear() + '</small></p></div>';
+            '<p><small>saved on: ' + monthNames[d.getMonth()] + ' ' + d.getDate() + ', ' + d.getFullYear() + '</small></p>' +
+            '<button type="button" class="btn btn-danger" id="removal_'+btnid+'" session_index='+ i + '>Remove this submission</button></div>';
         // $(sessionHTML).insertAfter("#old_upload_section_anchor");
         $('#session_container').append(sessionHTML);
         $('#' + btnid).click(handle_session_retrieval);
+        $('#removal_' +btnid).click(handle_session_removal);
     }//for
 }//function handle_session_retrieval_all
 
@@ -196,6 +220,13 @@ function handle_session_retrieval() {
     });
     console.log(sessions[ind]);
 }//function handle_session_retrieval
+
+function handle_session_removal() {
+    var ind = $(this).attr('session_index');
+    var session = sessions[ind];
+    var sid = session.id;
+    console.log('delete session with index: ' + sid);
+}
 
 function backBtnHandler() {
     window.history.back();

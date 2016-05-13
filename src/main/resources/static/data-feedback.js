@@ -7,6 +7,7 @@ var displayMessages = function displayMessages(data) {
     if(data.length == 0) {
         var html = '<div class="alert alert-success"> <strong>Data validation is successful!</strong></div>';
         $('#feedback-tables').append(html);
+
     }//if
     else {
         $('#feedback-tables').empty();
@@ -30,6 +31,7 @@ var displayMessages = function displayMessages(data) {
             var html = '<div class="panel-group"><div class="panel panel-default">'+middlepart+'</div></div>'
             $('#feedback-tables').append(html);
         }//for
+
     }//else
 };
 

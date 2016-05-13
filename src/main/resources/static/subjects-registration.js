@@ -55,6 +55,7 @@ function next_btn() {
         window.history.back();
     });
     $('#subject-next-btn').click(function () {
+        //handle subject file upload
         window.location.href = baseApp + "/views/events";
     });
 }

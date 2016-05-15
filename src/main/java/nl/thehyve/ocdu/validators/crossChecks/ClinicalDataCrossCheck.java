@@ -98,6 +98,9 @@ public interface ClinicalDataCrossCheck {
 
 
     default boolean isInteger(String input) {
+        if (input.contains(".") || input.contains(",")) {
+            return false;
+        }
         try {
             Integer.parseInt(input);
             return true;
@@ -107,6 +110,12 @@ public interface ClinicalDataCrossCheck {
     }
 
     default boolean isFloat(String input) {
+        if (!input.contains(".")) {
+            return false;
+        }
+        if (input.contains(",")) {
+            return false;
+        }
         try {
             Float.parseFloat(input);
             return true;

@@ -63,4 +63,27 @@ public class RangeCheck {
         }
     }
 
+    public String violationMessage() {
+        String comparatorHumanReadable = getHumanReadableComparator();
+        String message = "Should be "+ comparatorHumanReadable + value;
+        return message;
+    }
+
+    private String getHumanReadableComparator() {
+        if (comparator == COMPARATOR.GE) {
+            return "greater than or equal to ";
+        } else if (comparator == COMPARATOR.GT) {
+            return "greater than ";
+        } else if (comparator == COMPARATOR.LE) {
+            return "lesser than or equal to ";
+        } else if (comparator == COMPARATOR.LT) {
+            return "lesser than ";
+        } else if (comparator == COMPARATOR.EQ) {
+            return "equal to ";
+        } else if (comparator == COMPARATOR.NE) {
+            return "not equal to ";
+        } else {
+            return "";
+        }
+    }
 }

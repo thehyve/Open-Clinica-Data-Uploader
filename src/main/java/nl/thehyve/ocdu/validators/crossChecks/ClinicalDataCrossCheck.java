@@ -161,4 +161,12 @@ public interface ClinicalDataCrossCheck {
         }
     }
 
+    default HashMap<String, ItemDefinition> getItemMap(MetaData metaData) {
+        HashMap<String, ItemDefinition> itemMap = new HashMap<>();
+        metaData.getItemDefinitions().stream().forEach(itemDefinition -> {
+            itemMap.put(itemDefinition.getName(), itemDefinition);
+        });
+        return itemMap;
+    }
+
 }

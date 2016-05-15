@@ -48,6 +48,7 @@ public class ValidationTests {
     Path testFileNonExistentItem;
     Path testFileCorrectNoSite;
     Path testFileNonExistentVersion;
+    Path testFileRangeCheckViolation;
 
     @Before
     public void setUp() throws Exception {
@@ -66,7 +67,7 @@ public class ValidationTests {
             this.testFileNonExistentItem = Paths.get("docs/exampleFiles/nonExistentItem.txt");
             this.testFileCorrectNoSite = Paths.get("docs/exampleFiles/data_no_site.txt");
             this.testFileNonExistentVersion = Paths.get("docs/exampleFiles/nonExistentVersion.txt");
-
+            this.testFileRangeCheckViolation = Paths.get("docs/exampleFiles/rangeCheckViolation.txt");
 
             MessageFactory messageFactory = MessageFactory.newInstance();
             File testFile = new File("docs/responseExamples/getStudyMetadata.xml"); //TODO: Replace File with Path
@@ -143,5 +144,19 @@ public class ValidationTests {
         clinicalDataOcChecks = new ClinicalDataOcChecks(metaData, incorrectClinicalData);
         List<ValidationErrorMessage> errors = clinicalDataOcChecks.getErrors();
         assertEquals(1, errors.size());
+    }
+
+    @Test
+    public void rangeCheckViolation() throws Exception {
+        List<ClinicalData> incorrectClinicalData = factory.createClinicalData(testFileRangeCheckViolation);
+        clinicalDataOcChecks = new ClinicalDataOcChecks(metaData, incorrectClinicalData);
+        List<ValidationErrorMessage> errors = clinicalDataOcChecks.getErrors();
+        assertEquals(1, errors.size());
+    }
+
+    @Test
+    public void tooManyValues() throws Exception {
+
+
     }
 }

@@ -66,6 +66,7 @@ public class GetStudyMetadataResponseHandler extends OCResponseHandler {
 
         metaData.setEventDefinitions(events);
         metaData.setItemGroupDefinitions(itemGroups);
+        metaData.setItemDefinitions(items);
         return metaData;
     }
 

@@ -31,6 +31,9 @@ public class ValuesNumberCrossCheck implements ClinicalDataCrossCheck {
 
     private boolean isViolator(ClinicalData dataPoint, Map<String, String> dataTypeMap) {
         String type = dataTypeMap.get(dataPoint.getItem());
+        if (type == null) {
+            return false; // Missing item is a different error
+        }
         boolean multipleValuesAllowed = allowsMultiple(type);
         boolean hasMultipleValues = hasMultipleValues(dataPoint.getValue());
         if (hasMultipleValues && !multipleValuesAllowed) {

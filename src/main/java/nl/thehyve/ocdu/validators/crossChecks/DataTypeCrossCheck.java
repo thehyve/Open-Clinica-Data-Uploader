@@ -44,19 +44,12 @@ public class DataTypeCrossCheck implements ClinicalDataCrossCheck {
         } else if (expectedType.equals(FLOAT_DATA_TYPE)) {
             return isFloat(value);
         } else if (expectedType.equals(DATE_DATA_TYPE)) {
-            return dateWellformed(value);
+            return isDate(value);
         } else if (expectedType.equals(PARTIAL_DATE_DATA_TYPE)) {
-            return partialDateWellformed(value);
+            return isPDate(value);
         } else {
             return true; // no expectations, no disappointment
         }
     }
 
-    private boolean partialDateWellformed(String value) {
-        return true;
-    }
-
-    private boolean dateWellformed(String value) {
-        return true;
-    }
 }

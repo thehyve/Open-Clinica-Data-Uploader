@@ -6,6 +6,9 @@ import nl.thehyve.ocdu.models.OcDefinitions.MetaData;
 import nl.thehyve.ocdu.models.OCEntities.ClinicalData;
 import nl.thehyve.ocdu.models.errors.ValidationErrorMessage;
 
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -96,6 +99,40 @@ public interface ClinicalDataCrossCheck {
         }
     }
 
+    default boolean isDate(String input) {
+        DateFormat format = new SimpleDateFormat("YYYY-MM-DD", Locale.ENGLISH);
+        try {
+            Date date = format.parse(input);
+        } catch (ParseException e) {
+            return false;
+        }
+        return true;
+    }
+
+    default boolean isPDate(String input) {
+        DateFormat format1 = new SimpleDateFormat("DD-MMM-YYYY", Locale.ENGLISH);
+        DateFormat format2 = new SimpleDateFormat("MMM-YYYY", Locale.ENGLISH);
+        DateFormat format3 = new SimpleDateFormat("YYYY", Locale.ENGLISH);
+        boolean format1correct = true;
+        boolean format2correct = true;
+        boolean format3correct = true;
+        try {
+            Date date = format1.parse(input); //TODO: turn checking format correctness into a function and DRY
+        } catch (ParseException e) {
+            format1correct = false;
+        }
+        try {
+            Date date = format2.parse(input);
+        } catch (ParseException e) {
+            format2correct = false;
+        }
+        try {
+            Date date = format3.parse(input);
+        } catch (ParseException e) {
+            format3correct = false;
+        }
+        return format1correct || format2correct || format3correct;
+    }
 
     default boolean isInteger(String input) {
         if (input.contains(".") || input.contains(",")) {

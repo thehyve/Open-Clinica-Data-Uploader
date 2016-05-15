@@ -1,9 +1,7 @@
 package nl.thehyve.ocdu.models.OcDefinitions;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
+import java.util.List;
 
 /**
  * Created by piotrzakrzewski on 01/05/16.
@@ -18,6 +16,9 @@ public class ItemDefinition {
     private String dataType;
     private int length;
     private boolean mandatoryInGroup = false;
+
+    @OneToMany(targetEntity = RangeCheck.class)
+    private List<RangeCheck> rangeCheckList;
 
     public boolean isMandatoryInGroup() {
         return mandatoryInGroup;
@@ -76,5 +77,14 @@ public class ItemDefinition {
         this.oid = prototype.getOid();
         this.mandatoryInGroup = prototype.isMandatoryInGroup();
         this.dataType = prototype.getDataType();
+        this.rangeCheckList = prototype.getRangeCheckList();
+    }
+
+    public List<RangeCheck> getRangeCheckList() {
+        return rangeCheckList;
+    }
+
+    public void setRangeCheckList(List<RangeCheck> rangeCheckList) {
+        this.rangeCheckList = rangeCheckList;
     }
 }

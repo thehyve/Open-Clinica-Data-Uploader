@@ -19,6 +19,7 @@ import java.io.IOException;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static com.sun.corba.se.spi.activation.IIOP_CLEAR_TEXT.value;
 import static nl.thehyve.ocdu.soap.ResponseHandlers.SoapUtils.toDocument;
 
 /**
@@ -36,6 +37,7 @@ public class GetStudyMetadataResponseHandler extends OCResponseHandler {
     public static final String CRF_VERSION_SELECTOR = ".//*[local-name()='VersionDescription']/text()[1]";
     public static final String itemGroupRefSelector = ".//*[local-name()='ItemGroupRef']";
     public static final String itemRefSelector = ".//*[local-name()='ItemRef']";
+    public static final String rangeChecksSelector = ".//*[local-name()='RangeCheck']";
 
 
     public static MetaData parseGetStudyMetadataResponse(SOAPMessage response) throws Exception { //TODO: handle exception
@@ -68,7 +70,7 @@ public class GetStudyMetadataResponseHandler extends OCResponseHandler {
     }
 
 
-    private static void assignUngroupedItems(NodeList itemDefNodes, List<CRFDefinition> crfs) {
+    private static void assignUngroupedItems(NodeList itemDefNodes, List<CRFDefinition> crfs) throws XPathExpressionException {
         HashMap<String, CRFDefinition> crfMap = new HashMap<>();
         crfs.stream().forEach(crfDefinition -> crfMap.put(crfDefinition.getOid(), crfDefinition));
         for (int i = 0; i < itemDefNodes.getLength(); i++) {
@@ -211,7 +213,7 @@ public class GetStudyMetadataResponseHandler extends OCResponseHandler {
         return items;
     }
 
-    private static List<ItemDefinition> parseItemDefinitions(NodeList itemDefNodes) {
+    private static List<ItemDefinition> parseItemDefinitions(NodeList itemDefNodes) throws XPathExpressionException {
         List<ItemDefinition> items = new ArrayList<>();
         for (int i = 0; i < itemDefNodes.getLength(); i++) {
             Node item = itemDefNodes.item(i);
@@ -221,7 +223,7 @@ public class GetStudyMetadataResponseHandler extends OCResponseHandler {
         return items;
     }
 
-    private static ItemDefinition getItem(Node item) {
+    private static ItemDefinition getItem(Node item) throws XPathExpressionException {
         String oid = item.getAttributes().getNamedItem("OID").getTextContent();
         String name = item.getAttributes().getNamedItem("Name").getTextContent();
         String dataType = item.getAttributes().getNamedItem("DataType").getTextContent();
@@ -230,12 +232,33 @@ public class GetStudyMetadataResponseHandler extends OCResponseHandler {
         if (length1 != null) {
             length = length1.getTextContent();
         }
+        List<RangeCheck> rangeChecks = parseRangeChecks(item);
         ItemDefinition itemDef = new ItemDefinition();
         itemDef.setOid(oid);
         itemDef.setName(name);
         itemDef.setDataType(dataType);
         itemDef.setLength(Integer.parseInt(length));
+        itemDef.setRangeCheckList(rangeChecks);
         return itemDef;
+    }
+
+    private static List<RangeCheck> parseRangeChecks(Node item) throws XPathExpressionException {
+        NodeList rangeChekNodes = (NodeList) xpath.evaluate(rangeChecksSelector, item, XPathConstants.NODESET);
+        List<RangeCheck> rangeChecks = new ArrayList<>();
+        for (int i = 0; i < rangeChekNodes.getLength(); i++) {
+            Node rangeChecKnode = rangeChekNodes.item(i);
+            String comparator = rangeChecKnode.getAttributes().getNamedItem("Comparator").getTextContent();
+            Node valueNode = (Node) xpath.evaluate(".//CheckValue", rangeChecKnode, XPathConstants.NODE);
+            String value = valueNode.getTextContent();
+            RangeCheck rangeCheck = new RangeCheck();
+            RangeCheck.COMPARATOR comparatorEnum = RangeCheck.COMPARATOR.valueOf(comparator);
+            double valueDouble = Double.parseDouble(value);
+            int valueInt = (int) valueDouble; // We will not attempt floating point comparisons.
+            rangeCheck.setComparator(comparatorEnum);
+            rangeCheck.setValue(valueInt);
+            rangeChecks.add(rangeCheck);
+        }
+        return rangeChecks;
     }
 
     private static List<ItemGroupDefinition> parseItemGroupDefinitions(NodeList itemGroupDefNodes,

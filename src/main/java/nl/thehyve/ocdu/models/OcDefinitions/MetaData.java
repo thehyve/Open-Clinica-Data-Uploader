@@ -24,16 +24,6 @@ public class MetaData {
     @OneToMany(targetEntity = CodeListDefinition.class, cascade = CascadeType.ALL )
     private List<CodeListDefinition> codeListDefinitions;
 
-    @OneToMany(targetEntity = ItemDefinition.class, cascade = CascadeType.ALL )
-    private List<ItemDefinition> itemDefinitions;
-
-    public List<ItemDefinition> getItemDefinitions() {
-        return itemDefinitions;
-    }
-
-    public void setItemDefinitions(List<ItemDefinition> itemDefinitions) {
-        this.itemDefinitions = itemDefinitions;
-    }
 
     public void addEventDefinition(EventDefinition eventDef) {
         eventDefinitions.add(eventDef);

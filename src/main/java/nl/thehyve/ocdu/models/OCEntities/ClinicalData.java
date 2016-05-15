@@ -1,11 +1,11 @@
 package nl.thehyve.ocdu.models.OCEntities;
 
-import nl.thehyve.ocdu.models.*;
-import org.hibernate.annotations.*;
-import org.hibernate.annotations.CascadeType;
+import nl.thehyve.ocdu.models.OcUser;
+import nl.thehyve.ocdu.models.UploadSession;
 
 import javax.persistence.*;
-import javax.persistence.Entity;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * Created by piotrzakrzewski on 16/04/16.
@@ -188,5 +188,11 @@ public class ClinicalData implements OcEntity, UserSubmitted, EventReference {
                 ", groupRepeat=" + groupRepeat +
                 ", value='" + value + '\'' +
                 '}';
+    }
+
+    public List<String> getValues() {
+        String[] split = value.split(",");
+        List<String> values = Arrays.asList(split);
+        return values;
     }
 }

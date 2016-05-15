@@ -15,7 +15,7 @@ import java.util.stream.Collectors;
 public class ValuesNumberCrossCheck implements ClinicalDataCrossCheck {
     @Override
     public ValidationErrorMessage getCorrespondingError(List<ClinicalData> data, MetaData metaData) {
-        Map<String, String> dataTypeMap = buildDataTypeMap(metaData);
+        Map<ClinicalData, String> dataTypeMap = buildDataTypeMap(data, metaData);
         List<ClinicalData> violators = data.stream()
                 .filter(clinicalData -> isViolator(clinicalData, dataTypeMap)).collect(Collectors.toList());
         if (violators.size() > 0) {
@@ -29,13 +29,13 @@ public class ValuesNumberCrossCheck implements ClinicalDataCrossCheck {
             return null;
     }
 
-    private boolean isViolator(ClinicalData dataPoint, Map<String, String> dataTypeMap) {
-        String type = dataTypeMap.get(dataPoint.getItem());
+    private boolean isViolator(ClinicalData dataPoint, Map<ClinicalData, String> dataTypeMap) {
+        String type = dataTypeMap.get(dataPoint);
         if (type == null) {
             return false; // Missing item is a different error
         }
         boolean multipleValuesAllowed = allowsMultiple(type);
-        boolean hasMultipleValues = hasMultipleValues(dataPoint.getValue());
+        boolean hasMultipleValues = dataPoint.getValues().size() > 1;
         if (hasMultipleValues && !multipleValuesAllowed) {
             return true;
         } else {
@@ -43,15 +43,7 @@ public class ValuesNumberCrossCheck implements ClinicalDataCrossCheck {
         }
     }
 
-    private boolean hasMultipleValues(String value) {
-        String[] split = value.split(","); //TODO: make value separator configurable
-        if (split.length > 1) {
-            return true;
-        } else {
-            return false;
-        }
 
-    }
 
     private boolean allowsMultiple(String type) {
         if (type.equals("Multiselect") || type.equals("Checkbox")) {

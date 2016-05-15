@@ -1,6 +1,7 @@
 package nl.thehyve.ocdu.validators.crossChecks;
 
 import nl.thehyve.ocdu.models.OCEntities.ClinicalData;
+import nl.thehyve.ocdu.models.OcDefinitions.CRFDefinition;
 import nl.thehyve.ocdu.models.OcDefinitions.ItemDefinition;
 import nl.thehyve.ocdu.models.OcDefinitions.MetaData;
 import nl.thehyve.ocdu.models.OcDefinitions.RangeCheck;
@@ -9,6 +10,7 @@ import nl.thehyve.ocdu.models.errors.ValidationErrorMessage;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.atomic.DoubleAccumulator;
 
 /**
@@ -17,23 +19,23 @@ import java.util.concurrent.atomic.DoubleAccumulator;
 public class RangeChecks implements ClinicalDataCrossCheck {
     @Override
     public ValidationErrorMessage getCorrespondingError(List<ClinicalData> data, MetaData metaData) {
-        HashMap<String, ItemDefinition> itemMap = getItemMap(metaData);
         RangeCheckViolation error = new RangeCheckViolation();
 
         data.forEach(clinicalData -> {
-            ItemDefinition itemDefinition = itemMap.get(clinicalData.getItem());
+            ItemDefinition itemDefinition = getMatching(clinicalData, metaData);
             if (itemDefinition != null) { // Nonexistent item is a separate error
                 List<RangeCheck> rangeCheckList = itemDefinition.getRangeCheckList();
                 rangeCheckList.forEach(rangeCheck -> {
-                    String value = clinicalData.getValue();
-                    if (isFloat(value) || isInteger(value)) {
-                        int intValue = (int) Double.parseDouble(value); // Do not attempt floating point comparison
-                        if (!rangeCheck.isInRange(intValue)) {
-                            String msg = clinicalData.getItem() + " " + rangeCheck.violationMessage();
-                            error.addOffendingValue(msg);
-                        }
-                    } // If item is not numeric but should be - there is a separate error for that
-
+                    List<String> values = clinicalData.getValues();
+                    for (String value : values) {
+                        if (isFloat(value) || isInteger(value)) {
+                            int intValue = (int) Double.parseDouble(value); // Do not attempt floating point comparison
+                            if (!rangeCheck.isInRange(intValue)) {
+                                String msg = clinicalData.getItem() + " " + rangeCheck.violationMessage();
+                                error.addOffendingValue(msg);
+                            }
+                        } // If item is not numeric but should be - there is a separate error for that
+                    }
                 });
             }
         });

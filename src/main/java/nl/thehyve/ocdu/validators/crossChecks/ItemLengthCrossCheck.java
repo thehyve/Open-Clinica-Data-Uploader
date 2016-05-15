@@ -14,13 +14,13 @@ import java.util.Map;
 public class ItemLengthCrossCheck implements ClinicalDataCrossCheck {
     @Override
     public ValidationErrorMessage getCorrespondingError(List<ClinicalData> data, MetaData metaData) {
-        Map<String, Integer> lengthMap = buildFieldLengthMap(metaData);
+        Map<ClinicalData, Integer> lengthMap = buildFieldLengthMap(data, metaData);
         FieldLengthExceeded error = new FieldLengthExceeded();
         data.stream().forEach(clinicalData -> {
             String value = clinicalData.getValue();
             String itemName = clinicalData.getItem();
-            if (lengthMap.get(itemName) != null && value.length() > lengthMap.get(itemName)) {
-                if (lengthMap.get(itemName) != 0) // Length does not have to be defined, in this case it is 0
+            if (lengthMap.get(clinicalData) != null && value.length() > lengthMap.get(clinicalData)) {
+                if (lengthMap.get(clinicalData) != 0) // Length does not have to be defined, in this case it is 0
                     error.addOffendingValue("Item: " + itemName + " value: " + value);
             }
         });

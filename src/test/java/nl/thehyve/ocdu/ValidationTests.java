@@ -82,7 +82,7 @@ public class ValidationTests {
             this.testFileTooManyValues = Paths.get("docs/exampleFiles/tooManyValues.txt");
 
             MessageFactory messageFactory = MessageFactory.newInstance();
-            File testFile = new File("docs/responseExamples/getStudyMetadata.xml"); //TODO: Replace File with Path
+            File testFile = new File("docs/responseExamples/getStudyMetadata2.xml"); //TODO: Replace File with Path
             FileInputStream in = new FileInputStream(testFile);
 
             SOAPMessage mockedResponseGetMetadata = messageFactory.createMessage(null, in);//soapMessage;
@@ -171,8 +171,9 @@ public class ValidationTests {
         List<ClinicalData> incorrectClinicalData = factory.createClinicalData(testFileRangeCheckViolation);
         clinicalDataOcChecks = new ClinicalDataOcChecks(metaData, incorrectClinicalData);
         List<ValidationErrorMessage> errors = clinicalDataOcChecks.getErrors();
-        assertEquals(1, errors.size());
+        assertEquals(2, errors.size());
         assertThat(errors, hasItem(isA(RangeCheckViolation.class)));
+        assertThat(errors, hasItem(isA(MandatoryItemInCrfMissing.class)));
     }
 
     @Test
@@ -180,9 +181,8 @@ public class ValidationTests {
         List<ClinicalData> incorrectClinicalData = factory.createClinicalData(testFileTooManyValues);
         clinicalDataOcChecks = new ClinicalDataOcChecks(metaData, incorrectClinicalData);
         List<ValidationErrorMessage> errors = clinicalDataOcChecks.getErrors();
-        assertEquals(3, errors.size()); //TODO: Add Error type checking
+        assertEquals(2, errors.size());
         assertThat(errors, hasItem(isA(TooManyValues.class)));
-        assertThat(errors, hasItem(isA(FieldLengthExceeded.class)));
         assertThat(errors, hasItem(isA(FieldLengthExceeded.class)));
     }
 }

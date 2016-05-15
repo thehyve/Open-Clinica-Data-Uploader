@@ -32,16 +32,14 @@ public interface ClinicalDataCrossCheck {
         return eventMap;
     }
 
-    default Map<String, Integer> buildFieldLengthMap(MetaData metaData) {
-        Map<String, Integer> lengthMap = new HashMap<>();
-        metaData.getItemGroupDefinitions().stream().forEach(itemGroupDefinition ->
-                {
-                    List<ItemDefinition> items = itemGroupDefinition.getItems();
-                    items.stream().forEach(itemDefinition -> {
-                        lengthMap.put(itemDefinition.getName(), itemDefinition.getLength());
-                    });
-                }
-        );
+    default Map<ClinicalData, Integer> buildFieldLengthMap(List<ClinicalData> data, MetaData metaData) {
+        Map<ClinicalData, Integer> lengthMap = new HashMap<>();
+        data.forEach(clinicalData -> {
+            ItemDefinition itemDefinition = getMatching(clinicalData, metaData);
+            Integer length = 0;
+            if (itemDefinition != null) length = itemDefinition.getLength(); // zero means no check
+            lengthMap.put(clinicalData, length);
+        });
         return lengthMap;
     }
 
@@ -58,46 +56,48 @@ public interface ClinicalDataCrossCheck {
         return allItems;
     }
 
-    default Set<String> getAllItemNames(List<ClinicalData> data) {
-        return null;
-    }
-
-    default List<CRFDefinition> getAllCRFDefinitions(MetaData metaData) {
-        List<CRFDefinition> allCrfs = new ArrayList<>();
-        metaData.getEventDefinitions().stream().forEach(eventDefinition -> {
-            allCrfs.addAll(eventDefinition.getCrfDefinitions());
+    default Map<ClinicalData, String> buildDataTypeMap(List<ClinicalData> data, MetaData metaData) {
+        Map<ClinicalData, String> dataTypeMap = new HashMap<>();
+        data.forEach(clinicalData -> {
+            ItemDefinition itemDefinition = getMatching(clinicalData, metaData);
+            if (itemDefinition != null) {
+                dataTypeMap.put(clinicalData, itemDefinition.getDataType());
+            }
         });
-        return allCrfs;
-    }
-
-    default Map<String, String> buildDataTypeMap(MetaData metaData) {
-        List<CRFDefinition> allCRFDefinitions = getAllCRFDefinitions(metaData);
-        Map<String, String> dataTypeMap = new HashMap<>();
-        allCRFDefinitions.stream().forEach(crfDefinition -> {
-            crfDefinition.allItems().stream().forEach(itemDefinition -> {
-                        dataTypeMap.put(itemDefinition.getName(), itemDefinition.getDataType());
-                    }
-            );
-        });
-
-
         return dataTypeMap;
     }
 
 
-    default CRFDefinition getMatching(String eventName, String CRFName, String CRfVersion, Map<String, List<CRFDefinition>> eventMap) {
+    default CRFDefinition getMatchingCrf(String eventName, String CRFName, String CRfVersion, MetaData metaData) {
+        Map<String, List<CRFDefinition>> eventMap = buildEventMap(metaData);
         List<CRFDefinition> crfInEvents = eventMap.get(eventName);
         if (crfInEvents == null) {
             return null;
         }
         List<CRFDefinition> matching = crfInEvents.stream()
                 .filter(crfDefinition -> crfDefinition.getName().equals(CRFName) && crfDefinition.getVersion().equals(CRfVersion)).collect(Collectors.toList());
+        assert matching.size() < 2;
         if (matching.size() == 0) {
             return null;
         } else {
             return matching.get(0);
         }
     }
+
+    default ItemDefinition getMatching(ClinicalData dataPoint, MetaData metaData) {
+        CRFDefinition matchingCrf = getMatchingCrf(dataPoint.getEventName(), dataPoint.getCrfName(), dataPoint.getCrfVersion(), metaData);
+        if (matchingCrf == null) {
+            return null;
+        }
+        List<ItemDefinition> itemDefinitions = matchingCrf.allItems();
+        List<ItemDefinition> matchingItems = itemDefinitions.stream()
+                .filter(itemDefinition -> itemDefinition.getName().equals(dataPoint.getItem()))
+                .collect(Collectors.toList());
+        assert matchingItems.size() < 2;
+        if (matchingItems.size() == 0) return null;
+        else return matchingItems.get(0);
+    }
+
 
     default boolean isDate(String input) {
         DateFormat format = new SimpleDateFormat("YYYY-MM-DD", Locale.ENGLISH);
@@ -159,14 +159,6 @@ public interface ClinicalDataCrossCheck {
         } catch (NumberFormatException e) {
             return false;
         }
-    }
-
-    default HashMap<String, ItemDefinition> getItemMap(MetaData metaData) {
-        HashMap<String, ItemDefinition> itemMap = new HashMap<>();
-        metaData.getItemDefinitions().stream().forEach(itemDefinition -> {
-            itemMap.put(itemDefinition.getName(), itemDefinition);
-        });
-        return itemMap;
     }
 
 }

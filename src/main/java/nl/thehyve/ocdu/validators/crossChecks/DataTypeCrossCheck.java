@@ -23,17 +23,26 @@ public class DataTypeCrossCheck implements ClinicalDataCrossCheck {
 
     @Override
     public ValidationErrorMessage getCorrespondingError(List<ClinicalData> data, MetaData metaData) {
-        Map<String, String> itemDataTypes = buildDataTypeMap(metaData);
+        Map<ClinicalData, String> itemDataTypes = buildDataTypeMap(data, metaData);
         Set<ImmutablePair<String, String>> offenders = data.stream()
-                .filter(clinicalData -> !matchType(clinicalData.getValue(), itemDataTypes.get(clinicalData.getItem())))
-                .map(clinicalData -> new ImmutablePair<>(clinicalData.getItem(), itemDataTypes.get(clinicalData.getItem())))
+                .filter(clinicalData -> !allValuesMatch(clinicalData.getValues(), itemDataTypes.get(clinicalData)))
+                .map(clinicalData -> new ImmutablePair<>(clinicalData.getItem(), itemDataTypes.get(clinicalData)))
                 .collect(Collectors.toSet());
-        if (offenders.size() > 0 ) {
+        if (offenders.size() > 0) {
             DataTypeMismatch error = new DataTypeMismatch();
             offenders.stream().
-                    forEach(offender -> error.addOffendingValue("Item: "+offender.left+ " expected: "+offender.right ));
+                    forEach(offender -> error.addOffendingValue("Item: " + offender.left + " expected: " + offender.right));
             return error;
         } else return null;
+    }
+
+    private boolean allValuesMatch(List<String> values, String expectedType) {
+        for (String value : values) {
+            if (!matchType(value, expectedType)) {
+                return false;
+            }
+        }
+        return true;
     }
 
     private boolean matchType(String value, String expectedType) {

@@ -41,6 +41,7 @@ public class ClinicalDataOcChecks {
         crossChecks.add(new ValuesNumberCrossCheck());
         crossChecks.add(new RangeChecks());
         crossChecks.add(new SignificanceCrossCheck());
+        crossChecks.add(new SsidUniqueCrossCheck());
     }
 
     public List<ValidationErrorMessage> getErrors() {

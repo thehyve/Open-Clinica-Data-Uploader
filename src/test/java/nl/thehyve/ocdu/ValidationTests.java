@@ -53,7 +53,8 @@ public class ValidationTests {
     Path testFileNonExistentVersion;
     Path testFileRangeCheckViolation;
     Path testFileTooManyValues;
-     Path testFileTooManySignificantDigits;
+    Path testFileTooManySignificantDigits;
+    Path testFileDupSsid;
 
     @Before
     public void setUp() throws Exception {
@@ -75,6 +76,7 @@ public class ValidationTests {
             this.testFileRangeCheckViolation = Paths.get("docs/exampleFiles/rangeCheckViolation.txt");
             this.testFileTooManyValues = Paths.get("docs/exampleFiles/tooManyValues.txt");
             this.testFileTooManySignificantDigits = Paths.get("docs/exampleFiles/tooManySignificantDigits.txt");
+            this.testFileDupSsid = Paths.get("docs/exampleFiles/dupSSID.txt");
 
             MessageFactory messageFactory = MessageFactory.newInstance();
             File testFile = new File("docs/responseExamples/getStudyMetadata2.xml"); //TODO: Replace File with Path
@@ -190,6 +192,14 @@ public class ValidationTests {
         assertThat(errors, hasItem(isA(TooManySignificantDigits.class)));
         assertThat(errors, hasItem(isA(MandatoryItemInCrfMissing.class)));
         assertThat(errors, hasItem(isA(FieldLengthExceeded.class)));
+    }
 
+    @Test
+    public void duplicatedSsid() throws Exception {
+        List<ClinicalData> incorrectClinicalData = factory.createClinicalData(testFileDupSsid);
+        clinicalDataOcChecks = new ClinicalDataOcChecks(metaData, incorrectClinicalData);
+        List<ValidationErrorMessage> errors = clinicalDataOcChecks.getErrors();
+        assertEquals(1, errors.size());
+        assertThat(errors, hasItem(isA(SSIDDuplicated.class)));
     }
 }

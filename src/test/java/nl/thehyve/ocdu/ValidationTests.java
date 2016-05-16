@@ -1,15 +1,13 @@
 package nl.thehyve.ocdu;
 
 import nl.thehyve.ocdu.factories.ClinicalDataFactory;
-import nl.thehyve.ocdu.models.OcDefinitions.EventDefinition;
-import nl.thehyve.ocdu.models.OcDefinitions.MetaData;
 import nl.thehyve.ocdu.models.OCEntities.ClinicalData;
+import nl.thehyve.ocdu.models.OcDefinitions.MetaData;
 import nl.thehyve.ocdu.models.OcUser;
 import nl.thehyve.ocdu.models.UploadSession;
 import nl.thehyve.ocdu.models.errors.*;
 import nl.thehyve.ocdu.soap.ResponseHandlers.GetStudyMetadataResponseHandler;
 import nl.thehyve.ocdu.validators.ClinicalDataOcChecks;
-import nl.thehyve.ocdu.validators.crossChecks.ValuesNumberCrossCheck;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -26,13 +24,8 @@ import java.nio.file.Paths;
 import java.util.Date;
 import java.util.List;
 
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.core.AllOf.allOf;
-import static org.hamcrest.core.Every.everyItem;
 import static org.hamcrest.core.Is.isA;
 import static org.hamcrest.core.IsCollectionContaining.hasItem;
-import static org.hamcrest.core.IsInstanceOf.instanceOf;
-import static org.hamcrest.core.IsNull.notNullValue;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 
@@ -60,6 +53,7 @@ public class ValidationTests {
     Path testFileNonExistentVersion;
     Path testFileRangeCheckViolation;
     Path testFileTooManyValues;
+     Path testFileTooManySignificantDigits;
 
     @Before
     public void setUp() throws Exception {
@@ -80,6 +74,7 @@ public class ValidationTests {
             this.testFileNonExistentVersion = Paths.get("docs/exampleFiles/nonExistentVersion.txt");
             this.testFileRangeCheckViolation = Paths.get("docs/exampleFiles/rangeCheckViolation.txt");
             this.testFileTooManyValues = Paths.get("docs/exampleFiles/tooManyValues.txt");
+            this.testFileTooManySignificantDigits = Paths.get("docs/exampleFiles/tooManySignificantDigits.txt");
 
             MessageFactory messageFactory = MessageFactory.newInstance();
             File testFile = new File("docs/responseExamples/getStudyMetadata2.xml"); //TODO: Replace File with Path
@@ -184,5 +179,17 @@ public class ValidationTests {
         assertEquals(2, errors.size());
         assertThat(errors, hasItem(isA(TooManyValues.class)));
         assertThat(errors, hasItem(isA(FieldLengthExceeded.class)));
+    }
+
+    @Test
+    public void tooManySignificantDigits() throws Exception {
+        List<ClinicalData> incorrectClinicalData = factory.createClinicalData(testFileTooManySignificantDigits);
+        clinicalDataOcChecks = new ClinicalDataOcChecks(metaData, incorrectClinicalData);
+        List<ValidationErrorMessage> errors = clinicalDataOcChecks.getErrors();
+        assertEquals(3, errors.size());
+        assertThat(errors, hasItem(isA(TooManySignificantDigits.class)));
+        assertThat(errors, hasItem(isA(MandatoryItemInCrfMissing.class)));
+        assertThat(errors, hasItem(isA(FieldLengthExceeded.class)));
+
     }
 }

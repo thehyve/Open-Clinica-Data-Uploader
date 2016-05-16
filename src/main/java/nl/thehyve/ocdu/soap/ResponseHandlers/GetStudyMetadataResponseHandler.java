@@ -38,6 +38,7 @@ public class GetStudyMetadataResponseHandler extends OCResponseHandler {
     public static final String itemGroupRefSelector = ".//*[local-name()='ItemGroupRef']";
     public static final String itemRefSelector = ".//*[local-name()='ItemRef']";
     public static final String rangeChecksSelector = ".//*[local-name()='RangeCheck']";
+    public static final String CODELIST_DEFINITION_SELECTOR = "//MetaDataVersion/CodeList";
 
 
     public static MetaData parseGetStudyMetadataResponse(SOAPMessage response) throws Exception { //TODO: handle exception
@@ -52,6 +53,7 @@ public class GetStudyMetadataResponseHandler extends OCResponseHandler {
         NodeList eventDefsNodes = (NodeList) xpath.evaluate(eventDefSelector, odm, XPathConstants.NODESET);
         NodeList itemGroupDefNodes = (NodeList) xpath.evaluate(itemGroupDefSelector, odm, XPathConstants.NODESET);
         NodeList itemDefNodes = (NodeList) xpath.evaluate(ITEM_DEFINITION_SELECTOR, odm, XPathConstants.NODESET);
+        NodeList codeListNodes = (NodeList) xpath.evaluate(CODELIST_DEFINITION_SELECTOR, odm, XPathConstants.NODESET);
 
         Map eventMap = parseEvents(eventDefsNodes);
         List<CRFDefinition> crfDefs = parseCrfs(crfDefsNodes, eventMap);
@@ -228,9 +230,14 @@ public class GetStudyMetadataResponseHandler extends OCResponseHandler {
         String name = item.getAttributes().getNamedItem("Name").getTextContent();
         String dataType = item.getAttributes().getNamedItem("DataType").getTextContent();
         Node length1 = item.getAttributes().getNamedItem("Length");
+        Node significantDigits = item.getAttributes().getNamedItem("SignificantDigits");
         String length = "0"; // Can be empty, zero means no restriction on length
+        String significantDigitsText = "0";
         if (length1 != null) {
             length = length1.getTextContent();
+        }
+        if (significantDigits != null) {
+            significantDigitsText = significantDigits.getTextContent();
         }
         List<RangeCheck> rangeChecks = parseRangeChecks(item);
         ItemDefinition itemDef = new ItemDefinition();
@@ -239,6 +246,7 @@ public class GetStudyMetadataResponseHandler extends OCResponseHandler {
         itemDef.setDataType(dataType);
         itemDef.setLength(Integer.parseInt(length));
         itemDef.setRangeCheckList(rangeChecks);
+        itemDef.setSignificantDigits(Integer.parseInt(significantDigitsText));
         return itemDef;
     }
 

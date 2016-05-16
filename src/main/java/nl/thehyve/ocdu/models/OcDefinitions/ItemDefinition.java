@@ -16,6 +16,15 @@ public class ItemDefinition {
     private String dataType;
     private int length;
     private boolean mandatoryInGroup = false;
+    private int significantDigits = 0;
+
+    public int getSignificantDigits() {
+        return significantDigits;
+    }
+
+    public void setSignificantDigits(int significantDigits) {
+        this.significantDigits = significantDigits;
+    }
 
     @OneToMany(targetEntity = RangeCheck.class)
     private List<RangeCheck> rangeCheckList;
@@ -78,6 +87,7 @@ public class ItemDefinition {
         this.mandatoryInGroup = prototype.isMandatoryInGroup();
         this.dataType = prototype.getDataType();
         this.rangeCheckList = prototype.getRangeCheckList();
+        this.significantDigits = prototype.getSignificantDigits();
     }
 
     public List<RangeCheck> getRangeCheckList() {

@@ -5,6 +5,6 @@ package nl.thehyve.ocdu.models.errors;
  */
 public class DataTypeMismatch extends ValidationErrorMessage {
     public DataTypeMismatch() {
-        super("One or more items you provided do not match the expected type.");
+        super("One or more items you provided do not match the expected type. HINT: Items of type real always need to have a decimal mark.");
     }
 }

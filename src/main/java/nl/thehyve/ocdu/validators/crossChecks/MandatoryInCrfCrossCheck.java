@@ -2,7 +2,6 @@ package nl.thehyve.ocdu.validators.crossChecks;
 
 import nl.thehyve.ocdu.models.OCEntities.ClinicalData;
 import nl.thehyve.ocdu.models.OcDefinitions.CRFDefinition;
-import nl.thehyve.ocdu.models.OcDefinitions.ItemDefinition;
 import nl.thehyve.ocdu.models.OcDefinitions.MetaData;
 import nl.thehyve.ocdu.models.errors.MandatoryItemInCrfMissing;
 import nl.thehyve.ocdu.models.errors.ValidationErrorMessage;
@@ -15,8 +14,7 @@ import java.util.*;
 public class MandatoryInCrfCrossCheck implements ClinicalDataCrossCheck {
     @Override
     public ValidationErrorMessage getCorrespondingError(List<ClinicalData> data, MetaData metaData) {
-        Map<String, List<CRFDefinition>> eventMap = buildEventMap(metaData);
-        HashMap<String, Set<String>> mandatoryMap = getMandatoryMap(data, eventMap);
+        HashMap<String, Set<String>> mandatoryMap = getMandatoryMap(data, metaData);
         HashMap<String, Set<String>> presentMap = getPresentMap(data);
         MandatoryItemInCrfMissing error = new MandatoryItemInCrfMissing();
         for (String crfId : mandatoryMap.keySet()) {
@@ -47,13 +45,13 @@ public class MandatoryInCrfCrossCheck implements ClinicalDataCrossCheck {
         return presentMap;
     }
 
-    private HashMap<String, Set<String>> getMandatoryMap(List<ClinicalData> data, Map<String, List<CRFDefinition>> eventMap) {
+    private HashMap<String, Set<String>> getMandatoryMap(List<ClinicalData> data, MetaData metaData) {
         HashMap<String, Set<String>> mandatoryMap = new HashMap<>();
         data.stream().forEach(clinicalData -> {
             String eventName = clinicalData.getEventName();
             String crfName = clinicalData.getCrfName();
             String crfVersion = clinicalData.getCrfVersion();
-            CRFDefinition matching = getMatching(eventName, crfName, crfVersion, eventMap);
+            CRFDefinition matching = getMatchingCrf(eventName, crfName, crfVersion, metaData);
             if (matching != null) { // Missing CRF or Event are  separate errors
                 Set<String> expected = matching.getMandatoryItemNames();
                 mandatoryMap.put(crfName + crfVersion, expected);

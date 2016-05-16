@@ -38,6 +38,10 @@ public class ClinicalDataOcChecks {
         crossChecks.add(new ItemExistenceCrossCheck());
         crossChecks.add(new MandatoryInCrfCrossCheck());
         crossChecks.add(new DataTypeCrossCheck());
+        crossChecks.add(new ValuesNumberCrossCheck());
+        crossChecks.add(new RangeChecks());
+        crossChecks.add(new SignificanceCrossCheck());
+        crossChecks.add(new SsidUniqueCrossCheck());
     }
 
     public List<ValidationErrorMessage> getErrors() {

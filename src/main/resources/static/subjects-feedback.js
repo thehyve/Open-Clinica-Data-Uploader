@@ -3,6 +3,7 @@
  */
 
 var displayMessages = function displayMessages(data) {
+    $('#loading_div').remove();
     if(data.length == 0) {
         var html = '<div class="alert alert-success"> <strong>Subject validation is successful!</strong></div>';
         $('#feedback-tables').append(html);
@@ -39,6 +40,10 @@ function feedbackNext() {
 function backBtnHandler() {
     window.history.back();
 }
+
+//waiting for the ajax call
+var loadinghtml = '<div id="loading_div" class="loader"><br></div>';
+$('#feedback-tables').append(loadinghtml);
 
 //TODO: connect backend
 $.ajax({

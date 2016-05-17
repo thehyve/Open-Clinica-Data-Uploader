@@ -1,7 +1,7 @@
 var usr_data=[];//store user-uploaded tabular data in JSON
 var oc_data={};//store oc tree data in JSON
 var map_data=[];//store user-uploaded mapping data
-var usr_item_data;//store user-edited mapping data
+var usr_item_data = [];//store user-edited mapping data
 var selectedOCItem = null;//the selected OC item in the tree
 var selectedUsrItem = null;//the selected Usr item in the list
 var mapped_ocitems = [];//an array containing the paths of mapped oc items
@@ -34,7 +34,13 @@ $(window).on('resize', function () {
 $(document).ready(function () {
 
     //check if mapping file is available, if not, disable the mapping button
-    $('#auto-map-btn').prop("disabled",!MAPPING_FILE_ENABLED)
+    // $('#auto-map-btn').prop("disabled",!MAPPING_FILE_ENABLED);
+    if(MAPPING_FILE_ENABLED) {
+        $('#auto-map-btn').show();
+    }
+    else {
+        $('#auto-map-btn').hide();
+    }
 
     var usrDataCallSuccess = function (data) {
         initialize();
@@ -80,7 +86,7 @@ $(document).ready(function () {
     });
 
     $('#reset-btn').click(function () {
-        reCenterLayout();
+        resetLayout();
     });
 
     $('#auto-map-btn').click(function () {
@@ -276,13 +282,13 @@ function toggleChildren(d) {
     return d;
 }
 
-function reCenterLayout() {
-    // $('#baseSvg').empty();
-    // visualizeUsrList(usr_data);
-    // visualizeOCTree(oc_data);
+function resetLayout() {
+    $('#baseSvg').empty();
+    visualizeUsrList(usr_data);
+    visualizeOCTree(oc_data);
 
     zoomListener.translate([0,0]).scale(1);
-    updateOCTree(root, 750);
+    // updateOCTree(root, 750);
 }
 
 function constructUserMapping() {
@@ -723,40 +729,19 @@ function visualizeUsrList(usrData) {
         .style('font-size', 20)
         .text('Data file items');
 
-    usr_item_data = [];
-
-    // var usr_item_names = [];
-    //var usr_path_names = ['CRFNAME', 'CRFVERSION', 'EVENTNAME', 'EVENTREPEAT', 'STUDYSUBJECTID', 'STUDY'];
-    // for (var i = 0; i < usrData.length; i++) {
-    //     for (var key in usrData[i]) {
-    //         var upper_key = key.toUpperCase();
-    //         if (usr_path_names.indexOf(upper_key) == -1 && usr_item_names.indexOf(key) == -1) {
-    //             var listitem = {};
-    //             listitem.usrItemName = key;
-    //             listitem.mapped = false;
-    //             listitem.ocStudy = "";
-    //             listitem.ocEventName = "";
-    //             listitem.ocCRF = "";
-    //             listitem.ocCRFv = "";
-    //             listitem.ocItemName = "";
-    //             listitem.ocItemData = null;
-    //             usr_item_data.push(listitem);
-    //             usr_item_names.push(key);
-    //         }
-    //     }
-    // }
-
-    for(var i=0; i<usrData.length; i++) {
-        var listitem = {};
-        listitem.usrItemName = usrData[i];
-        listitem.mapped = false;
-        listitem.ocStudy = "";
-        listitem.ocEventName = "";
-        listitem.ocCRF = "";
-        listitem.ocCRFv = "";
-        listitem.ocItemName = "";
-        listitem.ocItemData = null;
-        usr_item_data.push(listitem);
+    if(usr_item_data.length == 0) {
+        for(var i=0; i<usrData.length; i++) {
+            var listitem = {};
+            listitem.usrItemName = usrData[i];
+            listitem.mapped = false;
+            listitem.ocStudy = "";
+            listitem.ocEventName = "";
+            listitem.ocCRF = "";
+            listitem.ocCRFv = "";
+            listitem.ocItemName = "";
+            listitem.ocItemData = null;
+            usr_item_data.push(listitem);
+        }
     }
 
     var usritem = listg.selectAll('.listitem').data(usr_item_data);
@@ -932,8 +917,8 @@ function positionUsrList(usr_item_data, time, _y0) {
                 if (head.parent.collapsed) head = head.parent;
                 if (head.parent.collapsed) head = head.parent;
                 if (head.parent.collapsed) head = head.parent;
-                uitem.x = head.y + 9;
-                uitem.y = head.x - 7;
+                uitem.x = head.y + rect_w + 6;
+                uitem.y = head.x - rect_h / 2;
             }
         }
     }

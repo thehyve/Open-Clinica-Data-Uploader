@@ -7,6 +7,6 @@ import javax.validation.Valid;
  */
 public class RangeCheckViolation extends ValidationErrorMessage {
     public RangeCheckViolation() {
-        super("One or more values in your data violates value range constraints (RangeChecks");
+        super("One or more values in your data violates value range constraints (RangeChecks)");
     }
 }

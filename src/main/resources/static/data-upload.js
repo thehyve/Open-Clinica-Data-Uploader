@@ -12,10 +12,6 @@ function uploadFile() {
     var isDataSelected = ($('#upload-file-input').val() !== "");
     var isMappingSelected = ($('#upload-mapping-input').val() !== "");
 
-    var isDataUploaded = false;
-    var isMappingUploaded = false;
-    var isDirected = false;
-
     SESSIONNAME = $('#upload-session-input').val();
     var sessionnames = [];
     for(var i=0; i<sessions.length; i++) {
@@ -26,77 +22,11 @@ function uploadFile() {
 
 
     $("#message-board").empty();
-    if (isSessionNameDefined && isDataSelected) {
 
-        var dataFileUpload = function () {
-            $.ajax({
-                url: baseApp+"/upload/data",
-                type: "POST",
-                data: new FormData($("#upload-file-form")[0]),
-                enctype: 'multipart/form-data',
-                processData: false,
-                contentType: false,
-                success: function (fileFormatErrors) {
-                    if (fileFormatErrors.length === 0) {
-                        // Handle upload success
-                        var info = '<span id="data-alert" class="alert alert-success">Data succesfully uploaded</span>';
-                        $("#message-board").append(info);
-                        isDataUploaded = true;
-                        if (!isDirected && ((isMappingSelected && isMappingUploaded) || !isMappingSelected)) {
-                            window.location.href = baseApp+"/views/mapping";
-                            isDirected = true;
-                        }
-                    } else {
-                        var info = '<div class="alert alert-danger"><ul>';
-                        fileFormatErrors.forEach(function (error) {
-                            var errDiv = '<li><span>' + error.message + '</span></li>';
-                            // console.log(error);
-                            info += errDiv;
-                        });
-                        info += '</div></ul>';
-                        $("#message-board").append(info);
-
-                        //since this is format error, we delete the just created submission
-                        $.ajax({
-                            url: baseApp+"/submission/delete",
-                            type: "post",
-                            data: {},
-                            success: function () {
-                                console.log('submission deleted');
-                            },
-                            error: function (jqXHR, textStatus, errorThrown) {
-                                console.log(jqXHR.status+" "+textStatus+" "+errorThrown);
-                            }
-                        });
-                    }
-                },
-                error: function (jqXHR, textStatus, errorThrown) {
-                    // Handle upload error
-                    var info = '<span id="data-alert" class="alert alert-danger">Data not uploaded, either due to exceeding file size limit or server error</span>';
-                    $("#message-board").append(info);
-                    isDataUploaded = false;
-                    console.log(jqXHR.status+" "+textStatus+" "+errorThrown);
-                }
-            });
-        };
-
-        $.ajax({
-            url: baseApp+"/submission/create",
-            type: "post",
-            data: {name: SESSIONNAME},
-            success: dataFileUpload,
-            error: function (jqXHR, textStatus, errorThrown) {
-                console.log(jqXHR.status+" "+textStatus+" "+errorThrown);
-            }
-        });
-
-        window.setTimeout(function () {
-            $("#data-alert").fadeTo(500, 0).slideUp(500, function () {
-                $(this).empty();
-            });
-        }, 3000);
-
-        if (isMappingSelected) {
+    var mappingFileUpload = function () { 
+        if(isMappingSelected) {
+            //upload the mapping file and direct to mapping view, also enable the mapping button by MAPPING_FILE_ENABLED = true;
+            MAPPING_FILE_ENABLED = true;
             // var upload_mapping_data = new FormData($("#upload-mapping-form")[0]);
             // $.ajax({
             //     headers: {
@@ -118,7 +48,6 @@ function uploadFile() {
             //         if (!isDirected && isDataUploaded) {
             //             // window.location.href = "/mapping");
             //             console.log(feedback);
-            //             isDirected = true;
             //         }
             //     },
             //     error: function (jqXHR, textStatus, errorThrown) {
@@ -134,8 +63,76 @@ function uploadFile() {
             //         $(this).empty();
             //     });
             // }, 3000);
-        }//if isMappingSelected
+        }
+        else{
+            //direct to mapping view
+            window.location.href = baseApp+"/views/mapping";
+        }
+    }
 
+    var dataFileUpload = function () {
+        $.ajax({
+            url: baseApp+"/upload/data",
+            type: "POST",
+            data: new FormData($("#upload-file-form")[0]),
+            enctype: 'multipart/form-data',
+            processData: false,
+            contentType: false,
+            success: function (fileFormatErrors) {
+                if (fileFormatErrors.length === 0) {
+                    // Handle upload success
+                    var info = '<span id="data-alert" class="alert alert-success">Data succesfully uploaded</span>';
+                    $("#message-board").append(info);
+                    mappingFileUpload();
+
+                } else {
+                    var info = '<div class="alert alert-danger"><ul>';
+                    fileFormatErrors.forEach(function (error) {
+                        var errDiv = '<li><span>' + error.message + '</span></li>';
+                        info += errDiv;
+                    });
+                    info += '</div></ul>';
+                    $("#message-board").append(info);
+
+                    //since this is format error, we delete the just created submission
+                    $.ajax({
+                        url: baseApp+"/submission/delete",
+                        type: "post",
+                        data: {},
+                        success: function () {
+                            console.log('submission deleted');
+                        },
+                        error: function (jqXHR, textStatus, errorThrown) {
+                            console.log(jqXHR.status+" "+textStatus+" "+errorThrown);
+                        }
+                    });
+                }
+            },
+            error: function (jqXHR, textStatus, errorThrown) {
+                // Handle upload error
+                var info = '<span id="data-alert" class="alert alert-danger">Data not uploaded, either due to exceeding file size limit or server error</span>';
+                $("#message-board").append(info);
+                console.log(jqXHR.status+" "+textStatus+" "+errorThrown);
+            }
+        });
+    };
+
+
+    if (isSessionNameDefined && isDataSelected) {
+        $.ajax({
+            url: baseApp+"/submission/create",
+            type: "post",
+            data: {name: SESSIONNAME},
+            success: dataFileUpload,
+            error: function (jqXHR, textStatus, errorThrown) {
+                console.log(jqXHR.status+" "+textStatus+" "+errorThrown);
+            }
+        });
+        window.setTimeout(function () {
+            $("#data-alert").fadeTo(500, 0).slideUp(500, function () {
+                $(this).empty();
+            });
+        }, 3000);
     }
 
     if (!isSessionNameDefined || !isDataSelected) {

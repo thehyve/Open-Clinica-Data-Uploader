@@ -23,7 +23,13 @@ public class ItemExistenceCrossCheck implements ClinicalDataCrossCheck {
 
         if (missing.size() > 0) {
             ItemDoesNotExist error = new ItemDoesNotExist();
-            missing.forEach(itemName -> error.addOffendingValue(itemName));
+            missing.forEach(itemName -> {
+                if (itemName.equals("")) {
+                    error.addOffendingValue(" (Empty string)");
+                } else {
+                    error.addOffendingValue(itemName);
+                }
+            });
             return error;
         } else {
             return null;

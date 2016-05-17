@@ -219,11 +219,24 @@ function handle_session_retrieval() {
 }//function handle_session_retrieval
 
 function handle_session_removal() {
+    //TODO: fix submission deletion bug
     var ind = $(this).attr('session_index');
     var session = sessions[ind];
-    var sid = session.id;
-    console.log('delete session with index: ' + sid);
+    var sid = session.id; console.log(session);
+    // console.log('delete session with index: ' + sid);
+    $.ajax({
+        url: baseApp + "/submission/deleteSession",
+        type: "post",
+        data: {id:sid},
+        success: function (data) {
+            console.log('deleted session ' + sid);
+        },
+        error: function(jqXHR, textStatus, errorThrown) {
+            console.log(jqXHR.status+" "+textStatus+" "+errorThrown);
+        }
+    });
 }
+
 
 function backBtnHandler() {
     window.history.back();

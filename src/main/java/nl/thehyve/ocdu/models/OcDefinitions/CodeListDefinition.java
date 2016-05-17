@@ -48,4 +48,9 @@ public class CodeListDefinition {
         return items.stream()
                 .anyMatch(codeListItemDefinition -> codeListItemDefinition.getContent().equals(value));
     }
+
+    @Override
+    public String toString() {
+        return items.toString();
+    }
 }

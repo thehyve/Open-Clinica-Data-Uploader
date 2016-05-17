@@ -281,6 +281,7 @@ public class GetStudyMetadataResponseHandler extends OCResponseHandler {
         itemDef.setRangeCheckList(rangeChecks);
         itemDef.setSignificantDigits(Integer.parseInt(significantDigitsText));
         itemDef.setMultiselect(isMultiSelect);
+        itemDef.setCodeListRef(codeListRef);
         return itemDef;
     }
 

@@ -134,8 +134,9 @@ public class ValidationTests {
         List<ClinicalData> incorrectClinicalData = factory.createClinicalData(testFileItemLengthExceeded);
         clinicalDataOcChecks = new ClinicalDataOcChecks(metaData, incorrectClinicalData);
         List<ValidationErrorMessage> errors = clinicalDataOcChecks.getErrors();
-        assertEquals(1, errors.size());
+        assertEquals(2, errors.size());
         assertThat(errors, hasItem(isA(FieldLengthExceeded.class)));
+        assertThat(errors, hasItem(isA(EnumerationError.class)));
     }
 
     @Test

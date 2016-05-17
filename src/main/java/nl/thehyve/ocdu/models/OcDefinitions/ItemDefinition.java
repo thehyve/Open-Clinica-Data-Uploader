@@ -8,6 +8,7 @@ import java.util.List;
  */
 @Entity
 public class ItemDefinition {
+
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long id;
@@ -17,6 +18,15 @@ public class ItemDefinition {
     private int length;
     private boolean mandatoryInGroup = false;
     private boolean isMultiselect = false;
+    private  String codeListRef;
+
+    public String getCodeListRef() {
+        return codeListRef;
+    }
+
+    public void setCodeListRef(String codeListRef) {
+        this.codeListRef = codeListRef;
+    }
 
     public boolean isMultiselect() {
         return isMultiselect;
@@ -99,6 +109,7 @@ public class ItemDefinition {
         this.rangeCheckList = prototype.getRangeCheckList();
         this.significantDigits = prototype.getSignificantDigits();
         this.isMultiselect = prototype.isMultiselect();
+        this.codeListRef = prototype.getCodeListRef();
     }
 
     public List<RangeCheck> getRangeCheckList() {

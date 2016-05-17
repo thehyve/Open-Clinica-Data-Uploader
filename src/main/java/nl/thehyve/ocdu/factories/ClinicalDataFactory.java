@@ -108,7 +108,7 @@ public class ClinicalDataFactory extends UserSubmittedDataFactory {
 
             String value = split[headerMap.get(colName)];
             ClinicalData dat = new ClinicalData(study, item, ssid, eventName, eventRepeat, crf,
-                    getSubmission(), crfVer, groupRepeat, getUser(), value);
+                    getSubmission(), crfVer, groupRepeat, getUser(), value.trim()); // Mind the trim() on value.
             dat.setSite(site);
             aggregation.add(dat);
         }

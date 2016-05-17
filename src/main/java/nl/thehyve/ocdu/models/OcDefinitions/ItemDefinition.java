@@ -16,6 +16,16 @@ public class ItemDefinition {
     private String dataType;
     private int length;
     private boolean mandatoryInGroup = false;
+    private boolean isMultiselect = false;
+
+    public boolean isMultiselect() {
+        return isMultiselect;
+    }
+
+    public void setMultiselect(boolean multiselect) {
+        isMultiselect = multiselect;
+    }
+
     private int significantDigits = 0;
 
     public int getSignificantDigits() {
@@ -88,6 +98,7 @@ public class ItemDefinition {
         this.dataType = prototype.getDataType();
         this.rangeCheckList = prototype.getRangeCheckList();
         this.significantDigits = prototype.getSignificantDigits();
+        this.isMultiselect = prototype.isMultiselect();
     }
 
     public List<RangeCheck> getRangeCheckList() {

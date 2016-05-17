@@ -240,6 +240,7 @@ public class GetStudyMetadataResponseHandler extends OCResponseHandler {
             significantDigitsText = significantDigits.getTextContent();
         }
         List<RangeCheck> rangeChecks = parseRangeChecks(item);
+        boolean isMultiSelect = isMultiSelect(item);
         ItemDefinition itemDef = new ItemDefinition();
         itemDef.setOid(oid);
         itemDef.setName(name);
@@ -247,7 +248,16 @@ public class GetStudyMetadataResponseHandler extends OCResponseHandler {
         itemDef.setLength(Integer.parseInt(length));
         itemDef.setRangeCheckList(rangeChecks);
         itemDef.setSignificantDigits(Integer.parseInt(significantDigitsText));
+        itemDef.setMultiselect(isMultiSelect);
         return itemDef;
+    }
+
+    private static boolean isMultiSelect(Node item) throws XPathExpressionException {
+        NodeList codeListRefs = (NodeList) xpath.evaluate(".//*[local-name()='MultiSelectListRef']", item, XPathConstants.NODESET);//TODO: make it into a constant at class level
+        if (codeListRefs.getLength() > 0) {
+            return true;
+        } else
+            return false;
     }
 
     private static List<RangeCheck> parseRangeChecks(Node item) throws XPathExpressionException {

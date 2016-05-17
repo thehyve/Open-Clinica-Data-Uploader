@@ -55,6 +55,7 @@ public class ValidationTests {
     Path testFileTooManyValues;
     Path testFileTooManySignificantDigits;
     Path testFileDupSsid;
+    Path testFileRepeatInNonrepeatingEvent;
 
     @Before
     public void setUp() throws Exception {
@@ -77,6 +78,7 @@ public class ValidationTests {
             this.testFileTooManyValues = Paths.get("docs/exampleFiles/tooManyValues.txt");
             this.testFileTooManySignificantDigits = Paths.get("docs/exampleFiles/tooManySignificantDigits.txt");
             this.testFileDupSsid = Paths.get("docs/exampleFiles/dupSSID.txt");
+            this.testFileRepeatInNonrepeatingEvent = Paths.get("docs/exampleFiles/event_repeat.txt");
 
             MessageFactory messageFactory = MessageFactory.newInstance();
             File testFile = new File("docs/responseExamples/getStudyMetadata2.xml"); //TODO: Replace File with Path
@@ -201,5 +203,14 @@ public class ValidationTests {
         List<ValidationErrorMessage> errors = clinicalDataOcChecks.getErrors();
         assertEquals(1, errors.size());
         assertThat(errors, hasItem(isA(SSIDDuplicated.class)));
+    }
+
+    @Test
+    public void repeatInNonrepeatingEvent() throws Exception {
+        List<ClinicalData> incorrectClinicalData = factory.createClinicalData(testFileRepeatInNonrepeatingEvent);
+        clinicalDataOcChecks = new ClinicalDataOcChecks(metaData, incorrectClinicalData);
+        List<ValidationErrorMessage> errors = clinicalDataOcChecks.getErrors();
+        assertEquals(1, errors.size());
+        assertThat(errors, hasItem(isA(RepeatInNonrepeatingEvent.class)));
     }
 }

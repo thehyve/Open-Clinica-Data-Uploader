@@ -19,7 +19,6 @@ import java.io.IOException;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static com.sun.corba.se.spi.activation.IIOP_CLEAR_TEXT.value;
 import static nl.thehyve.ocdu.soap.ResponseHandlers.SoapUtils.toDocument;
 
 /**

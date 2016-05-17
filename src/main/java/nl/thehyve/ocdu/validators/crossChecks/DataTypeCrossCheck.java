@@ -26,7 +26,7 @@ public class DataTypeCrossCheck implements ClinicalDataCrossCheck {
         Map<ClinicalData, String> itemDataTypes = buildDataTypeMap(data, metaData);
         Set<ImmutablePair<String, String>> offenders = data.stream()
                 .filter(clinicalData -> !allValuesMatch(clinicalData.getValues(), itemDataTypes.get(clinicalData)))
-                .map(clinicalData -> new ImmutablePair<>(clinicalData.getItem(), itemDataTypes.get(clinicalData)))
+                .map(clinicalData -> new ImmutablePair<>(clinicalData.getItem()+" values: "+ clinicalData.getValues(), itemDataTypes.get(clinicalData)))
                 .collect(Collectors.toSet());
         if (offenders.size() > 0) {
             DataTypeMismatch error = new DataTypeMismatch();

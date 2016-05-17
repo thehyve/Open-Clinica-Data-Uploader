@@ -19,7 +19,6 @@ import java.io.IOException;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static com.sun.corba.se.spi.activation.IIOP_CLEAR_TEXT.value;
 import static nl.thehyve.ocdu.soap.ResponseHandlers.SoapUtils.toDocument;
 
 /**
@@ -39,6 +38,7 @@ public class GetStudyMetadataResponseHandler extends OCResponseHandler {
     public static final String itemRefSelector = ".//*[local-name()='ItemRef']";
     public static final String rangeChecksSelector = ".//*[local-name()='RangeCheck']";
     public static final String CODELIST_DEFINITION_SELECTOR = "//MetaDataVersion/CodeList";
+    public static final String MULTIPLE_SELECT_DEFINITION_SELECTOR = "//MetaDataVersion/*[local-name()='MultiSelectList']";
 
 
     public static MetaData parseGetStudyMetadataResponse(SOAPMessage response) throws Exception { //TODO: handle exception
@@ -54,6 +54,9 @@ public class GetStudyMetadataResponseHandler extends OCResponseHandler {
         NodeList itemGroupDefNodes = (NodeList) xpath.evaluate(itemGroupDefSelector, odm, XPathConstants.NODESET);
         NodeList itemDefNodes = (NodeList) xpath.evaluate(ITEM_DEFINITION_SELECTOR, odm, XPathConstants.NODESET);
         NodeList codeListNodes = (NodeList) xpath.evaluate(CODELIST_DEFINITION_SELECTOR, odm, XPathConstants.NODESET);
+        NodeList multipleSelectNodes = (NodeList) xpath.evaluate(MULTIPLE_SELECT_DEFINITION_SELECTOR, odm, XPathConstants.NODESET);
+
+        List<CodeListDefinition> codeListDefinitions = parseCodeListDefinitions(codeListNodes, multipleSelectNodes);
 
         Map eventMap = parseEvents(eventDefsNodes);
         List<CRFDefinition> crfDefs = parseCrfs(crfDefsNodes, eventMap);
@@ -67,8 +70,36 @@ public class GetStudyMetadataResponseHandler extends OCResponseHandler {
         List<ItemGroupDefinition> itemGroups = parseItemGroupDefinitions(itemGroupDefNodes, crfDefs, items);
 
         metaData.setEventDefinitions(events);
+        metaData.setCodeListDefinitions(codeListDefinitions);
         metaData.setItemGroupDefinitions(itemGroups);
         return metaData;
+    }
+
+    private static List<CodeListDefinition> parseCodeListDefinitions(NodeList codeListNodes, NodeList multipleSelectNodes) throws XPathExpressionException {
+        List<CodeListDefinition> codeListDefinitions = parseCodeListNodes(codeListNodes, ".//CodeListItem", "OID","CodedValue");
+        codeListDefinitions.addAll(parseCodeListNodes(multipleSelectNodes, ".//*[local-name()='MultiSelectListItem']", "ID","CodedOptionValue"));
+        return codeListDefinitions;
+    }
+
+    private static List<CodeListDefinition> parseCodeListNodes(NodeList codeListNodes, String xpathSelector, String idAttribute, String codeValueAttribute) throws XPathExpressionException {
+        List<CodeListDefinition> codeLists = new ArrayList<>();
+        for (int i = 0; i < codeListNodes.getLength(); i++) {
+            Node codeListDefNode = codeListNodes.item(i);
+            NodeList codes = (NodeList) xpath.evaluate(xpathSelector, codeListDefNode, XPathConstants.NODESET);
+            CodeListDefinition codeList = new CodeListDefinition();
+            codeList.setOcid(codeListDefNode.getAttributes().getNamedItem(idAttribute).getTextContent());
+            List<CodeListItemDefinition> codeDefList = new ArrayList<>();
+            for (int codeIndex = 0; codeIndex < codes.getLength(); codeIndex++) {
+                Node codeNode = codes.item(codeIndex);
+                String codedValue = codeNode.getAttributes().getNamedItem(codeValueAttribute).getTextContent();
+                CodeListItemDefinition codeListItemDefinition = new CodeListItemDefinition();
+                codeListItemDefinition.setContent(codedValue);
+                codeDefList.add(codeListItemDefinition);
+            }
+            codeList.setItems(codeDefList);
+            codeLists.add(codeList);
+        }
+        return codeLists;
     }
 
 
@@ -240,6 +271,8 @@ public class GetStudyMetadataResponseHandler extends OCResponseHandler {
             significantDigitsText = significantDigits.getTextContent();
         }
         List<RangeCheck> rangeChecks = parseRangeChecks(item);
+        boolean isMultiSelect = isMultiSelect(item);
+        String codeListRef = determineCodeListRef(item);
         ItemDefinition itemDef = new ItemDefinition();
         itemDef.setOid(oid);
         itemDef.setName(name);
@@ -247,7 +280,29 @@ public class GetStudyMetadataResponseHandler extends OCResponseHandler {
         itemDef.setLength(Integer.parseInt(length));
         itemDef.setRangeCheckList(rangeChecks);
         itemDef.setSignificantDigits(Integer.parseInt(significantDigitsText));
+        itemDef.setMultiselect(isMultiSelect);
+        itemDef.setCodeListRef(codeListRef);
         return itemDef;
+    }
+
+    private static String determineCodeListRef(Node item) throws XPathExpressionException {
+        Node refCodeList = (Node) xpath.evaluate(".//CodeListRef", item, XPathConstants.NODE);
+        Node refMultiSelect = (Node) xpath.evaluate(".//*[local-name()='MultiSelectListRef']", item, XPathConstants.NODE);
+        if (refCodeList != null ){
+            return refCodeList.getAttributes().getNamedItem("CodeListOID").getTextContent();
+        }
+        if (refMultiSelect != null) {
+            return refMultiSelect.getAttributes().getNamedItem("MultiSelectListID").getTextContent();
+        }
+        return null;
+    }
+
+    private static boolean isMultiSelect(Node item) throws XPathExpressionException {
+        NodeList codeListRefs = (NodeList) xpath.evaluate(".//*[local-name()='MultiSelectListRef']", item, XPathConstants.NODESET);//TODO: make it into a constant at class level
+        if (codeListRefs.getLength() > 0) {
+            return true;
+        } else
+            return false;
     }
 
     private static List<RangeCheck> parseRangeChecks(Node item) throws XPathExpressionException {

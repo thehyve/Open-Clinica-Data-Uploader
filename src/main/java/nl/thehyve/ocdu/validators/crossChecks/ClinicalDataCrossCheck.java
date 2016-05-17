@@ -67,6 +67,19 @@ public interface ClinicalDataCrossCheck {
         return dataTypeMap;
     }
 
+    //TODO: refactor all cross checks to use buildTemDefMap in place of other map building methods.
+    //TODO: delete the other map building methods.
+    default Map<ClinicalData, ItemDefinition> buildItemDefMap(List<ClinicalData> data, MetaData metaData) {
+        Map<ClinicalData, ItemDefinition> itemDefMap = new HashMap<>();
+        data.forEach(clinicalData -> {
+            ItemDefinition itemDefinition = getMatching(clinicalData, metaData);
+            if (itemDefinition != null) {
+                itemDefMap.put(clinicalData, itemDefinition);
+            }
+        });
+        return itemDefMap;
+    }
+
 
     default CRFDefinition getMatchingCrf(String eventName, String CRFName, String CRfVersion, MetaData metaData) {
         Map<String, List<CRFDefinition>> eventMap = buildEventMap(metaData);

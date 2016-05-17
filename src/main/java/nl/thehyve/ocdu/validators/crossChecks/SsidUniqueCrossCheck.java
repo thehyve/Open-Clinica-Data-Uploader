@@ -53,6 +53,7 @@ public class SsidUniqueCrossCheck implements ClinicalDataCrossCheck {
     private String toRowIdString(ClinicalData clinicalData) {
         return clinicalData.getSsid() + "in: "
                 + clinicalData.getEventName() + " "
+                + clinicalData.getEventRepeat() + ""
                 + clinicalData.getCrfName() + " "
                 + clinicalData.getCrfVersion();
     }

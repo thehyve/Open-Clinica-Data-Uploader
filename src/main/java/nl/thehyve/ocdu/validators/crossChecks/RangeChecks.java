@@ -31,7 +31,8 @@ public class RangeChecks implements ClinicalDataCrossCheck {
                         if (isFloat(value) || isInteger(value)) {
                             int intValue = (int) Double.parseDouble(value); // Do not attempt floating point comparison
                             if (!rangeCheck.isInRange(intValue)) {
-                                String msg = clinicalData.getItem() + " " + rangeCheck.violationMessage();
+                                String msg = clinicalData.getItem() + " " + rangeCheck.violationMessage()
+                                        + " but was: " + intValue;
                                 error.addOffendingValue(msg);
                             }
                         } // If item is not numeric but should be - there is a separate error for that

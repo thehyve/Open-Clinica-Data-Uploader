@@ -10,7 +10,7 @@ var baseSvg;
 var treeg, listg;
 
 var tipDiv;
-var leaf_depth = 5;
+var leaf_depth = 4;
 var zoomListener;
 var rect_w = 150, rect_h = 18;//default rect size
 var text_cut_index = 13;
@@ -33,6 +33,8 @@ $(window).on('resize', function () {
 // initializing and button listeners
 $(document).ready(function () {
 
+    //check if mapping file is available, if not, disable the mapping button
+    $('#auto-map-btn').prop("disabled",!MAPPING_FILE_ENABLED)
 
     var usrDataCallSuccess = function (data) {
         initialize();
@@ -209,13 +211,13 @@ $(document).ready(function () {
 });//end of the function $(document).ready...
 
 function collapseLeaves(d) {
-    if (d.children) {
-        for (var i = 0; i < d.children.length; i++) {
-            var child = d.children[i];
-            if (child.depth == leaf_depth - 1) {
-                collapse(child);
-            }
-            else {
+    if(d.children) {
+        if(d.depth == leaf_depth - 1) {
+            toggleChildren(d);
+        }
+        else{
+            for (var i = 0; i < d.children.length; i++) {
+                var child = d.children[i];
                 collapseLeaves(child);
             }
         }
@@ -223,8 +225,10 @@ function collapseLeaves(d) {
 }
 
 function expandLeaves(d) {
-    for (var i = 0; i < d.children.length; i++) {
-        var child = d.children[i];
+    var children = d.children?d.children: d._children;
+
+    for (var i = 0; i < children.length; i++) {
+        var child = children[i];
         if (child.depth == leaf_depth - 1) {
             expand(child);
         }
@@ -232,6 +236,44 @@ function expandLeaves(d) {
             expandLeaves(child);
         }
     }
+}
+
+// Helper functions for collapsing and expanding nodes.
+function collapse(d) {
+    d.collapsed = true;
+    if (d.children) {
+        d._children = d.children;
+        d._children.forEach(collapse);
+        d.children = null;
+    }
+}
+
+function expand(d) {
+    d.collapsed = false;
+    if (d._children) {
+        d.children = d._children;
+        d.children.forEach(expand);
+        d._children = null;
+    }
+}
+
+// Toggle children function
+function toggleChildren(d) {
+    // if (d.children) {
+    //     collapse(d);
+    // } else if (d._children) {
+    //     expand(d);
+    // }
+    if (d.children) {
+        d._children = d.children;
+        d.children = null;
+        d.collapsed = true;
+    } else if (d._children) {
+        d.children = d._children;
+        d._children = null;
+        d.collapsed = false;
+    }
+    return d;
 }
 
 function reCenterLayout() {
@@ -552,44 +594,6 @@ function updateOCTree(source, _duration) {
         d.x0 = d.x;
         d.y0 = d.y;
     });
-}
-
-// Helper functions for collapsing and expanding nodes.
-function collapse(d) {
-    d.collapsed = true;
-    if (d.children) {
-        d._children = d.children;
-        d._children.forEach(collapse);
-        d.children = null;
-    }
-}
-
-function expand(d) {
-    d.collapsed = false;
-    if (d._children) {
-        d.children = d._children;
-        d.children.forEach(expand);
-        d._children = null;
-    }
-}
-
-// Toggle children function
-function toggleChildren(d) {
-    // if (d.children) {
-    //     collapse(d);
-    // } else if (d._children) {
-    //     expand(d);
-    // }
-    if (d.children) {
-        d._children = d.children;
-        d.children = null;
-        d.collapsed = true;
-    } else if (d._children) {
-        d.children = d._children;
-        d._children = null;
-        d.collapsed = false;
-    }
-    return d;
 }
 
 

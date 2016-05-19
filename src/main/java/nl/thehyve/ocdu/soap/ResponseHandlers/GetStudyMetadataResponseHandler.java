@@ -177,9 +177,12 @@ public class GetStudyMetadataResponseHandler extends OCResponseHandler {
             Node item = eventDefsNodes.item(i);
             String oid = item.getAttributes().getNamedItem("OID").getTextContent();
             String name = item.getAttributes().getNamedItem("Name").getTextContent();
-            String repeating = item.getAttributes().getNamedItem("Repeating").getTextContent();
+            String repeatingText = item.getAttributes().getNamedItem("Repeating").getTextContent();
             String type = item.getAttributes().getNamedItem("Type").getTextContent();
-            boolean isRepeating = Boolean.parseBoolean(repeating);
+            boolean isRepeating = false;
+            if (repeatingText.equals("Yes")) {
+                isRepeating = true;
+            }
             EventDefinition event = new EventDefinition();
             event.setName(name);
             event.setStudyEventOID(oid);

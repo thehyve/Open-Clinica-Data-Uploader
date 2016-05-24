@@ -48,6 +48,7 @@ dependencies {
     compile('commons-codec:commons-codec:1.10')
     compile('org.apache.httpcomponents:httpclient:4.5.2')
     compile('org.apache.commons:commons-lang3:3.1')
+    compile('commons-io:commons-io:2.5')
 
     testCompile('org.springframework.boot:spring-boot-starter-test')
     testCompile('co.unruly:java-8-matchers:1.4')

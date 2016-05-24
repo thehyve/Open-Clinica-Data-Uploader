@@ -1,17 +1,13 @@
 package nl.thehyve.ocdu.autonomous;
 
-import org.aspectj.lang.annotation.Aspect;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.PropertySource;
-import org.springframework.scheduling.annotation.Async;
-import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Controller;
+
+import java.nio.file.Path;
+import java.util.List;
 
 /**
  * Controller to coordinate the autonomous upload process
@@ -23,10 +19,27 @@ public class AutonomousUploadTask {
 
     private static final Logger log = LoggerFactory.getLogger(AutonomousUploadTask.class);
 
+    private FileCopyService fileCopyService;
 
     public void run() {
-        log.info("Running autonomousUploadTask.");
+        log.info("Running autonomousUploadTask...");
+        try {
+            fileCopyService.start();
+            List<Path> filePathList = fileCopyService.obtainWorkPathList();
+            for (Path filePath : filePathList) {
+                // how do you obtain the associated mapping file from the input files?
+                fileCopyService.successfulFile(filePath);
+            }
+            fileCopyService.stop();
+        }
+        catch (Exception e) {
+            log.error("Failed to complete run: " + e.getMessage());
+            return;
+        }
+        log.info("Finished running autonomousUploadTask");
+    }
 
-        log.info("Found XXX files");
+    public void setFileCopyService(FileCopyService fileCopyService) {
+        this.fileCopyService = fileCopyService;
     }
 }

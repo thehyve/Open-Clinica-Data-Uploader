@@ -21,7 +21,6 @@
     <context:property-placeholder properties-ref="applicationProps" />
 
     <bean name="fileCopyServiceBean" class="nl.thehyve.ocdu.autonomous.FileCopyService" >
-        <property name="workDirectory" value="#{applicationProps['autonomous.work.directory']}" />
         <property name="completedFilesDirectory" value="#{applicationProps['autonomous.completed.files.directory']}" />
         <property name="sourceDirectory" value="#{applicationProps['autonomous.upload.source.directory']}" />
         <property name="failedFilesDirectory" value="#{applicationProps['autonomous.failed.files.directory']}" />

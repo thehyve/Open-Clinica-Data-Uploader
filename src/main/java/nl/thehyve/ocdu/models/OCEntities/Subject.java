@@ -16,9 +16,12 @@ public class Subject implements OcEntity, UserSubmitted {
     private String ssid;
     private String gender;
     private Date dateOfBirth;
+    @Column(columnDefinition = "TEXT")
     private String personId;
     private Date dateOfEnrollment;
+    @Column(columnDefinition = "TEXT")
     private String secondaryId;
+    @Column(columnDefinition = "TEXT")
     private String study;
 
     @ManyToOne()
@@ -86,5 +89,16 @@ public class Subject implements OcEntity, UserSubmitted {
         return study;
     }
 
-
+    @Override
+    public String toString() {
+        return "Subject{" +
+                "study='" + study + '\'' +
+                ", ssid='" + ssid + '\'' +
+                ", gender='" + gender + '\'' +
+                ", dateOfBirth=" + dateOfBirth +
+                ", personId='" + personId + '\'' +
+                ", dateOfEnrollment=" + dateOfEnrollment +
+                ", secondaryId='" + secondaryId + '\'' +
+                '}';
+    }
 }

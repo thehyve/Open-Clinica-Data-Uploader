@@ -1,7 +1,8 @@
 package nl.thehyve.ocdu.validators.crossChecks;
 
-import nl.thehyve.ocdu.models.MetaData;
+import nl.thehyve.ocdu.models.OcDefinitions.MetaData;
 import nl.thehyve.ocdu.models.OCEntities.ClinicalData;
+import nl.thehyve.ocdu.models.errors.SSIDTooLong;
 import nl.thehyve.ocdu.models.errors.ValidationErrorMessage;
 
 import java.util.ArrayList;
@@ -25,8 +26,7 @@ public class DataFieldWidthCrossCheck implements ClinicalDataCrossCheck {
                         }
                 );
         if (violatingSSIDs.size() > 0) {
-            ValidationErrorMessage error = new ValidationErrorMessage("One or more of the " +
-                    "SSIDs you defined is too long. Max length: " + SSID_MAX_LENGTH);
+            ValidationErrorMessage error = new SSIDTooLong(SSID_MAX_LENGTH);
             error.addAllOffendingValues(violatingSSIDs);
             return error;
         } else return null;

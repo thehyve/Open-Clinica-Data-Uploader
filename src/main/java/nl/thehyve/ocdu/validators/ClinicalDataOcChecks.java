@@ -1,14 +1,11 @@
 package nl.thehyve.ocdu.validators;
 
 import nl.thehyve.ocdu.models.OCEntities.ClinicalData;
-import nl.thehyve.ocdu.models.MetaData;
+import nl.thehyve.ocdu.models.OcDefinitions.MetaData;
 import nl.thehyve.ocdu.models.errors.ValidationErrorMessage;
 import nl.thehyve.ocdu.validators.checks.DataFieldWidthCheck;
-import nl.thehyve.ocdu.validators.crossChecks.CrfExistsCrossCheck;
-import nl.thehyve.ocdu.validators.crossChecks.EventExistsCrossCheck;
+import nl.thehyve.ocdu.validators.crossChecks.*;
 import nl.thehyve.ocdu.validators.checks.OcEntityCheck;
-import nl.thehyve.ocdu.validators.crossChecks.ClinicalDataCrossCheck;
-import nl.thehyve.ocdu.validators.crossChecks.DataFieldWidthCrossCheck;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,6 +31,19 @@ public class ClinicalDataOcChecks {
         crossChecks.add(new EventExistsCrossCheck());
         crossChecks.add(new DataFieldWidthCrossCheck());
         crossChecks.add(new CrfExistsCrossCheck());
+        crossChecks.add(new CrfCouldNotBeVerifiedCrossCheck());
+        crossChecks.add(new MultipleEventsCrossCheck());
+        crossChecks.add(new MultipleStudiesCrossCheck());
+        crossChecks.add(new ItemLengthCrossCheck());
+        crossChecks.add(new ItemExistenceCrossCheck());
+        crossChecks.add(new MandatoryInCrfCrossCheck());
+        crossChecks.add(new DataTypeCrossCheck());
+        crossChecks.add(new ValuesNumberCrossCheck());
+        crossChecks.add(new RangeChecks());
+        crossChecks.add(new SignificanceCrossCheck());
+        crossChecks.add(new SsidUniqueCrossCheck());
+        crossChecks.add(new EventRepeatCrossCheck());
+        crossChecks.add(new CodeListCrossCheck());
     }
 
     public List<ValidationErrorMessage> getErrors() {

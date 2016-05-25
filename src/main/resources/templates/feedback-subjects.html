@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <title>Subject Regirstration Feedback</title>
+</head>
+<body role="document">
+<div th:replace="header"></div>
+<div class="container ocdu-container">
+
+    <div>
+        <h3>Feedback of Subject Registration</h3>
+    </div>
+
+    <div id="feedback-tables">
+
+    </div>
+
+    <hr>
+    <button type="button" class="btn btn-primary" id="data-feedback-back-btn" onclick="backBtnHandler()">Back</button>
+    <button type="button" class="btn btn-primary" id="data-feedback-proceed-btn" onclick="feedbackNext()">Next</button>
+
+</div>
+
+<script th:src="@{/subjects-feedback.js}"></script>
+<div th:replace="footer :: footer"></div>
+</body>
+</html>
+
+

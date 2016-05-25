@@ -1,1 +1,50 @@
-[{"Study_Site":"Study_Site_example","EventName":"Event: VisitsA","CRFname":"CRF: Medication","CRFversion":"CRF Version: 1","ocItemName":"item1","usrItemName":"item1"},{"Study_Site":"Study_Site_example","EventName":"Event: VisitsA","CRFname":"CRF: Medication","CRFversion":"CRF Version: 1","ocItemName":"item2","usrItemName":"item2"},{"Study_Site":"Study_Site_example","EventName":"Event: VisitsA","CRFname":"CRF: Medication","CRFversion":"CRF Version: 2","ocItemName":"a_ver_very_very_very_very_very_long_item3","usrItemName":"a_ver_very_very_very_very_very_long_item3"},{"Study_Site":"Study_Site_example","EventName":"Event: VisitsA","CRFname":"CRF: Laboratory","CRFversion":"CRF Version: 1","ocItemName":"item4","usrItemName":"usr_item4"},{"Study_Site":"Study_Site_example","EventName":"Event: VisitsA","CRFname":"CRF: Laboratory","CRFversion":"CRF Version: 1","ocItemName":"item5","usrItemName":"usr_item5"},{"Study_Site":"Study_Site_example","EventName":"Event: VisitsB","CRFname":"CRF: Medication","CRFversion":"CRF Version: 2","ocItemName":"item2","usrItemName":"item6"}]
+[
+  {
+    "study": "Study",
+    "eventName": "SE_NONREPEATINGEVENT",
+    "crfName": "F_DATATYPES_2",
+    "crfVersion": "New version. Removed some of the textures\nmade everything else required to see how that will work for instant-calculation",
+    "ocItemName": "I_DATAT_ENUMERATION_REAL_CHECKBOX",
+    "usrItemName": "item1"
+  },
+  {
+    "study": "Study",
+    "eventName": "SE_NONREPEATINGEVENT",
+    "crfName": "F_DATATYPES_2",
+    "crfVersion": "New version. Removed some of the textures\nmade everything else required to see how that will work for instant-calculation",
+    "ocItemName": "I_DATAT_ENUMERATION_STRING_RADIO",
+    "usrItemName": "item2"
+  },
+  {
+    "study": "Study",
+    "eventName": "SE_NONREPEATINGEVENT",
+    "crfName": "F_DATATYPES_2",
+    "crfVersion": "New version. Removed some of the textures\nmade everything else required to see how that will work for instant-calculation",
+    "ocItemName": "I_DATAT_ENUMERATION_INT_MULTIPLESEL",
+    "usrItemName": "a_ver_very_very_very_very_very_long_item3"
+  },
+  {
+    "study": "Study",
+    "eventName": "SE_NONREPEATINGEVENT",
+    "crfName": "F_DATATYPES_2",
+    "crfVersion": "New version. Removed some of the textures\nmade everything else required to see how that will work for instant-calculation",
+    "ocItemName": "I_DATAT_ENUMERATION_REAL_MULTIPESEL",
+    "usrItemName": "usr_item4"
+  },
+  {
+    "study": "Study",
+    "eventName": "SE_NONREPEATINGEVENT",
+    "crfName": "F_DATATYPES_3",
+    "crfVersion": "removed required and some other fields, changed some codings to see if that will work",
+    "ocItemName": "I_DATAT_CALCULATION_INT",
+    "usrItemName": "usr_item5"
+  },
+  {
+    "study": "Study",
+    "eventName": "SE_NONREPEATINGEVENT",
+    "crfName": "F_DATATYPES_2",
+    "crfVersion": "New version. Removed some of the textures\nmade everything else required to see how that will work for instant-calculation",
+    "ocItemName": "I_DATAT_INSTANTCALCULATION_DATE",
+    "usrItemName": "item6"
+  }
+]

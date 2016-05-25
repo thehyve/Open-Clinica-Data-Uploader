@@ -1,7 +1,6 @@
 package nl.thehyve.ocdu;
 
-import nl.thehyve.ocdu.models.OcDefinitions.EventDefinition;
-import nl.thehyve.ocdu.models.MetaData;
+import nl.thehyve.ocdu.models.OcDefinitions.*;
 import nl.thehyve.ocdu.soap.ResponseHandlers.GetStudyMetadataResponseHandler;
 import org.junit.Before;
 import org.junit.Test;
@@ -21,7 +20,7 @@ import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathFactory;
 import java.io.File;
 import java.io.FileInputStream;
-import java.util.List;
+import java.util.*;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.core.AllOf.allOf;
@@ -68,9 +67,20 @@ public class GetMetadataTests {
         String selector = GetStudyMetadataResponseHandler.presentInEventSelector;
         XPath xpath = XPathFactory.newInstance().newXPath();
         Document odm = GetStudyMetadataResponseHandler.getOdm(mockedResponseGetMetadata);
-        NodeList crfNodes = (NodeList) xpath.evaluate(selector ,
+        NodeList crfNodes = (NodeList) xpath.evaluate(selector,
                 odm, XPathConstants.NODESET);
         assertEquals(true, crfNodes.getLength() > 0);
+
+    }
+
+    @Test
+    public void xpathCRfVersion() throws Exception {
+        String selector = GetStudyMetadataResponseHandler.CRF_VERSION_SELECTOR;
+        XPath xpath = XPathFactory.newInstance().newXPath();
+        Document odm = GetStudyMetadataResponseHandler.getOdm(mockedResponseGetMetadata);
+        String  versions= (String) xpath.evaluate(selector,
+                odm, XPathConstants.STRING);
+        assertThat(versions, is(notNullValue()));
 
     }
 
@@ -83,17 +93,46 @@ public class GetMetadataTests {
         assertThat(eventDefinitions
                 ,
                 everyItem(is(allOf(notNullValue(), instanceOf(EventDefinition.class)))));
-        assertEquals(2 ,eventDefinitions.size());
+        assertEquals(2, eventDefinitions.size());
 
         EventDefinition eventDefinition = eventDefinitions.get(1);
-        assertEquals("SE_NONREPEATINGEVENT",eventDefinition.getStudyEventOID());
-        assertEquals("Non-repeating event",eventDefinition.getName());
+        assertEquals("SE_NONREPEATINGEVENT", eventDefinition.getStudyEventOID());
+        assertEquals("Non-repeating event", eventDefinition.getName());
 
-        List crfDefinitions = eventDefinition.getCrfDefinitions();
+        List<CRFDefinition> crfDefinitions = eventDefinition.getCrfDefinitions();
 
-        assertEquals(7,crfDefinitions.size());
+        assertEquals(7, crfDefinitions.size());
+        crfDefinitions.forEach(crDef -> {
+            assertThat(crDef.getVersion(), is(notNullValue()));
+                }
+        );
+        List<ItemGroupDefinition> itemGroupDefinitions = metaData.getItemGroupDefinitions();
+        assertEquals(24, itemGroupDefinitions.size());
 
+        int totalExpectedItemDefs = 282;
+        int totalExpectedItemNames = 57; // only items that are assigned to an ItemGroup are counted
+        Set<String> allItemNames = new HashSet<>();
+        List<ItemDefinition> allItemdefs = new ArrayList<>();
+        itemGroupDefinitions.forEach(itemGroupDefinition -> {
+            assertThat(itemGroupDefinition.getOid(), is(notNullValue()) );
+            assertThat(itemGroupDefinition.getName(), is(notNullValue()) );
+            assertThat(itemGroupDefinition.getItems(), is(notNullValue()) );
+            List<ItemDefinition> items = itemGroupDefinition.getItems();
+            assertTrue(items.size() > 0);
+            allItemdefs.addAll(items);
+            items.stream().forEach(item -> {
+                allItemNames.add(item.getName());
+                assertTrue(isUnique(item, items));
+            });
+        });
+        assertEquals(totalExpectedItemDefs, allItemdefs.size());
+        assertEquals(totalExpectedItemNames, allItemNames.size());
     }
 
+
+    private boolean isUnique(ItemDefinition item, List<ItemDefinition> collection ) {
+        long count = collection.stream().filter(itemDefinition -> itemDefinition.getOid().equals(item.getOid())).count();
+        return count == 1;
+    }
 
 }

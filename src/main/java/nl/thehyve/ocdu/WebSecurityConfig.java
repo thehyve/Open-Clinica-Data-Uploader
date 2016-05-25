@@ -40,18 +40,18 @@ class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     private AuthenticationFailureHandler authenticationFailureHandler = (request, response, e) -> {
         log.error("Error: " + e.getMessage());
-        response.sendRedirect(request.getContextPath()+"/login?error");
+        response.sendRedirect(request.getContextPath()+"/views/login?error");
     };
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http
                 .authorizeRequests()
-                .antMatchers("/", "/data").authenticated()
+                .antMatchers("/", "/views/data").authenticated()
                 .and()
                 .formLogin()
                 .permitAll()
-                .loginPage("/login")
+                .loginPage("/views/login").defaultSuccessUrl("/views/data")
                 .permitAll()
                 .and()
                 .logout()

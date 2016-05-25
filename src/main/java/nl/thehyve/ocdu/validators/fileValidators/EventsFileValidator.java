@@ -7,24 +7,10 @@ import java.util.List;
 /**
  * Created by piotrzakrzewski on 11/04/16.
  */
-public class EventsFileValidator implements FileFormatValidator {
+public class EventsFileValidator extends GenericFileValidator{
 
-    private boolean valid;
-    private List<String> humanreadableErrors;
 
-    @Override
-    public boolean isValid() {
-        return this.valid;
-    }
-
-    @Override
-    public List<String> getErrorMessages() {
-        return this.humanreadableErrors;
-    }
-
-    @Override
-    public void validateFile(Path file) {
-        this.valid = true; //TODO: implement validation
-        this.humanreadableErrors = new ArrayList<>();
+    public EventsFileValidator() {
+        super(new String[]{}, new String[]{}); //TODO: put references from EventsFactory here for mandatory and integer columns
     }
 }

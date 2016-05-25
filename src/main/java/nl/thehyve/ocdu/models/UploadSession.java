@@ -24,6 +24,15 @@ public class UploadSession {
 
     private Step step;
     private Date savedDate;
+    private String study;
+
+    public String getStudy() {
+        return study;
+    }
+
+    public void setStudy(String study) {
+        this.study = study;
+    }
 
     public UploadSession() {
         // needed by hibernate
@@ -58,5 +67,21 @@ public class UploadSession {
 
     public void setSavedDate(Date savedDate) {
         this.savedDate = savedDate;
+    }
+
+    public long getId() {
+        return id;
+    }
+
+    public void setId(long id) {
+        this.id = id;
+    }
+
+    public OcUser getOwner() {
+        return owner;
+    }
+
+    public void setOwner(OcUser owner) {
+        this.owner = owner;
     }
 }

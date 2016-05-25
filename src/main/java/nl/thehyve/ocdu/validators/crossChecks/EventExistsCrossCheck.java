@@ -1,7 +1,8 @@
 package nl.thehyve.ocdu.validators.crossChecks;
 
-import nl.thehyve.ocdu.models.*;
 import nl.thehyve.ocdu.models.OCEntities.ClinicalData;
+import nl.thehyve.ocdu.models.OcDefinitions.MetaData;
+import nl.thehyve.ocdu.models.errors.EventDoesNotExist;
 import nl.thehyve.ocdu.models.errors.ValidationErrorMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,14 +23,13 @@ public class EventExistsCrossCheck implements ClinicalDataCrossCheck {
         List<String> validEventNames = new ArrayList<>();
         metaData
                 .getEventDefinitions().stream()
-                .forEach(eventDefinition -> validEventNames.add(eventDefinition.getStudyEventOID()));
+                .forEach(eventDefinition -> validEventNames.add(eventDefinition.getName()));
         List<ClinicalData> violators = data.stream()
                 .filter(clinicalData -> !validEventNames.contains(clinicalData.getEventName()))
                 .collect(Collectors.toList());
         if (violators.size() > 0) {
             ValidationErrorMessage error =
-                    new ValidationErrorMessage("One or more of events you" +
-                            " used in your data file does not exist");
+                    new EventDoesNotExist();
             List<String> nonExistentEventNames = new ArrayList<>();
             violators.stream().forEach(clinicalData ->
             { String evName = clinicalData.getEventName();

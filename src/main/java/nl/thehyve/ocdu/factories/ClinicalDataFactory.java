@@ -40,8 +40,8 @@ public class ClinicalDataFactory extends UserSubmittedDataFactory {
             HashMap<String, Integer> header = parseHeader(headerLine.get());
             HashMap<String, Integer> coreColumns = getCoreHeader(header);
             List<ClinicalData> clinicalData = new ArrayList<>();
-            List<List<ClinicalData>> clinicalDataAggregates = lines.skip(1).
-                    filter(s -> s.split(FILE_SEPARATOR).length > 2).
+            List<List<ClinicalData>> clinicalDataAggregates = lines.skip(1). // skip header
+                    filter(s -> s.split(FILE_SEPARATOR).length > 2). // smallest legal file consists of no less than 3 columns
                     map(s -> parseLine(s, header, coreColumns)).collect(Collectors.toList());
             clinicalDataAggregates.forEach(aggregate -> clinicalData.addAll(aggregate));
             lines.close();
@@ -83,6 +83,12 @@ public class ClinicalDataFactory extends UserSubmittedDataFactory {
         return header;
     }
 
+    private String getOptionalFromArray(String[] array, int index) {
+        if (array.length <= index) {
+            return "";
+        } else return array[index];
+    }
+
     private List<ClinicalData> parseLine(String line, HashMap<String,
             Integer> headerMap, HashMap<String, Integer> coreColumns) {
         String[] split = line.split(FILE_SEPARATOR);
@@ -91,18 +97,23 @@ public class ClinicalDataFactory extends UserSubmittedDataFactory {
         String study = split[coreColumns.get(STUDY)];
         String eventName = split[coreColumns.get(EventName)];
         Integer eventRepeat = Integer.parseInt(split[coreColumns.get(EventRepeat)]);
-        String crf = split[coreColumns.get(CRFName)];
-        String crfVer = split[coreColumns.get(CRFVersion)];
-        String site = split[coreColumns.get(SITE)];
-
+        String crf = getOptionalFromArray(split, coreColumns.get(CRFName));
+        String crfVer = getOptionalFromArray(split, coreColumns.get(CRFVersion));
+        Integer siteInd = coreColumns.get(SITE);
+        String site = null;
+        if (siteInd != null) {
+            site = getOptionalFromArray(split,siteInd);
+        }
 
         List<ClinicalData> aggregation = new ArrayList<>();
         for (String colName : headerMap.keySet()) {
             String item = parseItem(colName);
             Integer groupRepeat = parseGroupRepeat(colName);
-            String value = split[headerMap.get(colName)];
+            if (groupRepeat == null) item = colName; // Consequences of encoding group repeat in the column name
+
+            String value = getOptionalFromArray(split, headerMap.get(colName));
             ClinicalData dat = new ClinicalData(study, item, ssid, eventName, eventRepeat, crf,
-                    getSubmission(), crfVer, groupRepeat, getUser(), value);
+                    getSubmission(), crfVer, groupRepeat, getUser(), value.trim()); // Mind the trim() on value.
             dat.setSite(site);
             aggregation.add(dat);
         }
@@ -110,15 +121,23 @@ public class ClinicalDataFactory extends UserSubmittedDataFactory {
     }
 
     private String parseItem(String columnToken) {
-        String[] splt = columnToken.split("_");
-        return splt[0];
+        int last = columnToken.lastIndexOf("_");
+        if (last > 0) {
+            return columnToken.substring(0, last);
+        } else {
+            return columnToken;
+        }
     }
 
     private Integer parseGroupRepeat(String columnToken) {
         String[] splt = columnToken.split("_");
         Integer gRep = null;
         if (splt.length > 1) {
-            gRep = Integer.parseInt(splt[1]);
+            try {
+                gRep = Integer.parseInt(splt[1]);
+            } catch (NumberFormatException e) {
+                gRep = null; // Do nothing
+            }
         }
         return gRep;
     }

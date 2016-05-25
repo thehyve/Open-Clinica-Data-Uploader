@@ -2,11 +2,17 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org"
       xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
 <head>
-    <title>Register New Events</title>
+    <title>Events</title>
 </head>
 <body>
-    <div th:replace="header">...</div>
-    <div class="container" style="padding-top: 50px;"> this is events view </div>
-    <div th:replace="footer :: footer"></div>
+<div th:replace="header">...</div>
+<div id="event-registration-container" class="container ocdu-container">
+    <div id="event-registration-div" class="jumbotron container-fluid">
+    </div>
+</div>
+
+
+<script th:src="@{/events-registration.js}"></script>
+<div th:replace="footer :: footer"></div>
 </body>
 </html>

@@ -5,10 +5,17 @@
 </head>
 <body role="document">
     <div th:replace="header"></div>
-    <div class="container" style="padding-top: 100px;">
+    <div class="container ocdu-container">
 
         <div id="new_upload_section" class="jumbotron container-fluid">
             <h2>Upload new data</h2>
+            <form id="upload-session-form" class="form-horizontal">
+                <div class="form-group">
+                    <label for="upload-session-input">* Give your submission a name:</label>
+                    <input id="upload-session-input" type="text" name="uploadsession" accept="*" />
+                </div>
+            </form>
+
             <form id="upload-file-form" class="form-horizontal">
                 <div class="form-group">
                     <label for="upload-file-input">* Select data file:</label>

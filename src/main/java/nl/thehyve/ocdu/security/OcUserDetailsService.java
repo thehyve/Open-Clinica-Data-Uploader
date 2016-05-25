@@ -2,7 +2,7 @@ package nl.thehyve.ocdu.security;
 
 import nl.thehyve.ocdu.models.OcUser;
 import nl.thehyve.ocdu.models.OcUserDetails;
-import nl.thehyve.ocdu.repositories.UserRepository;
+import nl.thehyve.ocdu.repositories.OCUserRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,7 +18,6 @@ import javax.servlet.http.HttpSession;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 /**
  * Created by piotrzakrzewski on 18/04/16.
@@ -29,12 +28,12 @@ public class OcUserDetailsService implements UserDetailsService {
     private static final Logger log = LoggerFactory.getLogger(OcUserDetailsService.class);
 
     @Autowired
-    UserRepository userRepository;
+    OCUserRepository OCUserRepository;
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         List<GrantedAuthority> authList = new ArrayList<>();
         HttpSession session = session();
-        List<OcUser> byUsername = userRepository.findByUsername(username);
+        List<OcUser> byUsername = OCUserRepository.findByUsername(username);
         String ocEnvironment = (String) session.getAttribute("ocEnvironment");
         List<OcUser> matching = byUsername.stream().filter(usr -> usr.getOcEnvironment().equals(ocEnvironment)).collect(Collectors.toList());
         if (matching.size() > 1) {
@@ -48,7 +47,7 @@ public class OcUserDetailsService implements UserDetailsService {
             OcUser usr = new OcUser();
             usr.setOcEnvironment(ocEnvironment);
             usr.setUsername(username);
-            userRepository.save(usr);
+            OCUserRepository.save(usr);
             return getDetails(usr, authList);
         }
     }

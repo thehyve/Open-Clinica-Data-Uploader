@@ -12,9 +12,13 @@ import java.util.Date;
 @Entity
 public class Event implements OcEntity, UserSubmitted, EventReference {
 
+    @Column(columnDefinition = "TEXT")
     private String eventName;
+
     private String ssid;
+    @Column(columnDefinition = "TEXT")
     private String study;
+    @Column(columnDefinition = "TEXT")
     private String location;
     private Date startDate;
     private Date startTime;
@@ -100,5 +104,20 @@ public class Event implements OcEntity, UserSubmitted, EventReference {
 
     public Integer getRepeatNumber() {
         return repeatNumber;
+    }
+
+    @Override
+    public String toString() {
+        return "Event{" +
+                "repeatNumber=" + repeatNumber +
+                ", eventName='" + eventName + '\'' +
+                ", ssid='" + ssid + '\'' +
+                ", study='" + study + '\'' +
+                ", location='" + location + '\'' +
+                ", startDate=" + startDate +
+                ", startTime=" + startTime +
+                ", endDate=" + endDate +
+                ", endTime=" + endTime +
+                '}';
     }
 }

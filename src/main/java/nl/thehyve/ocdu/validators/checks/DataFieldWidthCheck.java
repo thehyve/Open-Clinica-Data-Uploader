@@ -1,7 +1,7 @@
 package nl.thehyve.ocdu.validators.checks;
 
 import nl.thehyve.ocdu.models.OCEntities.ClinicalData;
-import nl.thehyve.ocdu.models.MetaData;
+import nl.thehyve.ocdu.models.OcDefinitions.MetaData;
 import nl.thehyve.ocdu.models.OCEntities.OcEntity;
 import nl.thehyve.ocdu.models.errors.ValidationErrorMessage;
 
@@ -11,7 +11,7 @@ import static nl.thehyve.ocdu.models.errors.ValidationErrorMessage.generateOffen
  * Created by piotrzakrzewski on 04/05/16.
  */
 public class DataFieldWidthCheck implements OcEntityCheck {
-
+    //TODO: refactor as a CrossCheck - there is no need for OcEntityCheck interface at all
     public static final int ITEM_MAX_LENGTH = 4000; //TODO: make configurable
 
     @Override
@@ -21,7 +21,7 @@ public class DataFieldWidthCheck implements OcEntityCheck {
                 "data violate Open Clinica field width constraints");
         String item = data.getItem();
         boolean itemLengthViolated = item.length() > ITEM_MAX_LENGTH;
-        if (itemLengthViolated ) {
+        if (itemLengthViolated) {
             error.addOffendingValue(generateOffendingValueString(data, item));
         }
         if (itemLengthViolated) {

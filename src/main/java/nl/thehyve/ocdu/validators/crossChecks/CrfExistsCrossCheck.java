@@ -1,6 +1,6 @@
 package nl.thehyve.ocdu.validators.crossChecks;
 
-import nl.thehyve.ocdu.models.MetaData;
+import nl.thehyve.ocdu.models.OcDefinitions.MetaData;
 import nl.thehyve.ocdu.models.OCEntities.ClinicalData;
 import nl.thehyve.ocdu.models.OcDefinitions.CRFDefinition;
 import nl.thehyve.ocdu.models.errors.CRFDoesNotExist;
@@ -11,6 +11,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * Created by piotrzakrzewski on 04/05/16.
@@ -18,37 +19,37 @@ import java.util.stream.Collectors;
 public class CrfExistsCrossCheck implements ClinicalDataCrossCheck {
     @Override
     public ValidationErrorMessage getCorrespondingError(List<ClinicalData> data, MetaData metaData) {
-        Map<String, List<String>> eventMap = buildEventMap(metaData);
-        List<ClinicalData> offenders = data.stream().filter(clinicalData -> {
-            List<String> valid = eventMap.get(clinicalData.getEventName());
-            String crf = clinicalData.getCrfName();
-            if (valid == null || !valid.contains(crf))
-                return true;
-            else return false;
-        }).collect(Collectors.toList());
-        if (offenders.size() > 0) {
-            CRFDoesNotExist error = new CRFDoesNotExist("One or more CRFs you used in your data file is not present in the referenced event");
+        Map<String, List<CRFDefinition>> eventMap = buildEventMap(metaData);
+        List<ClinicalData> crfNotExistsOffenders = getCrfNotExistsOffenders(data, eventMap);
+
+        if (crfNotExistsOffenders.size() > 0) {
+            CRFDoesNotExist error = new CRFDoesNotExist();
             List<String> offendingNames = new ArrayList<>();
-            offenders.stream().forEach(clinicalData -> {
+            crfNotExistsOffenders.stream().forEach(clinicalData -> {
                 String crf = clinicalData.getCrfName();
-                if (!offendingNames.contains(crf)) offendingNames.add(crf);
+                String eventName = clinicalData.getEventName();
+                String version = clinicalData.getCrfVersion();
+                String msg = "CRF: " + crf + " version: " + version + " in event: " + eventName+ " for subject: "
+                        + clinicalData.getSsid();
+                if (!offendingNames.contains(msg)) offendingNames.add(msg);
             });
             error.addAllOffendingValues(offendingNames);
             return error;
         } else return null;
     }
 
-    private Map<String, List<String>> buildEventMap(MetaData metaData) {
-        Map<String, List<String>> eventMap = new HashMap<>();
-        metaData.getEventDefinitions().stream().forEach(eventDefinition ->
-                {
-                    List<String> crfNames = new ArrayList<String>();
-                    for (CRFDefinition crf : eventDefinition.getCrfDefinitions()) {
-                        crfNames.add(crf.getOid());
-                    }
-                    eventMap.put(eventDefinition.getStudyEventOID(), crfNames);
-                }
-        );
-        return eventMap;
+
+    private List<ClinicalData> getCrfNotExistsOffenders(List<ClinicalData> data, Map<String, List<CRFDefinition>> eventMap) {
+        return data.stream().filter(clinicalData -> {
+            List<CRFDefinition> valid = eventMap.get(clinicalData.getEventName());
+            if (valid == null) return false; // CRF Could not be verified is a separate class
+            String crf = clinicalData.getCrfName();
+            String version = clinicalData.getCrfVersion();
+            List<CRFDefinition> matching = valid.stream()
+                    .filter(crfDefinition -> crfDefinition.getName().equals(crf) && crfDefinition.getVersion().equals(version)).collect(Collectors.toList());
+            return matching.size() == 0;
+        }).collect(Collectors.toList());
     }
+
+
 }

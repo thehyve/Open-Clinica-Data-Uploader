@@ -19,7 +19,6 @@ public class ItemGroupDefinition {
 
     private String name;
 
-    private boolean mandatoryInCrf;
 
     private boolean ungrouped = false;
 
@@ -43,12 +42,9 @@ public class ItemGroupDefinition {
     private List<String> mandatoryItems = new ArrayList<>();
 
     public boolean isMandatoryInCrf() {
-        return mandatoryInCrf;
+        return true; // In OpenClinica interpretation of the ODM all ItemGroups are mandatory
     }
 
-    public void setMandatoryInCrf(boolean mandatoryInCrf) {
-        this.mandatoryInCrf = mandatoryInCrf;
-    }
 
     @OneToMany(targetEntity = ItemDefinition.class, cascade = CascadeType.ALL)
     private List<ItemDefinition> items = new ArrayList<>();

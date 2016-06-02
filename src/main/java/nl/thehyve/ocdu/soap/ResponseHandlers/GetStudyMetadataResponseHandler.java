@@ -177,9 +177,12 @@ public class GetStudyMetadataResponseHandler extends OCResponseHandler {
             Node item = eventDefsNodes.item(i);
             String oid = item.getAttributes().getNamedItem("OID").getTextContent();
             String name = item.getAttributes().getNamedItem("Name").getTextContent();
-            String repeating = item.getAttributes().getNamedItem("Repeating").getTextContent();
+            String repeatingText = item.getAttributes().getNamedItem("Repeating").getTextContent();
             String type = item.getAttributes().getNamedItem("Type").getTextContent();
-            boolean isRepeating = Boolean.parseBoolean(repeating);
+            boolean isRepeating = false;
+            if (repeatingText.equals("Yes")) {
+                isRepeating = true;
+            }
             EventDefinition event = new EventDefinition();
             event.setName(name);
             event.setStudyEventOID(oid);
@@ -209,8 +212,6 @@ public class GetStudyMetadataResponseHandler extends OCResponseHandler {
             newCrf.setOid(oid);
             newCrf.setRepeating(repeating);
             newCrf.setVersion(version);
-            List<String> mandatoryItemGroups = getMandatory(crfNode, itemGroupRefSelector, "ItemGroupOID");
-            newCrf.setMandatoryItemGroups(mandatoryItemGroups);
             crfs.addAll(getCrfsInEvent(crfNode, newCrf, events)); // CRF Entity exists per Event
         }
         return crfs;
@@ -381,10 +382,9 @@ public class GetStudyMetadataResponseHandler extends OCResponseHandler {
                     .filter(crfDefinition -> crfDefinition.getOid().equals(formOID))
                     .forEach(crfDefinition -> {
                         ItemGroupDefinition groupDef = new ItemGroupDefinition(prototype);
-                        if (crfDefinition.getMandatoryItemGroups().contains(prototype.getOid())) {
-                            groupDef.setMandatoryInCrf(true);
+                        if (!groupDef.isUngrouped()) {
+                            crfDefinition.addItemGroupDef(groupDef);
                         }
-                        if (!groupDef.isUngrouped()) crfDefinition.addItemGroupDef(groupDef);
                         else crfDefinition.addAllUngroupedItems(getItemNames(groupDef));
                         itemGroupDefs.add(groupDef);
                     });

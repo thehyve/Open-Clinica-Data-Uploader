@@ -169,7 +169,7 @@ function handle_session_retrieval_all(_sessions) {
         var s = _sessions[i];
         var btnid = "s" + (i + 1);
         var d = new Date(s.savedDate);
-        var sessionHTML = '<div class="well">' +
+        var sessionHTML = '<div class="well" id="session_well_'+i+'">' +
             '<button type="button" class="btn btn-primary" id="' + btnid + '" session_index=' + i + '>' + s.name + '</button>' +
             '<p><small>saved on: ' + monthNames[d.getMonth()] + ' ' + d.getDate() + ', ' + d.getFullYear() + '</small></p>' +
             '<button type="button" class="btn btn-danger" id="removal_'+btnid+'" session_index='+ i + '>Remove this submission</button></div>';
@@ -211,11 +211,9 @@ function handle_session_retrieval() {
             console.log(jqXHR.status+" "+textStatus+" "+errorThrown);
         }
     });
-    console.log(sessions[ind]);
 }//function handle_session_retrieval
 
 function handle_session_removal() {
-    //TODO: fix submission deletion bug
     var ind = $(this).attr('session_index');
     var session = sessions[ind];
     var sid = session.id; console.log(session);
@@ -226,6 +224,7 @@ function handle_session_removal() {
         data: {id:sid},
         success: function (data) {
             console.log('deleted session ' + sid);
+            $('#session_well_'+ind).remove();
         },
         error: function(jqXHR, textStatus, errorThrown) {
             console.log(jqXHR.status+" "+textStatus+" "+errorThrown);

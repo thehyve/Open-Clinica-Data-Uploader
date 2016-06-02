@@ -104,7 +104,7 @@ public class UploadSessionController {
     @RequestMapping(value = "/deleteSession", method = RequestMethod.POST)
     public ResponseEntity<?> deleteSubmissionById(@RequestParam(value = "id") String sessionId, HttpSession session) {
         try {
-            long longsessionid = Long.getLong(sessionId);
+            long longsessionid = Long.parseLong(sessionId);
             UploadSession selectedSession = uploadSessionRepository.findOne(longsessionid);
             if(selectedSession != null) {
                 OcUser currentOcUser = ocUserService.getCurrentOcUser(session);

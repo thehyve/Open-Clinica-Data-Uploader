@@ -17,6 +17,27 @@ public class MandatoryInCrfCrossCheck implements ClinicalDataCrossCheck {
         HashMap<String, Set<String>> mandatoryMap = getMandatoryMap(data, metaData);
         HashMap<String, Set<String>> presentMap = getPresentMap(data);
         MandatoryItemInCrfMissing error = new MandatoryItemInCrfMissing();
+        reportMissingColumns(mandatoryMap, presentMap, error);
+        reportMissingValues(mandatoryMap, data, error);
+        if (error.getOffendingValues().size() > 0)
+            return error;
+        else return null;
+    }
+
+    private void reportMissingValues(HashMap<String, Set<String>> mandatoryMap, List<ClinicalData> data, MandatoryItemInCrfMissing error) {
+        data.stream().forEach(clinicalData -> {
+            String item = clinicalData.getItem();
+            String crfId = clinicalData.getCrfName() + clinicalData.getCrfVersion();
+            Set<String> mandatory = mandatoryMap.get(crfId);
+            String value = clinicalData.getValue();
+            if (mandatory != null && mandatory.contains(item) && value.equals("")) { // is mandatory and value is empty
+                error.addOffendingValue("Item: " + item + " cannot be empty as it is mandatory in CRF: " + crfId + " but was empty for subject: " + clinicalData.getSsid());
+            }
+        });
+    }
+
+
+    private void reportMissingColumns(HashMap<String, Set<String>> mandatoryMap, HashMap<String, Set<String>> presentMap, ValidationErrorMessage error) {
         for (String crfId : mandatoryMap.keySet()) {
             Set<String> expected = mandatoryMap.get(crfId);
             Set<String> found = presentMap.get(crfId);
@@ -24,9 +45,6 @@ public class MandatoryInCrfCrossCheck implements ClinicalDataCrossCheck {
                 error.addOffendingValue("CRF: " + crfId + " requires item: " + missing);
             });
         }
-        if (error.getOffendingValues().size() > 0)
-            return error;
-        else return null;
     }
 
     private HashMap<String, Set<String>> getPresentMap(List<ClinicalData> data) {
@@ -59,8 +77,6 @@ public class MandatoryInCrfCrossCheck implements ClinicalDataCrossCheck {
         });
         return mandatoryMap;
     }
-
-
 
 
 }

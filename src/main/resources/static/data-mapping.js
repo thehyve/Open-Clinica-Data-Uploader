@@ -16,6 +16,7 @@ var rect_w = 150, rect_h = 18;//default rect size
 var text_cut_index = 13;
 var usr_list_y = 30;
 var usr_list_h = 500;
+var is_mouse_down = false;
 // update and store mouse position
 var mousepos = {x: 0, y: 0};
 $(document).on("mousemove", function (event) {
@@ -32,6 +33,14 @@ $(window).on('resize', function () {
 
 // initializing and button listeners
 $(document).ready(function () {
+
+    $(document).mousedown(function () {
+        is_mouse_down = true;
+    });
+
+    $(document).mouseup(function () {
+        is_mouse_down = false;
+    });
 
     //check if mapping file is available, if not, disable the mapping button
     // $('#auto-map-btn').prop("disabled",!MAPPING_FILE_ENABLED);
@@ -635,10 +644,10 @@ function handleOCItemInteraction() {
     }
 
     /*
-     * ------ item mouse over/out behavior ------
+     * ------ oc item mouse over/out behavior ------
      */
     function itemover(d) {
-        if (d.shortTexted) {
+        if (d.shortTexted && !is_mouse_down) {
             tipDiv.transition().duration(200).style("opacity", .95);
             tipDiv.html('<span style="font-size:18px;">' + d.name + '</span>')
                 .style("left", (d3.event.pageX) + "px")

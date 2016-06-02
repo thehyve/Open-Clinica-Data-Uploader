@@ -110,7 +110,8 @@ function uploadFile() {
             },
             error: function (jqXHR, textStatus, errorThrown) {
                 // Handle upload error
-                var info = '<span id="data-alert" class="alert alert-danger">Data not uploaded, either due to exceeding file size limit or server error</span>';
+                var message = 'Hmm, the data could not be uploaded. Have you checked the data format, which should be plain, comma delimited or tab delimited. Also do make sure the file size does not exceed 300MB. Let\'s give it another try:) ';
+                var info = '<div id="data-alert" class="alert alert-danger">'+message+'</div>';
                 $("#message-board").append(info);
                 console.log(jqXHR.status+" "+textStatus+" "+errorThrown);
             }
@@ -128,11 +129,6 @@ function uploadFile() {
                 console.log(jqXHR.status+" "+textStatus+" "+errorThrown);
             }
         });
-        window.setTimeout(function () {
-            $("#data-alert").fadeTo(500, 0).slideUp(500, function () {
-                $(this).empty();
-            });
-        }, 3000);
     }
 
     if (!isSessionNameDefined || !isDataSelected) {

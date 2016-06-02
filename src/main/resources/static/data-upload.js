@@ -110,7 +110,8 @@ function uploadFile() {
             },
             error: function (jqXHR, textStatus, errorThrown) {
                 // Handle upload error
-                var info = '<span id="data-alert" class="alert alert-danger">Data not uploaded, either due to exceeding file size limit or server error</span>';
+                var message = 'Hmm, the data could not be uploaded. Have you checked the data format, which should be plain, comma delimited or tab delimited. Also do make sure the file size does not exceed 300MB. Let\'s give it another try:) ';
+                var info = '<div id="data-alert" class="alert alert-danger">'+message+'</div>';
                 $("#message-board").append(info);
                 console.log(jqXHR.status+" "+textStatus+" "+errorThrown);
             }
@@ -128,11 +129,6 @@ function uploadFile() {
                 console.log(jqXHR.status+" "+textStatus+" "+errorThrown);
             }
         });
-        window.setTimeout(function () {
-            $("#data-alert").fadeTo(500, 0).slideUp(500, function () {
-                $(this).empty();
-            });
-        }, 3000);
     }
 
     if (!isSessionNameDefined || !isDataSelected) {
@@ -173,7 +169,7 @@ function handle_session_retrieval_all(_sessions) {
         var s = _sessions[i];
         var btnid = "s" + (i + 1);
         var d = new Date(s.savedDate);
-        var sessionHTML = '<div class="well">' +
+        var sessionHTML = '<div class="well" id="session_well_'+i+'">' +
             '<button type="button" class="btn btn-primary" id="' + btnid + '" session_index=' + i + '>' + s.name + '</button>' +
             '<p><small>saved on: ' + monthNames[d.getMonth()] + ' ' + d.getDate() + ', ' + d.getFullYear() + '</small></p>' +
             '<button type="button" class="btn btn-danger" id="removal_'+btnid+'" session_index='+ i + '>Remove this submission</button></div>';
@@ -215,15 +211,27 @@ function handle_session_retrieval() {
             console.log(jqXHR.status+" "+textStatus+" "+errorThrown);
         }
     });
-    console.log(sessions[ind]);
 }//function handle_session_retrieval
 
 function handle_session_removal() {
     var ind = $(this).attr('session_index');
     var session = sessions[ind];
-    var sid = session.id;
-    console.log('delete session with index: ' + sid);
+    var sid = session.id; console.log(session);
+    // console.log('delete session with index: ' + sid);
+    $.ajax({
+        url: baseApp + "/submission/deleteSession",
+        type: "post",
+        data: {id:sid},
+        success: function (data) {
+            console.log('deleted session ' + sid);
+            $('#session_well_'+ind).remove();
+        },
+        error: function(jqXHR, textStatus, errorThrown) {
+            console.log(jqXHR.status+" "+textStatus+" "+errorThrown);
+        }
+    });
 }
+
 
 function backBtnHandler() {
     window.history.back();

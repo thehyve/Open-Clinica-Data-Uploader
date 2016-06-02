@@ -101,6 +101,33 @@ public class UploadSessionController {
         }
     }
 
+    @RequestMapping(value = "/deleteSession", method = RequestMethod.POST)
+    public ResponseEntity<?> deleteSubmissionById(@RequestParam(value = "id") long longsessionid, HttpSession session) {
+        try {
+            UploadSession selectedSession = uploadSessionRepository.findOne(longsessionid);
+            if(selectedSession != null) {
+                OcUser currentOcUser = ocUserService.getCurrentOcUser(session);
+                long userId1 = currentOcUser.getId();
+                long userId2 = selectedSession.getOwner().getId();
+                if(userId1 == userId2) {
+                    List<ClinicalData> bySubmission = clinicalDataRepository.findBySubmission(selectedSession);
+                    clinicalDataRepository.delete(bySubmission);
+                    uploadSessionRepository.delete(selectedSession);
+                    return new ResponseEntity<>(HttpStatus.OK);
+                }
+                else return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            }
+            else return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+
+        } catch (UploadSessionNotFoundException e) {
+            e.printStackTrace();
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        } catch (NumberFormatException e) {
+            e.printStackTrace();
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+    }
+
 
     @Autowired
     DataService dataService;

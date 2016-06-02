@@ -45,7 +45,7 @@ function backBtnHandler() {
 }
 
 //waiting for the ajax call
-var loadinghtml = '<div id="loading_div" class="loader"><br></div>';
+var loadinghtml = '<div id="loading_div" class="loader"></div>';
 $('#feedback-tables').append(loadinghtml);
 
 $.ajax({

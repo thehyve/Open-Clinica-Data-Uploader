@@ -24,27 +24,6 @@ import java.util.Iterator;
  */
 public class SoapUtils {
 
-    public static SOAPElement getFirstChildByName(SOAPElement soapElement, String name) {
-        Iterator<SOAPElement> childElements = soapElement.getChildElements(new QName(name));
-        if (!childElements.hasNext()) {
-            return null;
-        } else {
-            return childElements.next();
-        }
-    }
-
-    public static SOAPElement getFirtsChildByName(SOAPBody body, String name) {
-        Iterator<Node> nodes = body.getChildElements();
-        while (nodes.hasNext()) {
-            Node next = nodes.next();
-            if (next.getNodeType() == Node.ELEMENT_NODE) {
-                SOAPElement el = (SOAPElement) next;
-                if (el.getElementName().getLocalName() == name) return el;
-            }
-        }
-        return null;
-    }
-
     public static Document toDocument(SOAPMessage soapMsg) //TODO: handle exception
             throws TransformerException, SOAPException, IOException, ParserConfigurationException, SAXException {
         final StringWriter sw = new StringWriter();
@@ -59,8 +38,8 @@ public class SoapUtils {
     }
 
     public static Document unEscapeCDATAXML(String escapedXml) {
-        String xmlString = StringEscapeUtils.unescapeXml(escapedXml);
-        Document doc = simpleString2XmlDoc(xmlString);
+        //String xmlString = StringEscapeUtils.unescapeXml(escapedXml);
+        Document doc = simpleString2XmlDoc(escapedXml);
         return doc;
     }
 
@@ -78,6 +57,10 @@ public class SoapUtils {
         } catch (IOException e) {
             e.printStackTrace();
         }
+        return null;
+    }
+
+    private static String escapeAttributeValues(String xmlString) {
         return null;
     }
 

@@ -83,6 +83,12 @@ public class ClinicalDataFactory extends UserSubmittedDataFactory {
         return header;
     }
 
+    private String getOptionalFromArray(String[] array, int index) {
+        if (array.length <= index) {
+            return "";
+        } else return array[index];
+    }
+
     private List<ClinicalData> parseLine(String line, HashMap<String,
             Integer> headerMap, HashMap<String, Integer> coreColumns) {
         String[] split = line.split(FILE_SEPARATOR);
@@ -91,12 +97,12 @@ public class ClinicalDataFactory extends UserSubmittedDataFactory {
         String study = split[coreColumns.get(STUDY)];
         String eventName = split[coreColumns.get(EventName)];
         Integer eventRepeat = Integer.parseInt(split[coreColumns.get(EventRepeat)]);
-        String crf = split[coreColumns.get(CRFName)];
-        String crfVer = split[coreColumns.get(CRFVersion)];
+        String crf = getOptionalFromArray(split, coreColumns.get(CRFName));
+        String crfVer = getOptionalFromArray(split, coreColumns.get(CRFVersion));
         Integer siteInd = coreColumns.get(SITE);
         String site = null;
-        if (siteInd != null){
-            site = split[siteInd];
+        if (siteInd != null) {
+            site = getOptionalFromArray(split,siteInd);
         }
 
         List<ClinicalData> aggregation = new ArrayList<>();
@@ -105,7 +111,7 @@ public class ClinicalDataFactory extends UserSubmittedDataFactory {
             Integer groupRepeat = parseGroupRepeat(colName);
             if (groupRepeat == null) item = colName; // Consequences of encoding group repeat in the column name
 
-            String value = split[headerMap.get(colName)];
+            String value = getOptionalFromArray(split, headerMap.get(colName));
             ClinicalData dat = new ClinicalData(study, item, ssid, eventName, eventRepeat, crf,
                     getSubmission(), crfVer, groupRepeat, getUser(), value.trim()); // Mind the trim() on value.
             dat.setSite(site);
@@ -116,7 +122,7 @@ public class ClinicalDataFactory extends UserSubmittedDataFactory {
 
     private String parseItem(String columnToken) {
         int last = columnToken.lastIndexOf("_");
-        if (last > 0 ) {
+        if (last > 0) {
             return columnToken.substring(0, last);
         } else {
             return columnToken;

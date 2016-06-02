@@ -14,7 +14,7 @@ import java.util.stream.Stream;
 /**
  * Created by piotrzakrzewski on 06/05/16.
  */
-public  class GenericFileValidator implements FileFormatValidator {
+public class GenericFileValidator implements FileFormatValidator {
 
 
     public GenericFileValidator(String[] mandatoryColumns, String[] positiveIntegerColumns) {
@@ -47,7 +47,7 @@ public  class GenericFileValidator implements FileFormatValidator {
 
     protected String[] getBody(Path file) throws IOException {
         Stream<String> bodyStream = Files.lines(file);
-        String[] body =  bodyStream.skip(1).toArray(size -> new String[size]);
+        String[] body = bodyStream.skip(1).toArray(size -> new String[size]);
         bodyStream.close();
         return body;
     }
@@ -104,13 +104,12 @@ public  class GenericFileValidator implements FileFormatValidator {
         int expectedLength = splitLine(header).size();
         for (String line : body) {
             List<String> split = splitLine(line);
-            if (split.size() != expectedLength && split.size() != 0) {  // empty lines are fine
+            if (split.size() > expectedLength) {  // empty lines are fine, shorter ones as well (they will be padded)
                 errors.add(new FileFormatError("Following line has different number of fields than the header:" + line));
                 valid = false;
             }
         }
     }
-
 
 
     protected boolean isInteger(String input) {

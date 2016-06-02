@@ -212,8 +212,6 @@ public class GetStudyMetadataResponseHandler extends OCResponseHandler {
             newCrf.setOid(oid);
             newCrf.setRepeating(repeating);
             newCrf.setVersion(version);
-            List<String> mandatoryItemGroups = getMandatory(crfNode, itemGroupRefSelector, "ItemGroupOID");
-            newCrf.setMandatoryItemGroups(mandatoryItemGroups);
             crfs.addAll(getCrfsInEvent(crfNode, newCrf, events)); // CRF Entity exists per Event
         }
         return crfs;
@@ -384,10 +382,9 @@ public class GetStudyMetadataResponseHandler extends OCResponseHandler {
                     .filter(crfDefinition -> crfDefinition.getOid().equals(formOID))
                     .forEach(crfDefinition -> {
                         ItemGroupDefinition groupDef = new ItemGroupDefinition(prototype);
-                        if (crfDefinition.getMandatoryItemGroups().contains(prototype.getOid())) {
-                            groupDef.setMandatoryInCrf(true);
+                        if (!groupDef.isUngrouped()) {
+                            crfDefinition.addItemGroupDef(groupDef);
                         }
-                        if (!groupDef.isUngrouped()) crfDefinition.addItemGroupDef(groupDef);
                         else crfDefinition.addAllUngroupedItems(getItemNames(groupDef));
                         itemGroupDefs.add(groupDef);
                     });

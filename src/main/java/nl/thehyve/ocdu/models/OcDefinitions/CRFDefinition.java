@@ -60,8 +60,8 @@ public class CRFDefinition {
     }
 
     public List<String> getMandatoryItemGroups() {
-        return mandatoryItemGroups;
-    }
+        return itemGroups.stream().map(ItemGroupDefinition::getName).collect(Collectors.toList());
+    } // We explicitly ignore mandatory status of groups - all groups defined in CRF are mandatory
 
     public void setMandatoryItemGroups(List<String> mandatoryItemGroups) {
         this.mandatoryItemGroups = mandatoryItemGroups;

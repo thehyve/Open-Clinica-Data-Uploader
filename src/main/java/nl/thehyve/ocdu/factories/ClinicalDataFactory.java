@@ -3,7 +3,6 @@ package nl.thehyve.ocdu.factories;
 import nl.thehyve.ocdu.models.OCEntities.ClinicalData;
 import nl.thehyve.ocdu.models.OcUser;
 import nl.thehyve.ocdu.models.UploadSession;
-import org.springframework.security.access.method.P;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -41,8 +40,8 @@ public class ClinicalDataFactory extends UserSubmittedDataFactory {
             HashMap<String, Integer> header = parseHeader(headerLine.get());
             HashMap<String, Integer> coreColumns = getCoreHeader(header);
             List<ClinicalData> clinicalData = new ArrayList<>();
-            List<List<ClinicalData>> clinicalDataAggregates = lines.skip(1).
-                    filter(s -> s.split(FILE_SEPARATOR).length > 2).
+            List<List<ClinicalData>> clinicalDataAggregates = lines.skip(1). // skip header
+                    filter(s -> s.split(FILE_SEPARATOR).length > 2). // smallest legal file consists of no less than 3 columns
                     map(s -> parseLine(s, header, coreColumns)).collect(Collectors.toList());
             clinicalDataAggregates.forEach(aggregate -> clinicalData.addAll(aggregate));
             lines.close();

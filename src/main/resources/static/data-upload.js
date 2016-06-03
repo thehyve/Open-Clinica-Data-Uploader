@@ -81,7 +81,7 @@ function uploadFile() {
             success: function (fileFormatErrors) {
                 if (fileFormatErrors.length === 0) {
                     // Handle upload success
-                    var info = '<span id="data-alert" class="alert alert-success">Data succesfully uploaded</span>';
+                    var info = '<span id="data-alert" class="alert alert-success">Data successfully read.</span>';
                     $("#message-board").append(info);
                     mappingFileUpload();
 

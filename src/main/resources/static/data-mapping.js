@@ -9,20 +9,23 @@ var mapped_ocitems = [];//an array containing the paths of mapped oc items
 var baseSvg;
 var treeg, listg;
 
-var tipDiv;
+var tipDiv;//the tip used for items in OC tree
+var usrTipDiv;//the tip used for items in user item list
 var leaf_depth = 4;
 var zoomListener;
 var rect_w = 150, rect_h = 18;//default rect size
-var text_cut_index = 13;
+var item_rect_w = 2*rect_w;
+var node_text_cut_index = 13;
+var item_text_cut_index = 30;
 var usr_list_y = 30;
 var usr_list_h = 500;
-var is_mouse_down = false;
+var is_mouse_dragging = false;
 // update and store mouse position
 var mousepos = {x: 0, y: 0};
 $(document).on("mousemove", function (event) {
     var offset = $('#tree-container').offset();
     mousepos.x = event.pageX - offset.left;
-    mousepos.y = event.pageY - offset.top; //console.log(mousepos);
+    mousepos.y = event.pageY - offset.top;
 });
 $(window).on('resize', function () {
     //resize base svg
@@ -33,14 +36,6 @@ $(window).on('resize', function () {
 
 // initializing and button listeners
 $(document).ready(function () {
-
-    $(document).mousedown(function () {
-        is_mouse_down = true;
-    });
-
-    $(document).mouseup(function () {
-        is_mouse_down = false;
-    });
 
     //check if mapping file is available, if not, disable the mapping button
     // $('#auto-map-btn').prop("disabled",!MAPPING_FILE_ENABLED);
@@ -68,7 +63,7 @@ $(document).ready(function () {
     }
     var ocDataCallSuccess = function (data) {
         oc_data = data;
-        visualizeOCTree(data);
+        visualizeOCTree(oc_data);
     }
 
     $.ajax({
@@ -363,6 +358,9 @@ function initialize() {
     tipDiv = d3.select("body").append("div")
         .attr("class", "tooltip")
         .style("opacity", 0);
+    usrTipDiv = d3.select("body").append("div")
+        .attr("class", "tooltip")
+        .style("opacity", 0);
 }//initialize
 
 
@@ -475,7 +473,7 @@ function updateOCTree(source, _duration) {
         // d.y = (d.depth * (maxLabelLength * 10)); //maxLabelLength * 10px
         // alternatively to keep a fixed scale one can set a fixed depth per level
         // Normalize for fixed-depth by commenting out below line
-        d.y = (d.depth * 200); //150px per level.
+        d.y = (d.depth * 170); //200px per level.
     });
 
     // Update the nodes…
@@ -502,7 +500,7 @@ function updateOCTree(source, _duration) {
         else {
             node.append('rect').attr('class', 'itemRect')
                 .attr('rx', 4).attr('ry', 4)
-                .attr('width', rect_w).attr('height', rect_h);
+                .attr('width', item_rect_w).attr('height', rect_h);
         }
     });
 
@@ -534,7 +532,13 @@ function updateOCTree(source, _duration) {
         .text(function (d) {
             d.shortTexted = false;
             var len = this.getComputedTextLength();
-            if (len > rect_w) {
+            var ref_w = rect_w;
+            var text_cut_index = node_text_cut_index;
+            if(d.depth == leaf_depth) {
+                ref_w = item_rect_w;
+                text_cut_index = item_text_cut_index;
+            }
+            if (len > ref_w) {
                 d.shortTexted = true;
                 return d.name.substring(0, text_cut_index) + "...";
             }
@@ -647,11 +651,21 @@ function handleOCItemInteraction() {
      * ------ oc item mouse over/out behavior ------
      */
     function itemover(d) {
-        if (d.shortTexted && !is_mouse_down) {
+        if (d.shortTexted) {
+            // console.log(d3.select(this)[0][0].getBoundingClientRect());
+            var box = d3.select(this)[0][0].getBoundingClientRect();
             tipDiv.transition().duration(200).style("opacity", .95);
-            tipDiv.html('<span style="font-size:18px;">' + d.name + '</span>')
-                .style("left", (d3.event.pageX) + "px")
-                .style("top", (d3.event.pageY - 28) + "px");
+            tipDiv.html('<span style="font-size:18px;">' + d.name + '</span>');
+
+            var tipbox = tipDiv[0][0].getBoundingClientRect();
+            var left = +box.right - tipbox.width - 3;
+            var top = +box.top - 6;
+
+            tipDiv
+                .style('left', left+'px')
+                .style('top', top+'px');
+                // .style("left", (d3.event.pageX) + "px")
+                // .style("top", (d3.event.pageY - 28) + "px");
         }
         adjustColors(d, true);
         if (d.depth == leaf_depth) selectedOCItem = d3.select(this);
@@ -753,12 +767,13 @@ function visualizeUsrList(usrData) {
         }
     }
 
+
     var usritem = listg.selectAll('.listitem').data(usr_item_data);
     usritem.enter().append('g').attr('class', 'usritem');
 
     usritem.append('rect')
         .attr('rx', 4).attr('ry', 4)
-        .attr('width', rect_w).attr('height', rect_h);
+        .attr('width', item_rect_w).attr('height', rect_h);
     usritem.append('text')
         .attr('dx', 10)
         .attr('dy', rect_h / 1.2)
@@ -770,9 +785,9 @@ function visualizeUsrList(usrData) {
         .text(function (d) {
             d.shortTexted = false;
             var len = +this.getComputedTextLength();
-            if (len > rect_w) {
+            if (len > item_rect_w) {
                 d.shortTexted = true;
-                return d.usrItemName.substring(0, text_cut_index) + "...";
+                return d.usrItemName.substring(0, item_text_cut_index) + "...";
             }
             return d.usrItemName;
         });
@@ -788,39 +803,35 @@ function visualizeUsrList(usrData) {
     usritem.call(usrItemDrag);
     positionUsrList(usr_item_data, 250, usr_list_y);
 
+
+    function showTooltip(d, el) {
+        if (d.shortTexted) {
+
+            var box = el[0][0].getBoundingClientRect();
+            usrTipDiv.transition().duration(200).style("opacity", .95);
+            usrTipDiv.html('<span style="font-size:18px;">' + d.usrItemName + '</span>');
+
+            // var tipbox = usrTipDiv[0][0].getBoundingClientRect();
+            var left = +box.left - 3;
+            var top = +box.top - 6;
+
+            usrTipDiv
+                .style("left", left + 'px')
+                .style("top", top + 'px');
+        }
+    }
+
     function usrItemMouseOver(d) {
         d3.select(this).select('rect').style('fill', 'Orange');
-        if (d.shortTexted) {
-            var len = +computeTextLength(d3.select(this).select('text'));
-            tipDiv.transition()
-                .duration(200)
-                .style("opacity", .95);
-            tipDiv.html('<span style="font-size:18px;">' + d.usrItemName + '</span>')
-                .style("left", (d3.event.pageX - len) + "px")
-                .style("top", (d3.event.pageY - 30) + "px");
-        }
+        showTooltip(d, d3.select(this));
 
         selectedUsrItem = d3.select(this);
     }
 
     function usrItemMouseOut() {
-        tipDiv.transition().style("opacity", 0);
+        usrTipDiv.transition().style("opacity", 0);
         d3.select(this).select('rect').style('fill', 'LightSteelBlue');
         selectedUsrItem = null;
-    }
-
-    function computeTextLength(selection) {
-        selection.text(selection.datum().usrItemName);
-        var len = selection[0][0].getComputedTextLength();
-        selection.text(function (d) {
-            d.shortTexted = false;
-            if (len > rect_w) {
-                d.shortTexted = true;
-                return d.usrItemName.substring(0, text_cut_index) + "...";
-            }
-            return d.usrItemName;
-        });
-        return len;
     }
 
     function usrItemClick(d) {
@@ -840,6 +851,7 @@ function visualizeUsrList(usrData) {
     }
 
     function usrItemDragstart(d) {
+        is_mouse_dragging = true;
         d3.event.sourceEvent.stopPropagation();
         d.offsetX = d3.mouse(this)[0] - d3.select(this).select('rect').attr('x');
         d.offsetY = d3.mouse(this)[1] - d3.select(this).select('rect').attr('y');
@@ -850,9 +862,12 @@ function visualizeUsrList(usrData) {
         var x = coord[0] - d.offsetX, y = coord[1] - d.offsetY;
         d3.select(this).select('rect').attr('x', x).attr('y', y);
         d3.select(this).select('text').attr('x', x).attr('y', y);
+        showTooltip(d, d3.select(this));
     }
 
     function usrItemDragend(d) {
+        is_mouse_dragging = false;
+        usrTipDiv.transition().style("opacity", 0);
         if (selectedOCItem !== null) {
             usrItemClick(d);
             var ocd = selectedOCItem.datum();
@@ -918,7 +933,7 @@ function positionUsrList(usr_item_data, time, _y0) {
         //position the usr items when they are mapped
         else {
             var head = uitem.ocItemData;
-            uitem.x = head.y + rect_w + 2;
+            uitem.x = head.y + item_rect_w + 2;
             uitem.y = head.x - rect_h / 2;
 
             if (head.parent.collapsed) {

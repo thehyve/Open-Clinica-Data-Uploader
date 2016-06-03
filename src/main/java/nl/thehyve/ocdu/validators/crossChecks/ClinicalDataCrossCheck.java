@@ -113,7 +113,8 @@ public interface ClinicalDataCrossCheck {
 
 
     default boolean isDate(String input) {
-        DateFormat format = new SimpleDateFormat("YYYY-MM-DD", Locale.ENGLISH);
+        DateFormat format = new SimpleDateFormat("yyyy-mm-dd", Locale.ENGLISH);
+        format.setLenient(false);
         try {
             Date date = format.parse(input);
         } catch (ParseException e) {
@@ -124,8 +125,11 @@ public interface ClinicalDataCrossCheck {
 
     default boolean isPDate(String input) {
         DateFormat format1 = new SimpleDateFormat("DD-MMM-YYYY", Locale.ENGLISH);
+        format1.setLenient(false);
         DateFormat format2 = new SimpleDateFormat("MMM-YYYY", Locale.ENGLISH);
+        format2.setLenient(false);
         DateFormat format3 = new SimpleDateFormat("YYYY", Locale.ENGLISH);
+        format3.setLenient(false);
         boolean format1correct = true;
         boolean format2correct = true;
         boolean format3correct = true;

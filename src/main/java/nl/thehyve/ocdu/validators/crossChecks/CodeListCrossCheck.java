@@ -36,7 +36,7 @@ public class CodeListCrossCheck implements ClinicalDataCrossCheck {
                             String msg = clinicalData.getItem()+": "+value + " not in: " + codeListdef;
                             if( value.contains(" ")) msg += " (value contains whitespaces)";
                             else if(value.equals("")) msg+= " (value is an empty string)";
-                            error.addOffendingValue(msg);
+                            error.addOffendingValue(msg+ " for subject: "+ clinicalData.getSsid());
                         }
                     }
                 }

@@ -29,7 +29,8 @@ public class CrfExistsCrossCheck implements ClinicalDataCrossCheck {
                 String crf = clinicalData.getCrfName();
                 String eventName = clinicalData.getEventName();
                 String version = clinicalData.getCrfVersion();
-                String msg = "CRF: " + crf + " version: " + version + " in event: " + eventName;
+                String msg = "CRF: " + crf + " version: " + version + " in event: " + eventName+ " for subject: "
+                        + clinicalData.getSsid();
                 if (!offendingNames.contains(msg)) offendingNames.add(msg);
             });
             error.addAllOffendingValues(offendingNames);

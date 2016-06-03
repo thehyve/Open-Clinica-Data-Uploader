@@ -164,7 +164,7 @@ function handle_session_retrieval_all(_sessions) {
     sessions = _sessions;
     $("#data-proceed-btn").attr("disabled", false);
     var monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-    $('#old_upload_section').append('<div id="session_container" class="row-fluid"></div>');
+    $('#old_upload_section').append('<div id="session_container" class="row-fluid"><p id="anchor_old_sessions"></p> </div>');
     for (var i = 0; i < _sessions.length; i++) {
         var s = _sessions[i];
         var btnid = "s" + (i + 1);
@@ -173,8 +173,8 @@ function handle_session_retrieval_all(_sessions) {
             '<button type="button" class="btn btn-primary" id="' + btnid + '" session_index=' + i + '>' + s.name + '</button>' +
             '<p><small>saved on: ' + monthNames[d.getMonth()] + ' ' + d.getDate() + ', ' + d.getFullYear() + '</small></p>' +
             '<button type="button" class="btn btn-danger" id="removal_'+btnid+'" session_index='+ i + '>Remove this submission</button></div>';
-        // $(sessionHTML).insertAfter("#old_upload_section_anchor");
-        $('#session_container').append(sessionHTML);
+        $(sessionHTML).insertAfter("#anchor_old_sessions");
+        // $('#session_container').append(sessionHTML);
         $('#' + btnid).click(handle_session_retrieval);
         $('#removal_' +btnid).click(handle_session_removal);
     }//for

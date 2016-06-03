@@ -30,7 +30,7 @@ public class RangeChecks implements ClinicalDataCrossCheck {
                             int intValue = (int) Double.parseDouble(value); // Do not attempt floating point comparison
                             if (!rangeCheck.isInRange(intValue)) {
                                 String msg = clinicalData.getItem() + " " + rangeCheck.violationMessage()
-                                        + " but was: " + intValue;
+                                        + " but was: " + intValue + " for subject: "+ clinicalData.getSsid();
                                 if (!alreadyReported.contains(msg)) {
                                     error.addOffendingValue(msg);
                                     alreadyReported.add(msg);

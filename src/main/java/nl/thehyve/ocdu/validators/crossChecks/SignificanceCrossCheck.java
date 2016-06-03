@@ -33,7 +33,7 @@ public class SignificanceCrossCheck implements ClinicalDataCrossCheck {
             if (digitsAfterDM > definition.getSignificantDigits()) {
                 error.addOffendingValue("Item: " + clinicalData.getItem() +
                         " value: " + value + " expected number of significant digits: "
-                        + definition.getSignificantDigits());
+                        + definition.getSignificantDigits()+ " for subject: "+ clinicalData.getSsid() ) ;
             }
         }
     }

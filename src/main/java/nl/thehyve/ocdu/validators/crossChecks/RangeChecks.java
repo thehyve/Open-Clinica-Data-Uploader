@@ -8,9 +8,7 @@ import nl.thehyve.ocdu.models.OcDefinitions.RangeCheck;
 import nl.thehyve.ocdu.models.errors.RangeCheckViolation;
 import nl.thehyve.ocdu.models.errors.ValidationErrorMessage;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.atomic.DoubleAccumulator;
 
 /**
@@ -20,7 +18,7 @@ public class RangeChecks implements ClinicalDataCrossCheck {
     @Override
     public ValidationErrorMessage getCorrespondingError(List<ClinicalData> data, MetaData metaData) {
         RangeCheckViolation error = new RangeCheckViolation();
-
+        Set<String> alreadyReported = new HashSet<>();
         data.forEach(clinicalData -> {
             ItemDefinition itemDefinition = getMatching(clinicalData, metaData);
             if (itemDefinition != null) { // Nonexistent item is a separate error
@@ -32,8 +30,12 @@ public class RangeChecks implements ClinicalDataCrossCheck {
                             int intValue = (int) Double.parseDouble(value); // Do not attempt floating point comparison
                             if (!rangeCheck.isInRange(intValue)) {
                                 String msg = clinicalData.getItem() + " " + rangeCheck.violationMessage()
-                                        + " but was: " + intValue;
-                                error.addOffendingValue(msg);
+                                        + " but was: " + intValue + " for subject: "+ clinicalData.getSsid();
+                                if (!alreadyReported.contains(msg)) {
+                                    error.addOffendingValue(msg);
+                                    alreadyReported.add(msg);
+                                }
+
                             }
                         } // If item is not numeric but should be - there is a separate error for that
                     }

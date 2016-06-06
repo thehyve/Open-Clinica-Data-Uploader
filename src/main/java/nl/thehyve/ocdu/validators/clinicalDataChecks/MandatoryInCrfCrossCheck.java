@@ -5,6 +5,7 @@ import nl.thehyve.ocdu.models.OcDefinitions.CRFDefinition;
 import nl.thehyve.ocdu.models.OcDefinitions.MetaData;
 import nl.thehyve.ocdu.models.errors.MandatoryItemInCrfMissing;
 import nl.thehyve.ocdu.models.errors.ValidationErrorMessage;
+import org.openclinica.ws.beans.StudySubjectWithEventsType;
 
 import java.util.*;
 
@@ -13,7 +14,7 @@ import java.util.*;
  */
 public class MandatoryInCrfCrossCheck implements ClinicalDataCrossCheck {
     @Override
-    public ValidationErrorMessage getCorrespondingError(List<ClinicalData> data, MetaData metaData) {
+    public ValidationErrorMessage getCorrespondingError(List<ClinicalData> data, MetaData metaData, List<StudySubjectWithEventsType> subjectWithEventsTypeList) {
         HashMap<String, Set<String>> mandatoryMap = getMandatoryMap(data, metaData);
         HashMap<String, Set<String>> presentMap = getPresentMap(data);
         MandatoryItemInCrfMissing error = new MandatoryItemInCrfMissing();

@@ -2,11 +2,10 @@ package nl.thehyve.ocdu.services;
 
 import nl.thehyve.ocdu.models.OcDefinitions.MetaData;
 import nl.thehyve.ocdu.models.OCEntities.Study;
-import nl.thehyve.ocdu.soap.ResponseHandlers.GetStudyMetadataResponseHandler;
-import nl.thehyve.ocdu.soap.ResponseHandlers.ListStudiesResponseHandler;
-import nl.thehyve.ocdu.soap.ResponseHandlers.OCResponseHandler;
-import nl.thehyve.ocdu.soap.ResponseHandlers.SoapUtils;
+import nl.thehyve.ocdu.soap.ResponseHandlers.*;
 import nl.thehyve.ocdu.soap.SOAPRequestFactory;
+import org.openclinica.ws.beans.StudySubjectWithEventsType;
+import org.openclinica.ws.beans.StudySubjectsType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -38,6 +37,8 @@ public class OpenClinicaService {
         return studies;
     }
 
+
+
     public MetaData getMetadata(String username, String passwordHash, String url, Study study) throws Exception {
         log.info("Get metadata initiated by: "+username+" on: "+url+" study: "+study);
         if (study == null || username == null || passwordHash == null || url == null) {
@@ -51,6 +52,24 @@ public class OpenClinicaService {
         soapConnection.close();
         return metaData;
     }
+
+
+    public List<StudySubjectWithEventsType> getStudySubjectsType(String username, String passwordHash, String url, Study study) throws Exception {
+        log.info("Get metadata initiated by: " + username + " on: " + url + " study: " + study);
+        if (study == null || username == null || passwordHash == null || url == null) {
+            return null;
+        }
+        SOAPConnectionFactory soapConnectionFactory = SOAPConnectionFactory.newInstance();
+        SOAPConnection soapConnection = soapConnectionFactory.createConnection();
+        SOAPMessage soapMessage = responseFactory.createListAllByStudy(username, passwordHash, study.getIdentifier());
+        SOAPMessage soapResponse = soapConnection.call(soapMessage, url + "/ws/studySubject/v1");  // Add SOAP endopint to OCWS URL.
+        List<StudySubjectWithEventsType> subjectsTypeList =
+                ListAllByStudyResponseHandler.retrieveStudySubjectsType(soapResponse);
+
+        soapConnection.close();
+        return subjectsTypeList;
+    }
+
 
     public boolean isAuthenticated(String username, String /* hexdigest of sha1 password */ passwordHash, String url) throws Exception {
         SOAPConnectionFactory soapConnectionFactory = SOAPConnectionFactory.newInstance();

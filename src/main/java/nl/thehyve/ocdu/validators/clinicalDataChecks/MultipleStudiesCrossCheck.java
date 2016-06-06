@@ -4,6 +4,7 @@ import nl.thehyve.ocdu.models.OCEntities.ClinicalData;
 import nl.thehyve.ocdu.models.OcDefinitions.MetaData;
 import nl.thehyve.ocdu.models.errors.IncorrectNumberOfStudies;
 import nl.thehyve.ocdu.models.errors.ValidationErrorMessage;
+import org.openclinica.ws.beans.StudySubjectWithEventsType;
 
 import java.util.List;
 import java.util.Set;
@@ -15,7 +16,7 @@ import java.util.stream.Stream;
  */
 public class MultipleStudiesCrossCheck implements ClinicalDataCrossCheck {
     @Override
-    public ValidationErrorMessage getCorrespondingError(List<ClinicalData> data, MetaData metaData) {
+    public ValidationErrorMessage getCorrespondingError(List<ClinicalData> data, MetaData metaData, List<StudySubjectWithEventsType> subjectWithEventsTypeList) {
         Stream<ClinicalData> stream = data.stream();
         Set<String> studiesUsed = stream.map(clinicalData -> clinicalData.getStudy()).collect(Collectors.toSet());
         if (studiesUsed.size() != 1) {

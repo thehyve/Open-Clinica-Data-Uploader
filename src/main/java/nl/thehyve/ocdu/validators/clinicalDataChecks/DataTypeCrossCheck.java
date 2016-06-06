@@ -5,6 +5,7 @@ import nl.thehyve.ocdu.models.OcDefinitions.MetaData;
 import nl.thehyve.ocdu.models.errors.DataTypeMismatch;
 import nl.thehyve.ocdu.models.errors.ValidationErrorMessage;
 import org.apache.commons.lang3.tuple.ImmutablePair;
+import org.openclinica.ws.beans.StudySubjectWithEventsType;
 
 import java.util.List;
 import java.util.Map;
@@ -22,7 +23,7 @@ public class DataTypeCrossCheck implements ClinicalDataCrossCheck {
     public final static String PARTIAL_DATE_DATA_TYPE = "partialDate";
 
     @Override
-    public ValidationErrorMessage getCorrespondingError(List<ClinicalData> data, MetaData metaData) {
+    public ValidationErrorMessage getCorrespondingError(List<ClinicalData> data, MetaData metaData, List<StudySubjectWithEventsType> subjectWithEventsTypeList) {
         Map<ClinicalData, String> itemDataTypes = buildDataTypeMap(data, metaData);
         Set<ImmutablePair<String, String>> offenders = data.stream()
                 .filter(clinicalData -> !allValuesMatch(clinicalData.getValues(), itemDataTypes.get(clinicalData)))

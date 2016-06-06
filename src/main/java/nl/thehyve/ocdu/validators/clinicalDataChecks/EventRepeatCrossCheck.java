@@ -4,6 +4,7 @@ import nl.thehyve.ocdu.models.OCEntities.ClinicalData;
 import nl.thehyve.ocdu.models.OcDefinitions.MetaData;
 import nl.thehyve.ocdu.models.errors.RepeatInNonrepeatingEvent;
 import nl.thehyve.ocdu.models.errors.ValidationErrorMessage;
+import org.openclinica.ws.beans.StudySubjectWithEventsType;
 
 import java.util.List;
 import java.util.Set;
@@ -15,7 +16,7 @@ import java.util.stream.Collectors;
 public class EventRepeatCrossCheck implements ClinicalDataCrossCheck {
 
     @Override
-    public ValidationErrorMessage getCorrespondingError(List<ClinicalData> data, MetaData metaData) {
+    public ValidationErrorMessage getCorrespondingError(List<ClinicalData> data, MetaData metaData, List<StudySubjectWithEventsType> subjectWithEventsTypeList) {
         // if  there is a non repeating event which has repeat higher than 1 return error
         RepeatInNonrepeatingEvent error = new RepeatInNonrepeatingEvent();
         Set<String> offenders = data.stream().filter(clinicalData -> clinicalData.getEventRepeat() > 1)

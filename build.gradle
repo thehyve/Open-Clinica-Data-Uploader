@@ -3,18 +3,45 @@ buildscript {
         springBootVersion = '1.3.3.RELEASE'
     }
     repositories {
+        jcenter()
         mavenCentral()
     }
     dependencies {
         classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
+        classpath 'no.nils:wsdl2java:0.10'
     }
 }
 
+apply plugin: 'no.nils.wsdl2java'
 apply plugin: 'java'
 apply plugin: 'eclipse'
 apply plugin: 'idea'
 apply plugin: 'spring-boot'
 apply plugin: 'war'
+
+wsdl2javaExt {
+    cxfVersion = "2.5.1"
+    deleteGeneratedSourcesOnClean = true
+}
+
+wsdl2java {
+    generatedWsdlDir = file("src/main/generated")  // target directory for generated source coude
+    wsdlDir = file("src/main/wsdl")
+    wsdlsToGenerate = [
+                          ['src/main/wsdl/studySubjectWsdl.wsdl']
+
+    ]
+}
+
+
+ext {
+    protobufOutputDir = file("src/main/generated")
+}
+
+idea.module {
+    excludeDirs -= file("$buildDir")
+    sourceDirs += protobufOutputDir
+}
 
 war {
     baseName = 'ocdu'
@@ -72,3 +99,6 @@ test {
         println "Executing test ${desc.name} [${desc.className}] with result: ${result.resultType}"
     }
 }
+
+
+compileJava.dependsOn(wsdl2java)

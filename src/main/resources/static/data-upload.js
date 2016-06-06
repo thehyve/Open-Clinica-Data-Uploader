@@ -19,8 +19,7 @@ function uploadFile() {
     }
 
     if(sessionnames.indexOf(SESSIONNAME) !== -1) isSessionNameDefined = false;
-
-
+    
     $("#message-board").empty();
 
     var mappingFileUpload = function () { 
@@ -110,7 +109,7 @@ function uploadFile() {
             },
             error: function (jqXHR, textStatus, errorThrown) {
                 // Handle upload error
-                var message = 'Hmm, the data could not be uploaded. Have you checked the data format, which should be plain, comma delimited or tab delimited. Also do make sure the file size does not exceed 300MB. Let\'s give it another try:) ';
+                var message = 'Data upload failed. Please check the data format, which should be a plain, comma delimited file. The size of the file should be less than 10MB. ';
                 var info = '<div id="data-alert" class="alert alert-danger">'+message+'</div>';
                 $("#message-board").append(info);
                 console.log(jqXHR.status+" "+textStatus+" "+errorThrown);

@@ -107,7 +107,7 @@ function uploadFile() {
             },
             error: function (jqXHR, textStatus, errorThrown) {
                 // Handle upload error
-                var message = 'Data upload failed. Please check the data format, which should be a plain, comma delimited file. The size of the file should be less than 10MB. ';
+                var message = 'Data upload failed. Please check the data format, which should be a plain, tab-delimited file. The size of the file should be less than 10MB. ';
                 var info = '<div id="data-alert" class="alert alert-danger">'+message+'</div>';
                 $("#message-board").append(info);
                 console.log(jqXHR.status+" "+textStatus+" "+errorThrown);

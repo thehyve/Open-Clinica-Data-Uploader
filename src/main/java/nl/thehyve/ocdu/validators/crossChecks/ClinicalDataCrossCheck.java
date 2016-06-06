@@ -5,6 +5,7 @@ import nl.thehyve.ocdu.models.OcDefinitions.ItemDefinition;
 import nl.thehyve.ocdu.models.OcDefinitions.MetaData;
 import nl.thehyve.ocdu.models.OCEntities.ClinicalData;
 import nl.thehyve.ocdu.models.errors.ValidationErrorMessage;
+import org.openclinica.ws.beans.StudySubjectWithEventsType;
 
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -17,7 +18,7 @@ import java.util.stream.Collectors;
  */
 public interface ClinicalDataCrossCheck {
 
-    ValidationErrorMessage getCorrespondingError(List<ClinicalData> data, MetaData metaData);
+    ValidationErrorMessage getCorrespondingError(List<ClinicalData> data, MetaData metaData, List<StudySubjectWithEventsType> studySubjectWithEventsTypeList);
 
     default Map<String, List<CRFDefinition>> buildEventMap(MetaData metaData) {
         Map<String, List<CRFDefinition>> eventMap = new HashMap<>();

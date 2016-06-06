@@ -12,6 +12,7 @@ import nl.thehyve.ocdu.repositories.ClinicalDataRepository;
 import nl.thehyve.ocdu.repositories.EventRepository;
 import nl.thehyve.ocdu.repositories.SubjectRepository;
 import nl.thehyve.ocdu.validators.ClinicalDataOcChecks;
+import org.openclinica.ws.beans.StudySubjectWithEventsType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -52,13 +53,14 @@ public class ValidationService {
         OcUser submitter = submission.getOwner();
         Study study = dataService.findStudy(submission.getStudy(), submitter, wsPwdHash);
         MetaData metadata = openClinicaService.getMetadata(submitter.getUsername(), wsPwdHash, submitter.getOcEnvironment(), study);
+        List<StudySubjectWithEventsType> subjectWithEventsTypes = openClinicaService.getStudySubjectsType(submitter.getUsername(), wsPwdHash, submitter.getOcEnvironment(), study);
         List<ValidationErrorMessage> errors = new ArrayList<>();
         if (study == null || metadata == null) {
             StudyDoesNotExist studyError = new StudyDoesNotExist();
             studyError.addOffendingValue(submission.getStudy());
             errors.add(studyError);
         } else {
-            ClinicalDataOcChecks checksRunner = new ClinicalDataOcChecks(metadata, bySubmission);
+            ClinicalDataOcChecks checksRunner = new ClinicalDataOcChecks(metadata, bySubmission, subjectWithEventsTypes);
             errors.addAll(checksRunner.getErrors());
         }
         return errors;

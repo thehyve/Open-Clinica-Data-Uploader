@@ -6,6 +6,7 @@ package nl.thehyve.ocdu.models;
 public class OcItemMapping {
     private String study;
     private String eventName;
+    private Integer eventOrdinal = new Integer(1);
     private String crfName;
     private String crfVersion;
     private String ocItemName;
@@ -57,6 +58,28 @@ public class OcItemMapping {
 
     public void setUsrItemName(String usrItemName) {
         this.usrItemName = usrItemName;
+    }
+
+    /**
+     * Tests if a OCItemMapping has a conflicting CRF version. This is required to avoid uploads with similar study,
+     * subject, event, event-ordinal and CRF-name but with a different CRF-versions. When using OpenClinica web-services
+     * 2 CRF are erroneously added to the event. (TODO add the reference to the OC-bug)
+     * @param that
+     * @return
+     */
+    public boolean isConflicting(OcItemMapping that) {
+        if ((this.study == null) ||
+            (this.eventName == null) ||
+            (this.eventOrdinal == null) ||
+            (crfName == null) ||
+            (crfVersion == null)) {
+            throw new IllegalStateException("Unable to determine conflict state; a field is null");
+        }
+        return ((this.study.equals(that.study) &&
+                (this.eventName.equals(that.eventName)) &&
+                (this.eventOrdinal.equals(that.eventOrdinal)) &&
+                (this.crfName.equals(that.crfName)) &&
+                (! this.crfVersion.equals(that.crfVersion))));
     }
 
     @Override

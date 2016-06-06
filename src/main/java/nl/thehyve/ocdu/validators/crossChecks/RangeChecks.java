@@ -7,6 +7,7 @@ import nl.thehyve.ocdu.models.OcDefinitions.MetaData;
 import nl.thehyve.ocdu.models.OcDefinitions.RangeCheck;
 import nl.thehyve.ocdu.models.errors.RangeCheckViolation;
 import nl.thehyve.ocdu.models.errors.ValidationErrorMessage;
+import org.openclinica.ws.beans.StudySubjectWithEventsType;
 
 import java.util.*;
 import java.util.concurrent.atomic.DoubleAccumulator;
@@ -16,7 +17,7 @@ import java.util.concurrent.atomic.DoubleAccumulator;
  */
 public class RangeChecks implements ClinicalDataCrossCheck {
     @Override
-    public ValidationErrorMessage getCorrespondingError(List<ClinicalData> data, MetaData metaData) {
+    public ValidationErrorMessage getCorrespondingError(List<ClinicalData> data, MetaData metaData, List<StudySubjectWithEventsType> subjectWithEventsTypeList) {
         RangeCheckViolation error = new RangeCheckViolation();
         Set<String> alreadyReported = new HashSet<>();
         data.forEach(clinicalData -> {

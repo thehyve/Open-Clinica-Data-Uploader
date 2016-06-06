@@ -1,11 +1,25 @@
 package nl.thehyve.ocdu.soap;
 
+import com.sun.istack.internal.NotNull;
+import com.sun.xml.internal.bind.api.JAXBRIContext;
+import com.sun.xml.internal.bind.api.TypeReference;
+import com.sun.xml.internal.ws.api.model.SEIModel;
+import com.sun.xml.internal.ws.developer.JAXBContextFactory;
 import nl.thehyve.ocdu.models.OCEntities.Study;
 import nl.thehyve.ocdu.soap.SOAPRequestDecorators.GetStudyMetadataRequestDecorator;
 import nl.thehyve.ocdu.soap.SOAPRequestDecorators.listAllStudiesRequestDecorator;
+import org.openclinica.ws.beans.ListStudySubjectsInStudyType;
+import org.openclinica.ws.beans.StudyRefType;
+import org.openclinica.ws.studysubject.v1.ObjectFactory;
+import org.w3c.dom.Document;
 
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBElement;
+import javax.xml.bind.JAXBException;
 import javax.xml.namespace.QName;
 import javax.xml.soap.*;
+import javax.xml.transform.dom.DOMResult;
+import java.util.List;
 
 
 /**
@@ -36,6 +50,34 @@ public class SOAPRequestFactory {
         soapMessage.saveChanges();
 
         return soapMessage;
+    }
+
+
+    public SOAPMessage createListAllByStudy(String userName, String passwordHash, String studyIdentifier) throws Exception {
+        ObjectFactory objectFactory = new ObjectFactory();
+
+        ListStudySubjectsInStudyType listStudySubjectsInStudyType = new ListStudySubjectsInStudyType();
+        StudyRefType studyRefType = new StudyRefType();
+        studyRefType.setIdentifier(studyIdentifier);
+        listStudySubjectsInStudyType.setStudyRef(studyRefType);
+        JAXBElement<ListStudySubjectsInStudyType> body = objectFactory.createListAllByStudyRequest(listStudySubjectsInStudyType);
+
+        SOAPMessage soapMessage = getSoapMessage(userName, passwordHash);
+        SOAPEnvelope envelope = soapMessage.getSOAPPart().getEnvelope();
+        GetStudyMetadataRequestDecorator decorator = new GetStudyMetadataRequestDecorator();
+
+        decorator.decorateBody(envelope);
+        Document doc = convertToDocument(body);
+        soapMessage.getSOAPBody().addDocument(doc);
+        return null;
+    }
+
+
+    private Document convertToDocument(JAXBElement<?> jaxbElement) throws Exception {
+        DOMResult res = new DOMResult();
+        JAXBContext context = JAXBContext.newInstance(jaxbElement.getClass());
+        context.createMarshaller().marshal(jaxbElement, res);
+        return (Document) res.getNode();
     }
 
     //TODO: move decorateHeader to an abstract class implementing SoapDecorator and make other decorators extend it.

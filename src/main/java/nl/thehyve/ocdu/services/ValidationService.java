@@ -2,6 +2,7 @@ package nl.thehyve.ocdu.services;
 
 import nl.thehyve.ocdu.models.OCEntities.ClinicalData;
 import nl.thehyve.ocdu.models.OCEntities.Subject;
+import nl.thehyve.ocdu.models.OCEntities.Event;
 import nl.thehyve.ocdu.models.OCEntities.OcEntity;
 import nl.thehyve.ocdu.models.OCEntities.Study;
 import nl.thehyve.ocdu.models.OcDefinitions.MetaData;
@@ -67,7 +68,8 @@ public class ValidationService {
         return errors;
     }
 
-    public List<ValidationErrorMessage> getEventsErrors(UploadSession submission) {
+    public List<ValidationErrorMessage> getEventsErrors(UploadSession submission, String wsPwdHash) {
+        List<Event> events = eventRepository.findBySubmission(submission);
         ArrayList<ValidationErrorMessage> validationErrorMessages = new ArrayList<>();
         //TODO: implement generating validation error messages
         return validationErrorMessages;

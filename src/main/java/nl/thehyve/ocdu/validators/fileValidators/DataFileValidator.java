@@ -1,10 +1,8 @@
 package nl.thehyve.ocdu.validators.fileValidators;
 
 import nl.thehyve.ocdu.factories.ClinicalDataFactory;
-import nl.thehyve.ocdu.models.OCEntities.ClinicalData;
 import nl.thehyve.ocdu.models.OCEntities.Study;
 import nl.thehyve.ocdu.models.errors.FileFormatError;
-import nl.thehyve.ocdu.models.errors.IncorrectNumberOfStudies;
 
 import java.io.IOException;
 import java.nio.file.Path;
@@ -36,7 +34,7 @@ public class DataFileValidator extends GenericFileValidator {
                 onlyOneStudy(usedStudies);
                 studyExists(usedStudies);
             }
-            if (getErrorMessages().size() > 0 ) {
+            if (getErrorMessages().size() > 0) {
                 setValid(false);
             }
             //columnNamesWellFormed(header);
@@ -48,9 +46,9 @@ public class DataFileValidator extends GenericFileValidator {
     }
 
     private void studyExists(Set<String> usedStudies) {
-        for (String studyName: usedStudies) {
+        for (String studyName : usedStudies) {
             if (!studies.stream().anyMatch(study -> study.getName().equals(studyName))) {
-                FileFormatError error = new FileFormatError("Study: "+ studyName+" does not exist");
+                FileFormatError error = new FileFormatError("Study: " + studyName + " does not exist");
                 addError(error);
             }
         }
@@ -67,35 +65,13 @@ public class DataFileValidator extends GenericFileValidator {
         Set<String> usedStudies = new HashSet<>();
         for (int i = 0; i < body.length; i++) {
             String line = body[i];
-            String[] split = line.split(ClinicalDataFactory.FILE_SEPARATOR);
+            String[] split = line.split(ClinicalDataFactory.COLUMNS_DELIMITER);
             if (split.length > columnIndex) {
                 String study = split[columnIndex];
                 usedStudies.add(study);
             }
         }
         return usedStudies;
-    }
-
-    private void columnNamesWellFormed(String header) {
-        // If item name contains "_" the part to the right of it must be a positive integer
-        List<String> split = splitLine(header);
-        split.stream().filter(columnName -> columnName.contains("_")).forEach(columnName -> {
-            String[] itemSplit = columnName.split("_");
-            int itemSplitLen = itemSplit.length;
-            String lastToken = itemSplit[itemSplitLen - 1];
-            if (!super.isInteger(lastToken)) {
-                addError(new FileFormatError("Item name incorrect: " + columnName + "If column name contains _ part to the " +
-                        "right of it must be an integer - to indicate group repeat."));
-                setValid(false);
-            } else {
-                int intRep = Integer.parseInt(lastToken);
-                if (intRep < 1) {
-                    addError(new FileFormatError("Group repeat in item name: " + columnName + " incorrect. Group repeat must be greater than 0"));
-                    setValid(false);
-                }
-            }
-        });
-
     }
 
 }

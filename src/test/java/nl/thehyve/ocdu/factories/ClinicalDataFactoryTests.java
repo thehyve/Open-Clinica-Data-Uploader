@@ -1,10 +1,9 @@
-package nl.thehyve.ocdu;
+package nl.thehyve.ocdu.factories;
 
-import nl.thehyve.ocdu.factories.ClinicalDataFactory;
+import nl.thehyve.ocdu.OcduApplication;
 import nl.thehyve.ocdu.models.OCEntities.ClinicalData;
 import nl.thehyve.ocdu.models.OcUser;
 import nl.thehyve.ocdu.models.UploadSession;
-import nl.thehyve.ocdu.models.errors.FileFormatError;
 import nl.thehyve.ocdu.repositories.ClinicalDataRepository;
 import nl.thehyve.ocdu.repositories.UploadSessionRepository;
 import nl.thehyve.ocdu.repositories.OCUserRepository;

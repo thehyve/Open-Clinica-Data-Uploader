@@ -50,6 +50,7 @@ dependencies {
     compile('org.apache.commons:commons-lang3:3.1')
 
     testCompile('org.springframework.boot:spring-boot-starter-test')
+    testCompile('co.unruly:java-8-matchers:1.4')
     providedRuntime("org.springframework.boot:spring-boot-starter-tomcat")
 }
 

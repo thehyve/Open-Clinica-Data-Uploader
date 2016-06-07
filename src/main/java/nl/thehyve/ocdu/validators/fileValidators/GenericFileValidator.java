@@ -133,7 +133,7 @@ public class GenericFileValidator implements FileFormatValidator {
     }
 
     protected List<String> splitLine(String line) {
-        return Arrays.asList(line.split(ClinicalDataFactory.FILE_SEPARATOR));
+        return Arrays.asList(line.split(ClinicalDataFactory.COLUMNS_DELIMITER));
     }
 
     protected void setValid(boolean newValidValue) {

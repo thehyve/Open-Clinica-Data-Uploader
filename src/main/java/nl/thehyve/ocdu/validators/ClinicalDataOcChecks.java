@@ -39,6 +39,7 @@ public class ClinicalDataOcChecks {
         crossChecks.add(new EventExistsCrossCheck());
         crossChecks.add(new DataFieldWidthCrossCheck());
         crossChecks.add(new CrfExistsCrossCheck());
+        crossChecks.add(new CRFVersionMatchCrossCheck());
         crossChecks.add(new CrfCouldNotBeVerifiedCrossCheck());
         crossChecks.add(new MultipleEventsCrossCheck());
         crossChecks.add(new MultipleStudiesCrossCheck());
@@ -52,7 +53,6 @@ public class ClinicalDataOcChecks {
         crossChecks.add(new SsidUniqueCrossCheck());
         crossChecks.add(new EventRepeatCrossCheck());
         crossChecks.add(new CodeListCrossCheck());
-        crossChecks.add(new CRFVersionMatchCrossCheck());
     }
 
     public List<ValidationErrorMessage> getErrors() {

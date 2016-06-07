@@ -197,7 +197,7 @@ public class ClinicalData implements OcEntity, UserSubmitted, EventReference {
      * @param that
      * @return <code>true</code> if a conflicting CRF is present.
      */
-    public boolean isConflictingCRFVersion(ClinicalData that) {
+    public boolean hasSameCRFVersion(ClinicalData that) {
         if ((this.study == null) ||
                 (this.ssid == null) ||
                 (this.eventName == null) ||
@@ -211,7 +211,7 @@ public class ClinicalData implements OcEntity, UserSubmitted, EventReference {
                 (this.eventName.equals(that.eventName)) &&
                 (this.eventRepeat.equals(that.eventRepeat)) &&
                 (this.crfName.equals(that.crfName)) &&
-                (! this.crfVersion.equals(that.crfVersion))));
+                (this.crfVersion.equals(that.crfVersion))));
     }
 
     public List<String> getValues() {

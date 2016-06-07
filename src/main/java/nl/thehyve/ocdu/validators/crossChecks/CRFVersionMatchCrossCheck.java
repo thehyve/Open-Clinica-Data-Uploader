@@ -11,8 +11,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Checks if the CRF-version as specified in the input, matches the CRF-version existing data of each subject in
- * OpenClinica.
+ * Checks if the CRF-version as specified in the input, matches the CRF-version of existing data for each subject
+ * registered in OpenClinica.
  *
  * Created by jacob on 6/2/16.
  */
@@ -26,25 +26,28 @@ public class CRFVersionMatchCrossCheck implements ClinicalDataCrossCheck {
             return null;
         }
         // Assumption is that there is only 1 event and 1 CRF in a data file and that the clincalDataList only contains a single subjectID
-        String subjectLabel = clinicalDataList.get(0).getSsid();
+
         String studyIdentifier = metaData.getStudyIdentifier();
 
         List<String> offendingNames = new ArrayList<>();
-        List<ClinicalData> clinicalDataPresentInStudy = convertToClinicalData(subjectWithEventsTypeList, subjectLabel, studyIdentifier);
-        for (ClinicalData clinicalDataInStudy : clinicalDataPresentInStudy) {
-            for (ClinicalData clinicalDataToUpload : clinicalDataList) {
-                if (clinicalDataInStudy.isConflictingCRFVersion(clinicalDataToUpload)) {
-                    String msg = "Subject: " + subjectLabel + " has a mismatching CRF " +
+        for (ClinicalData clinicalDataToUpload : clinicalDataList) {
+            String subjectLabel = clinicalDataToUpload.getSsid();
+            List<ClinicalData> clinicalDataPresentInStudy = convertToClinicalData(subjectWithEventsTypeList, subjectLabel, studyIdentifier);
+            for (ClinicalData clinicalDataInStudy : clinicalDataPresentInStudy) {
+                if (! clinicalDataInStudy.hasSameCRFVersion(clinicalDataToUpload)) {
+                    String msg = "Subject " + subjectLabel + " has a mismatching CRF version (" +
                             clinicalDataToUpload.getCrfVersion()
-                            + " version compared to the data present in OpenClinica "
-                            + clinicalDataInStudy.getCrfVersion()
-                            + " for event " + clinicalDataInStudy.getEventName() +".";
-                    if (! offendingNames.contains(msg)) {
+                            + ") for CRF "
+                            + clinicalDataInStudy.getCrfName()
+                            + " in event " + clinicalDataInStudy.getEventName()
+                            + ", repeat number " + clinicalDataToUpload.getEventRepeat();
+                    if (!offendingNames.contains(msg)) {
                         offendingNames.add(msg);
                     }
                 }
             }
         }
+
         if (offendingNames.isEmpty()) {
             return null;
         }

@@ -8,7 +8,6 @@ import nl.thehyve.ocdu.models.UploadSession;
 import nl.thehyve.ocdu.models.errors.*;
 import nl.thehyve.ocdu.soap.ResponseHandlers.GetStudyMetadataResponseHandler;
 import nl.thehyve.ocdu.soap.ResponseHandlers.ListAllByStudyResponseHandler;
-import nl.thehyve.ocdu.soap.SOAPRequestFactory;
 import nl.thehyve.ocdu.validators.ClinicalDataOcChecks;
 import org.junit.Before;
 import org.junit.Ignore;
@@ -18,16 +17,12 @@ import org.openclinica.ws.beans.StudySubjectWithEventsType;
 import org.springframework.boot.test.SpringApplicationConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
-import org.springframework.ws.soap.saaj.SaajSoapMessageFactory;
 
 import javax.xml.soap.MessageFactory;
 import javax.xml.soap.MimeHeaders;
-import javax.xml.soap.SOAPBody;
 import javax.xml.soap.SOAPMessage;
-import javax.xml.transform.stream.StreamSource;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileReader;
 import java.io.InputStream;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -116,7 +111,6 @@ public class ValidationTests {
     }
 
     @Test
-    @Ignore
     public void validateCorrectClinicalDataTest() throws Exception {
         List<ClinicalData> correctClinicalData = factory.createClinicalData(testFileCorrect);
         clinicalDataOcChecks = new ClinicalDataOcChecks(metaData, correctClinicalData, testSubjectWithEventsTypeList);
@@ -125,7 +119,6 @@ public class ValidationTests {
     }
 
     @Test
-    @Ignore
     public void tooLongSSID() throws Exception {
         List<ClinicalData> incorrectClinicalData = factory.createClinicalData(testFileInCorrectSsidLength);
         clinicalDataOcChecks = new ClinicalDataOcChecks(metaData, incorrectClinicalData, testSubjectWithEventsTypeList);
@@ -135,7 +128,6 @@ public class ValidationTests {
     }
 
     @Test
-    @Ignore
     public void nonExistentEvent() throws Exception {
         List<ClinicalData> incorrectClinicalData = factory.createClinicalData(testFileNonExistentEvent);
         clinicalDataOcChecks = new ClinicalDataOcChecks(metaData, incorrectClinicalData, testSubjectWithEventsTypeList);
@@ -148,7 +140,6 @@ public class ValidationTests {
     }
 
     @Test
-    @Ignore
     public void nonExistentCRF() throws Exception {
         List<ClinicalData> incorrectClinicalData = factory.createClinicalData(testFileNonExistentCRF);
         clinicalDataOcChecks = new ClinicalDataOcChecks(metaData, incorrectClinicalData, testSubjectWithEventsTypeList);
@@ -158,7 +149,6 @@ public class ValidationTests {
     }
 
     @Test
-    @Ignore
     public void itemLengthExceeded() throws Exception {
         List<ClinicalData> incorrectClinicalData = factory.createClinicalData(testFileItemLengthExceeded);
         clinicalDataOcChecks = new ClinicalDataOcChecks(metaData, incorrectClinicalData, testSubjectWithEventsTypeList);
@@ -169,7 +159,6 @@ public class ValidationTests {
     }
 
     @Test
-    @Ignore
     public void nonExistentItem() throws Exception {
         List<ClinicalData> incorrectClinicalData = factory.createClinicalData(testFileNonExistentItem);
         clinicalDataOcChecks = new ClinicalDataOcChecks(metaData, incorrectClinicalData, testSubjectWithEventsTypeList);
@@ -179,7 +168,6 @@ public class ValidationTests {
     }
 
     @Test
-    @Ignore
     public void correctFileWithoutSIte() throws Exception {
         List<ClinicalData> correctClinicalData = factory.createClinicalData(testFileCorrectNoSite);
         clinicalDataOcChecks = new ClinicalDataOcChecks(metaData, correctClinicalData, testSubjectWithEventsTypeList);
@@ -189,7 +177,6 @@ public class ValidationTests {
 
 
     @Test
-    @Ignore
     public void nonExistentVersion() throws Exception {
         List<ClinicalData> incorrectClinicalData = factory.createClinicalData(testFileNonExistentVersion);
         clinicalDataOcChecks = new ClinicalDataOcChecks(metaData, incorrectClinicalData, testSubjectWithEventsTypeList);
@@ -199,7 +186,6 @@ public class ValidationTests {
     }
 
     @Test
-    @Ignore
     public void rangeCheckViolation() throws Exception {
         List<ClinicalData> incorrectClinicalData = factory.createClinicalData(testFileRangeCheckViolation);
         clinicalDataOcChecks = new ClinicalDataOcChecks(metaData, incorrectClinicalData, testSubjectWithEventsTypeList);
@@ -210,7 +196,6 @@ public class ValidationTests {
     }
 
     @Test
-    @Ignore
     public void tooManyValues() throws Exception {
         List<ClinicalData> incorrectClinicalData = factory.createClinicalData(testFileTooManyValues);
         clinicalDataOcChecks = new ClinicalDataOcChecks(metaData, incorrectClinicalData, testSubjectWithEventsTypeList);
@@ -221,7 +206,6 @@ public class ValidationTests {
     }
 
     @Test
-    @Ignore
     public void tooManySignificantDigits() throws Exception {
         List<ClinicalData> incorrectClinicalData = factory.createClinicalData(testFileTooManySignificantDigits);
         clinicalDataOcChecks = new ClinicalDataOcChecks(metaData, incorrectClinicalData, testSubjectWithEventsTypeList);
@@ -233,7 +217,6 @@ public class ValidationTests {
     }
 
     @Test
-    @Ignore
     public void duplicatedSsid() throws Exception {
         List<ClinicalData> incorrectClinicalData = factory.createClinicalData(testFileDupSsid);
         clinicalDataOcChecks = new ClinicalDataOcChecks(metaData, incorrectClinicalData, testSubjectWithEventsTypeList);
@@ -243,7 +226,6 @@ public class ValidationTests {
     }
 
     @Test
-    @Ignore
     public void repeatInNonrepeatingEvent() throws Exception {
         List<ClinicalData> incorrectClinicalData = factory.createClinicalData(testFileRepeatInNonrepeatingEvent);
         clinicalDataOcChecks = new ClinicalDataOcChecks(metaData, incorrectClinicalData, testSubjectWithEventsTypeList);
@@ -253,12 +235,16 @@ public class ValidationTests {
     }
 
     @Test
-    public void testCRFVersionMatchCrossCheck() throws Exception {
+    public void versionMismatchCRF() throws Exception {
         List<ClinicalData> incorrectClinicalData = factory.createClinicalData(testFileMismatchingCRFVersion );
-        clinicalDataOcChecks = new ClinicalDataOcChecks(metaData, incorrectClinicalData, testSubjectWithEventsTypeList);
+        File testFile = new File("docs/responseExamples/getStudyMetadata3.xml");
+        FileInputStream in = new FileInputStream(testFile);
+        MessageFactory messageFactory = MessageFactory.newInstance();
+        SOAPMessage mockedResponseGetMetadata = messageFactory.createMessage(null, in);//soapMessage;
+        MetaData crfVersionMetaData = GetStudyMetadataResponseHandler.parseGetStudyMetadataResponse(mockedResponseGetMetadata);
+        clinicalDataOcChecks = new ClinicalDataOcChecks(crfVersionMetaData, incorrectClinicalData, testSubjectWithEventsTypeList);
         List<ValidationErrorMessage> errors = clinicalDataOcChecks.getErrors();
         assertEquals(1, errors.size());
-        assertThat(errors, hasItem(isA(RepeatInNonrepeatingEvent.class)));
-
+        assertThat(errors, hasItem(isA(CRFVersionMismatchError.class)));
     }
 }

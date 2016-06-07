@@ -13,4 +13,10 @@ public class PatientsFileValidator extends GenericFileValidator{
     public PatientsFileValidator() {
         super(new String[]{}, new String[]{}); //TODO: put mandatory and integer columns here from PatientFactory
     }
+
+    @Override
+    public void validateFile(Path file) {
+        super.validateFile(file);
+
+    }
 }

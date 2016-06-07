@@ -1,8 +1,10 @@
 package nl.thehyve.ocdu.services;
 
 import nl.thehyve.ocdu.factories.ClinicalDataFactory;
+import nl.thehyve.ocdu.factories.PatientDataFactory;
 import nl.thehyve.ocdu.models.OCEntities.ClinicalData;
 import nl.thehyve.ocdu.models.OCEntities.Study;
+import nl.thehyve.ocdu.models.OCEntities.Subject;
 import nl.thehyve.ocdu.models.OcUser;
 import nl.thehyve.ocdu.models.UploadSession;
 import nl.thehyve.ocdu.models.errors.FileFormatError;
@@ -10,6 +12,7 @@ import nl.thehyve.ocdu.repositories.ClinicalDataRepository;
 import nl.thehyve.ocdu.repositories.EventRepository;
 import nl.thehyve.ocdu.repositories.SubjectRepository;
 import nl.thehyve.ocdu.validators.fileValidators.DataFileValidator;
+import nl.thehyve.ocdu.validators.fileValidators.PatientsFileValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -45,6 +48,21 @@ public class FileService {
             ClinicalDataFactory factory = new ClinicalDataFactory(user, submission);
             List<ClinicalData> newEntries = factory.createClinicalData(dataFile);
             clinicalDataRepository.save(newEntries);
+            return errorMsgs;
+        } else {
+            errorMsgs = validator.getErrorMessages();
+            return errorMsgs;
+        }
+    }
+
+    public List<FileFormatError> depositPatientFile(Path patientFile, OcUser user, UploadSession submission, String pwd) throws Exception {
+        PatientsFileValidator validator = new PatientsFileValidator();
+        validator.validateFile(patientFile);
+        List<FileFormatError> errorMsgs = new ArrayList<>();
+        if (validator.isValid()) {
+            PatientDataFactory factory = new PatientDataFactory(user, submission);
+            List<Subject> newEntries = factory.createPatientData(patientFile);
+            subjectRepository.save(newEntries);
             return errorMsgs;
         } else {
             errorMsgs = validator.getErrorMessages();

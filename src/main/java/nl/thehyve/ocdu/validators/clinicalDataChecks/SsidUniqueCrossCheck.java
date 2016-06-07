@@ -1,4 +1,4 @@
-package nl.thehyve.ocdu.validators.crossChecks;
+package nl.thehyve.ocdu.validators.clinicalDataChecks;
 
 import nl.thehyve.ocdu.models.OCEntities.ClinicalData;
 import nl.thehyve.ocdu.models.OcDefinitions.MetaData;
@@ -8,7 +8,6 @@ import nl.thehyve.ocdu.models.errors.ValidationErrorMessage;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 /**

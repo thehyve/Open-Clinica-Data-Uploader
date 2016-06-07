@@ -19,14 +19,16 @@ public class ItemDefinition {
     private boolean mandatoryInGroup = false;
     private boolean isMultiselect = false;
     private  String codeListRef;
-    private boolean show = false;
 
-    public boolean isShow() {
-        return show;
+    @OneToMany(targetEntity = RangeCheck.class)
+    private List<DisplayRule> displayRules;
+
+    public List<DisplayRule> getDisplayRules() {
+        return displayRules;
     }
 
-    public void setShow(boolean show) {
-        this.show = show;
+    public void setDisplayRules(List<DisplayRule> displayRules) {
+        this.displayRules = displayRules;
     }
 
     public String getCodeListRef() {
@@ -119,7 +121,7 @@ public class ItemDefinition {
         this.significantDigits = prototype.getSignificantDigits();
         this.isMultiselect = prototype.isMultiselect();
         this.codeListRef = prototype.getCodeListRef();
-        this.show = prototype.isShow();
+        this.displayRules = prototype.getDisplayRules();
     }
 
     public List<RangeCheck> getRangeCheckList() {

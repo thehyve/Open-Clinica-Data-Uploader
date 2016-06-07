@@ -42,6 +42,7 @@ public class GetStudyMetadataResponseHandler extends OCResponseHandler {
     public static final String MULTIPLE_SELECT_DEFINITION_SELECTOR = "//MetaDataVersion/*[local-name()='MultiSelectList']";
     public static final String STUDY_SELECTOR = "//Study[1]";
     public static final String SITES_SELECTOR = "//Study[position()>1]";
+    public static final String ITEM_PRESENT_IN_FORM_SELECTOR = ".//*[local-name()='ItemPresentInForm']";
 
 
     public static MetaData parseGetStudyMetadataResponse(SOAPMessage response) throws Exception { //TODO: handle exception
@@ -327,6 +328,45 @@ public class GetStudyMetadataResponseHandler extends OCResponseHandler {
         return items;
     }
 
+    private static List<DisplayRule> getDisplayRules(Node itemDefNode) throws XPathExpressionException {
+        List<DisplayRule> displayRules = new ArrayList<>();
+        NodeList itemPresentInFormNode = (NodeList) xpath.evaluate(ITEM_PRESENT_IN_FORM_SELECTOR, itemDefNode, XPathConstants.NODESET);
+        for (int i = 0; i < itemPresentInFormNode.getLength(); i++) {
+            Node item = itemPresentInFormNode.item(i);
+            DisplayRule displayRule = getDisplayRule(item);
+            displayRules.add(displayRule);
+        }
+        return displayRules;
+    }
+
+    private static DisplayRule getDisplayRule(Node itemPresentInFormNode) {
+        Node formOIDNode = itemPresentInFormNode.getAttributes().getNamedItem("FormOID");
+        Node showItemNode = itemPresentInFormNode.getAttributes().getNamedItem("ShowItem");
+        NodeList childNodes = itemPresentInFormNode.getChildNodes();
+        assert formOIDNode != null;
+        assert showItemNode != null;
+
+        DisplayRule rule = new DisplayRule();
+        String crfOID = formOIDNode.getTextContent();
+        boolean show = true;
+        if (showItemNode.getTextContent().equals("No")) {
+            show = false;
+        }
+        for (int i = 0; i < childNodes.getLength(); i++) {
+            Node child = childNodes.item(i);
+            if (child.getNodeName().equals("ControlItemName")) {
+                String item = child.getTextContent();
+                rule.setControlItemName(item);
+            } else if (child.getNodeName().equals("OptionValue")) {
+                String item = child.getTextContent();
+                rule.setOptionValue(item);
+            }
+        }
+        rule.setAppliesInCrf(crfOID);
+        rule.setShow(show);
+        return rule;
+    }
+
     private static ItemDefinition getItem(Node item) throws XPathExpressionException {
         String oid = item.getAttributes().getNamedItem("OID").getTextContent();
         String name = item.getAttributes().getNamedItem("Name").getTextContent();
@@ -335,14 +375,6 @@ public class GetStudyMetadataResponseHandler extends OCResponseHandler {
         Node significantDigits = item.getAttributes().getNamedItem("SignificantDigits");
         String length = "0"; // Can be empty, zero means no restriction on length
         String significantDigitsText = "0";
-        boolean showItem = true;
-        Node showNode = item.getAttributes().getNamedItem("ShowItem");
-        if (showNode != null) {
-            String showItemText = showNode.getTextContent();
-            if (showItemText != null && showItemText.equals("No")) {
-                showItem = false;
-            }
-        }
         if (length1 != null) {
             length = length1.getTextContent();
         }
@@ -361,14 +393,13 @@ public class GetStudyMetadataResponseHandler extends OCResponseHandler {
         itemDef.setSignificantDigits(Integer.parseInt(significantDigitsText));
         itemDef.setMultiselect(isMultiSelect);
         itemDef.setCodeListRef(codeListRef);
-        itemDef.setShow(showItem);
         return itemDef;
     }
 
     private static String determineCodeListRef(Node item) throws XPathExpressionException {
         Node refCodeList = (Node) xpath.evaluate(".//CodeListRef", item, XPathConstants.NODE);
         Node refMultiSelect = (Node) xpath.evaluate(".//*[local-name()='MultiSelectListRef']", item, XPathConstants.NODE);
-        if (refCodeList != null ){
+        if (refCodeList != null) {
             return refCodeList.getAttributes().getNamedItem("CodeListOID").getTextContent();
         }
         if (refMultiSelect != null) {
@@ -463,8 +494,7 @@ public class GetStudyMetadataResponseHandler extends OCResponseHandler {
                         ItemGroupDefinition groupDef = new ItemGroupDefinition(prototype);
                         if (!groupDef.isUngrouped()) {
                             crfDefinition.addItemGroupDef(groupDef);
-                        }
-                        else crfDefinition.addAllUngroupedItems(getItemNames(groupDef));
+                        } else crfDefinition.addAllUngroupedItems(getItemNames(groupDef));
                         itemGroupDefs.add(groupDef);
                     });
         }

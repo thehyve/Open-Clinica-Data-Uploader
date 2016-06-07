@@ -88,7 +88,7 @@ public class DataService {
                 MetaDataTree versionNode = new MetaDataTree();
                 versionNode.setName(version);
                 crfChildren.add(versionNode);
-                List<ItemDefinition> items = crfDefinition.allItems();
+                Set<ItemDefinition> items = crfDefinition.allItems();
 
                 List<MetaDataTree> itemNodes = items.stream()
                         .map(itemDefinition -> itemDefinition.getName())

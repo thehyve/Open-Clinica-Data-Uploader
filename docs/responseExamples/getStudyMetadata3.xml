@@ -1,0 +1,688 @@
+<SOAP-ENV:Envelope xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/">
+    <SOAP-ENV:Header/>
+    <SOAP-ENV:Body>
+        <createResponse xmlns="http://openclinica.org/ws/study/v1">
+            <result>Success</result>
+            <odm><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
+<ODM FileOID="Study-MetaD20160606132026+0200" Description="Study Metadata" CreationDateTime="2016-06-06T13:20:26+02:00" FileType="Snapshot" ODMVersion="1.3" xmlns="http://www.cdisc.org/ns/odm/v1.3" xmlns:OpenClinica="http://www.openclinica.org/ns/odm_ext_v130/v3.1" xmlns:OpenClinicaRules="http://www.openclinica.org/ns/rules/v3.1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.cdisc.org/ns/odm/v1.3 OpenClinica-ODM1-3-0-OC2-0.xsd" >
+    <Study OID="S_EVENTFUL">
+        <GlobalVariables>
+            <StudyName>Eventful</StudyName>
+            <StudyDescription>
+                Test study for the development of the modifications to the event SOAP-service
+            </StudyDescription>
+            <ProtocolName>Eventful</ProtocolName>
+        </GlobalVariables>
+        <BasicDefinitions>
+            <MeasurementUnit OID="MU_CM" Name="cm">
+                <Symbol>
+                    <TranslatedText>cm</TranslatedText>
+                </Symbol>
+            </MeasurementUnit>
+            <MeasurementUnit OID="MU_YEARS" Name="years">
+                <Symbol>
+                    <TranslatedText>years</TranslatedText>
+                </Symbol>
+            </MeasurementUnit>
+        </BasicDefinitions>
+        <MetaDataVersion OID="v1.0.0" Name="MetaDataVersion_v1.0.0">
+            <Protocol>
+                <StudyEventRef StudyEventOID="SE_EVENTFUL" OrderNumber="1" Mandatory="Yes"/>
+                <StudyEventRef StudyEventOID="SE_REPEATINGEVENT" OrderNumber="2" Mandatory="Yes"/>
+            </Protocol>
+            <StudyEventDef OID="SE_EVENTFUL"  Name="Non-repeating Event" Repeating="No" Type="Scheduled">
+                <FormRef FormOID="F_MUSTFOR_NON__010" Mandatory="Yes"/>
+                <FormRef FormOID="F_MUSTFOR_NON__009" Mandatory="Yes"/>
+                <FormRef FormOID="F_MUSTFOR_NON__008" Mandatory="Yes"/>
+                <FormRef FormOID="F_MUSTFOR_NON__007" Mandatory="Yes"/>
+                <OpenClinica:EventDefinitionDetails StudyEventOID="SE_EVENTFUL">
+                    <OpenClinica:Description>The only event</OpenClinica:Description>
+                </OpenClinica:EventDefinitionDetails>
+            </StudyEventDef>
+            <StudyEventDef OID="SE_REPEATINGEVENT"  Name="RepeatingEvent" Repeating="Yes" Type="Scheduled">
+                <FormRef FormOID="F_MUSTFOR_NON__010" Mandatory="Yes"/>
+                <FormRef FormOID="F_MUSTFOR_NON__009" Mandatory="Yes"/>
+                <FormRef FormOID="F_MUSTFOR_NON__008" Mandatory="Yes"/>
+                <FormRef FormOID="F_MUSTFOR_NON__007" Mandatory="Yes"/>
+                <OpenClinica:EventDefinitionDetails StudyEventOID="SE_REPEATINGEVENT">
+                    <OpenClinica:Description>A repeating event</OpenClinica:Description>
+                </OpenClinica:EventDefinitionDetails>
+            </StudyEventDef>
+            <FormDef OID="F_MUSTFOR_NON__010" Name="MUST-FOR_NON_TTP_STUDY - 0.10" Repeating="No">
+                <ItemGroupRef ItemGroupOID="IG_MUSTF_PATIENT_CHARS" Mandatory="Yes"/>
+                <ItemGroupRef ItemGroupOID="IG_MUSTF_OCCLUSION_CHARS" Mandatory="Yes"/>
+                <OpenClinica:FormDetails FormOID="F_MUSTFOR_NON__010" ParentFormOID="F_MUSTFOR_NON_">
+                    <OpenClinica:SectionDetails>
+                        <OpenClinica:Section SectionLabel="M" SectionTitle="MUST" SectionSubtitle="" SectionInstructions="" SectionPageNumber="1"/>
+                    </OpenClinica:SectionDetails>
+                    <OpenClinica:VersionDescription>Voorbereidende fase versie 0.09</OpenClinica:VersionDescription>
+                    <OpenClinica:RevisionNotes>Eerste opzet CRF
+V8: Added a reg expression to check how WS react</OpenClinica:RevisionNotes>
+                    <OpenClinica:PresentInEventDefinition StudyEventOID="SE_EVENTFUL" IsDefaultVersion="Yes" PasswordRequired="No" DoubleDataEntry="No" HideCRF="No" ParticipantForm="No" SourceDataVerification="not_required"/>
+                    <OpenClinica:PresentInEventDefinition StudyEventOID="SE_REPEATINGEVENT" IsDefaultVersion="Yes" PasswordRequired="No" DoubleDataEntry="No" HideCRF="No" ParticipantForm="No" SourceDataVerification="not_required"/>
+                </OpenClinica:FormDetails>
+            </FormDef>
+            <FormDef OID="F_MUSTFOR_NON__009" Name="MUST-FOR_NON_TTP_STUDY - 0.09" Repeating="No">
+                <ItemGroupRef ItemGroupOID="IG_MUSTF_PATIENT_CHARS" Mandatory="Yes"/>
+                <ItemGroupRef ItemGroupOID="IG_MUSTF_OCCLUSION_CHARS" Mandatory="No"/>
+                <OpenClinica:FormDetails FormOID="F_MUSTFOR_NON__009" ParentFormOID="F_MUSTFOR_NON_">
+                    <OpenClinica:SectionDetails>
+                        <OpenClinica:Section SectionLabel="M" SectionTitle="MUST" SectionSubtitle="" SectionInstructions="" SectionPageNumber="1"/>
+                    </OpenClinica:SectionDetails>
+                    <OpenClinica:VersionDescription>Voorbereidende fase versie 0.09</OpenClinica:VersionDescription>
+                    <OpenClinica:RevisionNotes>Eerste opzet CRF
+V8: Added a reg expression to check how WS react</OpenClinica:RevisionNotes>
+                    <OpenClinica:PresentInEventDefinition StudyEventOID="SE_EVENTFUL" IsDefaultVersion="No" PasswordRequired="No" DoubleDataEntry="No" HideCRF="No" ParticipantForm="No" SourceDataVerification="not_required"/>
+                    <OpenClinica:PresentInEventDefinition StudyEventOID="SE_REPEATINGEVENT" IsDefaultVersion="No" PasswordRequired="No" DoubleDataEntry="No" HideCRF="No" ParticipantForm="No" SourceDataVerification="not_required"/>
+                </OpenClinica:FormDetails>
+            </FormDef>
+            <FormDef OID="F_MUSTFOR_NON__008" Name="MUST-FOR_NON_TTP_STUDY - 0.08" Repeating="No">
+                <ItemGroupRef ItemGroupOID="IG_MUSTF_PATIENT_CHARS" Mandatory="Yes"/>
+                <ItemGroupRef ItemGroupOID="IG_MUSTF_OCCLUSION_CHARS" Mandatory="No"/>
+                <OpenClinica:FormDetails FormOID="F_MUSTFOR_NON__008" ParentFormOID="F_MUSTFOR_NON_">
+                    <OpenClinica:SectionDetails>
+                        <OpenClinica:Section SectionLabel="M" SectionTitle="MUST" SectionSubtitle="" SectionInstructions="" SectionPageNumber="1"/>
+                    </OpenClinica:SectionDetails>
+                    <OpenClinica:VersionDescription>Voorbereidende fase versie 0.08</OpenClinica:VersionDescription>
+                    <OpenClinica:RevisionNotes>Eerste opzet CRF
+V8: Added a reg expression to check how WS react</OpenClinica:RevisionNotes>
+                    <OpenClinica:PresentInEventDefinition StudyEventOID="SE_EVENTFUL" IsDefaultVersion="No" PasswordRequired="No" DoubleDataEntry="No" HideCRF="No" ParticipantForm="No" SourceDataVerification="not_required"/>
+                    <OpenClinica:PresentInEventDefinition StudyEventOID="SE_REPEATINGEVENT" IsDefaultVersion="No" PasswordRequired="No" DoubleDataEntry="No" HideCRF="No" ParticipantForm="No" SourceDataVerification="not_required"/>
+                </OpenClinica:FormDetails>
+            </FormDef>
+            <FormDef OID="F_MUSTFOR_NON__007" Name="MUST-FOR_NON_TTP_STUDY - 0.07" Repeating="No">
+                <ItemGroupRef ItemGroupOID="IG_MUSTF_PATIENT_CHARS" Mandatory="Yes"/>
+                <ItemGroupRef ItemGroupOID="IG_MUSTF_OCCLUSION_CHARS" Mandatory="No"/>
+                <OpenClinica:FormDetails FormOID="F_MUSTFOR_NON__007" ParentFormOID="F_MUSTFOR_NON_">
+                    <OpenClinica:SectionDetails>
+                        <OpenClinica:Section SectionLabel="M" SectionTitle="MUST" SectionSubtitle="" SectionInstructions="" SectionPageNumber="1"/>
+                    </OpenClinica:SectionDetails>
+                    <OpenClinica:VersionDescription>Voorbereidende fase versie 0.07</OpenClinica:VersionDescription>
+                    <OpenClinica:RevisionNotes>Eerste opzet CRF</OpenClinica:RevisionNotes>
+                    <OpenClinica:PresentInEventDefinition StudyEventOID="SE_EVENTFUL" IsDefaultVersion="No" PasswordRequired="No" DoubleDataEntry="No" HideCRF="No" ParticipantForm="No" SourceDataVerification="not_required"/>
+                    <OpenClinica:PresentInEventDefinition StudyEventOID="SE_REPEATINGEVENT" IsDefaultVersion="No" PasswordRequired="No" DoubleDataEntry="No" HideCRF="No" ParticipantForm="No" SourceDataVerification="not_required"/>
+                </OpenClinica:FormDetails>
+            </FormDef>
+            <ItemGroupDef OID="IG_MUSTF_PATIENT_CHARS" Name="PATIENT_CHARS" Repeating="No" SASDatasetName="PATIENT_" Comment="PTCHARS">
+                <ItemRef ItemOID="I_MUSTF_PATIENT_ID" OrderNumber="1" Mandatory="Yes"/>
+                <ItemRef ItemOID="I_MUSTF_MALE0_FEMALE1" OrderNumber="2" Mandatory="Yes"/>
+                <ItemRef ItemOID="I_MUSTF_AGE" OrderNumber="3" Mandatory="Yes"/>
+                <OpenClinica:ItemGroupDetails ItemGroupOID="IG_MUSTF_PATIENT_CHARS">
+                    <OpenClinica:PresentInForm FormOID="F_MUSTFOR_NON__010" ShowGroup="Yes">
+                        <OpenClinica:ItemGroupRepeat RepeatNumber="1" RepeatMax="1"/>
+                        <OpenClinica:ItemGroupHeader>PTCHARS</OpenClinica:ItemGroupHeader>
+                    </OpenClinica:PresentInForm>
+                    <OpenClinica:PresentInForm FormOID="F_MUSTFOR_NON__009" ShowGroup="Yes">
+                        <OpenClinica:ItemGroupRepeat RepeatNumber="1" RepeatMax="1"/>
+                        <OpenClinica:ItemGroupHeader>PTCHARS</OpenClinica:ItemGroupHeader>
+                    </OpenClinica:PresentInForm>
+                    <OpenClinica:PresentInForm FormOID="F_MUSTFOR_NON__008" ShowGroup="Yes">
+                        <OpenClinica:ItemGroupRepeat RepeatNumber="1" RepeatMax="1"/>
+                        <OpenClinica:ItemGroupHeader>PTCHARS</OpenClinica:ItemGroupHeader>
+                    </OpenClinica:PresentInForm>
+                    <OpenClinica:PresentInForm FormOID="F_MUSTFOR_NON__007" ShowGroup="Yes">
+                        <OpenClinica:ItemGroupRepeat RepeatNumber="1" RepeatMax="1"/>
+                        <OpenClinica:ItemGroupHeader>PTCHARS</OpenClinica:ItemGroupHeader>
+                    </OpenClinica:PresentInForm>
+                </OpenClinica:ItemGroupDetails>
+            </ItemGroupDef>
+            <ItemGroupDef OID="IG_MUSTF_OCCLUSION_CHARS" Name="OCCLUSION_CHARS" Repeating="No" SASDatasetName="OCCLUSIO" Comment="OCCLCHARS">
+                <ItemRef ItemOID="I_MUSTF_SITE_OCCLUSION_LIMB_LEFT1_R" OrderNumber="1" Mandatory="Yes"/>
+                <ItemRef ItemOID="I_MUSTF_OCCLUDED_ARTERY" OrderNumber="2" Mandatory="Yes"/>
+                <ItemRef ItemOID="I_MUSTF_TOTAL_LENGTH_OCCLUDED_SEGME" OrderNumber="3" Mandatory="Yes"/>
+                <ItemRef ItemOID="I_MUSTF_TEST_PARAMETERIZED_LINK_V2" OrderNumber="4" Mandatory="No"/>
+                <OpenClinica:ItemGroupDetails ItemGroupOID="IG_MUSTF_OCCLUSION_CHARS">
+                    <OpenClinica:PresentInForm FormOID="F_MUSTFOR_NON__010" ShowGroup="Yes">
+                        <OpenClinica:ItemGroupRepeat RepeatNumber="1" RepeatMax="1"/>
+                        <OpenClinica:ItemGroupHeader>OCCLCHARS</OpenClinica:ItemGroupHeader>
+                    </OpenClinica:PresentInForm>
+                    <OpenClinica:PresentInForm FormOID="F_MUSTFOR_NON__009" ShowGroup="Yes">
+                        <OpenClinica:ItemGroupRepeat RepeatNumber="1" RepeatMax="1"/>
+                        <OpenClinica:ItemGroupHeader>OCCLCHARS</OpenClinica:ItemGroupHeader>
+                    </OpenClinica:PresentInForm>
+                    <OpenClinica:PresentInForm FormOID="F_MUSTFOR_NON__008" ShowGroup="Yes">
+                        <OpenClinica:ItemGroupRepeat RepeatNumber="1" RepeatMax="1"/>
+                        <OpenClinica:ItemGroupHeader>OCCLCHARS</OpenClinica:ItemGroupHeader>
+                    </OpenClinica:PresentInForm>
+                    <OpenClinica:PresentInForm FormOID="F_MUSTFOR_NON__007" ShowGroup="Yes">
+                        <OpenClinica:ItemGroupRepeat RepeatNumber="1" RepeatMax="1"/>
+                        <OpenClinica:ItemGroupHeader>OCCLCHARS</OpenClinica:ItemGroupHeader>
+                    </OpenClinica:PresentInForm>
+                </OpenClinica:ItemGroupDetails>
+            </ItemGroupDef>
+            <ItemDef OID="I_MUSTF_PATIENT_ID" Name="patient_ID" DataType="text" Length="13" SASFieldName="patient_" Comment="patient ID" OpenClinica:FormOIDs="F_MUSTFOR_NON__010,F_MUSTFOR_NON__009,F_MUSTFOR_NON__008,F_MUSTFOR_NON__007">
+                <Question>
+                    <TranslatedText>
+                    patient ID  - 0 decimals
+                    </TranslatedText>
+                </Question>
+                <OpenClinica:ItemDetails ItemOID="I_MUSTF_PATIENT_ID">
+                    <OpenClinica:ItemPresentInForm FormOID="F_MUSTFOR_NON__010" PageNumber="1" PHI="No" ShowItem="Yes" OrderInForm= "1">
+                        <OpenClinica:LeftItemText>patient ID</OpenClinica:LeftItemText>
+                        <OpenClinica:RightItemText>0 decimals</OpenClinica:RightItemText>
+                        <OpenClinica:SectionLabel>M</OpenClinica:SectionLabel>
+                        <OpenClinica:ItemResponse ResponseType="text"/>
+                    </OpenClinica:ItemPresentInForm>
+                    <OpenClinica:ItemPresentInForm FormOID="F_MUSTFOR_NON__009" PageNumber="1" PHI="No" ShowItem="Yes" OrderInForm= "1">
+                        <OpenClinica:LeftItemText>patient ID</OpenClinica:LeftItemText>
+                        <OpenClinica:RightItemText>0 decimals</OpenClinica:RightItemText>
+                        <OpenClinica:SectionLabel>M</OpenClinica:SectionLabel>
+                        <OpenClinica:ItemResponse ResponseType="text"/>
+                    </OpenClinica:ItemPresentInForm>
+                    <OpenClinica:ItemPresentInForm FormOID="F_MUSTFOR_NON__008" PageNumber="1" PHI="No" ShowItem="Yes" OrderInForm= "1">
+                        <OpenClinica:LeftItemText>patient ID</OpenClinica:LeftItemText>
+                        <OpenClinica:RightItemText>0 decimals</OpenClinica:RightItemText>
+                        <OpenClinica:SectionLabel>M</OpenClinica:SectionLabel>
+                        <OpenClinica:ItemResponse ResponseType="text"/>
+                    </OpenClinica:ItemPresentInForm>
+                    <OpenClinica:ItemPresentInForm FormOID="F_MUSTFOR_NON__007" PageNumber="1" PHI="No" ShowItem="Yes" OrderInForm= "1">
+                        <OpenClinica:LeftItemText>patient ID</OpenClinica:LeftItemText>
+                        <OpenClinica:RightItemText>0 decimals</OpenClinica:RightItemText>
+                        <OpenClinica:SectionLabel>M</OpenClinica:SectionLabel>
+                        <OpenClinica:ItemResponse ResponseType="text"/>
+                    </OpenClinica:ItemPresentInForm>
+                </OpenClinica:ItemDetails>
+            </ItemDef>
+            <ItemDef OID="I_MUSTF_MALE0_FEMALE1" Name="male0_female1" DataType="text" Length="1" SASFieldName="male0_fe" Comment="male0_female1" OpenClinica:FormOIDs="F_MUSTFOR_NON__010,F_MUSTFOR_NON__009,F_MUSTFOR_NON__008,F_MUSTFOR_NON__007">
+                <Question>
+                    <TranslatedText>
+                    male0_female1  - 0 or 1
+                    </TranslatedText>
+                </Question>
+                <OpenClinica:ItemDetails ItemOID="I_MUSTF_MALE0_FEMALE1">
+                    <OpenClinica:ItemPresentInForm FormOID="F_MUSTFOR_NON__010" PageNumber="1" PHI="No" ShowItem="Yes" OrderInForm= "2">
+                        <OpenClinica:LeftItemText>male0_female1</OpenClinica:LeftItemText>
+                        <OpenClinica:RightItemText>0 or 1</OpenClinica:RightItemText>
+                        <OpenClinica:SectionLabel>M</OpenClinica:SectionLabel>
+                        <OpenClinica:ItemResponse ResponseType="text"/>
+                    </OpenClinica:ItemPresentInForm>
+                    <OpenClinica:ItemPresentInForm FormOID="F_MUSTFOR_NON__009" PageNumber="1" PHI="No" ShowItem="Yes" OrderInForm= "2">
+                        <OpenClinica:LeftItemText>male0_female1</OpenClinica:LeftItemText>
+                        <OpenClinica:RightItemText>0 or 1</OpenClinica:RightItemText>
+                        <OpenClinica:SectionLabel>M</OpenClinica:SectionLabel>
+                        <OpenClinica:ItemResponse ResponseType="text"/>
+                    </OpenClinica:ItemPresentInForm>
+                    <OpenClinica:ItemPresentInForm FormOID="F_MUSTFOR_NON__008" PageNumber="1" PHI="No" ShowItem="Yes" OrderInForm= "2">
+                        <OpenClinica:LeftItemText>male0_female1</OpenClinica:LeftItemText>
+                        <OpenClinica:RightItemText>0 or 1</OpenClinica:RightItemText>
+                        <OpenClinica:SectionLabel>M</OpenClinica:SectionLabel>
+                        <OpenClinica:ItemResponse ResponseType="text"/>
+                    </OpenClinica:ItemPresentInForm>
+                    <OpenClinica:ItemPresentInForm FormOID="F_MUSTFOR_NON__007" PageNumber="1" PHI="No" ShowItem="Yes" OrderInForm= "2">
+                        <OpenClinica:LeftItemText>male0_female1</OpenClinica:LeftItemText>
+                        <OpenClinica:RightItemText>0 or 1</OpenClinica:RightItemText>
+                        <OpenClinica:SectionLabel>M</OpenClinica:SectionLabel>
+                        <OpenClinica:ItemResponse ResponseType="text"/>
+                    </OpenClinica:ItemPresentInForm>
+                </OpenClinica:ItemDetails>
+            </ItemDef>
+            <ItemDef OID="I_MUSTF_AGE" Name="age" DataType="integer" Length="10" SASFieldName="age" Comment="age" OpenClinica:FormOIDs="F_MUSTFOR_NON__010,F_MUSTFOR_NON__009,F_MUSTFOR_NON__008,F_MUSTFOR_NON__007">
+                <Question>
+                    <TranslatedText>
+                    age
+                    </TranslatedText>
+                </Question>
+                <MeasurementUnitRef MeasurementUnitOID="MU_YEARS"/>
+                <OpenClinica:ItemDetails ItemOID="I_MUSTF_AGE">
+                    <OpenClinica:ItemPresentInForm FormOID="F_MUSTFOR_NON__010" PageNumber="1" PHI="No" ShowItem="Yes" OrderInForm= "3">
+                        <OpenClinica:LeftItemText>age</OpenClinica:LeftItemText>
+                        <OpenClinica:SectionLabel>M</OpenClinica:SectionLabel>
+                        <OpenClinica:ItemResponse ResponseType="text"/>
+                    </OpenClinica:ItemPresentInForm>
+                    <OpenClinica:ItemPresentInForm FormOID="F_MUSTFOR_NON__009" PageNumber="1" PHI="No" ShowItem="Yes" OrderInForm= "3">
+                        <OpenClinica:LeftItemText>age</OpenClinica:LeftItemText>
+                        <OpenClinica:SectionLabel>M</OpenClinica:SectionLabel>
+                        <OpenClinica:ItemResponse ResponseType="text"/>
+                    </OpenClinica:ItemPresentInForm>
+                    <OpenClinica:ItemPresentInForm FormOID="F_MUSTFOR_NON__008" PageNumber="1" PHI="No" ShowItem="Yes" OrderInForm= "3">
+                        <OpenClinica:LeftItemText>age</OpenClinica:LeftItemText>
+                        <OpenClinica:SectionLabel>M</OpenClinica:SectionLabel>
+                        <OpenClinica:ItemResponse ResponseType="text"/>
+                    </OpenClinica:ItemPresentInForm>
+                    <OpenClinica:ItemPresentInForm FormOID="F_MUSTFOR_NON__007" PageNumber="1" PHI="No" ShowItem="Yes" OrderInForm= "3">
+                        <OpenClinica:LeftItemText>age</OpenClinica:LeftItemText>
+                        <OpenClinica:SectionLabel>M</OpenClinica:SectionLabel>
+                        <OpenClinica:ItemResponse ResponseType="text"/>
+                    </OpenClinica:ItemPresentInForm>
+                </OpenClinica:ItemDetails>
+            </ItemDef>
+            <ItemDef OID="I_MUSTF_SITE_OCCLUSION_LIMB_LEFT1_R" Name="site_occlusion_limb_Left1_right2_both3" DataType="text" Length="1" SASFieldName="site_occ" Comment="site_occlusion_limb_Left1_right2_both3" OpenClinica:FormOIDs="F_MUSTFOR_NON__010,F_MUSTFOR_NON__009,F_MUSTFOR_NON__008,F_MUSTFOR_NON__007">
+                <Question>
+                    <TranslatedText>
+                    site_occlusion_limb_Left1_right2_both3  - left1, right2, both3
+                    </TranslatedText>
+                </Question>
+                <OpenClinica:ItemDetails ItemOID="I_MUSTF_SITE_OCCLUSION_LIMB_LEFT1_R">
+                    <OpenClinica:ItemPresentInForm FormOID="F_MUSTFOR_NON__010" PageNumber="1" PHI="No" ShowItem="Yes" OrderInForm= "4">
+                        <OpenClinica:LeftItemText>site_occlusion_limb_Left1_right2_both3</OpenClinica:LeftItemText>
+                        <OpenClinica:RightItemText>left1, right2, both3</OpenClinica:RightItemText>
+                        <OpenClinica:SectionLabel>M</OpenClinica:SectionLabel>
+                        <OpenClinica:ItemResponse ResponseType="text"/>
+                    </OpenClinica:ItemPresentInForm>
+                    <OpenClinica:ItemPresentInForm FormOID="F_MUSTFOR_NON__009" PageNumber="1" PHI="No" ShowItem="Yes" OrderInForm= "4">
+                        <OpenClinica:LeftItemText>site_occlusion_limb_Left1_right2_both3</OpenClinica:LeftItemText>
+                        <OpenClinica:RightItemText>left1, right2, both3</OpenClinica:RightItemText>
+                        <OpenClinica:SectionLabel>M</OpenClinica:SectionLabel>
+                        <OpenClinica:ItemResponse ResponseType="text"/>
+                    </OpenClinica:ItemPresentInForm>
+                    <OpenClinica:ItemPresentInForm FormOID="F_MUSTFOR_NON__008" PageNumber="1" PHI="No" ShowItem="Yes" OrderInForm= "4">
+                        <OpenClinica:LeftItemText>site_occlusion_limb_Left1_right2_both3</OpenClinica:LeftItemText>
+                        <OpenClinica:RightItemText>left1, right2, both3</OpenClinica:RightItemText>
+                        <OpenClinica:SectionLabel>M</OpenClinica:SectionLabel>
+                        <OpenClinica:ItemResponse ResponseType="text"/>
+                    </OpenClinica:ItemPresentInForm>
+                    <OpenClinica:ItemPresentInForm FormOID="F_MUSTFOR_NON__007" PageNumber="1" PHI="No" ShowItem="Yes" OrderInForm= "4">
+                        <OpenClinica:LeftItemText>site_occlusion_limb_Left1_right2_both3</OpenClinica:LeftItemText>
+                        <OpenClinica:RightItemText>left1, right2, both3</OpenClinica:RightItemText>
+                        <OpenClinica:SectionLabel>M</OpenClinica:SectionLabel>
+                        <OpenClinica:ItemResponse ResponseType="text"/>
+                    </OpenClinica:ItemPresentInForm>
+                </OpenClinica:ItemDetails>
+            </ItemDef>
+            <ItemDef OID="I_MUSTF_OCCLUDED_ARTERY" Name="occluded_artery" DataType="text" Length="11" SASFieldName="occluded" Comment="occluded_artery" OpenClinica:FormOIDs="F_MUSTFOR_NON__010,F_MUSTFOR_NON__009,F_MUSTFOR_NON__008,F_MUSTFOR_NON__007">
+                <Question>
+                    <TranslatedText>
+                    occluded_artery  - welke arterie(en)? van hoogste segment naar laagste segment
+                    </TranslatedText>
+                </Question>
+                <OpenClinica:ItemDetails ItemOID="I_MUSTF_OCCLUDED_ARTERY">
+                    <OpenClinica:ItemPresentInForm FormOID="F_MUSTFOR_NON__010" PageNumber="1" PHI="No" ShowItem="Yes" OrderInForm= "5">
+                        <OpenClinica:LeftItemText>occluded_artery</OpenClinica:LeftItemText>
+                        <OpenClinica:RightItemText>welke arterie(en)? van hoogste segment naar laagste segment</OpenClinica:RightItemText>
+                        <OpenClinica:SectionLabel>M</OpenClinica:SectionLabel>
+                        <OpenClinica:ItemResponse ResponseType="text"/>
+                    </OpenClinica:ItemPresentInForm>
+                    <OpenClinica:ItemPresentInForm FormOID="F_MUSTFOR_NON__009" PageNumber="1" PHI="No" ShowItem="Yes" OrderInForm= "5">
+                        <OpenClinica:LeftItemText>occluded_artery</OpenClinica:LeftItemText>
+                        <OpenClinica:RightItemText>welke arterie(en)? van hoogste segment naar laagste segment</OpenClinica:RightItemText>
+                        <OpenClinica:SectionLabel>M</OpenClinica:SectionLabel>
+                        <OpenClinica:ItemResponse ResponseType="text"/>
+                    </OpenClinica:ItemPresentInForm>
+                    <OpenClinica:ItemPresentInForm FormOID="F_MUSTFOR_NON__008" PageNumber="1" PHI="No" ShowItem="Yes" OrderInForm= "5">
+                        <OpenClinica:LeftItemText>occluded_artery</OpenClinica:LeftItemText>
+                        <OpenClinica:RightItemText>welke arterie(en)? van hoogste segment naar laagste segment</OpenClinica:RightItemText>
+                        <OpenClinica:SectionLabel>M</OpenClinica:SectionLabel>
+                        <OpenClinica:ItemResponse ResponseType="text"/>
+                    </OpenClinica:ItemPresentInForm>
+                    <OpenClinica:ItemPresentInForm FormOID="F_MUSTFOR_NON__007" PageNumber="1" PHI="No" ShowItem="Yes" OrderInForm= "5">
+                        <OpenClinica:LeftItemText>occluded_artery</OpenClinica:LeftItemText>
+                        <OpenClinica:RightItemText>welke arterie(en)? van hoogste segment naar laagste segment</OpenClinica:RightItemText>
+                        <OpenClinica:SectionLabel>M</OpenClinica:SectionLabel>
+                        <OpenClinica:ItemResponse ResponseType="text"/>
+                    </OpenClinica:ItemPresentInForm>
+                </OpenClinica:ItemDetails>
+            </ItemDef>
+            <ItemDef OID="I_MUSTF_TOTAL_LENGTH_OCCLUDED_SEGME" Name="total_length_occluded_segment_in_cm" DataType="text" Length="3" SASFieldName="total_le" Comment="total_length_occluded_segment_in_cm___DESCRIPTION_LABEL" OpenClinica:FormOIDs="F_MUSTFOR_NON__010,F_MUSTFOR_NON__009,F_MUSTFOR_NON__008,F_MUSTFOR_NON__007">
+                <Question>
+                    <TranslatedText>
+                    total_length_occluded_segment_in_cm
+                    </TranslatedText>
+                </Question>
+                <MeasurementUnitRef MeasurementUnitOID="MU_CM"/>
+                <OpenClinica:ItemDetails ItemOID="I_MUSTF_TOTAL_LENGTH_OCCLUDED_SEGME">
+                    <OpenClinica:ItemPresentInForm FormOID="F_MUSTFOR_NON__010" PageNumber="1" PHI="No" ShowItem="Yes" OrderInForm= "6">
+                        <OpenClinica:LeftItemText>total_length_occluded_segment_in_cm</OpenClinica:LeftItemText>
+                        <OpenClinica:SectionLabel>M</OpenClinica:SectionLabel>
+                        <OpenClinica:ItemResponse ResponseType="text"/>
+                    </OpenClinica:ItemPresentInForm>
+                    <OpenClinica:ItemPresentInForm FormOID="F_MUSTFOR_NON__009" PageNumber="1" PHI="No" ShowItem="Yes" OrderInForm= "6">
+                        <OpenClinica:LeftItemText>total_length_occluded_segment_in_cm</OpenClinica:LeftItemText>
+                        <OpenClinica:SectionLabel>M</OpenClinica:SectionLabel>
+                        <OpenClinica:ItemResponse ResponseType="text"/>
+                    </OpenClinica:ItemPresentInForm>
+                    <OpenClinica:ItemPresentInForm FormOID="F_MUSTFOR_NON__008" PageNumber="1" PHI="No" ShowItem="Yes" OrderInForm= "6">
+                        <OpenClinica:LeftItemText>total_length_occluded_segment_in_cm</OpenClinica:LeftItemText>
+                        <OpenClinica:SectionLabel>M</OpenClinica:SectionLabel>
+                        <OpenClinica:ItemResponse ResponseType="text"/>
+                    </OpenClinica:ItemPresentInForm>
+                    <OpenClinica:ItemPresentInForm FormOID="F_MUSTFOR_NON__007" PageNumber="1" PHI="No" ShowItem="Yes" OrderInForm= "6">
+                        <OpenClinica:LeftItemText>total_length_occluded_segment_in_cm</OpenClinica:LeftItemText>
+                        <OpenClinica:SectionLabel>M</OpenClinica:SectionLabel>
+                        <OpenClinica:ItemResponse ResponseType="text"/>
+                    </OpenClinica:ItemPresentInForm>
+                </OpenClinica:ItemDetails>
+            </ItemDef>
+            <ItemDef OID="I_MUSTF_TEST_PARAMETERIZED_LINK_V2" Name="test_parameterized_link_v2" DataType="text" Length="74" SASFieldName="test_par" Comment="Test_of_the_parameterized_link" OpenClinica:FormOIDs="F_MUSTFOR_NON__010,F_MUSTFOR_NON__009,F_MUSTFOR_NON__008,F_MUSTFOR_NON__007">
+                <Question>
+                    <TranslatedText>
+                    Link-test  - Click here to see the patient&apos;s CT-scans
+                    </TranslatedText>
+                </Question>
+                <OpenClinica:ItemDetails ItemOID="I_MUSTF_TEST_PARAMETERIZED_LINK_V2">
+                    <OpenClinica:ItemPresentInForm FormOID="F_MUSTFOR_NON__010" PageNumber="1" DefaultValue="http://www.example.com/studyBaseURL/{subject:StudySubjectID}?view=image-01" PHI="No" ShowItem="Yes" OrderInForm= "7">
+                        <OpenClinica:LeftItemText>Link-test</OpenClinica:LeftItemText>
+                        <OpenClinica:RightItemText>Click here to see the patient&apos;s CT-scans</OpenClinica:RightItemText>
+                        <OpenClinica:SectionLabel>M</OpenClinica:SectionLabel>
+                        <OpenClinica:ItemResponse ResponseType="text"/>
+                    </OpenClinica:ItemPresentInForm>
+                    <OpenClinica:ItemPresentInForm FormOID="F_MUSTFOR_NON__009" PageNumber="1" DefaultValue="http://www.example.com/studyBaseURL/{subject:StudySubjectID}?view=image-01" PHI="No" ShowItem="Yes" OrderInForm= "7">
+                        <OpenClinica:LeftItemText>Link-test</OpenClinica:LeftItemText>
+                        <OpenClinica:RightItemText>Click here to see the patient&apos;s CT-scans</OpenClinica:RightItemText>
+                        <OpenClinica:SectionLabel>M</OpenClinica:SectionLabel>
+                        <OpenClinica:ItemResponse ResponseType="text"/>
+                    </OpenClinica:ItemPresentInForm>
+                    <OpenClinica:ItemPresentInForm FormOID="F_MUSTFOR_NON__008" PageNumber="1" DefaultValue="http://www.example.com/studyBaseURL/{subject:StudySubjectID}?view=image-01" PHI="No" ShowItem="Yes" OrderInForm= "7">
+                        <OpenClinica:LeftItemText>Link-test</OpenClinica:LeftItemText>
+                        <OpenClinica:RightItemText>Click here to see the patient&apos;s CT-scans</OpenClinica:RightItemText>
+                        <OpenClinica:SectionLabel>M</OpenClinica:SectionLabel>
+                        <OpenClinica:ItemResponse ResponseType="text"/>
+                    </OpenClinica:ItemPresentInForm>
+                    <OpenClinica:ItemPresentInForm FormOID="F_MUSTFOR_NON__007" PageNumber="1" DefaultValue="http://www.example.com/studyBaseURL/{subject:StudySubjectID}?view=image-01" PHI="No" ShowItem="Yes" OrderInForm= "7">
+                        <OpenClinica:LeftItemText>Link-test</OpenClinica:LeftItemText>
+                        <OpenClinica:RightItemText>Click here to see the patient&apos;s CT-scans</OpenClinica:RightItemText>
+                        <OpenClinica:SectionLabel>M</OpenClinica:SectionLabel>
+                        <OpenClinica:ItemResponse ResponseType="text"/>
+                    </OpenClinica:ItemPresentInForm>
+                </OpenClinica:ItemDetails>
+            </ItemDef>
+            <OpenClinica:StudyDetails StudyOID="S_EVENTFUL">
+                <OpenClinica:StudyDescriptionAndStatus OfficialTitle="Eventful" SecondaryIDs="Eventful" DateCreated="2016-04-05">
+                    <OpenClinica:StudySytemStatus>available</OpenClinica:StudySytemStatus>
+                    <OpenClinica:PrincipalInvestigator>Dr. Bibber</OpenClinica:PrincipalInvestigator>
+                    <OpenClinica:Sponsor>n_a</OpenClinica:Sponsor>
+                    <OpenClinica:StudyPhase></OpenClinica:StudyPhase>
+                    <OpenClinica:ProtocolType>Interventional</OpenClinica:ProtocolType>
+                    <OpenClinica:Purpose></OpenClinica:Purpose>
+                </OpenClinica:StudyDescriptionAndStatus>
+                <OpenClinica:ConditionsAndEligibility>
+                    <OpenClinica:Sex>Both</OpenClinica:Sex>
+                    <OpenClinica:HealthyVolunteersAccepted>No</OpenClinica:HealthyVolunteersAccepted>
+                </OpenClinica:ConditionsAndEligibility>
+                <OpenClinica:RelatedInformation>
+                    <OpenClinica:ResultsReference>No</OpenClinica:ResultsReference>
+                </OpenClinica:RelatedInformation>
+                <OpenClinica:StudyParameterConfiguration>
+                    <OpenClinica:StudyParameterListRef StudyParameterListID="SPL_collectDob" Value="1"/>
+                    <OpenClinica:StudyParameterListRef StudyParameterListID="SPL_discrepancyManagement" Value="true"/>
+                    <OpenClinica:StudyParameterListRef StudyParameterListID="SPL_subjectPersonIdRequired" Value="required"/>
+                    <OpenClinica:StudyParameterListRef StudyParameterListID="SPL_genderRequired" Value="true"/>
+                    <OpenClinica:StudyParameterListRef StudyParameterListID="SPL_subjectIdGeneration" Value="manual"/>
+                    <OpenClinica:StudyParameterListRef StudyParameterListID="SPL_interviewerNameRequired" Value="not_used"/>
+                    <OpenClinica:StudyParameterListRef StudyParameterListID="SPL_interviewerNameDefault" Value="blank"/>
+                    <OpenClinica:StudyParameterListRef StudyParameterListID="SPL_interviewerNameEditable" Value="true"/>
+                    <OpenClinica:StudyParameterListRef StudyParameterListID="SPL_interviewDateRequired" Value="not_used"/>
+                    <OpenClinica:StudyParameterListRef StudyParameterListID="SPL_interviewDateDefault" Value="blank"/>
+                    <OpenClinica:StudyParameterListRef StudyParameterListID="SPL_interviewDateEditable" Value="true"/>
+                    <OpenClinica:StudyParameterListRef StudyParameterListID="SPL_personIdShownOnCRF" Value="false"/>
+                    <OpenClinica:StudyParameterListRef StudyParameterListID="SPL_secondaryLabelViewable" Value="false"/>
+                    <OpenClinica:StudyParameterListRef StudyParameterListID="SPL_adminForcedReasonForChange" Value="true"/>
+                    <OpenClinica:StudyParameterListRef StudyParameterListID="SPL_eventLocationRequired" Value="not_used"/>
+                    <OpenClinica:StudyParameterList ID="SPL_collectDob" Name="Collect Subject Date Of Birth">
+                        <OpenClinica:StudyParameterListItem CodedParameterValue="1">
+                            <Decode>
+                                <TranslatedText>Yes</TranslatedText>
+                            </Decode>
+                        </OpenClinica:StudyParameterListItem>
+                        <OpenClinica:StudyParameterListItem CodedParameterValue="2">
+                            <Decode>
+                                <TranslatedText>Only Year of Birth</TranslatedText>
+                            </Decode>
+                        </OpenClinica:StudyParameterListItem>
+                        <OpenClinica:StudyParameterListItem CodedParameterValue="3">
+                            <Decode>
+                                <TranslatedText>Not Used</TranslatedText>
+                            </Decode>
+                        </OpenClinica:StudyParameterListItem>
+                    </OpenClinica:StudyParameterList>
+                    <OpenClinica:StudyParameterList ID="SPL_discrepancyManagement" Name="Allow Discrepancy Management">
+                        <OpenClinica:StudyParameterListItem CodedParameterValue="true">
+                            <Decode>
+                                <TranslatedText>Yes</TranslatedText>
+                            </Decode>
+                        </OpenClinica:StudyParameterListItem>
+                        <OpenClinica:StudyParameterListItem CodedParameterValue="false">
+                            <Decode>
+                                <TranslatedText>No</TranslatedText>
+                            </Decode>
+                        </OpenClinica:StudyParameterListItem>
+                    </OpenClinica:StudyParameterList>
+                    <OpenClinica:StudyParameterList ID="SPL_subjectPersonIdRequired" Name="Person ID Required">
+                        <OpenClinica:StudyParameterListItem CodedParameterValue="required">
+                            <Decode>
+                                <TranslatedText>Required</TranslatedText>
+                            </Decode>
+                        </OpenClinica:StudyParameterListItem>
+                        <OpenClinica:StudyParameterListItem CodedParameterValue="optional">
+                            <Decode>
+                                <TranslatedText>Optional</TranslatedText>
+                            </Decode>
+                        </OpenClinica:StudyParameterListItem>
+                        <OpenClinica:StudyParameterListItem CodedParameterValue="not used">
+                            <Decode>
+                                <TranslatedText>Not Used</TranslatedText>
+                            </Decode>
+                        </OpenClinica:StudyParameterListItem>
+                    </OpenClinica:StudyParameterList>
+                    <OpenClinica:StudyParameterList ID="SPL_genderRequired" Name="Sex Required">
+                        <OpenClinica:StudyParameterListItem CodedParameterValue="true">
+                            <Decode>
+                                <TranslatedText>Yes</TranslatedText>
+                            </Decode>
+                        </OpenClinica:StudyParameterListItem>
+                        <OpenClinica:StudyParameterListItem CodedParameterValue="false">
+                            <Decode>
+                                <TranslatedText>No</TranslatedText>
+                            </Decode>
+                        </OpenClinica:StudyParameterListItem>
+                    </OpenClinica:StudyParameterList>
+                    <OpenClinica:StudyParameterList ID="SPL_subjectIdGeneration" Name="How To Generate Study SubjectID">
+                        <OpenClinica:StudyParameterListItem CodedParameterValue="manual">
+                            <Decode>
+                                <TranslatedText>Manual Entry</TranslatedText>
+                            </Decode>
+                        </OpenClinica:StudyParameterListItem>
+                        <OpenClinica:StudyParameterListItem CodedParameterValue="auto editable">
+                            <Decode>
+                                <TranslatedText>Auto-generated and Editable</TranslatedText>
+                            </Decode>
+                        </OpenClinica:StudyParameterListItem>
+                        <OpenClinica:StudyParameterListItem CodedParameterValue="auto non-editable">
+                            <Decode>
+                                <TranslatedText>Auto-generated and Non-editable</TranslatedText>
+                            </Decode>
+                        </OpenClinica:StudyParameterListItem>
+                    </OpenClinica:StudyParameterList>
+                    <OpenClinica:StudyParameterList ID="SPL_interviewerNameRequired" Name="When Performing Data Entry, Interviewer Name Required For Data Entry">
+                        <OpenClinica:StudyParameterListItem CodedParameterValue="yes">
+                            <Decode>
+                                <TranslatedText>Yes</TranslatedText>
+                            </Decode>
+                        </OpenClinica:StudyParameterListItem>
+                        <OpenClinica:StudyParameterListItem CodedParameterValue="no">
+                            <Decode>
+                                <TranslatedText>No</TranslatedText>
+                            </Decode>
+                        </OpenClinica:StudyParameterListItem>
+                        <OpenClinica:StudyParameterListItem CodedParameterValue="not_used">
+                            <Decode>
+                                <TranslatedText>Not Used</TranslatedText>
+                            </Decode>
+                        </OpenClinica:StudyParameterListItem>
+                    </OpenClinica:StudyParameterList>
+                    <OpenClinica:StudyParameterList ID="SPL_interviewerNameDefault" Name="When Performing Data Entry, Interviewer Name Default as Blank">
+                        <OpenClinica:StudyParameterListItem CodedParameterValue="blank">
+                            <Decode>
+                                <TranslatedText>Blank</TranslatedText>
+                            </Decode>
+                        </OpenClinica:StudyParameterListItem>
+                        <OpenClinica:StudyParameterListItem CodedParameterValue="pre-populated">
+                            <Decode>
+                                <TranslatedText>Pre-Populated from active user</TranslatedText>
+                            </Decode>
+                        </OpenClinica:StudyParameterListItem>
+                    </OpenClinica:StudyParameterList>
+                    <OpenClinica:StudyParameterList ID="SPL_interviewerNameEditable" Name="When Performing Data Entry, Interviewer Name Editable">
+                        <OpenClinica:StudyParameterListItem CodedParameterValue="true">
+                            <Decode>
+                                <TranslatedText>Yes</TranslatedText>
+                            </Decode>
+                        </OpenClinica:StudyParameterListItem>
+                        <OpenClinica:StudyParameterListItem CodedParameterValue="false">
+                            <Decode>
+                                <TranslatedText>No</TranslatedText>
+                            </Decode>
+                        </OpenClinica:StudyParameterListItem>
+                    </OpenClinica:StudyParameterList>
+                    <OpenClinica:StudyParameterList ID="SPL_interviewDateRequired" Name="When Performing Data Entry, Interview Date Required">
+                        <OpenClinica:StudyParameterListItem CodedParameterValue="true">
+                            <Decode>
+                                <TranslatedText>Yes</TranslatedText>
+                            </Decode>
+                        </OpenClinica:StudyParameterListItem>
+                        <OpenClinica:StudyParameterListItem CodedParameterValue="false">
+                            <Decode>
+                                <TranslatedText>No</TranslatedText>
+                            </Decode>
+                        </OpenClinica:StudyParameterListItem>
+                        <OpenClinica:StudyParameterListItem CodedParameterValue="not_used">
+                            <Decode>
+                                <TranslatedText>Not Used</TranslatedText>
+                            </Decode>
+                        </OpenClinica:StudyParameterListItem>
+                    </OpenClinica:StudyParameterList>
+                    <OpenClinica:StudyParameterList ID="SPL_interviewDateDefault" Name="When Performing Data Entry, Interview Date Default as Blank">
+                        <OpenClinica:StudyParameterListItem CodedParameterValue="blank">
+                            <Decode>
+                                <TranslatedText>Blank</TranslatedText>
+                            </Decode>
+                        </OpenClinica:StudyParameterListItem>
+                        <OpenClinica:StudyParameterListItem CodedParameterValue="pre-populated">
+                            <Decode>
+                                <TranslatedText>Pre-Populated from Study Event</TranslatedText>
+                            </Decode>
+                        </OpenClinica:StudyParameterListItem>
+                    </OpenClinica:StudyParameterList>
+                    <OpenClinica:StudyParameterList ID="SPL_interviewDateEditable" Name="When Performing Data Entry, Interview Date Editable">
+                        <OpenClinica:StudyParameterListItem CodedParameterValue="true">
+                            <Decode>
+                                <TranslatedText>Yes</TranslatedText>
+                            </Decode>
+                        </OpenClinica:StudyParameterListItem>
+                        <OpenClinica:StudyParameterListItem CodedParameterValue="false">
+                            <Decode>
+                                <TranslatedText>No</TranslatedText>
+                            </Decode>
+                        </OpenClinica:StudyParameterListItem>
+                    </OpenClinica:StudyParameterList>
+                    <OpenClinica:StudyParameterList ID="SPL_personIdShownOnCRF" Name="Show Person ID on CRF Header">
+                        <OpenClinica:StudyParameterListItem CodedParameterValue="true">
+                            <Decode>
+                                <TranslatedText>Yes</TranslatedText>
+                            </Decode>
+                        </OpenClinica:StudyParameterListItem>
+                        <OpenClinica:StudyParameterListItem CodedParameterValue="false">
+                            <Decode>
+                                <TranslatedText>No</TranslatedText>
+                            </Decode>
+                        </OpenClinica:StudyParameterListItem>
+                    </OpenClinica:StudyParameterList>
+                    <OpenClinica:StudyParameterList ID="SPL_secondaryLabelViewable" Name="Secondary Label Viewable">
+                        <OpenClinica:StudyParameterListItem CodedParameterValue="true">
+                            <Decode>
+                                <TranslatedText>Yes</TranslatedText>
+                            </Decode>
+                        </OpenClinica:StudyParameterListItem>
+                        <OpenClinica:StudyParameterListItem CodedParameterValue="false">
+                            <Decode>
+                                <TranslatedText>No</TranslatedText>
+                            </Decode>
+                        </OpenClinica:StudyParameterListItem>
+                    </OpenClinica:StudyParameterList>
+                    <OpenClinica:StudyParameterList ID="SPL_adminForcedReasonForChange" Name="Forced Reason For Change in Administrative Editing">
+                        <OpenClinica:StudyParameterListItem CodedParameterValue="true">
+                            <Decode>
+                                <TranslatedText>Yes</TranslatedText>
+                            </Decode>
+                        </OpenClinica:StudyParameterListItem>
+                        <OpenClinica:StudyParameterListItem CodedParameterValue="false">
+                            <Decode>
+                                <TranslatedText>No</TranslatedText>
+                            </Decode>
+                        </OpenClinica:StudyParameterListItem>
+                    </OpenClinica:StudyParameterList>
+                    <OpenClinica:StudyParameterList ID="SPL_eventLocationRequired" Name="Event Location Required">
+                        <OpenClinica:StudyParameterListItem CodedParameterValue="required">
+                            <Decode>
+                                <TranslatedText>Required</TranslatedText>
+                            </Decode>
+                        </OpenClinica:StudyParameterListItem>
+                        <OpenClinica:StudyParameterListItem CodedParameterValue="optional">
+                            <Decode>
+                                <TranslatedText>Optional</TranslatedText>
+                            </Decode>
+                        </OpenClinica:StudyParameterListItem>
+                        <OpenClinica:StudyParameterListItem CodedParameterValue="not_used">
+                            <Decode>
+                                <TranslatedText>Not Used</TranslatedText>
+                            </Decode>
+                        </OpenClinica:StudyParameterListItem>
+                    </OpenClinica:StudyParameterList>
+                </OpenClinica:StudyParameterConfiguration>
+            </OpenClinica:StudyDetails>
+        </MetaDataVersion>
+    </Study>
+    <Study OID="S_EVENTFUL_4878">
+        <GlobalVariables>
+            <StudyName>Eventful - Eventful-Site</StudyName>
+            <StudyDescription>
+                Test study for the development of the modifications to the event SOAP-service - The site of the study
+            </StudyDescription>
+            <ProtocolName>Eventful - EventfulSite</ProtocolName>
+        </GlobalVariables>
+        <BasicDefinitions>
+            <MeasurementUnit OID="MU_CM" Name="cm">
+                <Symbol>
+                    <TranslatedText>cm</TranslatedText>
+                </Symbol>
+            </MeasurementUnit>
+            <MeasurementUnit OID="MU_YEARS" Name="years">
+                <Symbol>
+                    <TranslatedText>years</TranslatedText>
+                </Symbol>
+            </MeasurementUnit>
+        </BasicDefinitions>
+        <MetaDataVersion OID="null-S_EVENTFUL_4878" Name="null-S_EVENTFUL_4878">
+            <Protocol>
+                <StudyEventRef StudyEventOID="SE_EVENTFUL" OrderNumber="1" Mandatory="Yes"/>
+                <StudyEventRef StudyEventOID="SE_REPEATINGEVENT" OrderNumber="2" Mandatory="Yes"/>
+            </Protocol>
+            <StudyEventDef OID="SE_EVENTFUL"  Name="Non-repeating Event" Repeating="No" Type="Scheduled">
+                <FormRef FormOID="F_MUSTFOR_NON__010" Mandatory="Yes"/>
+                <FormRef FormOID="F_MUSTFOR_NON__009" Mandatory="Yes"/>
+                <FormRef FormOID="F_MUSTFOR_NON__008" Mandatory="Yes"/>
+                <FormRef FormOID="F_MUSTFOR_NON__007" Mandatory="Yes"/>
+            </StudyEventDef>
+            <StudyEventDef OID="SE_REPEATINGEVENT"  Name="RepeatingEvent" Repeating="Yes" Type="Scheduled">
+                <FormRef FormOID="F_MUSTFOR_NON__010" Mandatory="Yes"/>
+                <FormRef FormOID="F_MUSTFOR_NON__009" Mandatory="Yes"/>
+                <FormRef FormOID="F_MUSTFOR_NON__008" Mandatory="Yes"/>
+                <FormRef FormOID="F_MUSTFOR_NON__007" Mandatory="Yes"/>
+            </StudyEventDef>
+        </MetaDataVersion>
+    </Study>
+    <AdminData StudyOID="S_EVENTFUL">
+        <User OID="USR_1">
+            <FullName>Root User</FullName>
+            <FirstName>Root</FirstName>
+            <LastName>User</LastName>
+            <Organization>Akaza Research</Organization>
+        </User>
+        <User OID="USR_2">
+            <FullName>Test Test</FullName>
+            <FirstName>Test</FirstName>
+            <LastName>Test</LastName>
+            <Organization>Example.com</Organization>
+        </User>
+    </AdminData>
+    <AdminData StudyOID="S_EVENTFUL_4878">
+        <User OID="USR_3">
+            <FullName>Root Site</FullName>
+            <FirstName>Root</FirstName>
+            <LastName>Site</LastName>
+            <Organization>NKI</Organization>
+        </User>
+    </AdminData>
+</ODM>]]></odm>
+        </createResponse>
+    </SOAP-ENV:Body>
+</SOAP-ENV:Envelope>

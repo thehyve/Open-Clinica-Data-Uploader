@@ -1,5 +1,10 @@
 package nl.thehyve.ocdu.validators.fileValidators;
 
+import nl.thehyve.ocdu.factories.ClinicalDataFactory;
+import nl.thehyve.ocdu.factories.PatientDataFactory;
+import nl.thehyve.ocdu.models.errors.FileFormatError;
+
+import java.io.IOException;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
@@ -11,12 +16,11 @@ public class PatientsFileValidator extends GenericFileValidator{
 
 
     public PatientsFileValidator() {
-        super(new String[]{}, new String[]{}); //TODO: put mandatory and integer columns here from PatientFactory
+        super(PatientDataFactory.MANDATORY_HEADERS, new String[]{});
     }
 
     @Override
     public void validateFile(Path file) {
         super.validateFile(file);
-
     }
 }

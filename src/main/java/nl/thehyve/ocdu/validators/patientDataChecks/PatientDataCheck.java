@@ -9,7 +9,7 @@ import java.util.List;
 /**
  * Created by bo on 6/7/16.
  */
-public interface PatientDataCrossCheck {
+public interface PatientDataCheck {
     ValidationErrorMessage getCorrespondingError(List<Subject> data, MetaData metaData);
 
 }

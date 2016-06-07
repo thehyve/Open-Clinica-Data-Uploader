@@ -16,8 +16,6 @@ import java.util.List;
 public class ClinicalDataOcChecks {
 
 
-
-
     private final List<ClinicalData> clinicalData;
     private final MetaData metadata;
     private  List<OcEntityCheck> recordChecks = new ArrayList<>();

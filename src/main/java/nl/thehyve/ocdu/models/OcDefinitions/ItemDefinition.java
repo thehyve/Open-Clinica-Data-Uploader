@@ -19,6 +19,15 @@ public class ItemDefinition {
     private boolean mandatoryInGroup = false;
     private boolean isMultiselect = false;
     private  String codeListRef;
+    private boolean show = false;
+
+    public boolean isShow() {
+        return show;
+    }
+
+    public void setShow(boolean show) {
+        this.show = show;
+    }
 
     public String getCodeListRef() {
         return codeListRef;
@@ -110,6 +119,7 @@ public class ItemDefinition {
         this.significantDigits = prototype.getSignificantDigits();
         this.isMultiselect = prototype.isMultiselect();
         this.codeListRef = prototype.getCodeListRef();
+        this.show = prototype.isShow();
     }
 
     public List<RangeCheck> getRangeCheckList() {

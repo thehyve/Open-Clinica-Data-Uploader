@@ -335,6 +335,14 @@ public class GetStudyMetadataResponseHandler extends OCResponseHandler {
         Node significantDigits = item.getAttributes().getNamedItem("SignificantDigits");
         String length = "0"; // Can be empty, zero means no restriction on length
         String significantDigitsText = "0";
+        boolean showItem = true;
+        Node showNode = item.getAttributes().getNamedItem("ShowItem");
+        if (showNode != null) {
+            String showItemText = showNode.getTextContent();
+            if (showItemText != null && showItemText.equals("No")) {
+                showItem = false;
+            }
+        }
         if (length1 != null) {
             length = length1.getTextContent();
         }
@@ -353,6 +361,7 @@ public class GetStudyMetadataResponseHandler extends OCResponseHandler {
         itemDef.setSignificantDigits(Integer.parseInt(significantDigitsText));
         itemDef.setMultiselect(isMultiSelect);
         itemDef.setCodeListRef(codeListRef);
+        itemDef.setShow(showItem);
         return itemDef;
     }
 

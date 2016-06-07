@@ -2,6 +2,7 @@ package nl.thehyve.ocdu.repositories;
 
 import nl.thehyve.ocdu.models.OCEntities.ClinicalData;
 import nl.thehyve.ocdu.models.OCEntities.Subject;
+import nl.thehyve.ocdu.models.UploadSession;
 import org.springframework.data.repository.CrudRepository;
 
 import java.util.List;
@@ -11,8 +12,8 @@ import java.util.List;
  */
 public interface SubjectRepository extends CrudRepository<Subject, Long> {
 
-    List<ClinicalData> findByOwner(String owner);
+    List<Subject> findByOwner(String owner);
 
-    List<ClinicalData> findBySubmission(String submission);
+    List<Subject> findBySubmission(UploadSession submission);
 
 }

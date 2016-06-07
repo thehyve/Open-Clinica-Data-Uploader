@@ -1,9 +1,8 @@
-package nl.thehyve.ocdu.validators.crossChecks;
+package nl.thehyve.ocdu.validators.clinicalDataChecks;
 
 import nl.thehyve.ocdu.models.OCEntities.ClinicalData;
 import nl.thehyve.ocdu.models.OcDefinitions.MetaData;
 import nl.thehyve.ocdu.models.errors.IncorrectNumberOfEvents;
-import nl.thehyve.ocdu.models.errors.IncorrectNumberOfStudies;
 import nl.thehyve.ocdu.models.errors.ValidationErrorMessage;
 
 import java.util.List;

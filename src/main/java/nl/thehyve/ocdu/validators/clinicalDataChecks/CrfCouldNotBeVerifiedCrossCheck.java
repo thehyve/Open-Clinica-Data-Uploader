@@ -1,9 +1,8 @@
-package nl.thehyve.ocdu.validators.crossChecks;
+package nl.thehyve.ocdu.validators.clinicalDataChecks;
 
 import nl.thehyve.ocdu.models.OCEntities.ClinicalData;
 import nl.thehyve.ocdu.models.OcDefinitions.CRFDefinition;
 import nl.thehyve.ocdu.models.OcDefinitions.MetaData;
-import nl.thehyve.ocdu.models.errors.CRFDoesNotExist;
 import nl.thehyve.ocdu.models.errors.CrfCouldNotBeVerified;
 import nl.thehyve.ocdu.models.errors.ValidationErrorMessage;
 

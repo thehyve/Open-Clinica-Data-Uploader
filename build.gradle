@@ -29,7 +29,8 @@ wsdl2java {
     wsdlDir = file("src/main/wsdl")
     wsdlsToGenerate = [
             ['src/main/wsdl/studySubjectWsdl.wsdl'],
-            ['src/main/wsdl/studyWsdl.wsdl']
+            ['src/main/wsdl/studyWsdl.wsdl'],
+            ['src/main/wsdl/eventWsdl.wsdl'],
 
     ]
 }

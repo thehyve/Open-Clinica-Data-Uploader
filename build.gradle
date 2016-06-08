@@ -32,6 +32,7 @@ wsdl2java {
             ['src/main/wsdl/studyWsdl.wsdl'],
             ['src/main/wsdl/eventWsdl.wsdl'],
             ['src/main/wsdl/studyEventDefinitionWsdl.wsdl'],
+            ['src/main/wsdl/dataWsdl.wsdl'],
 
     ]
 }

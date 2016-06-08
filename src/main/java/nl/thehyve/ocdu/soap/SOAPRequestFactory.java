@@ -1,10 +1,6 @@
 package nl.thehyve.ocdu.soap;
 
-import com.sun.istack.internal.NotNull;
-import com.sun.xml.internal.bind.api.JAXBRIContext;
-import com.sun.xml.internal.bind.api.TypeReference;
-import com.sun.xml.internal.ws.api.model.SEIModel;
-import com.sun.xml.internal.ws.developer.JAXBContextFactory;
+
 import nl.thehyve.ocdu.models.OCEntities.Study;
 import nl.thehyve.ocdu.soap.SOAPRequestDecorators.GetStudyMetadataRequestDecorator;
 import nl.thehyve.ocdu.soap.SOAPRequestDecorators.listAllStudiesRequestDecorator;
@@ -15,11 +11,9 @@ import org.w3c.dom.Document;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBElement;
-import javax.xml.bind.JAXBException;
 import javax.xml.namespace.QName;
 import javax.xml.soap.*;
 import javax.xml.transform.dom.DOMResult;
-import java.util.List;
 
 
 /**

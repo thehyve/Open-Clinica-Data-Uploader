@@ -30,155 +30,11 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link SubjectType }
-     * 
-     */
-    public SubjectType createSubjectType() {
-        return new SubjectType();
-    }
-
-    /**
      * Create an instance of {@link StudyRefType }
      * 
      */
     public StudyRefType createStudyRefType() {
         return new StudyRefType();
-    }
-
-    /**
-     * Create an instance of {@link StudyMetadataType }
-     * 
-     */
-    public StudyMetadataType createStudyMetadataType() {
-        return new StudyMetadataType();
-    }
-
-    /**
-     * Create an instance of {@link CrfVersionType }
-     * 
-     */
-    public CrfVersionType createCrfVersionType() {
-        return new CrfVersionType();
-    }
-
-    /**
-     * Create an instance of {@link StudySubjectWithEventsType }
-     * 
-     */
-    public StudySubjectWithEventsType createStudySubjectWithEventsType() {
-        return new StudySubjectWithEventsType();
-    }
-
-    /**
-     * Create an instance of {@link EventDefinitionCrfType }
-     * 
-     */
-    public EventDefinitionCrfType createEventDefinitionCrfType() {
-        return new EventDefinitionCrfType();
-    }
-
-    /**
-     * Create an instance of {@link SiteType }
-     * 
-     */
-    public SiteType createSiteType() {
-        return new SiteType();
-    }
-
-    /**
-     * Create an instance of {@link EventDefinitionCrfsType }
-     * 
-     */
-    public EventDefinitionCrfsType createEventDefinitionCrfsType() {
-        return new EventDefinitionCrfsType();
-    }
-
-    /**
-     * Create an instance of {@link StudiesType }
-     * 
-     */
-    public StudiesType createStudiesType() {
-        return new StudiesType();
-    }
-
-    /**
-     * Create an instance of {@link EventCrfInformationList }
-     * 
-     */
-    public EventCrfInformationList createEventCrfInformationList() {
-        return new EventCrfInformationList();
-    }
-
-    /**
-     * Create an instance of {@link StudyEventDefinitionType }
-     * 
-     */
-    public StudyEventDefinitionType createStudyEventDefinitionType() {
-        return new StudyEventDefinitionType();
-    }
-
-    /**
-     * Create an instance of {@link StudySubjectRefType }
-     * 
-     */
-    public StudySubjectRefType createStudySubjectRefType() {
-        return new StudySubjectRefType();
-    }
-
-    /**
-     * Create an instance of {@link EventType }
-     * 
-     */
-    public EventType createEventType() {
-        return new EventType();
-    }
-
-    /**
-     * Create an instance of {@link EventCrfType }
-     * 
-     */
-    public EventCrfType createEventCrfType() {
-        return new EventCrfType();
-    }
-
-    /**
-     * Create an instance of {@link CrfsType }
-     * 
-     */
-    public CrfsType createCrfsType() {
-        return new CrfsType();
-    }
-
-    /**
-     * Create an instance of {@link SiteRefType }
-     * 
-     */
-    public SiteRefType createSiteRefType() {
-        return new SiteRefType();
-    }
-
-    /**
-     * Create an instance of {@link StudyEventDefinitionsType }
-     * 
-     */
-    public StudyEventDefinitionsType createStudyEventDefinitionsType() {
-        return new StudyEventDefinitionsType();
-    }
-
-    /**
-     * Create an instance of {@link StudySubjectType }
-     * 
-     */
-    public StudySubjectType createStudySubjectType() {
-        return new StudySubjectType();
-    }
-
-    /**
-     * Create an instance of {@link StudyEventDefinitionListAllType }
-     * 
-     */
-    public StudyEventDefinitionListAllType createStudyEventDefinitionListAllType() {
-        return new StudyEventDefinitionListAllType();
     }
 
     /**
@@ -190,11 +46,91 @@ public class ObjectFactory {
     }
 
     /**
+     * Create an instance of {@link StudiesType }
+     * 
+     */
+    public StudiesType createStudiesType() {
+        return new StudiesType();
+    }
+
+    /**
+     * Create an instance of {@link CrfVersionType }
+     * 
+     */
+    public CrfVersionType createCrfVersionType() {
+        return new CrfVersionType();
+    }
+
+    /**
+     * Create an instance of {@link EventCrfType }
+     * 
+     */
+    public EventCrfType createEventCrfType() {
+        return new EventCrfType();
+    }
+
+    /**
+     * Create an instance of {@link StudySubjectType }
+     * 
+     */
+    public StudySubjectType createStudySubjectType() {
+        return new StudySubjectType();
+    }
+
+    /**
+     * Create an instance of {@link EventDefinitionCrfsType }
+     * 
+     */
+    public EventDefinitionCrfsType createEventDefinitionCrfsType() {
+        return new EventDefinitionCrfsType();
+    }
+
+    /**
+     * Create an instance of {@link CrfsType }
+     * 
+     */
+    public CrfsType createCrfsType() {
+        return new CrfsType();
+    }
+
+    /**
      * Create an instance of {@link StudyType }
      * 
      */
     public StudyType createStudyType() {
         return new StudyType();
+    }
+
+    /**
+     * Create an instance of {@link SiteType }
+     * 
+     */
+    public SiteType createSiteType() {
+        return new SiteType();
+    }
+
+    /**
+     * Create an instance of {@link StudyMetadataType }
+     * 
+     */
+    public StudyMetadataType createStudyMetadataType() {
+        return new StudyMetadataType();
+    }
+
+    /**
+     * Create an instance of {@link EventDefinitionCrfType }
+     * 
+     */
+    public EventDefinitionCrfType createEventDefinitionCrfType() {
+        return new EventDefinitionCrfType();
+    }
+
+    /**
+     * Create an instance of {@link EventsType }
+     * 
+     */
+    public EventsType createEventsType() {
+        return new EventsType();
     }
 
     /**
@@ -206,19 +142,19 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link EventResponseType }
+     * Create an instance of {@link EventType }
      * 
      */
-    public EventResponseType createEventResponseType() {
-        return new EventResponseType();
+    public EventType createEventType() {
+        return new EventType();
     }
 
     /**
-     * Create an instance of {@link StudySubjectsType }
+     * Create an instance of {@link StudyEventDefinitionsType }
      * 
      */
-    public StudySubjectsType createStudySubjectsType() {
-        return new StudySubjectsType();
+    public StudyEventDefinitionsType createStudyEventDefinitionsType() {
+        return new StudyEventDefinitionsType();
     }
 
     /**
@@ -230,11 +166,75 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link EventsType }
+     * Create an instance of {@link StudySubjectWithEventsType }
      * 
      */
-    public EventsType createEventsType() {
-        return new EventsType();
+    public StudySubjectWithEventsType createStudySubjectWithEventsType() {
+        return new StudySubjectWithEventsType();
+    }
+
+    /**
+     * Create an instance of {@link StudySubjectRefType }
+     * 
+     */
+    public StudySubjectRefType createStudySubjectRefType() {
+        return new StudySubjectRefType();
+    }
+
+    /**
+     * Create an instance of {@link StudySubjectsType }
+     * 
+     */
+    public StudySubjectsType createStudySubjectsType() {
+        return new StudySubjectsType();
+    }
+
+    /**
+     * Create an instance of {@link SubjectType }
+     * 
+     */
+    public SubjectType createSubjectType() {
+        return new SubjectType();
+    }
+
+    /**
+     * Create an instance of {@link StudyEventDefinitionListAllType }
+     * 
+     */
+    public StudyEventDefinitionListAllType createStudyEventDefinitionListAllType() {
+        return new StudyEventDefinitionListAllType();
+    }
+
+    /**
+     * Create an instance of {@link EventResponseType }
+     * 
+     */
+    public EventResponseType createEventResponseType() {
+        return new EventResponseType();
+    }
+
+    /**
+     * Create an instance of {@link SiteRefType }
+     * 
+     */
+    public SiteRefType createSiteRefType() {
+        return new SiteRefType();
+    }
+
+    /**
+     * Create an instance of {@link StudyEventDefinitionType }
+     * 
+     */
+    public StudyEventDefinitionType createStudyEventDefinitionType() {
+        return new StudyEventDefinitionType();
+    }
+
+    /**
+     * Create an instance of {@link EventCrfInformationList }
+     * 
+     */
+    public EventCrfInformationList createEventCrfInformationList() {
+        return new EventCrfInformationList();
     }
 
 }

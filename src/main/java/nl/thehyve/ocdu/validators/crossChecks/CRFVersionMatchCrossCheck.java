@@ -1,6 +1,5 @@
 package nl.thehyve.ocdu.validators.crossChecks;
 
-import com.sun.istack.internal.Nullable;
 import nl.thehyve.ocdu.models.OCEntities.ClinicalData;
 import nl.thehyve.ocdu.models.OcDefinitions.MetaData;
 import nl.thehyve.ocdu.models.errors.CRFVersionMismatchError;
@@ -57,8 +56,6 @@ public class CRFVersionMatchCrossCheck implements ClinicalDataCrossCheck {
 
     }
 
-
-    @Nullable
     private List<ClinicalData> convertToClinicalData(List<StudySubjectWithEventsType> subjectWithEventsTypeList, String studySubjectLabel, String studyIdentifier) {
         // TODO convert to lambda expressions ????
         List<ClinicalData> ret = new ArrayList<>();

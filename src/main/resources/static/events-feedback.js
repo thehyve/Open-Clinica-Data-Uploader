@@ -35,11 +35,22 @@ var displayMessages = function displayMessages(data) {
 };
 
 function feedbackNext() {
-    window.location.href = baseApp + "/views/final";
+    $.ajax({
+        url: baseApp + "/submission/update",
+        type: "POST",
+        data: {step: "overview"},
+        success: function () {
+            window.location.href = baseApp + "/views/final";
+        },
+        error: function (jqXHR, textStatus, errorThrown) {
+            console.log(jqXHR.status+" "+textStatus+" "+errorThrown);
+            window.location.href = baseApp + "/views/feedback-events";
+        }
+    });
 }
 
 function backBtnHandler() {
-    window.history.back();
+    window.location.href = baseApp + "/views/events";
 }
 
 //waiting for the ajax call

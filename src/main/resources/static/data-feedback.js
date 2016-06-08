@@ -37,11 +37,24 @@ var displayMessages = function displayMessages(data) {
 };
 
 function feedbackDataNext() {
-    window.location.href = baseApp + "/views/subjects";
+    $.ajax({
+        url: baseApp + "/submission/update",
+        type: "POST",
+        data: {step: "subjects"},
+        success: function () {
+            window.location.href = baseApp + "/views/subjects";
+        },
+        error: function (jqXHR, textStatus, errorThrown) {
+            console.log(jqXHR.status+" "+textStatus+" "+errorThrown);
+            window.location.href = baseApp + "/views/feedback-data";
+        }
+    });
+    
+    
 }
 
 function backBtnHandler() {
-    window.history.back();
+    window.location.href = baseApp + "/views/mapping";
 }
 
 //waiting for the ajax call

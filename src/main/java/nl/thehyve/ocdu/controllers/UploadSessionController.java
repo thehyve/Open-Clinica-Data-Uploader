@@ -65,23 +65,29 @@ public class UploadSessionController {
         }
     }
 
-    @RequestMapping(value = "/update", method=RequestMethod.POST)
-    public ResponseEntity<?> updateSubmission(@RequestParam(value = "name") String step  ,HttpSession session) {
+    @RequestMapping(value = "/update", method = RequestMethod.POST)
+    public ResponseEntity<UploadSession> updateSubmission(@RequestParam(value = "step") String step, HttpSession session) {
         try {
             UploadSession currentUploadSession = uploadSessionService.getCurrentUploadSession(session);
-            UploadSession.Step step1 = UploadSession.Step.valueOf(step);
-            if (step1 != null) {
-                currentUploadSession.setStep(step1);
-                return new ResponseEntity<>(HttpStatus.OK);
-            } else {
-                return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            UploadSession.Step _step;
+            switch (step) {
+                case "mapping": _step = UploadSession.Step.MAPPING; break;
+                case "feedback-data": _step = UploadSession.Step.FEEDBACK_DATA; break;
+                case "subjects": _step = UploadSession.Step.SUBJECTS; break;
+                case "feedback-subjects": _step = UploadSession.Step.FEEDBACK_SUBJECTS; break;
+                case "events": _step = UploadSession.Step.EVENTS; break;
+                case "feedback-events": _step = UploadSession.Step.FEEDBACK_EVENTS; break;
+                case "overview": _step = UploadSession.Step.OVERVIEW; break;
+                default: _step = UploadSession.Step.MAPPING; break;
             }
+            currentUploadSession.setStep(_step);
+            uploadSessionRepository.save(currentUploadSession);
+            return new ResponseEntity<>(OK);
         } catch (UploadSessionNotFoundException e) {
             e.printStackTrace();
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
     }
-
 
     @Autowired
     ClinicalDataRepository clinicalDataRepository;

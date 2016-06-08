@@ -19,7 +19,7 @@ public class UploadSession {
     private OcUser owner;
 
     public enum Step {
-        MAPPING, PATIENTS, EVENTS, OVERVIEW
+        MAPPING, FEEDBACK_DATA, SUBJECTS, FEEDBACK_SUBJECTS, EVENTS, FEEDBACK_EVENTS, OVERVIEW
     }
 
     private Step step;

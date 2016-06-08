@@ -35,7 +35,7 @@ public class OcduApplication {
                     bogusUser));
             repository.save(new UploadSession("session3", UploadSession.Step.MAPPING, new Date(),
                     bogusUser));
-            repository.save(new UploadSession("session4", UploadSession.Step.PATIENTS, new Date(),
+            repository.save(new UploadSession("session4", UploadSession.Step.SUBJECTS, new Date(),
                     bogusUser));
             repository.save(new UploadSession("session5", UploadSession.Step.OVERVIEW, new Date(),
                     bogusUser));

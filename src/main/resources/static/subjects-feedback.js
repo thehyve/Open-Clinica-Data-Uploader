@@ -34,11 +34,25 @@ var displayMessages = function displayMessages(data) {
 };
 
 function feedbackNext() {
+    $.ajax({
+        url: baseApp + "/submission/update",
+        type: "POST",
+        data: {step: "events"},
+        success: function () {
+            //handle subject file upload
+            window.location.href = baseApp + "/views/events";
+        },
+        error: function (jqXHR, textStatus, errorThrown) {
+            console.log(jqXHR.status+" "+textStatus+" "+errorThrown);
+            window.location.href = baseApp + "/views/subjects-feedback";
+        }
+    });
+    
     window.location.href = baseApp + "/views/events";
 }
 
 function backBtnHandler() {
-    window.history.back();
+    window.location.href = baseApp + "/views/subjects";
 }
 
 //waiting for the ajax call

@@ -14,16 +14,16 @@ function uploadFile() {
 
     SESSIONNAME = $('#upload-session-input').val();
     var sessionnames = [];
-    for(var i=0; i<sessions.length; i++) {
+    for (var i = 0; i < sessions.length; i++) {
         sessionnames.push(sessions[i].name);
     }
 
-    if(sessionnames.indexOf(SESSIONNAME) !== -1) isSessionNameDefined = false;
-    
+    if (sessionnames.indexOf(SESSIONNAME) !== -1) isSessionNameDefined = false;
+
     $("#message-board").empty();
 
-    var mappingFileUpload = function () { 
-        if(isMappingSelected) {
+    var mappingFileUpload = function () {
+        if (isMappingSelected) {
             //upload the mapping file and direct to mapping view, also enable the mapping button by MAPPING_FILE_ENABLED = true;
             MAPPING_FILE_ENABLED = true;
             // var upload_mapping_data = new FormData($("#upload-mapping-form")[0]);
@@ -63,15 +63,15 @@ function uploadFile() {
             //     });
             // }, 3000);
         }
-        else{
+        else {
             //direct to mapping view
-            window.location.href = baseApp+"/views/mapping";
+            window.location.href = baseApp + "/views/mapping";
         }
     }
 
     var dataFileUpload = function () {
         $.ajax({
-            url: baseApp+"/upload/data",
+            url: baseApp + "/upload/data",
             type: "POST",
             data: new FormData($("#upload-file-form")[0]),
             enctype: 'multipart/form-data',
@@ -93,14 +93,14 @@ function uploadFile() {
 
                     //since this is format error, we delete the just created submission
                     $.ajax({
-                        url: baseApp+"/submission/delete",
+                        url: baseApp + "/submission/delete",
                         type: "post",
                         data: {},
                         success: function () {
                             console.log('submission deleted');
                         },
                         error: function (jqXHR, textStatus, errorThrown) {
-                            console.log(jqXHR.status+" "+textStatus+" "+errorThrown);
+                            console.log(jqXHR.status + " " + textStatus + " " + errorThrown);
                         }
                     });
                 }
@@ -108,9 +108,9 @@ function uploadFile() {
             error: function (jqXHR, textStatus, errorThrown) {
                 // Handle upload error
                 var message = 'Data upload failed. Please check the data format, which should be a plain, tab-delimited file. The size of the file should be less than 10MB. ';
-                var info = '<div id="data-alert" class="alert alert-danger">'+message+'</div>';
+                var info = '<div id="data-alert" class="alert alert-danger">' + message + '</div>';
                 $("#message-board").append(info);
-                console.log(jqXHR.status+" "+textStatus+" "+errorThrown);
+                console.log(jqXHR.status + " " + textStatus + " " + errorThrown);
             }
         });
     };
@@ -118,12 +118,12 @@ function uploadFile() {
 
     if (isSessionNameDefined && isDataSelected) {
         $.ajax({
-            url: baseApp+"/submission/create",
+            url: baseApp + "/submission/create",
             type: "post",
             data: {name: SESSIONNAME},
             success: dataFileUpload,
             error: function (jqXHR, textStatus, errorThrown) {
-                console.log(jqXHR.status+" "+textStatus+" "+errorThrown);
+                console.log(jqXHR.status + " " + textStatus + " " + errorThrown);
             }
         });
     }
@@ -144,11 +144,11 @@ function uploadFile() {
 
 function retrieveSessions() {
     $.ajax({
-        url: baseApp+"/submission/all",
+        url: baseApp + "/submission/all",
         type: "get",
         success: handle_session_retrieval_all,
-        error: function(jqXHR, textStatus, errorThrown) {
-            console.log(jqXHR.status+" "+textStatus+" "+errorThrown);
+        error: function (jqXHR, textStatus, errorThrown) {
+            console.log(jqXHR.status + " " + textStatus + " " + errorThrown);
             // if(jqXHR.status == 401) {
             //     window.location.href = baseApp+"/views/data";
             // }
@@ -166,14 +166,14 @@ function handle_session_retrieval_all(_sessions) {
         var s = _sessions[i];
         var btnid = "s" + (i + 1);
         var d = new Date(s.savedDate);
-        var sessionHTML = '<div class="well" id="session_well_'+i+'">' +
+        var sessionHTML = '<div class="well" id="session_well_' + i + '">' +
             '<button type="button" class="btn btn-primary" id="' + btnid + '" session_index=' + i + '>' + s.name + '</button>' +
             '<p><small>saved on: ' + monthNames[d.getMonth()] + ' ' + d.getDate() + ', ' + d.getFullYear() + '</small></p>' +
-            '<button type="button" class="btn btn-danger" id="removal_'+btnid+'" session_index='+ i + '>Remove this submission</button></div>';
+            '<button type="button" class="btn btn-danger" id="removal_' + btnid + '" session_index=' + i + '>Remove this submission</button></div>';
         $(sessionHTML).insertAfter("#anchor_old_sessions");
         // $('#session_container').append(sessionHTML);
         $('#' + btnid).click(handle_session_retrieval);
-        $('#removal_' +btnid).click(handle_session_removal);
+        $('#removal_' + btnid).click(handle_session_removal);
     }//for
 }//function handle_session_retrieval_all
 
@@ -183,29 +183,41 @@ function handle_session_retrieval() {
     var sid = session.id;
     //set the current session
     $.ajax({
-        url: baseApp+"/submission/select",
+        url: baseApp + "/submission/select",
         type: "get",
-        data:{sessionId:sid},
+        data: {sessionId: sid},
         success: function (data) {
+            var page;
             //direct user to the selected session
-            if(session.step == "MAPPING") {
-                window.location.href = baseApp+"/views/mapping";
+            switch (session.step) {
+                case "MAPPING":
+                    page = "mapping";
+                    break;
+                case "FEEDBACK_DATA":
+                    page = "feedback-data";
+                    break;
+                case "SUBJECTS":
+                    page = "subjects";
+                    break;
+                case "FEEDBACK_SUBJECTS":
+                    page = "feedback-subjects";
+                    break;
+                case "EVENTS":
+                    page = "events";
+                    break;
+                case "FEEDBACK_EVENTS":
+                    page = "feedback-events";
+                    break;
+                case "OVERVIEW":
+                    page = "final";
+                    break;
+                default:
+                    page = "mapping";
             }
-            else if(session.step == "PATIENTS") {
-                window.location.href = baseApp+"/views/subjects";
-            }
-            else if(session.step == "EVENTS") {
-                window.location.href = baseApp+"/views/events";
-            }
-            else if(session.step = "OVERVIEW") {
-                window.location.href = baseApp+"/views/overview";
-            }
-            else {
-                console.log('Session step is not recognized.');
-            }
+            window.location.href = baseApp + "/views/" + page;
         },
-        error: function(jqXHR, textStatus, errorThrown) {
-            console.log(jqXHR.status+" "+textStatus+" "+errorThrown);
+        error: function (jqXHR, textStatus, errorThrown) {
+            console.log(jqXHR.status + " " + textStatus + " " + errorThrown);
         }
     });
 }//function handle_session_retrieval
@@ -213,17 +225,17 @@ function handle_session_retrieval() {
 function handle_session_removal() {
     var ind = $(this).attr('session_index');
     var session = sessions[ind];
-    var sid = session.id; 
+    var sid = session.id;
     $.ajax({
         url: baseApp + "/submission/deleteSession",
         type: "post",
-        data: {id:sid},
+        data: {id: sid},
         success: function (data) {
             console.log('deleted session ' + sid);
-            $('#session_well_'+ind).remove();
+            $('#session_well_' + ind).remove();
         },
-        error: function(jqXHR, textStatus, errorThrown) {
-            console.log(jqXHR.status+" "+textStatus+" "+errorThrown);
+        error: function (jqXHR, textStatus, errorThrown) {
+            console.log(jqXHR.status + " " + textStatus + " " + errorThrown);
         }
     });
 }
@@ -238,13 +250,13 @@ $(document).ready(function () {
 
     //retrieve user name
     $.ajax({
-        url: baseApp+"/submission/username",
+        url: baseApp + "/submission/username",
         type: "get",
         success: function (data) {
             USERNAME = data;
         },
-        error: function(jqXHR, textStatus, errorThrown) {
-            console.log(jqXHR.status+" "+textStatus+" "+errorThrown);
+        error: function (jqXHR, textStatus, errorThrown) {
+            console.log(jqXHR.status + " " + textStatus + " " + errorThrown);
         }
     });
 

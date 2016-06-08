@@ -31,6 +31,7 @@ wsdl2java {
             ['src/main/wsdl/studySubjectWsdl.wsdl'],
             ['src/main/wsdl/studyWsdl.wsdl'],
             ['src/main/wsdl/eventWsdl.wsdl'],
+            ['src/main/wsdl/studyEventDefinitionWsdl.wsdl'],
 
     ]
 }

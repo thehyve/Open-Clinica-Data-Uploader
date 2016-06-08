@@ -28,7 +28,8 @@ wsdl2java {
     generatedWsdlDir = file("src/main/generated")  // target directory for generated source coude
     wsdlDir = file("src/main/wsdl")
     wsdlsToGenerate = [
-                          ['src/main/wsdl/studySubjectWsdl.wsdl']
+            ['src/main/wsdl/studySubjectWsdl.wsdl'],
+            ['src/main/wsdl/studyWsdl.wsdl']
 
     ]
 }

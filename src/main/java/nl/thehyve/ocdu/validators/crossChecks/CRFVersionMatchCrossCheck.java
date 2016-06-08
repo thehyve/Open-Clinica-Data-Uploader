@@ -26,7 +26,7 @@ public class CRFVersionMatchCrossCheck implements ClinicalDataCrossCheck {
         }
         // Assumption is that there is only 1 event and 1 CRF in a data file and that the clincalDataList only contains a single subjectID
 
-        String studyIdentifier = metaData.getStudyIdentifier();
+        String studyIdentifier = metaData.getStudyOID();
 
         List<String> offendingNames = new ArrayList<>();
         for (ClinicalData clinicalDataToUpload : clinicalDataList) {

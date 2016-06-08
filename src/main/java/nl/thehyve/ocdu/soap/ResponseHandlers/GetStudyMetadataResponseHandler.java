@@ -3,6 +3,7 @@ package nl.thehyve.ocdu.soap.ResponseHandlers;
 import nl.thehyve.ocdu.models.OcDefinitions.*;
 import org.springframework.security.authentication.AuthenticationCredentialsNotFoundException;
 import org.w3c.dom.Document;
+import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
@@ -39,6 +40,8 @@ public class GetStudyMetadataResponseHandler extends OCResponseHandler {
     public static final String rangeChecksSelector = ".//*[local-name()='RangeCheck']";
     public static final String CODELIST_DEFINITION_SELECTOR = "//MetaDataVersion/CodeList";
     public static final String MULTIPLE_SELECT_DEFINITION_SELECTOR = "//MetaDataVersion/*[local-name()='MultiSelectList']";
+    public static final String STUDY_SELECTOR = "//Study[1]";
+    public static final String SITES_SELECTOR = "//Study[position()>1]";
 
 
     public static MetaData parseGetStudyMetadataResponse(SOAPMessage response) throws Exception { //TODO: handle exception
@@ -47,16 +50,11 @@ public class GetStudyMetadataResponseHandler extends OCResponseHandler {
             return null;
         }
 
-        MetaData metaData = new MetaData();
-        metaData.setStudyIdentifier("Study");//TODO: add retrieving study identifier from the metadata
+        Node studyNode = (Node) xpath.evaluate(STUDY_SELECTOR, odm, XPathConstants.NODE);
         NodeList crfDefsNodes = (NodeList) xpath.evaluate(crfDefSelector, odm, XPathConstants.NODESET);
         NodeList eventDefsNodes = (NodeList) xpath.evaluate(eventDefSelector, odm, XPathConstants.NODESET);
         NodeList itemGroupDefNodes = (NodeList) xpath.evaluate(itemGroupDefSelector, odm, XPathConstants.NODESET);
         NodeList itemDefNodes = (NodeList) xpath.evaluate(ITEM_DEFINITION_SELECTOR, odm, XPathConstants.NODESET);
-        NodeList codeListNodes = (NodeList) xpath.evaluate(CODELIST_DEFINITION_SELECTOR, odm, XPathConstants.NODESET);
-        NodeList multipleSelectNodes = (NodeList) xpath.evaluate(MULTIPLE_SELECT_DEFINITION_SELECTOR, odm, XPathConstants.NODESET);
-
-        List<CodeListDefinition> codeListDefinitions = parseCodeListDefinitions(codeListNodes, multipleSelectNodes);
 
         Map eventMap = parseEvents(eventDefsNodes);
         List<CRFDefinition> crfDefs = parseCrfs(crfDefsNodes, eventMap);
@@ -69,15 +67,87 @@ public class GetStudyMetadataResponseHandler extends OCResponseHandler {
         List<ItemDefinition> items = parseItemDefinitions(itemDefNodes);
         List<ItemGroupDefinition> itemGroups = parseItemGroupDefinitions(itemGroupDefNodes, crfDefs, items);
 
+        MetaData metaData = new MetaData();
+        Optional<String> studyIdOpt = parseStudyOid(studyNode);
+        if (studyIdOpt.isPresent()) {
+            metaData.setStudyOID(studyIdOpt.get());
+        }
+        Optional<String> studyNameOpt = parseStudyName(studyNode);
+        if (studyNameOpt.isPresent()) {
+            metaData.setStudyName(studyNameOpt.get());
+        }
         metaData.setEventDefinitions(events);
-        metaData.setCodeListDefinitions(codeListDefinitions);
+        metaData.setCodeListDefinitions(parseCodeListDefinitions(odm));
+        metaData.setSiteDefinitions(parseSiteDefinitions(odm));
         metaData.setItemGroupDefinitions(itemGroups);
         return metaData;
     }
 
+    private static List<SiteDefinition> parseSiteDefinitions(Document odm) throws XPathExpressionException {
+        NodeList siteNodes = (NodeList) xpath.evaluate(SITES_SELECTOR, odm, XPathConstants.NODESET);
+
+        ArrayList<SiteDefinition> siteDefinitions = new ArrayList<>();
+        for (int i = 0; i < siteNodes.getLength(); i++) {
+            Node siteNode = siteNodes.item(i);
+            SiteDefinition siteDefinition = new SiteDefinition();
+            Optional<String> siteOidOpt = parseStudyOid(siteNode);
+            if (siteOidOpt.isPresent()) {
+                siteDefinition.setSiteOID(siteOidOpt.get());
+            }
+            Optional<String> siteNameOpt = parseStudyName(siteNode);
+            if (siteNameOpt.isPresent()) {
+                siteDefinition.setName(siteNameOpt.get());
+            }
+            siteDefinitions.add(siteDefinition);
+        }
+        return siteDefinitions;
+    }
+
+    private static Optional<String> parseStudyOid(Node studyNode) {
+        NamedNodeMap siteNodeAttributes = studyNode.getAttributes();
+        if (siteNodeAttributes != null) {
+            Node oidAttr = siteNodeAttributes.getNamedItem("OID");
+            if (oidAttr != null) {
+                return Optional.of(oidAttr.getTextContent());
+            }
+        }
+        return Optional.empty();
+    }
+
+    private static Optional<String> parseStudyName(Node studyNode) {
+        Node globalVariablesNode = null;
+        NodeList studyNodeChildNodes = studyNode.getChildNodes();
+        for (int j = 0; j < studyNodeChildNodes.getLength(); j++) {
+            Node childNode = studyNodeChildNodes.item(j);
+            if (childNode.getNodeName().equals("GlobalVariables")) {
+                globalVariablesNode = childNode;
+                break;
+            }
+        }
+
+        if (globalVariablesNode != null) {
+            NodeList globalVariablesNodeChildNodes = globalVariablesNode.getChildNodes();
+            for (int j = 0; j < globalVariablesNodeChildNodes.getLength(); j++) {
+                Node childNode = globalVariablesNodeChildNodes.item(j);
+                if (childNode.getNodeName().equals("StudyName")) {
+                    return Optional.of(childNode.getTextContent());
+                }
+            }
+        }
+        return Optional.empty();
+    }
+
+    private static List<CodeListDefinition> parseCodeListDefinitions(Document odm) throws XPathExpressionException {
+        NodeList codeListNodes = (NodeList) xpath.evaluate(CODELIST_DEFINITION_SELECTOR, odm, XPathConstants.NODESET);
+        NodeList multipleSelectNodes = (NodeList) xpath.evaluate(MULTIPLE_SELECT_DEFINITION_SELECTOR, odm,
+                XPathConstants.NODESET);
+
+        return parseCodeListDefinitions(codeListNodes, multipleSelectNodes);
+    }
+
     private static List<CodeListDefinition> parseCodeListDefinitions(NodeList codeListNodes, NodeList multipleSelectNodes) throws XPathExpressionException {
-        List<CodeListDefinition> codeListDefinitions = parseCodeListNodes(codeListNodes, ".//CodeListItem", "OID","CodedValue");
-        codeListDefinitions.addAll(parseCodeListNodes(multipleSelectNodes, ".//*[local-name()='MultiSelectListItem']", "ID","CodedOptionValue"));
+        List<CodeListDefinition> codeListDefinitions = parseCodeListNodes(codeListNodes, ".//CodeListItem", "OID", "CodedValue");
+        codeListDefinitions.addAll(parseCodeListNodes(multipleSelectNodes, ".//*[local-name()='MultiSelectListItem']", "ID", "CodedOptionValue"));
         return codeListDefinitions;
     }
 

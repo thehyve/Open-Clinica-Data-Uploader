@@ -44,4 +44,13 @@ public class ValidationErrorMessage {
     public String getMessage() {
         return message;
     }
+
+    @Override
+    public String toString() {
+        return "ValidationErrorMessage{" +
+                "message='" + message + '\'' +
+                ", offendingValues=" + offendingValues +
+                ", isError=" + isError +
+                '}';
+    }
 }

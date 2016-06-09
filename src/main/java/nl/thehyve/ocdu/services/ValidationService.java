@@ -21,10 +21,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -57,7 +54,7 @@ public class ValidationService {
         OcUser submitter = submission.getOwner();
         Study study = dataService.findStudy(submission.getStudy(), submitter, wsPwdHash);
         MetaData metadata = openClinicaService.getMetadata(submitter.getUsername(), wsPwdHash, submitter.getOcEnvironment(), study);
-        List<StudySubjectWithEventsType> subjectWithEventsTypes = openClinicaService.getStudySubjectsType(submitter.getUsername(), wsPwdHash, submitter.getOcEnvironment(), study);
+        List<StudySubjectWithEventsType> subjectWithEventsTypes = Collections.emptyList();//openClinicaService.getStudySubjectsType(submitter.getUsername(), wsPwdHash, submitter.getOcEnvironment(), study);
         List<ValidationErrorMessage> errors = new ArrayList<>();
         if (study == null || metadata == null) {
             StudyDoesNotExist studyError = new StudyDoesNotExist();

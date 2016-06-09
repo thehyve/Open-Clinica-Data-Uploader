@@ -61,7 +61,7 @@ public class OpenClinicaService {
         }
         SOAPConnectionFactory soapConnectionFactory = SOAPConnectionFactory.newInstance();
         SOAPConnection soapConnection = soapConnectionFactory.createConnection();
-        SOAPMessage soapMessage = responseFactory.createListAllByStudy(username, passwordHash, study.getIdentifier());
+        SOAPMessage soapMessage = responseFactory.createListAllByStudy(username, passwordHash, study);
         SOAPMessage soapResponse = soapConnection.call(soapMessage, url + "/ws/studySubject/v1");  // Add SOAP endopint to OCWS URL.
         List<StudySubjectWithEventsType> subjectsTypeList =
                 ListAllByStudyResponseHandler.retrieveStudySubjectsType(soapResponse);

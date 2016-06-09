@@ -43,6 +43,22 @@ public class ObjectFactory {
     }
 
     /**
+     * Create an instance of {@link IsStudySubjectRequest }
+     * 
+     */
+    public IsStudySubjectRequest createIsStudySubjectRequest() {
+        return new IsStudySubjectRequest();
+    }
+
+    /**
+     * Create an instance of {@link CreateRequest }
+     * 
+     */
+    public CreateRequest createCreateRequest() {
+        return new CreateRequest();
+    }
+
+    /**
      * Create an instance of {@link CreateResponse }
      * 
      */
@@ -56,22 +72,6 @@ public class ObjectFactory {
      */
     public IsStudySubjectResponse createIsStudySubjectResponse() {
         return new IsStudySubjectResponse();
-    }
-
-    /**
-     * Create an instance of {@link CreateRequest }
-     * 
-     */
-    public CreateRequest createCreateRequest() {
-        return new CreateRequest();
-    }
-
-    /**
-     * Create an instance of {@link IsStudySubjectRequest }
-     * 
-     */
-    public IsStudySubjectRequest createIsStudySubjectRequest() {
-        return new IsStudySubjectRequest();
     }
 
     /**

@@ -33,8 +33,8 @@ public class CRFDefinition {
     @OneToMany(targetEntity = ItemDefinition.class)
     private List<ItemDefinition> ungroupedItems = new ArrayList<>();
 
-    public List<ItemDefinition> allItems() {
-        List<ItemDefinition> all = new ArrayList<>();
+    public Set<ItemDefinition> allItems() {
+        Set<ItemDefinition> all = new HashSet<>();
         itemGroups.stream().forEach(itemGroupDefinition -> {
             all.addAll(itemGroupDefinition.getItems());
         });

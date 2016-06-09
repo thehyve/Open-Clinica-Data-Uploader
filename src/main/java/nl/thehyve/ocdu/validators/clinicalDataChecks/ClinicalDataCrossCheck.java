@@ -5,6 +5,7 @@ import nl.thehyve.ocdu.models.OcDefinitions.ItemDefinition;
 import nl.thehyve.ocdu.models.OcDefinitions.MetaData;
 import nl.thehyve.ocdu.models.OCEntities.ClinicalData;
 import nl.thehyve.ocdu.models.errors.ValidationErrorMessage;
+import org.openclinica.ws.beans.StudySubjectWithEventsType;
 
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -17,15 +18,15 @@ import java.util.stream.Collectors;
  */
 public interface ClinicalDataCrossCheck {
 
-    ValidationErrorMessage getCorrespondingError(List<ClinicalData> data, MetaData metaData);
+    ValidationErrorMessage getCorrespondingError(List<ClinicalData> data, MetaData metaData, List<StudySubjectWithEventsType> studySubjectWithEventsTypeList);
 
-    default Map<String, List<CRFDefinition>> buildEventMap(MetaData metaData) {
-        Map<String, List<CRFDefinition>> eventMap = new HashMap<>();
+    default Map<String, Set<CRFDefinition>> buildEventMap(MetaData metaData) {
+        Map<String, Set<CRFDefinition>> eventMap = new HashMap<>();
         metaData.getEventDefinitions().stream().forEach(eventDefinition ->
                 {
-                    List<CRFDefinition> crfNames = eventDefinition.getCrfDefinitions()
+                    Set<CRFDefinition> crfNames = eventDefinition.getCrfDefinitions()
                             .stream()
-                            .collect(Collectors.toList());
+                            .collect(Collectors.toSet());
                     eventMap.put(eventDefinition.getName(), crfNames);
                 }
         );
@@ -82,8 +83,8 @@ public interface ClinicalDataCrossCheck {
 
 
     default CRFDefinition getMatchingCrf(String eventName, String CRFName, String CRfVersion, MetaData metaData) {
-        Map<String, List<CRFDefinition>> eventMap = buildEventMap(metaData);
-        List<CRFDefinition> crfInEvents = eventMap.get(eventName);
+        Map<String, Set<CRFDefinition>> eventMap = buildEventMap(metaData);
+        Set<CRFDefinition> crfInEvents = eventMap.get(eventName);
         if (crfInEvents == null) {
             return null;
         }
@@ -102,7 +103,7 @@ public interface ClinicalDataCrossCheck {
         if (matchingCrf == null) {
             return null;
         }
-        List<ItemDefinition> itemDefinitions = matchingCrf.allItems();
+        Set<ItemDefinition> itemDefinitions = matchingCrf.allItems();
         List<ItemDefinition> matchingItems = itemDefinitions.stream()
                 .filter(itemDefinition -> itemDefinition.getName().equals(dataPoint.getItem()))
                 .collect(Collectors.toList());

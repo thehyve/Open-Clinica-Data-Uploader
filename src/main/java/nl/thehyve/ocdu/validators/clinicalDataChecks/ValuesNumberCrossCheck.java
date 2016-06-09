@@ -5,6 +5,7 @@ import nl.thehyve.ocdu.models.OcDefinitions.ItemDefinition;
 import nl.thehyve.ocdu.models.OcDefinitions.MetaData;
 import nl.thehyve.ocdu.models.errors.TooManyValues;
 import nl.thehyve.ocdu.models.errors.ValidationErrorMessage;
+import org.openclinica.ws.beans.StudySubjectWithEventsType;
 
 import java.util.List;
 import java.util.Map;
@@ -15,7 +16,7 @@ import java.util.stream.Collectors;
  */
 public class ValuesNumberCrossCheck implements ClinicalDataCrossCheck {
     @Override
-    public ValidationErrorMessage getCorrespondingError(List<ClinicalData> data, MetaData metaData) {
+    public ValidationErrorMessage getCorrespondingError(List<ClinicalData> data, MetaData metaData, List<StudySubjectWithEventsType> subjectWithEventsTypeList) {
         Map<ClinicalData, ItemDefinition> dataTypeMap = buildItemDefMap(data, metaData);
         List<ClinicalData> violators = data.stream()
                 .filter(clinicalData -> isViolator(clinicalData, dataTypeMap)).collect(Collectors.toList());

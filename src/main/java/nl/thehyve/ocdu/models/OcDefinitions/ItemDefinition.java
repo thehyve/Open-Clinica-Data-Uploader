@@ -119,4 +119,20 @@ public class ItemDefinition {
     public void setRangeCheckList(List<RangeCheck> rangeCheckList) {
         this.rangeCheckList = rangeCheckList;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        ItemDefinition that = (ItemDefinition) o;
+
+        return oid != null ? oid.equals(that.oid) : that.oid == null;
+
+    }
+
+    @Override
+    public int hashCode() {
+        return oid != null ? oid.hashCode() : 0;
+    }
 }

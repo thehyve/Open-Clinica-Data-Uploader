@@ -14,6 +14,10 @@ public class SiteDefinition {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long id;
 
+    private String siteOID;
+
+    private String name;
+
     private boolean isGenderRequired = true;
 
     private boolean isBirthdateRequired = true;
@@ -40,5 +44,21 @@ public class SiteDefinition {
 
     public void setBirthdateRequired(boolean birthdateRequired) {
         isBirthdateRequired = birthdateRequired;
+    }
+
+    public String getSiteOID() {
+        return siteOID;
+    }
+
+    public void setSiteOID(String siteOID) {
+        this.siteOID = siteOID;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 }

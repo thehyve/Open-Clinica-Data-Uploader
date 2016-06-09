@@ -1,19 +1,13 @@
 package nl.thehyve.ocdu;
 
-import nl.thehyve.ocdu.models.OcUser;
-import nl.thehyve.ocdu.models.UploadSession;
-import nl.thehyve.ocdu.repositories.UploadSessionRepository;
-import nl.thehyve.ocdu.repositories.OCUserRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.context.annotation.Bean;
-
-import java.util.Date;
+import org.springframework.scheduling.annotation.EnableScheduling;
 
 @SpringBootApplication
+@EnableScheduling
 public class OcduApplication {
 
     public static void main(String[] args) {
@@ -24,6 +18,9 @@ public class OcduApplication {
     /*@Bean
     public CommandLineRunner testData(UploadSessionRepository repository, OCUserRepository usrRepository) {
         return (args) -> {
+            log.info("Loading autonomous module...");
+            ApplicationContext context =
+                    new ClassPathXmlApplicationContext(new String[] {"autonomous.xml"});
             log.info("Generating test data ...");
             OcUser bogusUser= new OcUser();
             bogusUser.setUsername("bogao");

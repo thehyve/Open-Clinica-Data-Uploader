@@ -38,12 +38,28 @@
                     <element xmlns="http://www.w3.org/2001/XMLSchema" name="startTime" type="time"/>
                     <element xmlns="http://www.w3.org/2001/XMLSchema" name="endDate" type="date"/>
                     <element xmlns="http://www.w3.org/2001/XMLSchema" name="endTime" type="time"/>
+                    <element maxOccurs="unbounded" minOccurs="0" name="eventCrfInformation"
+                             type="beans:eventCrfInformationList" xmlns="http://www.w3.org/2001/XMLSchema"/>
+                </sequence>
+            </complexType>
+            <complexType name="eventCrfInformationList" xmlns="http://www.w3.org/2001/XMLSchema">
+                <sequence xmlns="http://www.w3.org/2001/XMLSchema">
+                    <element maxOccurs="unbounded" minOccurs="0" name="eventCrf" type="beans:eventCrfType"
+                             xmlns="http://www.w3.org/2001/XMLSchema"/>
                 </sequence>
             </complexType>
             <complexType xmlns="http://www.w3.org/2001/XMLSchema" name="eventsType">
                 <sequence xmlns="http://www.w3.org/2001/XMLSchema">
                     <element xmlns="http://www.w3.org/2001/XMLSchema" maxOccurs="unbounded" minOccurs="0" name="event"
                              type="beans:eventResponseType"/>
+                </sequence>
+            </complexType>
+            <complexType name="eventCrfType" xmlns="http://www.w3.org/2001/XMLSchema">
+                <sequence xmlns="http://www.w3.org/2001/XMLSchema">
+                    <element name="name" type="beans:customStringType" xmlns="http://www.w3.org/2001/XMLSchema"/>
+                    <element name="oid" type="beans:customStringType" xmlns="http://www.w3.org/2001/XMLSchema"/>
+                    <element name="status" type="beans:customStringType" xmlns="http://www.w3.org/2001/XMLSchema"/>
+                    <element name="version" type="beans:customStringType" xmlns="http://www.w3.org/2001/XMLSchema"/>
                 </sequence>
             </complexType>
             <complexType xmlns="http://www.w3.org/2001/XMLSchema" name="studySubjectType">

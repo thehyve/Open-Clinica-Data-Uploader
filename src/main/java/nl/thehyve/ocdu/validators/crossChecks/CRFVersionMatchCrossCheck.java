@@ -4,6 +4,7 @@ import nl.thehyve.ocdu.models.OCEntities.ClinicalData;
 import nl.thehyve.ocdu.models.OcDefinitions.MetaData;
 import nl.thehyve.ocdu.models.errors.CRFVersionMismatchError;
 import nl.thehyve.ocdu.models.errors.ValidationErrorMessage;
+import nl.thehyve.ocdu.validators.clinicalDataChecks.ClinicalDataCrossCheck;
 import org.openclinica.ws.beans.*;
 
 import java.util.ArrayList;
@@ -16,7 +17,6 @@ import java.util.List;
  * Created by jacob on 6/2/16.
  */
 public class CRFVersionMatchCrossCheck implements ClinicalDataCrossCheck {
-
 
     @Override
     public ValidationErrorMessage getCorrespondingError(List<ClinicalData> clinicalDataList, MetaData metaData, List<StudySubjectWithEventsType> subjectWithEventsTypeList) {

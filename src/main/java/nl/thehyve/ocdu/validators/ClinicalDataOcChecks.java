@@ -4,8 +4,9 @@ import nl.thehyve.ocdu.models.OCEntities.ClinicalData;
 import nl.thehyve.ocdu.models.OcDefinitions.MetaData;
 import nl.thehyve.ocdu.models.errors.ValidationErrorMessage;
 import nl.thehyve.ocdu.validators.checks.DataFieldWidthCheck;
-import nl.thehyve.ocdu.validators.crossChecks.*;
 import nl.thehyve.ocdu.validators.checks.OcEntityCheck;
+import nl.thehyve.ocdu.validators.clinicalDataChecks.*;
+import nl.thehyve.ocdu.validators.crossChecks.CRFVersionMatchCrossCheck;
 import org.openclinica.ws.beans.StudySubjectWithEventsType;
 
 import java.util.ArrayList;
@@ -17,8 +18,6 @@ import java.util.List;
 public class ClinicalDataOcChecks {
 
 
-
-
     private final List<ClinicalData> clinicalData;
     private final MetaData metadata;
 
@@ -27,8 +26,8 @@ public class ClinicalDataOcChecks {
      */
     private final List<StudySubjectWithEventsType> subjectWithEventsTypeList;
 
-    private  List<OcEntityCheck> recordChecks = new ArrayList<>();
-    private  List<ClinicalDataCrossCheck> crossChecks = new ArrayList<>();
+    private List<OcEntityCheck> recordChecks = new ArrayList<>();
+    private List<ClinicalDataCrossCheck> crossChecks = new ArrayList<>();
 
     public ClinicalDataOcChecks(MetaData metadata, List<ClinicalData> clinicalData, List<StudySubjectWithEventsType> subjectWithEventsTypes) {
         this.metadata = metadata;

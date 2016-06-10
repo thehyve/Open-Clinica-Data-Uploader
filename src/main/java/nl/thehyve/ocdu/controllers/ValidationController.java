@@ -52,9 +52,13 @@ public class ValidationController {
     public ResponseEntity<List<ValidationErrorMessage>> validatePatients(HttpSession session) {
         try {
             UploadSession currentUploadSession = uploadSessionService.getCurrentUploadSession(session);
-            List<ValidationErrorMessage> patientsErrors = validationService.getPatientsErrors(currentUploadSession);
+            String pwdHash = ocUserService.getOcwsHash(session);
+            List<ValidationErrorMessage> patientsErrors = validationService.getPatientsErrors(currentUploadSession, pwdHash);
             return new ResponseEntity<>(patientsErrors, HttpStatus.OK);
         } catch (UploadSessionNotFoundException e) {
+            e.printStackTrace();
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        } catch (Exception e) {
             e.printStackTrace();
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
@@ -64,7 +68,8 @@ public class ValidationController {
     public ResponseEntity<List<ValidationErrorMessage>> validateEvents(HttpSession session) {
         try {
             UploadSession currentUploadSession = uploadSessionService.getCurrentUploadSession(session);
-            List<ValidationErrorMessage> eventsErrors = validationService.getEventsErrors(currentUploadSession);
+            String pwdHash = ocUserService.getOcwsHash(session);
+            List<ValidationErrorMessage> eventsErrors = validationService.getEventsErrors(currentUploadSession, pwdHash);
             return new ResponseEntity<>(eventsErrors,HttpStatus.OK);
         } catch (UploadSessionNotFoundException e) {
             e.printStackTrace();

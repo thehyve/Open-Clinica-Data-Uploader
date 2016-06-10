@@ -33,19 +33,15 @@ public class ClinicalDataFactory extends UserSubmittedDataFactory {
     }
 
     public List<ClinicalData> createClinicalData(Path dataFile) {
-        try {
-            Stream<String> lines = Files.lines(dataFile);
-            Stream<String> lines2 = Files.lines(dataFile);
-            Optional<String> headerLine = lines2.findFirst();
-            HashMap<String, Integer> header = parseHeader(headerLine.get());
-            HashMap<String, Integer> coreColumns = getCoreHeader(header);
+        Optional<String[]> headerRow = getHeaderRow(dataFile);
+        Map<String, Integer> columnsIndex = createColumnsIndexMap(headerRow.get());
+        try (Stream<String> lines = Files.lines(dataFile)) {
+            HashMap<String, Integer> coreColumns = getCoreHeader(columnsIndex);
             List<ClinicalData> clinicalData = new ArrayList<>();
             List<List<ClinicalData>> clinicalDataAggregates = lines.skip(1). // skip header
-                    filter(s -> s.split(FILE_SEPARATOR).length > 2). // smallest legal file consists of no less than 3 columns
-                    map(s -> parseLine(s, header, coreColumns)).collect(Collectors.toList());
+                    filter(s -> parseLine(s).length > 2). // smallest legal file consists of no less than 3 columns
+                    map(s -> parseLine(s, columnsIndex, coreColumns)).collect(Collectors.toList());
             clinicalDataAggregates.forEach(aggregate -> clinicalData.addAll(aggregate));
-            lines.close();
-            lines2.close();
             return clinicalData;
         } catch (IOException e) {
             e.printStackTrace();
@@ -53,7 +49,7 @@ public class ClinicalDataFactory extends UserSubmittedDataFactory {
         return null;
     }
 
-    private HashMap<String, Integer> getCoreHeader(HashMap<String, Integer> headerMap) {
+    private HashMap<String, Integer> getCoreHeader(Map<String, Integer> headerMap) {
         HashMap<String, Integer> coreMap = new HashMap<>();
         Integer ssidIndex = getAndRemove(headerMap, STUDY_SUBJECT_ID);
         coreMap.put(STUDY_SUBJECT_ID, ssidIndex);
@@ -72,26 +68,15 @@ public class ClinicalDataFactory extends UserSubmittedDataFactory {
         return coreMap;
     }
 
-    private HashMap<String, Integer> parseHeader(String headerLine) {
-        String[] split = headerLine.split(FILE_SEPARATOR);
-        int i = 0;
-        HashMap<String, Integer> header = new HashMap();
-        List<String> tokens = Arrays.asList(split);
-        for (String token : tokens) {
-            header.put(token, i++);
-        }
-        return header;
-    }
-
     private String getOptionalFromArray(String[] array, int index) {
         if (array.length <= index) {
             return "";
         } else return array[index];
     }
 
-    private List<ClinicalData> parseLine(String line, HashMap<String,
+    private List<ClinicalData> parseLine(String line, Map<String,
             Integer> headerMap, HashMap<String, Integer> coreColumns) {
-        String[] split = line.split(FILE_SEPARATOR);
+        String[] split = parseLine(line);
 
         String ssid = split[coreColumns.get(STUDY_SUBJECT_ID)];
         String study = split[coreColumns.get(STUDY)];
@@ -102,7 +87,7 @@ public class ClinicalDataFactory extends UserSubmittedDataFactory {
         Integer siteInd = coreColumns.get(SITE);
         String site = null;
         if (siteInd != null) {
-            site = getOptionalFromArray(split,siteInd);
+            site = getOptionalFromArray(split, siteInd);
         }
 
         List<ClinicalData> aggregation = new ArrayList<>();
@@ -142,7 +127,7 @@ public class ClinicalDataFactory extends UserSubmittedDataFactory {
         return gRep;
     }
 
-    private Integer getAndRemove(HashMap<String, Integer> map, String key) {
+    private Integer getAndRemove(Map<String, Integer> map, String key) {
         Integer index = map.get(key);
         map.remove(key);
         return index;

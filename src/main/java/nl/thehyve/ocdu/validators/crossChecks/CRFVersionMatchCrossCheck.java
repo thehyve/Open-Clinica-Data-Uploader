@@ -4,6 +4,7 @@ import nl.thehyve.ocdu.models.OCEntities.ClinicalData;
 import nl.thehyve.ocdu.models.OcDefinitions.MetaData;
 import nl.thehyve.ocdu.models.errors.CRFVersionMismatchError;
 import nl.thehyve.ocdu.models.errors.ValidationErrorMessage;
+import nl.thehyve.ocdu.validators.clinicalDataChecks.ClinicalDataCrossCheck;
 import org.openclinica.ws.beans.*;
 
 import java.util.ArrayList;
@@ -17,7 +18,6 @@ import java.util.List;
  */
 public class CRFVersionMatchCrossCheck implements ClinicalDataCrossCheck {
 
-
     @Override
     public ValidationErrorMessage getCorrespondingError(List<ClinicalData> clinicalDataList, MetaData metaData, List<StudySubjectWithEventsType> subjectWithEventsTypeList) {
 
@@ -26,7 +26,7 @@ public class CRFVersionMatchCrossCheck implements ClinicalDataCrossCheck {
         }
         // Assumption is that there is only 1 event and 1 CRF in a data file and that the clincalDataList only contains a single subjectID
 
-        String studyIdentifier = metaData.getStudyIdentifier();
+        String studyIdentifier = metaData.getStudyOID();
 
         List<String> offendingNames = new ArrayList<>();
         for (ClinicalData clinicalDataToUpload : clinicalDataList) {

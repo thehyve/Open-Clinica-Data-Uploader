@@ -1,0 +1,301 @@
+<wsdl:definitions xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+                  xmlns:tns="http://openclinica.org/ws/event/v1" targetNamespace="http://openclinica.org/ws/event/v1">
+    <wsdl:types xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">
+        <schema xmlns="http://www.w3.org/2001/XMLSchema" xmlns:beans="http://openclinica.org/ws/beans"
+                attributeFormDefault="unqualified" elementFormDefault="qualified"
+                targetNamespace="http://openclinica.org/ws/beans">
+            <complexType xmlns="http://www.w3.org/2001/XMLSchema" name="eventType">
+                <sequence xmlns="http://www.w3.org/2001/XMLSchema">
+                    <element xmlns="http://www.w3.org/2001/XMLSchema" name="studySubjectRef"
+                             type="beans:studySubjectRefType"/>
+                    <element xmlns="http://www.w3.org/2001/XMLSchema" name="studyRef" type="beans:studyRefType"/>
+                    <element xmlns="http://www.w3.org/2001/XMLSchema" name="eventDefinitionOID"
+                             type="beans:customStringType"/>
+                    <element xmlns="http://www.w3.org/2001/XMLSchema" minOccurs="0" name="location"
+                             type="beans:customStringType"/>
+                    <element xmlns="http://www.w3.org/2001/XMLSchema" name="startDate" type="date"/>
+                    <element xmlns="http://www.w3.org/2001/XMLSchema" minOccurs="0" name="startTime" type="time"/>
+                    <element xmlns="http://www.w3.org/2001/XMLSchema" minOccurs="0" name="endDate" type="date"/>
+                    <element xmlns="http://www.w3.org/2001/XMLSchema" minOccurs="0" name="endTime" type="time"/>
+                </sequence>
+            </complexType>
+            <complexType xmlns="http://www.w3.org/2001/XMLSchema" name="eventResponseType">
+                <sequence xmlns="http://www.w3.org/2001/XMLSchema">
+                    <element xmlns="http://www.w3.org/2001/XMLSchema" name="studySubjectRef"
+                             type="beans:studySubjectRefType"/>
+                    <element xmlns="http://www.w3.org/2001/XMLSchema" name="studyRef" type="beans:studyRefType"/>
+                    <element xmlns="http://www.w3.org/2001/XMLSchema" name="eventDefinitionOID"
+                             type="beans:customStringType"/>
+                    <element xmlns="http://www.w3.org/2001/XMLSchema" name="occurrence" type="beans:customStringType"/>
+                    <element xmlns="http://www.w3.org/2001/XMLSchema" name="status" type="beans:customStringType"/>
+                    <element xmlns="http://www.w3.org/2001/XMLSchema" name="subjectEventStatus"
+                             type="beans:customStringType"/>
+                    <element xmlns="http://www.w3.org/2001/XMLSchema" name="location" type="beans:customStringType"/>
+                    <element xmlns="http://www.w3.org/2001/XMLSchema" name="startDate" type="date"/>
+                    <element xmlns="http://www.w3.org/2001/XMLSchema" name="startTime" type="time"/>
+                    <element xmlns="http://www.w3.org/2001/XMLSchema" name="endDate" type="date"/>
+                    <element xmlns="http://www.w3.org/2001/XMLSchema" name="endTime" type="time"/>
+                    <element maxOccurs="unbounded" minOccurs="0" name="eventCrfInformation"
+                             type="beans:eventCrfInformationList" xmlns="http://www.w3.org/2001/XMLSchema"/>
+                </sequence>
+            </complexType>
+            <complexType name="eventCrfInformationList" xmlns="http://www.w3.org/2001/XMLSchema">
+                <sequence xmlns="http://www.w3.org/2001/XMLSchema">
+                    <element maxOccurs="unbounded" minOccurs="0" name="eventCrf" type="beans:eventCrfType"
+                             xmlns="http://www.w3.org/2001/XMLSchema"/>
+                </sequence>
+            </complexType>
+            <complexType xmlns="http://www.w3.org/2001/XMLSchema" name="eventsType">
+                <sequence xmlns="http://www.w3.org/2001/XMLSchema">
+                    <element xmlns="http://www.w3.org/2001/XMLSchema" maxOccurs="unbounded" minOccurs="0" name="event"
+                             type="beans:eventResponseType"/>
+                </sequence>
+            </complexType>
+            <complexType name="eventCrfType" xmlns="http://www.w3.org/2001/XMLSchema">
+                <sequence xmlns="http://www.w3.org/2001/XMLSchema">
+                    <element name="name" type="beans:customStringType" xmlns="http://www.w3.org/2001/XMLSchema"/>
+                    <element name="oid" type="beans:customStringType" xmlns="http://www.w3.org/2001/XMLSchema"/>
+                    <element name="status" type="beans:customStringType" xmlns="http://www.w3.org/2001/XMLSchema"/>
+                    <element name="version" type="beans:customStringType" xmlns="http://www.w3.org/2001/XMLSchema"/>
+                </sequence>
+            </complexType>
+            <complexType xmlns="http://www.w3.org/2001/XMLSchema" name="studySubjectType">
+                <sequence xmlns="http://www.w3.org/2001/XMLSchema">
+                    <element xmlns="http://www.w3.org/2001/XMLSchema" minOccurs="0" name="label"
+                             type="beans:customStringType"/>
+                    <element xmlns="http://www.w3.org/2001/XMLSchema" minOccurs="0" name="secondaryLabel"
+                             type="beans:customStringType"/>
+                    <element xmlns="http://www.w3.org/2001/XMLSchema" name="enrollmentDate" type="date"/>
+                    <element xmlns="http://www.w3.org/2001/XMLSchema" name="subject" type="beans:subjectType"/>
+                    <element xmlns="http://www.w3.org/2001/XMLSchema" name="studyRef" type="beans:studyRefType"/>
+                </sequence>
+            </complexType>
+            <complexType xmlns="http://www.w3.org/2001/XMLSchema" name="studySubjectWithEventsType">
+                <sequence xmlns="http://www.w3.org/2001/XMLSchema">
+                    <element xmlns="http://www.w3.org/2001/XMLSchema" minOccurs="0" name="label"
+                             type="beans:customStringType"/>
+                    <element xmlns="http://www.w3.org/2001/XMLSchema" minOccurs="0" name="secondaryLabel"
+                             type="beans:customStringType"/>
+                    <element xmlns="http://www.w3.org/2001/XMLSchema" name="enrollmentDate" type="date"/>
+                    <element xmlns="http://www.w3.org/2001/XMLSchema" name="subject" type="beans:subjectType"/>
+                    <element xmlns="http://www.w3.org/2001/XMLSchema" name="studyRef" type="beans:studyRefType"/>
+                    <element xmlns="http://www.w3.org/2001/XMLSchema" name="events" type="beans:eventsType"/>
+                </sequence>
+            </complexType>
+            <complexType xmlns="http://www.w3.org/2001/XMLSchema" name="subjectType">
+                <sequence xmlns="http://www.w3.org/2001/XMLSchema">
+                    <element xmlns="http://www.w3.org/2001/XMLSchema" minOccurs="0" name="uniqueIdentifier"
+                             type="beans:customStringType"/>
+                    <element xmlns="http://www.w3.org/2001/XMLSchema" minOccurs="0" name="gender"
+                             type="beans:genderType"/>
+                    <choice xmlns="http://www.w3.org/2001/XMLSchema" minOccurs="0">
+                        <element xmlns="http://www.w3.org/2001/XMLSchema" name="dateOfBirth" type="date"/>
+                        <element xmlns="http://www.w3.org/2001/XMLSchema" name="yearOfBirth"
+                                 type="beans:customDateType"/>
+                    </choice>
+                </sequence>
+            </complexType>
+            <complexType xmlns="http://www.w3.org/2001/XMLSchema" name="studiesType">
+                <sequence xmlns="http://www.w3.org/2001/XMLSchema">
+                    <element xmlns="http://www.w3.org/2001/XMLSchema" maxOccurs="unbounded" minOccurs="0" name="study"
+                             type="beans:studyType"/>
+                </sequence>
+            </complexType>
+            <complexType xmlns="http://www.w3.org/2001/XMLSchema" name="studyType">
+                <sequence xmlns="http://www.w3.org/2001/XMLSchema">
+                    <element xmlns="http://www.w3.org/2001/XMLSchema" name="identifier" type="beans:customStringType"/>
+                    <element xmlns="http://www.w3.org/2001/XMLSchema" name="oid" type="beans:customStringType"/>
+                    <element xmlns="http://www.w3.org/2001/XMLSchema" name="name" type="beans:customStringType"/>
+                    <element xmlns="http://www.w3.org/2001/XMLSchema" name="sites" type="beans:sitesType"/>
+                </sequence>
+            </complexType>
+            <complexType xmlns="http://www.w3.org/2001/XMLSchema" name="sitesType">
+                <sequence xmlns="http://www.w3.org/2001/XMLSchema">
+                    <element xmlns="http://www.w3.org/2001/XMLSchema" maxOccurs="unbounded" minOccurs="0" name="site"
+                             type="beans:siteType"/>
+                </sequence>
+            </complexType>
+            <complexType xmlns="http://www.w3.org/2001/XMLSchema" name="siteType">
+                <sequence xmlns="http://www.w3.org/2001/XMLSchema">
+                    <element xmlns="http://www.w3.org/2001/XMLSchema" name="identifier" type="beans:customStringType"/>
+                    <element xmlns="http://www.w3.org/2001/XMLSchema" name="oid" type="beans:customStringType"/>
+                    <element xmlns="http://www.w3.org/2001/XMLSchema" name="name" type="beans:customStringType"/>
+                </sequence>
+            </complexType>
+            <complexType xmlns="http://www.w3.org/2001/XMLSchema" name="studySubjectsType">
+                <sequence xmlns="http://www.w3.org/2001/XMLSchema">
+                    <element xmlns="http://www.w3.org/2001/XMLSchema" maxOccurs="unbounded" minOccurs="0"
+                             name="studySubject" type="beans:studySubjectWithEventsType"/>
+                </sequence>
+            </complexType>
+            <complexType xmlns="http://www.w3.org/2001/XMLSchema" name="studyEventDefinitionsType">
+                <sequence xmlns="http://www.w3.org/2001/XMLSchema">
+                    <element xmlns="http://www.w3.org/2001/XMLSchema" maxOccurs="unbounded" minOccurs="0"
+                             name="studyEventDefinition" type="beans:studyEventDefinitionType"/>
+                </sequence>
+            </complexType>
+            <complexType xmlns="http://www.w3.org/2001/XMLSchema" name="studyEventDefinitionType">
+                <sequence xmlns="http://www.w3.org/2001/XMLSchema">
+                    <element xmlns="http://www.w3.org/2001/XMLSchema" name="oid" type="beans:customStringType"/>
+                    <element xmlns="http://www.w3.org/2001/XMLSchema" name="name" type="beans:customStringType"/>
+                    <element xmlns="http://www.w3.org/2001/XMLSchema" name="eventDefinitionCrfs" type="beans:crfsType"/>
+                </sequence>
+            </complexType>
+            <complexType xmlns="http://www.w3.org/2001/XMLSchema" name="eventDefinitionCrfsType">
+                <sequence xmlns="http://www.w3.org/2001/XMLSchema">
+                    <element xmlns="http://www.w3.org/2001/XMLSchema" maxOccurs="unbounded" minOccurs="0"
+                             name="eventDefinitionCrf" type="beans:eventDefinitionCrfType"/>
+                </sequence>
+            </complexType>
+            <complexType xmlns="http://www.w3.org/2001/XMLSchema" name="eventDefinitionCrfType">
+                <sequence xmlns="http://www.w3.org/2001/XMLSchema">
+                    <element xmlns="http://www.w3.org/2001/XMLSchema" name="required" type="boolean"/>
+                    <element xmlns="http://www.w3.org/2001/XMLSchema" name="doubleDataEntry" type="boolean"/>
+                    <element xmlns="http://www.w3.org/2001/XMLSchema" name="passwordRequired" type="boolean"/>
+                    <element xmlns="http://www.w3.org/2001/XMLSchema" name="hideCrf" type="boolean"/>
+                    <element xmlns="http://www.w3.org/2001/XMLSchema" name="participantForm" type="boolean"/>
+                    <element xmlns="http://www.w3.org/2001/XMLSchema" name="sourceDataVerificaiton"
+                             type="beans:customStringType"/>
+                    <element xmlns="http://www.w3.org/2001/XMLSchema" name="crf" type="beans:crfObjType"/>
+                    <element xmlns="http://www.w3.org/2001/XMLSchema" name="defaultCrfVersion"
+                             type="beans:crfVersionType"/>
+                </sequence>
+            </complexType>
+            <complexType xmlns="http://www.w3.org/2001/XMLSchema" name="crfsType">
+                <sequence xmlns="http://www.w3.org/2001/XMLSchema">
+                    <element xmlns="http://www.w3.org/2001/XMLSchema" minOccurs="0" name="crf" type="beans:crfObjType"/>
+                </sequence>
+            </complexType>
+            <complexType xmlns="http://www.w3.org/2001/XMLSchema" name="crfObjType">
+                <sequence xmlns="http://www.w3.org/2001/XMLSchema">
+                    <element xmlns="http://www.w3.org/2001/XMLSchema" name="oid" type="beans:customStringType"/>
+                    <element xmlns="http://www.w3.org/2001/XMLSchema" name="name" type="beans:customStringType"/>
+                </sequence>
+            </complexType>
+            <complexType xmlns="http://www.w3.org/2001/XMLSchema" name="crfVersionType">
+                <sequence xmlns="http://www.w3.org/2001/XMLSchema">
+                    <element xmlns="http://www.w3.org/2001/XMLSchema" name="oid" type="beans:customStringType"/>
+                    <element xmlns="http://www.w3.org/2001/XMLSchema" name="name" type="beans:customStringType"/>
+                </sequence>
+            </complexType>
+            <complexType xmlns="http://www.w3.org/2001/XMLSchema" name="listStudySubjectsInStudyType">
+                <sequence xmlns="http://www.w3.org/2001/XMLSchema">
+                    <element xmlns="http://www.w3.org/2001/XMLSchema" name="studyRef" type="beans:studyRefType"/>
+                </sequence>
+            </complexType>
+            <complexType xmlns="http://www.w3.org/2001/XMLSchema" name="studyEventDefinitionListAllType">
+                <sequence xmlns="http://www.w3.org/2001/XMLSchema">
+                    <element xmlns="http://www.w3.org/2001/XMLSchema" name="studyRef" type="beans:studyRefType"/>
+                </sequence>
+            </complexType>
+            <complexType xmlns="http://www.w3.org/2001/XMLSchema" name="studyMetadataType">
+                <sequence xmlns="http://www.w3.org/2001/XMLSchema">
+                    <element xmlns="http://www.w3.org/2001/XMLSchema" name="studyRef" type="beans:studyRefType"/>
+                </sequence>
+            </complexType>
+            <complexType xmlns="http://www.w3.org/2001/XMLSchema" name="studyRefType">
+                <sequence xmlns="http://www.w3.org/2001/XMLSchema">
+                    <element xmlns="http://www.w3.org/2001/XMLSchema" name="identifier" type="beans:customStringType"/>
+                    <element xmlns="http://www.w3.org/2001/XMLSchema" minOccurs="0" name="siteRef"
+                             type="beans:siteRefType"/>
+                </sequence>
+            </complexType>
+            <complexType xmlns="http://www.w3.org/2001/XMLSchema" name="siteRefType">
+                <sequence xmlns="http://www.w3.org/2001/XMLSchema">
+                    <element xmlns="http://www.w3.org/2001/XMLSchema" name="identifier" type="beans:customStringType"/>
+                </sequence>
+            </complexType>
+            <complexType xmlns="http://www.w3.org/2001/XMLSchema" name="studySubjectRefType">
+                <sequence xmlns="http://www.w3.org/2001/XMLSchema">
+                    <element xmlns="http://www.w3.org/2001/XMLSchema" name="label" type="beans:customStringType"/>
+                </sequence>
+            </complexType>
+            <simpleType xmlns="http://www.w3.org/2001/XMLSchema" name="genderType">
+                <restriction xmlns="http://www.w3.org/2001/XMLSchema" base="string">
+                    <enumeration xmlns="http://www.w3.org/2001/XMLSchema" value="m"/>
+                    <enumeration xmlns="http://www.w3.org/2001/XMLSchema" value="f"/>
+                </restriction>
+            </simpleType>
+            <simpleType xmlns="http://www.w3.org/2001/XMLSchema" name="customStringType">
+                <restriction xmlns="http://www.w3.org/2001/XMLSchema" base="normalizedString">
+                    <minLength xmlns="http://www.w3.org/2001/XMLSchema" value="1"/>
+                    <whiteSpace xmlns="http://www.w3.org/2001/XMLSchema" value="collapse"/>
+                </restriction>
+            </simpleType>
+            <simpleType xmlns="http://www.w3.org/2001/XMLSchema" name="customDateType">
+                <restriction xmlns="http://www.w3.org/2001/XMLSchema" base="integer">
+                    <pattern xmlns="http://www.w3.org/2001/XMLSchema" value="[1-2][0-9][0-9][0-9]"/>
+                    <whiteSpace xmlns="http://www.w3.org/2001/XMLSchema" value="collapse"/>
+                </restriction>
+            </simpleType>
+            <simpleType xmlns="http://www.w3.org/2001/XMLSchema" name="customTimeType">
+                <restriction xmlns="http://www.w3.org/2001/XMLSchema" base="integer">
+                    <pattern xmlns="http://www.w3.org/2001/XMLSchema" value="[0-2][0-9]:[0-9][0-9]"/>
+                    <whiteSpace xmlns="http://www.w3.org/2001/XMLSchema" value="collapse"/>
+                </restriction>
+            </simpleType>
+        </schema>
+        <schema xmlns="http://www.w3.org/2001/XMLSchema" xmlns:beans="http://openclinica.org/ws/beans"
+                attributeFormDefault="unqualified" elementFormDefault="qualified"
+                targetNamespace="http://openclinica.org/ws/event/v1">
+            <import xmlns="http://www.w3.org/2001/XMLSchema" namespace="http://openclinica.org/ws/beans"/>
+            <element xmlns="http://www.w3.org/2001/XMLSchema" name="scheduleRequest">
+                <complexType xmlns="http://www.w3.org/2001/XMLSchema">
+                    <sequence xmlns="http://www.w3.org/2001/XMLSchema">
+                        <element xmlns="http://www.w3.org/2001/XMLSchema" maxOccurs="unbounded" name="event"
+                                 type="beans:eventType"/>
+                    </sequence>
+                </complexType>
+            </element>
+            <element xmlns="http://www.w3.org/2001/XMLSchema" name="scheduleResponse">
+                <complexType xmlns="http://www.w3.org/2001/XMLSchema">
+                    <sequence xmlns="http://www.w3.org/2001/XMLSchema">
+                        <element xmlns="http://www.w3.org/2001/XMLSchema" name="result" type="string"/>
+                        <element xmlns="http://www.w3.org/2001/XMLSchema" name="eventDefinitionOID" type="string"/>
+                        <element xmlns="http://www.w3.org/2001/XMLSchema" name="studySubjectOID" type="string"/>
+                        <element xmlns="http://www.w3.org/2001/XMLSchema" name="studyEventOrdinal" type="string"/>
+                        <element xmlns="http://www.w3.org/2001/XMLSchema" maxOccurs="unbounded" minOccurs="0"
+                                 name="warning" type="string"/>
+                        <element xmlns="http://www.w3.org/2001/XMLSchema" maxOccurs="unbounded" minOccurs="0"
+                                 name="error" type="string"/>
+                    </sequence>
+                </complexType>
+            </element>
+        </schema>
+    </wsdl:types>
+    <wsdl:message xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" name="scheduleRequest">
+        <wsdl:part xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" element="tns:scheduleRequest"
+                   name="scheduleRequest"></wsdl:part>
+    </wsdl:message>
+    <wsdl:message xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" name="scheduleResponse">
+        <wsdl:part xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" element="tns:scheduleResponse"
+                   name="scheduleResponse"></wsdl:part>
+    </wsdl:message>
+    <wsdl:portType xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" name="ws">
+        <wsdl:operation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" name="schedule">
+            <wsdl:input xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" message="tns:scheduleRequest"
+                        name="scheduleRequest"></wsdl:input>
+            <wsdl:output xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" message="tns:scheduleResponse"
+                         name="scheduleResponse"></wsdl:output>
+        </wsdl:operation>
+    </wsdl:portType>
+    <wsdl:binding xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" name="wsSoap11" type="tns:ws">
+        <soap:binding xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" style="document"
+                      transport="http://schemas.xmlsoap.org/soap/http"/>
+        <wsdl:operation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" name="schedule">
+            <soap:operation xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" soapAction=""/>
+            <wsdl:input xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" name="scheduleRequest">
+                <soap:body xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" use="literal"/>
+            </wsdl:input>
+            <wsdl:output xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" name="scheduleResponse">
+                <soap:body xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
+    </wsdl:binding>
+    <wsdl:service xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" name="wsService">
+        <wsdl:port xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" binding="tns:wsSoap11" name="wsSoap11">
+            <soap:address xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+                          location="http://ocdu-openclinica-dev.thehyve.net:80/OpenClinica-ws/ws/event/v1"/>
+        </wsdl:port>
+    </wsdl:service>
+</wsdl:definitions>

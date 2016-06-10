@@ -52,10 +52,26 @@ function next_btn() {
         '<button type="button" class="btn btn-primary" id="subject-next-btn">Next</button>';
     $('#subject-registration-div').append(html);
     $('#subject-back-btn').click(function () {
-        window.history.back();
+        window.location.href = baseApp + "/views/feedback-data";
     });
+
     $('#subject-next-btn').click(function () {
-        //handle subject file upload
-        window.location.href = baseApp + "/views/feedback-subjects";
+
+        $.ajax({
+            url: baseApp + "/submission/update",
+            type: "POST",
+            data: {step: "feedback-subjects"},
+            success: function () {
+                //handle subject file upload
+                window.location.href = baseApp + "/views/feedback-subjects";
+            },
+            error: function (jqXHR, textStatus, errorThrown) {
+                console.log(jqXHR.status+" "+textStatus+" "+errorThrown);
+                window.location.href = baseApp + "/views/subjects";
+            }
+        });
+
     });
+
 }
+

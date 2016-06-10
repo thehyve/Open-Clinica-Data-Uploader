@@ -47,19 +47,19 @@ public class SOAPRequestFactory {
     }
 
 
-    public SOAPMessage createListAllByStudy(String userName, String passwordHash, String studyIdentifier) throws Exception {
+    public SOAPMessage createListAllByStudy(String userName, String passwordHash, Study study) throws Exception {
         ObjectFactory objectFactory = new ObjectFactory();
 
         ListStudySubjectsInStudyType listStudySubjectsInStudyType = new ListStudySubjectsInStudyType();
         StudyRefType studyRefType = new StudyRefType();
-        studyRefType.setIdentifier(studyIdentifier);
+        studyRefType.setIdentifier(study.getIdentifier());
         listStudySubjectsInStudyType.setStudyRef(studyRefType);
         JAXBElement<ListStudySubjectsInStudyType> body = objectFactory.createListAllByStudyRequest(listStudySubjectsInStudyType);
 
         SOAPMessage soapMessage = getSoapMessage(userName, passwordHash);
         SOAPEnvelope envelope = soapMessage.getSOAPPart().getEnvelope();
         GetStudyMetadataRequestDecorator decorator = new GetStudyMetadataRequestDecorator();
-
+        decorator.setStudy(study);
         decorator.decorateBody(envelope);
         Document doc = convertToDocument(body);
         soapMessage.getSOAPBody().addDocument(doc);

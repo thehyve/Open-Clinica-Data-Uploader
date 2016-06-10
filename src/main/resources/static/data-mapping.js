@@ -185,7 +185,22 @@ $(document).ready(function () {
     $('#map-proceed-btn').click(function () {
         var isValid = true; // TODO: implement validation ?
 
-        var uploadMappingAjax = function uploadMappingAjax() {
+        var updateSubmissionAjax = function () {
+            $.ajax({
+                url: baseApp + "/submission/update",
+                type: "POST",
+                data: {step: "feedback-data"},
+                success: function () {
+                    window.location.href = baseApp + "/views/feedback-data";
+                },
+                error: function (jqXHR, textStatus, errorThrown) {
+                    console.log(jqXHR.status+" "+textStatus+" "+errorThrown);
+                    window.location.href = baseApp + "/views/mapping";
+                }
+            });
+        }
+
+        var uploadMappingAjax = function () {
             var output = constructUserMapping();
             if (output.length > 0) {
                 $.ajax({
@@ -198,7 +213,8 @@ $(document).ready(function () {
                     dataType: 'json',
                     data: JSON.stringify(output),
                     success: function () {
-                        window.location.href = baseApp + "/views/feedback-data";
+                        console.log('upload user mapping successfully');
+                        updateSubmissionAjax();
                     },
                     error: function (jqXHR, textStatus, errorThrown) {
                         window.location.href = baseApp + "/views/data";
@@ -206,7 +222,7 @@ $(document).ready(function () {
                 });//ajax call
             }//if output is not empty
             else {
-                window.location.href = baseApp + "/views/feedback-data";
+                updateSubmissionAjax();
             }//if output is empty
         };
         if (isValid) {
@@ -215,8 +231,12 @@ $(document).ready(function () {
     });
 
     $('#map-back-btn').click(function () {
-        window.history.back();
+        stepback();
     });
+
+    function stepback() {
+        window.location.href = baseApp + "/views/data";
+    }
 
 });//end of the function $(document).ready...
 

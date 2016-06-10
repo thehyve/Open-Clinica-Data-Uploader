@@ -8,7 +8,7 @@ $(document).ready(function () {
     //TODO: connect to backend
     contains_events_unscheduled = true;
 
-    if(contains_events_unscheduled) {
+    if (contains_events_unscheduled) {
         notify_that_additional_info_required();
         provide_event_template_download();
         provide_event_template_upload();
@@ -42,6 +42,19 @@ function next_btn() {
         window.history.back();
     });
     $('#event-next-btn').click(function () {
-        window.location.href = baseApp + "/views/feedback-events";
+        $.ajax({
+            url: baseApp + "/submission/update",
+            type: "POST",
+            data: {step: "feedback-events"},
+            success: function () {
+                //handle subject file upload
+                window.location.href = baseApp + "/views/feedback-events";
+            },
+            error: function (jqXHR, textStatus, errorThrown) {
+                console.log(jqXHR.status + " " + textStatus + " " + errorThrown);
+                window.location.href = baseApp + "/views/events";
+            }
+        });
+
     });
 }

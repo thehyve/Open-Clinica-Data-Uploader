@@ -28,7 +28,11 @@ wsdl2java {
     generatedWsdlDir = file("src/main/generated")  // target directory for generated source coude
     wsdlDir = file("src/main/wsdl")
     wsdlsToGenerate = [
-                          ['src/main/wsdl/studySubjectWsdl.wsdl']
+            ['src/main/wsdl/studySubjectWsdl.wsdl'],
+            ['src/main/wsdl/studyWsdl.wsdl'],
+            ['src/main/wsdl/eventWsdl.wsdl'],
+            ['src/main/wsdl/studyEventDefinitionWsdl.wsdl'],
+            ['src/main/wsdl/dataWsdl.wsdl'],
 
     ]
 }
@@ -78,6 +82,7 @@ dependencies {
     compile('commons-io:commons-io:2.5')
 
     testCompile('org.springframework.boot:spring-boot-starter-test')
+    testCompile('co.unruly:java-8-matchers:1.4')
     providedRuntime("org.springframework.boot:spring-boot-starter-tomcat")
 }
 

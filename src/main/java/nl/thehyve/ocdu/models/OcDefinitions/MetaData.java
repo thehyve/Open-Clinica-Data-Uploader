@@ -13,7 +13,9 @@ public class MetaData {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long id;
 
-    private String studyIdentifier; //TODO: shouldn't it be Study entity? Should we serialize Study as well?
+    private String studyOID;
+
+    private String studyName;
 
     @OneToMany(targetEntity = EventDefinition.class, cascade = CascadeType.ALL)
     private List<EventDefinition> eventDefinitions;
@@ -24,6 +26,8 @@ public class MetaData {
     @OneToMany(targetEntity = CodeListDefinition.class, cascade = CascadeType.ALL )
     private List<CodeListDefinition> codeListDefinitions;
 
+    @OneToMany(targetEntity = SiteDefinition.class, cascade = CascadeType.ALL )
+    private List<SiteDefinition> siteDefinitions;
 
     public void addEventDefinition(EventDefinition eventDef) {
         eventDefinitions.add(eventDef);
@@ -59,12 +63,12 @@ public class MetaData {
         this.id = id;
     }
 
-    public String getStudyIdentifier() {
-        return studyIdentifier;
+    public String getStudyOID() {
+        return studyOID;
     }
 
-    public void setStudyIdentifier(String studyIdentifier) {
-        this.studyIdentifier = studyIdentifier;
+    public void setStudyOID(String studyOID) {
+        this.studyOID = studyOID;
     }
 
     public List<EventDefinition> getEventDefinitions() {
@@ -89,6 +93,22 @@ public class MetaData {
 
     public void setCodeListDefinitions(List<CodeListDefinition> codeListDefinitions) {
         this.codeListDefinitions = codeListDefinitions;
+    }
+
+    public List<SiteDefinition> getSiteDefinitions() {
+        return siteDefinitions;
+    }
+
+    public void setSiteDefinitions(List<SiteDefinition> siteDefinitions) {
+        this.siteDefinitions = siteDefinitions;
+    }
+
+    public String getStudyName() {
+        return studyName;
+    }
+
+    public void setStudyName(String studyName) {
+        this.studyName = studyName;
     }
 
     public MetaData() {

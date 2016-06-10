@@ -65,6 +65,25 @@ public class UploadController {
 
     }
 
+    @RequestMapping(value = "/eventsData", method = RequestMethod.POST)
+    @ResponseBody
+    public ResponseEntity<List<FileFormatError>> uploadEventsDataFile(
+            @RequestParam("uploadfile") MultipartFile uploadfile, HttpSession session) {
+
+        try {
+            OcUser user = ocUserService.getCurrentOcUser(session);
+            Path locallySavedDataFile = saveFile(uploadfile);
+            UploadSession currentUploadSession = uploadSessionService.getCurrentUploadSession(session);
+            List<FileFormatError> fileFormatErrors = fileService
+                    .depositEventsDataFile(locallySavedDataFile, user, currentUploadSession);
+            return new ResponseEntity<>(fileFormatErrors, HttpStatus.OK);
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+
+    }
+
     private Path saveFile(MultipartFile file) throws IOException {
         // Get the filename and build the local file path
         String filename = file.getOriginalFilename();
@@ -94,7 +113,6 @@ public class UploadController {
             e.printStackTrace();
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
-
     }
 
     private boolean isValid(List<OcItemMapping> mappings) {
@@ -111,5 +129,25 @@ public class UploadController {
             return false;
         } else return true;
     }
+
+    @RequestMapping(value = "/subjects", method = RequestMethod.POST)
+    @ResponseBody
+    public ResponseEntity<List<FileFormatError>> uploadPatientFile(
+            @RequestParam("uploadPatientData") MultipartFile uploadPatientData, HttpSession session) {
+
+        try {
+            OcUser user = ocUserService.getCurrentOcUser(session);
+            Path locallySavedDataFile = saveFile(uploadPatientData);
+            UploadSession currentUploadSession = uploadSessionService.getCurrentUploadSession(session);
+            String pwd = ocUserService.getOcwsHash(session);
+            List<FileFormatError> fileFormatErrors = fileService.depositPatientFile(locallySavedDataFile, user, currentUploadSession, pwd);
+            return new ResponseEntity<>(fileFormatErrors, HttpStatus.OK);
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+
+    }
+
 
 }

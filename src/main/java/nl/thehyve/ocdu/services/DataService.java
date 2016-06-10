@@ -52,7 +52,7 @@ public class DataService {
     }
 
     private MetaDataTree buildTree(MetaData metaData) {
-        String studyIdentifier = metaData.getStudyIdentifier();
+        String studyIdentifier = metaData.getStudyOID();
 
         MetaDataTree studyNode = new MetaDataTree();
         studyNode.setName(studyIdentifier);

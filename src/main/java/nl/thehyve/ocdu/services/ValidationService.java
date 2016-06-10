@@ -1,6 +1,8 @@
 package nl.thehyve.ocdu.services;
 
 import nl.thehyve.ocdu.models.OCEntities.ClinicalData;
+import nl.thehyve.ocdu.models.OCEntities.Subject;
+import nl.thehyve.ocdu.models.OCEntities.Event;
 import nl.thehyve.ocdu.models.OCEntities.OcEntity;
 import nl.thehyve.ocdu.models.OCEntities.Study;
 import nl.thehyve.ocdu.models.OcDefinitions.MetaData;
@@ -12,16 +14,14 @@ import nl.thehyve.ocdu.repositories.ClinicalDataRepository;
 import nl.thehyve.ocdu.repositories.EventRepository;
 import nl.thehyve.ocdu.repositories.SubjectRepository;
 import nl.thehyve.ocdu.validators.ClinicalDataOcChecks;
+import nl.thehyve.ocdu.validators.PatientDataOcChecks;
 import org.openclinica.ws.beans.StudySubjectWithEventsType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -47,13 +47,14 @@ public class ValidationService {
     @Autowired
     DataService dataService;
 
+
     public List<ValidationErrorMessage> getDataErrors(UploadSession submission, String wsPwdHash) throws Exception {
         List<ClinicalData> bySubmission = clinicalDataRepository.findBySubmission(submission);
         determineStudy(bySubmission, submission);
         OcUser submitter = submission.getOwner();
         Study study = dataService.findStudy(submission.getStudy(), submitter, wsPwdHash);
         MetaData metadata = openClinicaService.getMetadata(submitter.getUsername(), wsPwdHash, submitter.getOcEnvironment(), study);
-        List<StudySubjectWithEventsType> subjectWithEventsTypes = openClinicaService.getStudySubjectsType(submitter.getUsername(), wsPwdHash, submitter.getOcEnvironment(), study);
+        List<StudySubjectWithEventsType> subjectWithEventsTypes = Collections.emptyList();//openClinicaService.getStudySubjectsType(submitter.getUsername(), wsPwdHash, submitter.getOcEnvironment(), study);
         List<ValidationErrorMessage> errors = new ArrayList<>();
         if (study == null || metadata == null) {
             StudyDoesNotExist studyError = new StudyDoesNotExist();
@@ -66,16 +67,24 @@ public class ValidationService {
         return errors;
     }
 
-    public List<ValidationErrorMessage> getEventsErrors(UploadSession submission) {
+    public List<ValidationErrorMessage> getEventsErrors(UploadSession submission, String wsPwdHash) {
+        List<Event> events = eventRepository.findBySubmission(submission);
         ArrayList<ValidationErrorMessage> validationErrorMessages = new ArrayList<>();
         //TODO: implement generating validation error messages
         return validationErrorMessages;
     }
 
-    public List<ValidationErrorMessage> getPatientsErrors(UploadSession submission) {
-        ArrayList<ValidationErrorMessage> validationErrorMessages = new ArrayList<>();
-        //TODO: implement generating validation error messages
-        return validationErrorMessages;
+    public List<ValidationErrorMessage> getPatientsErrors(UploadSession submission, String wsPwdHash) throws Exception {
+        List<Subject> bySubmission = subjectRepository.findBySubmission(submission);
+        OcUser submitter = submission.getOwner();
+        Study study = dataService.findStudy(submission.getStudy(), submitter, wsPwdHash);
+        MetaData metadata = openClinicaService.getMetadata(submitter.getUsername(), wsPwdHash, submitter.getOcEnvironment(), study);
+        List<ValidationErrorMessage> errors = new ArrayList<>();
+
+        PatientDataOcChecks checksRunner = new PatientDataOcChecks(metadata, bySubmission);
+        errors.addAll(checksRunner.getErrors());
+
+        return errors;
     }
 
     public List<ValidationErrorMessage> getFinallErrors(UploadSession submission) {

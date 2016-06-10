@@ -7,7 +7,7 @@ import java.util.List;
  * Created by piotrzakrzewski on 01/05/16.
  */
 @Entity
-public class ItemDefinition {
+public class ItemDefinition implements ODMElement {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)

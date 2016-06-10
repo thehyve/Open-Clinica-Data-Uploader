@@ -1,5 +1,6 @@
 package nl.thehyve.ocdu.models.OCEntities;
 
+import nl.thehyve.ocdu.models.OcDefinitions.ODMElement;
 import nl.thehyve.ocdu.models.OcUser;
 import nl.thehyve.ocdu.models.UploadSession;
 
@@ -11,7 +12,7 @@ import java.util.Date;
  */
 
 @Entity
-public class Subject implements OcEntity, UserSubmitted {
+public class Subject implements OcEntity, UserSubmitted, ODMElement {
 
     private String ssid;
     private String gender;
@@ -100,5 +101,16 @@ public class Subject implements OcEntity, UserSubmitted {
                 ", dateOfEnrollment=" + dateOfEnrollment +
                 ", secondaryId='" + secondaryId + '\'' +
                 '}';
+    }
+
+    public void appendODMStart(StringBuffer odmStringBuffer) {
+        odmStringBuffer.append("<SubjectData SubjectKey=\"");
+        odmStringBuffer.append(ssid);
+        odmStringBuffer.append("\">");
+        odmStringBuffer.append("</SubjectData>");
+    }
+
+    public void appendODMClose(StringBuffer odmStringBuffer) {
+        odmStringBuffer.append("</SubjectData>");
     }
 }

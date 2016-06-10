@@ -8,7 +8,7 @@ import java.util.stream.Collectors;
  * Created by piotrzakrzewski on 01/05/16.
  */
 @Entity
-public class CRFDefinition {
+public class CRFDefinition implements ODMElement {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long id;

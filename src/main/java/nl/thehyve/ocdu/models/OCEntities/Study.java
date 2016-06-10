@@ -1,9 +1,11 @@
 package nl.thehyve.ocdu.models.OCEntities;
 
+import nl.thehyve.ocdu.models.OcDefinitions.ODMElement;
+
 /**
  * Created by piotrzakrzewski on 15/04/16.
  */
-public class Study {
+public class Study implements ODMElement {
 
     private final String identifier;
     private final  String oid;

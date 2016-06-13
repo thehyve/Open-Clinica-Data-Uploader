@@ -35,27 +35,19 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link ListAllByStudyResponse }
-     * 
-     */
-    public ListAllByStudyResponse createListAllByStudyResponse() {
-        return new ListAllByStudyResponse();
-    }
-
-    /**
-     * Create an instance of {@link IsStudySubjectRequest }
-     * 
-     */
-    public IsStudySubjectRequest createIsStudySubjectRequest() {
-        return new IsStudySubjectRequest();
-    }
-
-    /**
      * Create an instance of {@link CreateRequest }
      * 
      */
     public CreateRequest createCreateRequest() {
         return new CreateRequest();
+    }
+
+    /**
+     * Create an instance of {@link ListAllByStudyResponse }
+     * 
+     */
+    public ListAllByStudyResponse createListAllByStudyResponse() {
+        return new ListAllByStudyResponse();
     }
 
     /**
@@ -72,6 +64,14 @@ public class ObjectFactory {
      */
     public IsStudySubjectResponse createIsStudySubjectResponse() {
         return new IsStudySubjectResponse();
+    }
+
+    /**
+     * Create an instance of {@link IsStudySubjectRequest }
+     * 
+     */
+    public IsStudySubjectRequest createIsStudySubjectRequest() {
+        return new IsStudySubjectRequest();
     }
 
     /**

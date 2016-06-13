@@ -1,37 +1,18 @@
 package nl.thehyve.ocdu.services;
 
-import com.sun.org.apache.xml.internal.serialize.OutputFormat;
-import com.sun.org.apache.xml.internal.serialize.XMLSerializer;
 import nl.thehyve.ocdu.models.OCEntities.ClinicalData;
-import nl.thehyve.ocdu.models.OCEntities.DataNode;
-import nl.thehyve.ocdu.models.OCEntities.Subject;
-import nl.thehyve.ocdu.models.OcDefinitions.ItemGroupDefinition;
 import nl.thehyve.ocdu.models.OcDefinitions.MetaData;
-import nl.thehyve.ocdu.models.OcDefinitions.ODMElement;
-import org.springframework.stereotype.Service;
+import org.apache.commons.lang3.text.StrBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.w3c.dom.Attr;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
+import org.springframework.stereotype.Service;
 
-import javax.xml.crypto.Data;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.OutputKeys;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerException;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.stream.StreamResult;
-import java.io.StringWriter;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.time.format.DateTimeFormatter;
-import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.function.Function;
-import java.util.function.Predicate;
+import java.util.GregorianCalendar;
+import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 import java.util.stream.Collectors;
 
 /**
@@ -40,127 +21,134 @@ import java.util.stream.Collectors;
 @Service
 public class ODMService {
 
-    private static final String ODM_DOCUMENT_NS = "http://www.cdisc.org/ns/odm/v1.3";
+    private static final String STUDY_SUBJECT_PARAM = "${SUBJECT_OID}";
+
+    private static final String STUDY_EVENT_DATA_PARAM = "${STUDY_EVENT_DATA}";
+
+    private static final String STUDY_EVENT_REPEAT_ORDINAL_PARAM = "${STUDY_EVENT_REPEAT_ORDINAL}";
+
+    private static final String CRF_OID_PARAM = "${CRF_OID}";
+
+    private static final String CRF_VERSION_PARAM = "${CRF_VERSION}";
+
+    private static final String ITEM_GROUP_PARAM = "${ITEM_GROUP_PARAM}";
+
+    private static final String ITEM_DATA_PARAM = "${ITEM_DATA_PARAM}";
+
+    private static final String ITEM_OID_PARAM = "${ITEM_OID_PARAM}";
+
+    private static final String ITEM_VALUE_PARAM = "${ITEM_VALUE_PARAM}";
+
+    // TODO: add the post-upload CRF status to the template
+    /**
+     * Template for the subjects section in an ODM-file
+     */
+    private static final String ODM_SUBJECT_SECTION =
+            "<SubjectData subjectKey=\"" + STUDY_SUBJECT_PARAM + "\">"
+          + "\t<StudyEventData StudyEventOID=\""+ STUDY_EVENT_DATA_PARAM + "\" StudyEventRepeatKey=\"" + STUDY_EVENT_REPEAT_ORDINAL_PARAM + "\">"
+          + "\t\t<FormData FormOID=\"" + CRF_OID_PARAM + "\">"
+          + "\t\t\t<ItemGroupData ItemGroupOID=\"" + ITEM_GROUP_PARAM + "\" TransactionType=\"Insert\" >"
+          + ITEM_DATA_PARAM
+          + "\t\t\t</ItemGroupData>"
+          + "\t\t</FormData>"
+          + "\t</StudyEventData>"
+          + "</SubjectData>";
+
+    /**
+     * Template for the section of the individual items.
+     */
+    private static final String ODM_ITEM_SECTION =
+            "\t\t\t\t<ItemData ItemOID=\"" + ITEM_OID_PARAM + "\" Value=\"" + ITEM_VALUE_PARAM + "\"/>";
 
     private static final Logger log = LoggerFactory.getLogger(ODMService.class);
 
     public String generateODM(List<ClinicalData> clinicalDataList, MetaData metaData) throws Exception {
-        StringBuffer odmDocument = buildDataTree(clinicalDataList);
+        StringBuffer odmDocument = buildODM(clinicalDataList, metaData.getStudyOID());
         return odmDocument.toString();
     }
 
 
-    private StringBuffer createODMDocument(String studyOID) throws Exception {
-        StringBuffer ret = new StringBuffer();
-        ret.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
-        ret.append("<ODM xmlns=\"http://www.cdisc.org/ns/odm/v1.3\" ");
-        ret.append("xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" ");
-        ret.append("ODMVersion=\"1.3\" ");
-        ret.append("FileOID=\"");
-        ret.append(System.currentTimeMillis() + "");
-        ret.append("\" ");
-        ret.append("FileType=\"Snapshot\" ");
-        ret.append("Description=\"Dataset ODM\" ");
-        ret.append("CreationDateTime=\"");
+    private void addODMDocumentHeader(String studyOID, StringBuffer odmData) throws Exception {
+
+        odmData.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
+        odmData.append("<ODM xmlns=\"http://www.cdisc.org/ns/odm/v1.3 https://dev.openclinica.com/tools/odm-doc/OpenClinica-ToODM1-3-0-OC2-0.xsd\"");
+        odmData.append("xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" ");
+        odmData.append("ODMVersion=\"1.3\" ");
+        odmData.append("FileOID=\"");
+        odmData.append(System.currentTimeMillis() + "");
+        odmData.append("\" ");
+        odmData.append("FileType=\"Snapshot\" ");
+        odmData.append("Description=\"Dataset ODM\" ");
+        odmData.append("CreationDateTime=\"");
 
         DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssz");
         String dateTimeStamp = df.format(GregorianCalendar.getInstance().getTime());
-        ret.append(dateTimeStamp);
-        ret.append("\">");
-        ret.append("<ClinicalData StudyOID=\"");
-        ret.append(studyOID);
-        ret.append("\" ");
-        ret.append("MetaDataVersionOID=\"v1.0.0\">");
-        return ret;
+        odmData.append(dateTimeStamp);
+        odmData.append("\">");
+        odmData.append("<ClinicalData StudyOID=\"");
+        odmData.append(studyOID);
+        odmData.append("\" ");
+        odmData.append("MetaDataVersionOID=\"v1.0.0\">");
     }
 
-    private StringBuffer buildDataTree(List<ClinicalData> clinicalDataList) throws Exception {
-        long startTime = System.currentTimeMillis();
+    private void addClosingTags(StringBuffer odmData) {
+        odmData.append("</ClinicalData>");
+        odmData.append("</ODM>");
+    }
+
+    private void appendSubjectODMSection(StringBuffer odmData, List<ClinicalData> clinicalDataList) {
+        // should not be possible but we just to be sure
         if (clinicalDataList.size() == 0) {
-            return new StringBuffer("");
+            return;
         }
+        String subjectOID = clinicalDataList.get(0).getSsid();
+        String eventName = clinicalDataList.get(0).getEventName();
+        Integer eventRepeatOrdinal = clinicalDataList.get(0).getEventRepeat();
+        String crfName = clinicalDataList.get(0).getCrfName();
+        String crfVersion = clinicalDataList.get(0).getCrfVersion();
 
-        DataNode root = new DataNode("root", "root");
+        StrBuilder builder = new StrBuilder(ODM_SUBJECT_SECTION);
+        builder.replaceAll(STUDY_SUBJECT_PARAM, subjectOID);
+        builder.replaceAll(STUDY_EVENT_DATA_PARAM, eventName);
+        builder.replaceAll(STUDY_EVENT_REPEAT_ORDINAL_PARAM, eventRepeatOrdinal.toString());
+        builder.replaceAll(CRF_OID_PARAM, crfName);
 
+        StrBuilder itemDataBuilder = new StrBuilder();
         for (ClinicalData clinicalData : clinicalDataList) {
-            DataNode studyNode = new DataNode("StudyData", clinicalData.getStudy());
-            root.addChild(studyNode);
-            studyNode = root.findChild(studyNode);
 
-            DataNode subjectDataNode = new DataNode("SubjectData", clinicalData.getSsid());
-            studyNode.addChild(subjectDataNode);
-            subjectDataNode = studyNode.findChild(subjectDataNode);
+            StrBuilder itemBuilder = new StrBuilder(ODM_ITEM_SECTION);
+            itemBuilder.replaceAll(ITEM_OID_PARAM, clinicalData.getItem());
+            itemBuilder.replaceAll(ITEM_VALUE_PARAM, clinicalData.getValue());
+            itemDataBuilder.append(itemBuilder);
 
-            DataNode eventNode = new DataNode("StudyEventData", clinicalData.getEventName());
-            subjectDataNode.addChild(eventNode);
-            eventNode = subjectDataNode.findChild(eventNode);
+        }
+        builder.replaceAll(ITEM_DATA_PARAM, itemDataBuilder.toString());
 
-            DataNode eventRepeatNode = new DataNode("StudyEventRepeatKey", clinicalData.getEventRepeat() + "");
-            eventNode.addChild(eventRepeatNode);
-            eventRepeatNode = eventNode.findChild(eventRepeatNode);
+        odmData.append(builder.toStringBuffer());
+    }
 
+    private StringBuffer buildODM(List<ClinicalData> clinicalDataList, String studyOID) throws Exception {
+        long startTime = System.currentTimeMillis();
 
-            DataNode crfNode = new DataNode("FormData", clinicalData.getCrfName());
-            eventRepeatNode.addChild(crfNode);
-            crfNode = eventRepeatNode.findChild(crfNode);
+        StringBuffer odmData = new StringBuffer("");
+        if (clinicalDataList.size() == 0) {
+            return odmData;
+        }
+        addODMDocumentHeader(studyOID, odmData);
 
+        Map<String, List<ClinicalData>> outputMap = clinicalDataList.stream().collect(Collectors.groupingBy(ClinicalData::createODMKey,
+                Collectors.toList()));
 
-            // TODO: add the ItemGroup to the ClinicalData and this section of code!!!
-            DataNode itemDataNode = new DataNode("ItemData", clinicalData.getItem());
-            crfNode.addChild(itemDataNode);
-            //itemDataNode = crfNode.findChild(itemDataNode);
+        TreeMap<String, List<ClinicalData>> sortedMap = new TreeMap<>(outputMap);
+        for (String key : sortedMap.keySet()) {
+            List<ClinicalData> outputClinicalData = sortedMap.get(key);
+            appendSubjectODMSection(odmData, outputClinicalData);
         }
 
+        addClosingTags(odmData);
         long duration = System.currentTimeMillis() - startTime;
-        System.out.println(">>>>>" + duration);
-        return new StringBuffer("");
-    }
+        log.info("Finished ODM generation for study " + studyOID + " in " + duration + " milliseconds for " + clinicalDataList.size() + " data points");
 
-    private String toString(Document document) throws Exception {
-        StringWriter stringOut = new StringWriter();
-        OutputFormat format = new OutputFormat();
-        format.setLineWidth(120);
-        format.setIndenting(true);
-        format.setIndent(4);
-        format.setEncoding("UTF-8");
-        XMLSerializer serial = new XMLSerializer(stringOut, format);
-        serial.serialize(document);
-        return stringOut.toString();
-
-    }
-
-
-    public class DataTree {
-        private String name;
-
-        private String xmlElementName;
-        //private MetaDataTree parent;
-        private List<DataTree> children = new ArrayList<>();
-
-        public DataTree(String name, String xmlElementName) {
-            this.name = name;
-            this.xmlElementName = xmlElementName;
-        }
-
-        public DataTree() {
-        }
-
-        public String getName() {
-            return name;
-        }
-
-
-
-        public List<DataTree> getChildren() {
-            return children;
-        }
-
-        public void setChildren(List<DataTree> children) {
-            this.children = children;
-        }
-
-        public void addChild(DataTree node) {
-            this.children.add(node);
-        }
+        return odmData;
     }
 }

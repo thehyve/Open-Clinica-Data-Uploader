@@ -26,9 +26,9 @@ import javax.xml.datatype.XMLGregorianCalendar;
  *         &lt;element name="studySubjectRef" type="{http://openclinica.org/ws/beans}studySubjectRefType"/>
  *         &lt;element name="studyRef" type="{http://openclinica.org/ws/beans}studyRefType"/>
  *         &lt;element name="eventDefinitionOID" type="{http://openclinica.org/ws/beans}customStringType"/>
- *         &lt;element name="occurrence" type="{http://openclinica.org/ws/beans}customStringType" minOccurs="0"/>
- *         &lt;element name="status" type="{http://openclinica.org/ws/beans}customStringType" minOccurs="0"/>
- *         &lt;element name="subjectEventStatus" type="{http://openclinica.org/ws/beans}customStringType" minOccurs="0"/>
+ *         &lt;element name="occurrence" type="{http://openclinica.org/ws/beans}customStringType"/>
+ *         &lt;element name="status" type="{http://openclinica.org/ws/beans}customStringType"/>
+ *         &lt;element name="subjectEventStatus" type="{http://openclinica.org/ws/beans}customStringType"/>
  *         &lt;element name="location" type="{http://openclinica.org/ws/beans}customStringType"/>
  *         &lt;element name="startDate" type="{http://www.w3.org/2001/XMLSchema}date"/>
  *         &lt;element name="startTime" type="{http://www.w3.org/2001/XMLSchema}time"/>
@@ -67,10 +67,13 @@ public class EventResponseType {
     @XmlElement(required = true)
     @XmlJavaTypeAdapter(NormalizedStringAdapter.class)
     protected String eventDefinitionOID;
+    @XmlElement(required = true)
     @XmlJavaTypeAdapter(NormalizedStringAdapter.class)
     protected String occurrence;
+    @XmlElement(required = true)
     @XmlJavaTypeAdapter(NormalizedStringAdapter.class)
     protected String status;
+    @XmlElement(required = true)
     @XmlJavaTypeAdapter(NormalizedStringAdapter.class)
     protected String subjectEventStatus;
     @XmlElement(required = true)

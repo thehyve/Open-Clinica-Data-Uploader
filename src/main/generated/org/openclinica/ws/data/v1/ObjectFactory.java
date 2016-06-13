@@ -34,19 +34,19 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link ImportResponse }
-     * 
-     */
-    public ImportResponse createImportResponse() {
-        return new ImportResponse();
-    }
-
-    /**
      * Create an instance of {@link AuditMessagesType }
      * 
      */
     public AuditMessagesType createAuditMessagesType() {
         return new AuditMessagesType();
+    }
+
+    /**
+     * Create an instance of {@link ImportResponse }
+     * 
+     */
+    public ImportResponse createImportResponse() {
+        return new ImportResponse();
     }
 
     /**

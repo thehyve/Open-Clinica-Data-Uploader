@@ -42,19 +42,19 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link GetMetadataResponse }
-     * 
-     */
-    public GetMetadataResponse createGetMetadataResponse() {
-        return new GetMetadataResponse();
-    }
-
-    /**
      * Create an instance of {@link GetMetadataRequest }
      * 
      */
     public GetMetadataRequest createGetMetadataRequest() {
         return new GetMetadataRequest();
+    }
+
+    /**
+     * Create an instance of {@link GetMetadataResponse }
+     * 
+     */
+    public GetMetadataResponse createGetMetadataResponse() {
+        return new GetMetadataResponse();
     }
 
     /**

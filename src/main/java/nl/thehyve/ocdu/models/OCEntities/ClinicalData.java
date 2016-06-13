@@ -214,6 +214,21 @@ public class ClinicalData implements OcEntity, UserSubmitted, EventReference {
                 (this.crfVersion.equals(that.crfVersion))));
     }
 
+    /**
+     * creates a key value for the ODM generation for each unique chunk of output.
+     * @return
+     */
+    public String createODMKey() {
+        StringBuffer ret = new StringBuffer();
+        ret.append(ssid);
+        ret.append(eventName);
+        ret.append(eventRepeat);
+        ret.append(crfName);
+        ret.append(crfVersion);
+        // TODO add the itemGroup level;
+        return ret.toString();
+    }
+
     public List<String> getValues() {
         String[] split = value.split(",");
         List<String> values = Arrays.asList(split);

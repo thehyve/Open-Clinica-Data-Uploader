@@ -72,10 +72,6 @@ public class ODMGenerationTests {
         List<ClinicalData> correctClinicalData = factory.createClinicalData(testODMGenerationCorrect);
         clinicalDataOcChecks = new ClinicalDataOcChecks(metaData, correctClinicalData, testSubjectWithEventsTypeList);
         ODMService odmService = new ODMService();
-
         String result = odmService.generateODM(correctClinicalData, metaData);
-
-        System.out.println(result);
-
     }
 }

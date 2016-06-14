@@ -4,6 +4,7 @@ import nl.thehyve.ocdu.models.OCEntities.ClinicalData;
 import nl.thehyve.ocdu.models.OcDefinitions.ItemDefinition;
 import nl.thehyve.ocdu.models.OcDefinitions.MetaData;
 import nl.thehyve.ocdu.models.errors.ValidationErrorMessage;
+import org.openclinica.ws.beans.StudySubjectWithEventsType;
 
 import java.util.List;
 import java.util.Map;
@@ -12,8 +13,9 @@ import java.util.Map;
  * Created by piotrzakrzewski on 08/06/16.
  */
 public class HiddenValueEmptyCheck implements ClinicalDataCrossCheck {
+
     @Override
-    public ValidationErrorMessage getCorrespondingError(List<ClinicalData> data, MetaData metaData) {
+    public ValidationErrorMessage getCorrespondingError(List<ClinicalData> data, MetaData metaData, List<StudySubjectWithEventsType> studySubjectWithEventsTypeList) {
         Map<ClinicalData, ItemDefinition> itemMap = buildItemDefMap(data, metaData);
         data.stream().forEach(clinicalData -> {
             boolean isEmpty = clinicalData.getValue().equals("");

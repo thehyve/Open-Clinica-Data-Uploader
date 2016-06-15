@@ -6,7 +6,7 @@ import nl.thehyve.ocdu.models.errors.ValidationErrorMessage;
 import nl.thehyve.ocdu.validators.checks.DataFieldWidthCheck;
 import nl.thehyve.ocdu.validators.checks.OcEntityCheck;
 import nl.thehyve.ocdu.validators.clinicalDataChecks.*;
-import nl.thehyve.ocdu.validators.crossChecks.CRFVersionMatchCrossCheck;
+import nl.thehyve.ocdu.validators.clinicalDataChecks.CRFVersionMatchCrossCheck;
 import org.openclinica.ws.beans.StudySubjectWithEventsType;
 
 import java.util.ArrayList;

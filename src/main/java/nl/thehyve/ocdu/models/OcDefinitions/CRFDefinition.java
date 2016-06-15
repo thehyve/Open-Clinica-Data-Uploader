@@ -140,6 +140,7 @@ public class CRFDefinition implements ODMElement {
         this.itemGroups = prototype.getItemGroups();
         this.mandatoryUngroupedItems = prototype.getMandatoryUngroupedItems();
         this.ungroupedItems = prototype.getUngroupedItems();
+        this.hidden = prototype.isHidden();
     }
 
     public CRFDefinition() {

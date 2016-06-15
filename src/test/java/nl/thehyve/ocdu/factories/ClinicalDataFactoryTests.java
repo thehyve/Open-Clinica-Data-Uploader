@@ -64,7 +64,7 @@ public class ClinicalDataFactoryTests {
 
     @Test
     @Ignore("Requires OC connection ")
-    public void depositionDataFileTest() throws Exception{
+    public void depositionDataFileTest() throws Exception {
         //List<FileFormatError> errorMessages = fileService.depositDataFile(testFile, testUser, testSubmission);
         //assertEquals(0, errorMessages.size());
     }

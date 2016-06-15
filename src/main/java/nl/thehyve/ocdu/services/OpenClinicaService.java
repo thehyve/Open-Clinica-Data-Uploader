@@ -1,11 +1,14 @@
 package nl.thehyve.ocdu.services;
 
-import nl.thehyve.ocdu.models.OcDefinitions.MetaData;
 import nl.thehyve.ocdu.models.OCEntities.Study;
-import nl.thehyve.ocdu.soap.ResponseHandlers.*;
+import nl.thehyve.ocdu.models.OcDefinitions.MetaData;
+import nl.thehyve.ocdu.soap.ResponseHandlers.GetStudyMetadataResponseHandler;
+import nl.thehyve.ocdu.soap.ResponseHandlers.ListAllByStudyResponseHandler;
+import nl.thehyve.ocdu.soap.ResponseHandlers.ListStudiesResponseHandler;
+import nl.thehyve.ocdu.soap.ResponseHandlers.OCResponseHandler;
+import nl.thehyve.ocdu.soap.ResponseHandlers.SoapUtils;
 import nl.thehyve.ocdu.soap.SOAPRequestFactory;
 import org.openclinica.ws.beans.StudySubjectWithEventsType;
-import org.openclinica.ws.beans.StudySubjectsType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -14,6 +17,10 @@ import org.w3c.dom.Document;
 import javax.xml.soap.SOAPConnection;
 import javax.xml.soap.SOAPConnectionFactory;
 import javax.xml.soap.SOAPMessage;
+import javax.xml.transform.Source;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.stream.StreamResult;
 import java.util.List;
 
 /**
@@ -27,7 +34,7 @@ public class OpenClinicaService {
     private static final Logger log = LoggerFactory.getLogger(OpenClinicaService.class);
 
     public List<Study> listStudies(String username, String passwordHash, String url) throws Exception { //TODO: handle exceptions
-        log.info("List studies initiated by: "+username+" on: "+url);
+        log.info("List studies initiated by: " + username + " on: " + url);
         SOAPConnectionFactory soapConnectionFactory = SOAPConnectionFactory.newInstance();
         SOAPConnection soapConnection = soapConnectionFactory.createConnection();
         SOAPMessage message = responseFactory.createListStudiesRequest(username, passwordHash);
@@ -38,9 +45,8 @@ public class OpenClinicaService {
     }
 
 
-
     public MetaData getMetadata(String username, String passwordHash, String url, Study study) throws Exception {
-        log.info("Get metadata initiated by: "+username+" on: "+url+" study: "+study);
+        log.info("Get metadata initiated by: " + username + " on: " + url + " study: " + study);
         if (study == null || username == null || passwordHash == null || url == null) {
             return null;
         }
@@ -55,7 +61,7 @@ public class OpenClinicaService {
 
 
     public List<StudySubjectWithEventsType> getStudySubjectsType(String username, String passwordHash, String url, Study study) throws Exception {
-        log.info("Get metadata initiated by: " + username + " on: " + url + " study: " + study);
+        log.info("Get listAllByStudy by: " + username + " on: " + url + " study: " + study);
         if (study == null || username == null || passwordHash == null || url == null) {
             return null;
         }
@@ -80,5 +86,4 @@ public class OpenClinicaService {
         soapConnection.close();
         return !OCResponseHandler.isAuthFailure(responseXml);
     }
-
 }

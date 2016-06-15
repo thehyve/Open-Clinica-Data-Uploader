@@ -55,6 +55,7 @@ public class ClinicalDataOcChecks {
         crossChecks.add(new SsidUniqueCrossCheck());
         crossChecks.add(new EventRepeatCrossCheck());
         crossChecks.add(new CodeListCrossCheck());
+        crossChecks.add(new HiddenValueEmptyCheck());
     }
 
     public List<ValidationErrorMessage> getErrors() {
@@ -83,7 +84,7 @@ public class ClinicalDataOcChecks {
     private List<ValidationErrorMessage> getCrossCheckErrors(List<ClinicalData> data) {
         List<ValidationErrorMessage> errors = new ArrayList<>();
         Map<ClinicalData, ItemDefinition> defMap = buildItemDefMap(data, metadata);
-        Map<ClinicalData, Boolean> showMap = new HashMap<>();
+        Map<ClinicalData, Boolean> showMap = buildShownMap(data, defMap);
         Map<String, Set<CRFDefinition>> eventMap = buildEventMap(metadata);
         crossChecks.stream().forEach(
                 check -> {
@@ -166,6 +167,9 @@ public class ClinicalDataOcChecks {
     }
 
     private boolean determineShown(ClinicalData clinicalData1, Collection<ClinicalData> data, ItemDefinition definition) {
+        if (definition == null) {
+            return true; // This case is covered by separate checks
+        }
         List<DisplayRule> displayRules = definition.getDisplayRules();
         boolean satisfied = true;
         for (DisplayRule displayRule: displayRules)

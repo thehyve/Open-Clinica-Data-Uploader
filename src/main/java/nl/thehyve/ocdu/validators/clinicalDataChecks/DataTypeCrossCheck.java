@@ -29,8 +29,8 @@ public class DataTypeCrossCheck implements ClinicalDataCrossCheck {
     public ValidationErrorMessage getCorrespondingError(List<ClinicalData> data, MetaData metaData, Map<ClinicalData, ItemDefinition> itemDefMap, List<StudySubjectWithEventsType> studySubjectWithEventsTypeList, Map<ClinicalData, Boolean> shownMap, Map<String, Set<CRFDefinition>> eventMap) {
         Map<ClinicalData, String> itemDataTypes = buildDataTypeMap(data, itemDefMap);
         Set<ImmutablePair<String, String>> offenders = data.stream()
-                .filter(clinicalData -> !allValuesMatch(clinicalData.getValues(), itemDataTypes.get(clinicalData)))
-                .map(clinicalData -> new ImmutablePair<>(clinicalData.getItem()+" values: "+ clinicalData.getValues(), itemDataTypes.get(clinicalData)))
+                .filter(clinicalData -> !allValuesMatch(clinicalData.getValues(), itemDataTypes.get(clinicalData)) && shownMap.get(clinicalData))
+                .map(clinicalData -> new ImmutablePair<>(clinicalData.getItem() + " values: " + clinicalData.getValues(), itemDataTypes.get(clinicalData)))
                 .collect(Collectors.toSet());
         if (offenders.size() > 0) {
             DataTypeMismatch error = new DataTypeMismatch();
@@ -40,8 +40,8 @@ public class DataTypeCrossCheck implements ClinicalDataCrossCheck {
         } else return null;
     }
 
-    private Map<ClinicalData,String> buildDataTypeMap(List<ClinicalData> data, Map<ClinicalData, ItemDefinition> defMap) {
-        Map<ClinicalData,String> typeMap = new HashMap<>();
+    private Map<ClinicalData, String> buildDataTypeMap(List<ClinicalData> data, Map<ClinicalData, ItemDefinition> defMap) {
+        Map<ClinicalData, String> typeMap = new HashMap<>();
         for (ClinicalData clinicalData : data) {
             ItemDefinition def = defMap.get(clinicalData);
             if (def != null) {

@@ -1,6 +1,8 @@
 package nl.thehyve.ocdu.validators.clinicalDataChecks;
 
 import nl.thehyve.ocdu.models.OCEntities.ClinicalData;
+import nl.thehyve.ocdu.models.OcDefinitions.CRFDefinition;
+import nl.thehyve.ocdu.models.OcDefinitions.ItemDefinition;
 import nl.thehyve.ocdu.models.OcDefinitions.MetaData;
 import nl.thehyve.ocdu.models.errors.CRFVersionMismatchError;
 import nl.thehyve.ocdu.models.errors.ValidationErrorMessage;
@@ -9,6 +11,8 @@ import org.openclinica.ws.beans.*;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * Checks if the CRF-version as specified in the input, matches the CRF-version of existing data for each subject
@@ -19,9 +23,9 @@ import java.util.List;
 public class CRFVersionMatchCrossCheck implements ClinicalDataCrossCheck {
 
     @Override
-    public ValidationErrorMessage getCorrespondingError(List<ClinicalData> clinicalDataList, MetaData metaData, List<StudySubjectWithEventsType> subjectWithEventsTypeList) {
+    public ValidationErrorMessage getCorrespondingError(List<ClinicalData> data, MetaData metaData, Map<ClinicalData, ItemDefinition> itemDefMap, List<StudySubjectWithEventsType> subjectWithEventsTypeList, Map<ClinicalData, Boolean> shownMap, Map<String, Set<CRFDefinition>> eventMap) {
 
-        if (clinicalDataList.isEmpty()) {
+        if (data.isEmpty()) {
             return null;
         }
         // Assumption is that there is only 1 event and 1 CRF in a data file and that the clincalDataList only contains a single subjectID
@@ -29,7 +33,7 @@ public class CRFVersionMatchCrossCheck implements ClinicalDataCrossCheck {
         String studyIdentifier = metaData.getStudyOID();
 
         List<String> offendingNames = new ArrayList<>();
-        for (ClinicalData clinicalDataToUpload : clinicalDataList) {
+        for (ClinicalData clinicalDataToUpload : data) {
             String subjectLabel = clinicalDataToUpload.getSsid();
             List<ClinicalData> clinicalDataPresentInStudy = convertToClinicalData(subjectWithEventsTypeList, subjectLabel, studyIdentifier);
             for (ClinicalData clinicalDataInStudy : clinicalDataPresentInStudy) {

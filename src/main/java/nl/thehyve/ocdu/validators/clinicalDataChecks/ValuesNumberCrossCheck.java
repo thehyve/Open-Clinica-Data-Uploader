@@ -1,6 +1,7 @@
 package nl.thehyve.ocdu.validators.clinicalDataChecks;
 
 import nl.thehyve.ocdu.models.OCEntities.ClinicalData;
+import nl.thehyve.ocdu.models.OcDefinitions.CRFDefinition;
 import nl.thehyve.ocdu.models.OcDefinitions.ItemDefinition;
 import nl.thehyve.ocdu.models.OcDefinitions.MetaData;
 import nl.thehyve.ocdu.models.errors.TooManyValues;
@@ -9,6 +10,7 @@ import org.openclinica.ws.beans.StudySubjectWithEventsType;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
@@ -16,10 +18,9 @@ import java.util.stream.Collectors;
  */
 public class ValuesNumberCrossCheck implements ClinicalDataCrossCheck {
     @Override
-    public ValidationErrorMessage getCorrespondingError(List<ClinicalData> data, MetaData metaData, List<StudySubjectWithEventsType> subjectWithEventsTypeList) {
-        Map<ClinicalData, ItemDefinition> dataTypeMap = buildItemDefMap(data, metaData);
+    public ValidationErrorMessage getCorrespondingError(List<ClinicalData> data, MetaData metaData, Map<ClinicalData, ItemDefinition> itemDefMap, List<StudySubjectWithEventsType> studySubjectWithEventsTypeList, Map<ClinicalData, Boolean> shownMap, Map<String, Set<CRFDefinition>> eventMap) {
         List<ClinicalData> violators = data.stream()
-                .filter(clinicalData -> isViolator(clinicalData, dataTypeMap)).collect(Collectors.toList());
+                .filter(clinicalData -> isViolator(clinicalData, itemDefMap)).collect(Collectors.toList());
         if (violators.size() > 0) {
             TooManyValues error = new TooManyValues();
             violators.forEach(clinicalData -> {

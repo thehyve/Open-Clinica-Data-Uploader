@@ -1,6 +1,7 @@
 package nl.thehyve.ocdu.validators.clinicalDataChecks;
 
 import nl.thehyve.ocdu.models.OCEntities.ClinicalData;
+import nl.thehyve.ocdu.models.OcDefinitions.CRFDefinition;
 import nl.thehyve.ocdu.models.OcDefinitions.CodeListDefinition;
 import nl.thehyve.ocdu.models.OcDefinitions.ItemDefinition;
 import nl.thehyve.ocdu.models.OcDefinitions.MetaData;
@@ -11,22 +12,24 @@ import org.openclinica.ws.beans.StudySubjectWithEventsType;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * Created by piotrzakrzewski on 17/05/16.
  */
 public class CodeListCrossCheck implements ClinicalDataCrossCheck {
+
+
     @Override
-    public ValidationErrorMessage getCorrespondingError(List<ClinicalData> data, MetaData metaData, List<StudySubjectWithEventsType> subjectWithEventsTypeList) {
+    public ValidationErrorMessage getCorrespondingError(List<ClinicalData> data, MetaData metaData, Map<ClinicalData, ItemDefinition> itemDefMap, List<StudySubjectWithEventsType> studySubjectWithEventsTypeList, Map<ClinicalData, Boolean> shownMap, Map<String, Set<CRFDefinition>> eventMap) {
         EnumerationError error = new EnumerationError();
-        Map<ClinicalData, ItemDefinition> clinicalDataItemDefinitionMap = buildItemDefMap(data, metaData);
         Map<String, CodeListDefinition> codeListMap = new HashMap<>();
         metaData.getCodeListDefinitions().stream().forEach(codeListDefinition -> {
             codeListMap.put(codeListDefinition.getOcid(), codeListDefinition);
         });
         data.stream().forEach(clinicalData -> {
             List<String> values = clinicalData.getValues();
-            ItemDefinition def = clinicalDataItemDefinitionMap.get(clinicalData);
+            ItemDefinition def = itemDefMap.get(clinicalData);
 
             if (def != null) { // Non existent item is a separate error
                 String codeListRef = def.getCodeListRef();

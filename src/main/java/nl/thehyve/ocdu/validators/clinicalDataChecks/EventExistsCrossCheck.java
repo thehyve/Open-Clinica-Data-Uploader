@@ -1,6 +1,8 @@
 package nl.thehyve.ocdu.validators.clinicalDataChecks;
 
 import nl.thehyve.ocdu.models.OCEntities.ClinicalData;
+import nl.thehyve.ocdu.models.OcDefinitions.CRFDefinition;
+import nl.thehyve.ocdu.models.OcDefinitions.ItemDefinition;
 import nl.thehyve.ocdu.models.OcDefinitions.MetaData;
 import nl.thehyve.ocdu.models.errors.EventDoesNotExist;
 import nl.thehyve.ocdu.models.errors.ValidationErrorMessage;
@@ -10,6 +12,8 @@ import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
@@ -20,7 +24,7 @@ public class EventExistsCrossCheck implements ClinicalDataCrossCheck {
     private static final Logger log = LoggerFactory.getLogger(EventExistsCrossCheck.class);
 
     @Override
-    public ValidationErrorMessage getCorrespondingError(List<ClinicalData> data, MetaData metaData, List<StudySubjectWithEventsType> subjectWithEventsTypeList) {
+    public ValidationErrorMessage getCorrespondingError(List<ClinicalData> data, MetaData metaData, Map<ClinicalData, ItemDefinition> itemDefMap, List<StudySubjectWithEventsType> studySubjectWithEventsTypeList, Map<ClinicalData, Boolean> shownMap, Map<String, Set<CRFDefinition>> eventMap) {
         List<String> validEventNames = new ArrayList<>();
         metaData
                 .getEventDefinitions().stream()

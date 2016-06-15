@@ -1,21 +1,25 @@
 package nl.thehyve.ocdu.validators.clinicalDataChecks;
 
 import nl.thehyve.ocdu.models.OCEntities.ClinicalData;
+import nl.thehyve.ocdu.models.OcDefinitions.CRFDefinition;
+import nl.thehyve.ocdu.models.OcDefinitions.ItemDefinition;
 import nl.thehyve.ocdu.models.OcDefinitions.MetaData;
 import nl.thehyve.ocdu.models.errors.FieldLengthExceeded;
 import nl.thehyve.ocdu.models.errors.ValidationErrorMessage;
 import org.openclinica.ws.beans.StudySubjectWithEventsType;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * Created by piotrzakrzewski on 11/05/16.
  */
 public class ItemLengthCrossCheck implements ClinicalDataCrossCheck {
     @Override
-    public ValidationErrorMessage getCorrespondingError(List<ClinicalData> data, MetaData metaData, List<StudySubjectWithEventsType> subjectWithEventsTypeList) {
-        Map<ClinicalData, Integer> lengthMap = buildFieldLengthMap(data, metaData);
+    public ValidationErrorMessage getCorrespondingError(List<ClinicalData> data, MetaData metaData, Map<ClinicalData, ItemDefinition> itemDefMap, List<StudySubjectWithEventsType> studySubjectWithEventsTypeList, Map<ClinicalData, Boolean> shownMap, Map<String, Set<CRFDefinition>> eventMap)  {
+        Map<ClinicalData, Integer> lengthMap = buildFieldLengthMap(data, itemDefMap);
         FieldLengthExceeded error = new FieldLengthExceeded();
         data.stream().forEach(clinicalData -> {
             String value = clinicalData.getValue();
@@ -31,4 +35,16 @@ public class ItemLengthCrossCheck implements ClinicalDataCrossCheck {
             return error;
         } else return null;
     }
+
+    Map<ClinicalData, Integer> buildFieldLengthMap(List<ClinicalData> data, Map<ClinicalData, ItemDefinition> itemDefMap) {
+        Map<ClinicalData, Integer> lengthMap = new HashMap<>();
+        data.forEach(clinicalData -> {
+            ItemDefinition itemDefinition = itemDefMap.get(clinicalData);
+            Integer length = 0;
+            if (itemDefinition != null) length = itemDefinition.getLength(); // zero means no check
+            lengthMap.put(clinicalData, length);
+        });
+        return lengthMap;
+    }
+
 }

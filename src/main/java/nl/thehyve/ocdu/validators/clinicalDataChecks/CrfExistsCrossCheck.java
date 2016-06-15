@@ -1,5 +1,6 @@
 package nl.thehyve.ocdu.validators.clinicalDataChecks;
 
+import nl.thehyve.ocdu.models.OcDefinitions.ItemDefinition;
 import nl.thehyve.ocdu.models.OcDefinitions.MetaData;
 import nl.thehyve.ocdu.models.OCEntities.ClinicalData;
 import nl.thehyve.ocdu.models.OcDefinitions.CRFDefinition;
@@ -15,10 +16,8 @@ import java.util.stream.Collectors;
  */
 public class CrfExistsCrossCheck implements ClinicalDataCrossCheck {
     @Override
-    public ValidationErrorMessage getCorrespondingError(List<ClinicalData> data, MetaData metaData, List<StudySubjectWithEventsType> subjectWithEventsTypeList) {
-        Map<String, Set<CRFDefinition>> eventMap = buildEventMap(metaData);
+    public ValidationErrorMessage getCorrespondingError(List<ClinicalData> data, MetaData metaData, Map<ClinicalData, ItemDefinition> itemDefMap, List<StudySubjectWithEventsType> studySubjectWithEventsTypeList, Map<ClinicalData, Boolean> shownMap, Map<String, Set<CRFDefinition>> eventMap) {
         List<ClinicalData> crfNotExistsOffenders = getCrfNotExistsOffenders(data, eventMap);
-
         if (crfNotExistsOffenders.size() > 0) {
             CRFDoesNotExist error = new CRFDoesNotExist();
             List<String> offendingNames = new ArrayList<>();
@@ -26,7 +25,7 @@ public class CrfExistsCrossCheck implements ClinicalDataCrossCheck {
                 String crf = clinicalData.getCrfName();
                 String eventName = clinicalData.getEventName();
                 String version = clinicalData.getCrfVersion();
-                String msg = "CRF: " + crf + " version: " + version + " in event: " + eventName+ " for subject: "
+                String msg = "CRF: " + crf + " version: " + version + " in event: " + eventName + " for subject: "
                         + clinicalData.getSsid();
                 if (!offendingNames.contains(msg)) offendingNames.add(msg);
             });

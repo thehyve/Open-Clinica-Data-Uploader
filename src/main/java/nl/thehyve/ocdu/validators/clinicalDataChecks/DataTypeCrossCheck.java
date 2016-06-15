@@ -1,12 +1,15 @@
 package nl.thehyve.ocdu.validators.clinicalDataChecks;
 
 import nl.thehyve.ocdu.models.OCEntities.ClinicalData;
+import nl.thehyve.ocdu.models.OcDefinitions.CRFDefinition;
+import nl.thehyve.ocdu.models.OcDefinitions.ItemDefinition;
 import nl.thehyve.ocdu.models.OcDefinitions.MetaData;
 import nl.thehyve.ocdu.models.errors.DataTypeMismatch;
 import nl.thehyve.ocdu.models.errors.ValidationErrorMessage;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.openclinica.ws.beans.StudySubjectWithEventsType;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -23,8 +26,8 @@ public class DataTypeCrossCheck implements ClinicalDataCrossCheck {
     public final static String PARTIAL_DATE_DATA_TYPE = "partialDate";
 
     @Override
-    public ValidationErrorMessage getCorrespondingError(List<ClinicalData> data, MetaData metaData, List<StudySubjectWithEventsType> subjectWithEventsTypeList) {
-        Map<ClinicalData, String> itemDataTypes = buildDataTypeMap(data, metaData);
+    public ValidationErrorMessage getCorrespondingError(List<ClinicalData> data, MetaData metaData, Map<ClinicalData, ItemDefinition> itemDefMap, List<StudySubjectWithEventsType> studySubjectWithEventsTypeList, Map<ClinicalData, Boolean> shownMap, Map<String, Set<CRFDefinition>> eventMap) {
+        Map<ClinicalData, String> itemDataTypes = buildDataTypeMap(data, itemDefMap);
         Set<ImmutablePair<String, String>> offenders = data.stream()
                 .filter(clinicalData -> !allValuesMatch(clinicalData.getValues(), itemDataTypes.get(clinicalData)))
                 .map(clinicalData -> new ImmutablePair<>(clinicalData.getItem()+" values: "+ clinicalData.getValues(), itemDataTypes.get(clinicalData)))
@@ -35,6 +38,17 @@ public class DataTypeCrossCheck implements ClinicalDataCrossCheck {
                     forEach(offender -> error.addOffendingValue("Item: " + offender.left + " expected: " + offender.right));
             return error;
         } else return null;
+    }
+
+    private Map<ClinicalData,String> buildDataTypeMap(List<ClinicalData> data, Map<ClinicalData, ItemDefinition> defMap) {
+        Map<ClinicalData,String> typeMap = new HashMap<>();
+        for (ClinicalData clinicalData : data) {
+            ItemDefinition def = defMap.get(clinicalData);
+            if (def != null) {
+                typeMap.put(clinicalData, def.getDataType());
+            }
+        }
+        return typeMap;
     }
 
     private boolean allValuesMatch(List<String> values, String expectedType) {

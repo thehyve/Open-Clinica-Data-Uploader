@@ -20,6 +20,17 @@ public class ItemDefinition {
     private boolean isMultiselect = false;
     private  String codeListRef;
 
+    @OneToMany(targetEntity = RangeCheck.class)
+    private List<DisplayRule> displayRules;
+
+    public List<DisplayRule> getDisplayRules() {
+        return displayRules;
+    }
+
+    public void setDisplayRules(List<DisplayRule> displayRules) {
+        this.displayRules = displayRules;
+    }
+
     public String getCodeListRef() {
         return codeListRef;
     }
@@ -110,6 +121,7 @@ public class ItemDefinition {
         this.significantDigits = prototype.getSignificantDigits();
         this.isMultiselect = prototype.isMultiselect();
         this.codeListRef = prototype.getCodeListRef();
+        this.displayRules = prototype.getDisplayRules();
     }
 
     public List<RangeCheck> getRangeCheckList() {

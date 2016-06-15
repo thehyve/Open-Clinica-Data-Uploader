@@ -53,8 +53,10 @@ public class ValidationService {
         determineStudy(bySubmission, submission);
         OcUser submitter = submission.getOwner();
         Study study = dataService.findStudy(submission.getStudy(), submitter, wsPwdHash);
-        MetaData metadata = openClinicaService.getMetadata(submitter.getUsername(), wsPwdHash, submitter.getOcEnvironment(), study);
-        List<StudySubjectWithEventsType> subjectWithEventsTypes = Collections.emptyList();//openClinicaService.getStudySubjectsType(submitter.getUsername(), wsPwdHash, submitter.getOcEnvironment(), study);
+        MetaData metadata = openClinicaService
+                .getMetadata(submitter.getUsername(), wsPwdHash, submitter.getOcEnvironment(), study);
+        List<StudySubjectWithEventsType> subjectWithEventsTypes = openClinicaService
+                .getStudySubjectsType(submitter.getUsername(), wsPwdHash, submitter.getOcEnvironment(), study);
         List<ValidationErrorMessage> errors = new ArrayList<>();
         if (study == null || metadata == null) {
             StudyDoesNotExist studyError = new StudyDoesNotExist();

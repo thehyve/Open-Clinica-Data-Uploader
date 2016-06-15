@@ -31,7 +31,7 @@ public class CodeListCrossCheck implements ClinicalDataCrossCheck {
             List<String> values = clinicalData.getValues();
             ItemDefinition def = itemDefMap.get(clinicalData);
 
-            if (def != null) { // Non existent item is a separate error
+            if (def != null && shownMap.get(clinicalData)) { // Non existent item is a separate error, hidden values are not validated
                 String codeListRef = def.getCodeListRef();
                 if (codeListRef != null) {
                     CodeListDefinition codeListdef = codeListMap.get(codeListRef);

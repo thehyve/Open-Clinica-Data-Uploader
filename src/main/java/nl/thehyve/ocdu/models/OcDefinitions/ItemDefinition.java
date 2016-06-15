@@ -1,6 +1,7 @@
 package nl.thehyve.ocdu.models.OcDefinitions;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -21,7 +22,7 @@ public class ItemDefinition {
     private  String codeListRef;
 
     @OneToMany(targetEntity = RangeCheck.class)
-    private List<DisplayRule> displayRules;
+    private List<DisplayRule> displayRules = new ArrayList<>();
 
     public List<DisplayRule> getDisplayRules() {
         return displayRules;

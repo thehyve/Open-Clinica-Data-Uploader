@@ -56,6 +56,7 @@ public class ClinicalDataOcChecks {
         crossChecks.add(new EventRepeatCrossCheck());
         crossChecks.add(new CodeListCrossCheck());
         crossChecks.add(new HiddenValueEmptyCheck());
+        crossChecks.add(new HiddenTogglePresent());
     }
 
     public List<ValidationErrorMessage> getErrors() {
@@ -182,8 +183,7 @@ public class ClinicalDataOcChecks {
         String controlItemName = displayRule.getControlItemName();
         String optionValue = displayRule.getOptionValue();// This value has to equal value of the controlItemName for given subject
         for (ClinicalData clinicalData1: data)  {
-            boolean controlItem = clinicalData1.getCrfName().equals(appliesInCrf)
-                    && clinicalData1.getItem().equals(controlItemName)
+            boolean controlItem = clinicalData1.getItem().equals(controlItemName)
                     && clinicalData1.getSsid().equals(subjectId);
             if (controlItem) {
                 return clinicalData1.getValue().equals(optionValue);

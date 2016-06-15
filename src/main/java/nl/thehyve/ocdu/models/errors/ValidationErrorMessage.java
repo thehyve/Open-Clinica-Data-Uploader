@@ -3,6 +3,7 @@ package nl.thehyve.ocdu.models.errors;
 import nl.thehyve.ocdu.models.OCEntities.OcEntity;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -31,7 +32,7 @@ public class ValidationErrorMessage {
         offendingValues.add(value);
     }
 
-    public void addAllOffendingValues(List<String> values) {offendingValues.addAll(values);}
+    public void addAllOffendingValues(Collection<String> values) {offendingValues.addAll(values);}
 
     public List<String> getOffendingValues() {
         return offendingValues;

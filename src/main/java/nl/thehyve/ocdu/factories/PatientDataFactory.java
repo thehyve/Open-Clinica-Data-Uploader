@@ -38,26 +38,25 @@ public class PatientDataFactory extends UserSubmittedDataFactory {
 
     public List<Subject> createPatientData(Path patientFile) {
         Optional<String[]> headerRow = getHeaderRow(patientFile);
-        if(headerRow.isPresent()) {
+        if (headerRow.isPresent()) {
             Map<String, Integer> columnsIndex = createColumnsIndexMap(headerRow.get());
 
-            try(Stream<String> lines = Files.lines(patientFile)) {
+            try (Stream<String> lines = Files.lines(patientFile)) {
                 return lines.skip(1)
-                            .map(UserSubmittedDataFactory::parseLine)
-                            .map(row -> mapRow(row, columnsIndex))
-                            .collect(Collectors.toList());
+                        .map(UserSubmittedDataFactory::parseLine)
+                        .map(row -> mapRow(row, columnsIndex))
+                        .collect(Collectors.toList());
 
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
-        }
-        else {
+        } else {
             throw new RuntimeException("Patient file is empty.");
         }
 
     }
 
-    protected Subject mapRow(String[] row, Map<String, Integer> columnsIndex) {
+    private Subject mapRow(String[] row, Map<String, Integer> columnsIndex) {
         Subject subject = new Subject();
         subject.setOwner(getUser());
         subject.setSubmission(getSubmission());
@@ -72,7 +71,7 @@ public class PatientDataFactory extends UserSubmittedDataFactory {
         return subject;
     }
 
-    protected void setValue(String[] row, Map<String, Integer> columnsIndex, String columnName,
+    private void setValue(String[] row, Map<String, Integer> columnsIndex, String columnName,
                             Consumer<String> consumer) {
         if (!columnsIndex.containsKey(columnName)) {
             return;

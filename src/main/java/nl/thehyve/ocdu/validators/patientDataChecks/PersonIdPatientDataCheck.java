@@ -19,8 +19,8 @@ public class PersonIdPatientDataCheck implements PatientDataCheck {
         ValidationErrorMessage error = null;
         String personId = subject.getPersonId();
 
-        if(!StringUtils.isBlank(personId)) {
-            error  = new ValidationErrorMessage(commonMessage+"Person ID is not needed. ");
+        if (!StringUtils.isBlank(personId)) {
+            error = new ValidationErrorMessage(commonMessage + "Person ID is not needed. ");
         }
 
         return error;

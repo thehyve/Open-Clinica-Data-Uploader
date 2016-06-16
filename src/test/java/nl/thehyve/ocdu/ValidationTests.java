@@ -236,7 +236,7 @@ public class ValidationTests {
 
     @Test
     public void versionMismatchCRF() throws Exception {
-        List<ClinicalData> incorrectClinicalData = factory.createClinicalData(testFileMismatchingCRFVersion );
+        List<ClinicalData> incorrectClinicalData = factory.createClinicalData(testFileMismatchingCRFVersion);
         File testFile = new File("docs/responseExamples/getStudyMetadata3.xml");
         FileInputStream in = new FileInputStream(testFile);
         MessageFactory messageFactory = MessageFactory.newInstance();

@@ -10,7 +10,7 @@ import java.util.List;
 /**
  * Created by bo on 6/7/16.
  */
-public class GenderPatientDataCheck implements PatientDataCheck{
+public class GenderPatientDataCheck implements PatientDataCheck {
 
     @Override
     public ValidationErrorMessage getCorrespondingError(int index, Subject subject, MetaData metaData) {
@@ -19,9 +19,9 @@ public class GenderPatientDataCheck implements PatientDataCheck{
         String commonMessage = getCommonErrorMessage(index, ssid);
 
         ValidationErrorMessage error = null;
-        if(!StringUtils.isBlank(subject.getGender())) {
-            if(!subject.getGender().equals("m") & !subject.getGender().equals("f")) {
-                error  = new ValidationErrorMessage(commonMessage+"Gender needs to be specified as m or f. ");
+        if (!StringUtils.isBlank(subject.getGender())) {
+            if (!subject.getGender().equals("m") & !subject.getGender().equals("f")) {
+                error = new ValidationErrorMessage(commonMessage + "Gender needs to be specified as m or f. ");
             }
         }
 

@@ -8,7 +8,7 @@ import org.apache.commons.lang3.StringUtils;
 /**
  * Created by bo on 6/15/16.
  */
-public class StudyPatientDataCheck implements PatientDataCheck{
+public class StudyPatientDataCheck implements PatientDataCheck {
 
     @Override
     public ValidationErrorMessage getCorrespondingError(int index, Subject subject, MetaData metaData) {
@@ -19,7 +19,7 @@ public class StudyPatientDataCheck implements PatientDataCheck{
         ValidationErrorMessage error = null;
         String study = subject.getStudy();
 
-        if(StringUtils.isBlank(study)) {
+        if (StringUtils.isBlank(study)) {
             error = new ValidationErrorMessage(commonMessage + "Study should be provided.");
         }
 

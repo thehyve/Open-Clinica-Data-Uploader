@@ -8,7 +8,7 @@ import org.apache.commons.lang3.StringUtils;
 /**
  * Created by bo on 6/15/16.
  */
-public class SitePatientDataCheck implements PatientDataCheck{
+public class SitePatientDataCheck implements PatientDataCheck {
 
     @Override
     public ValidationErrorMessage getCorrespondingError(int index, Subject subject, MetaData metaData) {
@@ -19,7 +19,7 @@ public class SitePatientDataCheck implements PatientDataCheck{
         ValidationErrorMessage error = null;
         String site = subject.getSite();
 
-        if(!StringUtils.isBlank(site)) {
+        if (!StringUtils.isBlank(site)) {
             //TODO: check if site exists in study
         }
 

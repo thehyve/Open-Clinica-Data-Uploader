@@ -8,7 +8,9 @@ import org.apache.commons.lang3.StringUtils;
 /**
  * Created by bo on 6/15/16.
  */
-public class SecondaryIdPatientDataCheck implements PatientDataCheck{
+public class SecondaryIdPatientDataCheck implements PatientDataCheck {
+
+    public final static int MAX_SECONDARY_ID_LENGTH = 30;
 
     @Override
     public ValidationErrorMessage getCorrespondingError(int index, Subject subject, MetaData metaData) {
@@ -19,9 +21,9 @@ public class SecondaryIdPatientDataCheck implements PatientDataCheck{
         ValidationErrorMessage error = null;
         String secondaryId = subject.getSecondaryId();
 
-        if(!StringUtils.isBlank(secondaryId)) {
-            if(secondaryId.length() > 30) {
-                error = new ValidationErrorMessage(commonMessage + "The length of secondary ID is over 30 characters.");
+        if (!StringUtils.isBlank(secondaryId)) {
+            if (secondaryId.length() > MAX_SECONDARY_ID_LENGTH) {
+                error = new ValidationErrorMessage(commonMessage + "The length of secondary ID is over " + MAX_SECONDARY_ID_LENGTH + " characters.");
             }
         }
 

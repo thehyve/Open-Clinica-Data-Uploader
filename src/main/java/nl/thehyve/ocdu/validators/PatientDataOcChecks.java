@@ -29,10 +29,10 @@ public class PatientDataOcChecks {
     public List<ValidationErrorMessage> getErrors() {
         List<ValidationErrorMessage> errors = new ArrayList<>();
         int index = 1;
-        for(Subject subject: subjects) {
-            for(PatientDataCheck check: checks) {
+        for (Subject subject : subjects) {
+            for (PatientDataCheck check : checks) {
                 ValidationErrorMessage error = check.getCorrespondingError(index, subject, metadata);
-                if(error != null) {
+                if (error != null) {
                     errors.add(error);
                 }
             }

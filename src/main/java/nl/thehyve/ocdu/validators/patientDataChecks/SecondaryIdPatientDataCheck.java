@@ -5,12 +5,12 @@ import nl.thehyve.ocdu.models.OcDefinitions.MetaData;
 import nl.thehyve.ocdu.models.errors.ValidationErrorMessage;
 import org.apache.commons.lang3.StringUtils;
 
-import java.util.List;
-
 /**
- * Created by bo on 6/7/16.
+ * Created by bo on 6/15/16.
  */
-public class GenderPatientDataCheck implements PatientDataCheck {
+public class SecondaryIdPatientDataCheck implements PatientDataCheck {
+
+    public final static int MAX_SECONDARY_ID_LENGTH = 30;
 
     @Override
     public ValidationErrorMessage getCorrespondingError(int index, Subject subject, MetaData metaData) {
@@ -19,9 +19,11 @@ public class GenderPatientDataCheck implements PatientDataCheck {
         String commonMessage = getCommonErrorMessage(index, ssid);
 
         ValidationErrorMessage error = null;
-        if (!StringUtils.isBlank(subject.getGender())) {
-            if (!subject.getGender().equals("m") & !subject.getGender().equals("f")) {
-                error = new ValidationErrorMessage(commonMessage + "Gender needs to be specified as m or f. ");
+        String secondaryId = subject.getSecondaryId();
+
+        if (!StringUtils.isBlank(secondaryId)) {
+            if (secondaryId.length() > MAX_SECONDARY_ID_LENGTH) {
+                error = new ValidationErrorMessage(commonMessage + "The length of secondary ID is over " + MAX_SECONDARY_ID_LENGTH + " characters.");
             }
         }
 

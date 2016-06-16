@@ -72,8 +72,3 @@ $.ajax({
     }
 });
 
-//for testing
-// d3.json('/data/test-feedback-data.json', function (data) {
-//     displayMessages(data);
-// });
-

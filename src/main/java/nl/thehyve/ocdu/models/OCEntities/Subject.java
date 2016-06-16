@@ -15,14 +15,17 @@ public class Subject implements OcEntity, UserSubmitted {
 
     private String ssid;
     private String gender;
-    private Date dateOfBirth;
+    private String dateOfBirth;
+    private String yearOfBirth;
     @Column(columnDefinition = "TEXT")
     private String personId;
-    private Date dateOfEnrollment;
+    private String dateOfEnrollment;
     @Column(columnDefinition = "TEXT")
     private String secondaryId;
     @Column(columnDefinition = "TEXT")
     private String study;
+    @Column(columnDefinition = "TEXT")
+    private String site;
 
     @ManyToOne()
     private OcUser owner;
@@ -64,29 +67,73 @@ public class Subject implements OcEntity, UserSubmitted {
         return ssid;
     }
 
+    public void setSsid(String ssid) {
+        this.ssid = ssid;
+    }
+
     public String getGender() {
         return gender;
     }
 
-    public Date getDateOfBirth() {
+    public void setGender(String gender) {
+        this.gender = gender;
+    }
+
+    public String getDateOfBirth() {
         return dateOfBirth;
+    }
+
+    public void setDateOfBirth(String dateOfBirth) {
+        this.dateOfBirth = dateOfBirth;
+    }
+
+    public String getYearOfBirth() {
+        return yearOfBirth;
+    }
+
+    public void setYearOfBirth(String yearOfBirth) {
+        this.yearOfBirth = yearOfBirth;
     }
 
     public String getPersonId() {
         return personId;
     }
 
-    public Date getDateOfEnrollment() {
+    public void setPersonId(String personId) {
+        this.personId = personId;
+    }
+
+    public String getDateOfEnrollment() {
         return dateOfEnrollment;
+    }
+
+    public void setDateOfEnrollment(String dateOfEnrollment) {
+        this.dateOfEnrollment = dateOfEnrollment;
     }
 
     public String getSecondaryId() {
         return secondaryId;
     }
 
+    public void setSecondaryId(String secondaryId) {
+        this.secondaryId = secondaryId;
+    }
+
     @Override
     public String getStudy() {
         return study;
+    }
+
+    public void setStudy(String study) {
+        this.study = study;
+    }
+
+    public String getSite() {
+        return site;
+    }
+
+    public void setSite(String site) {
+        this.site = site;
     }
 
     @Override

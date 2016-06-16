@@ -476,6 +476,7 @@ public class GetStudyMetadataResponseHandler extends OCResponseHandler {
                         item.setMandatoryInGroup(true);
                     }
                     groupDef.addItem(item);
+                    item.setGroup(groupDef);
                 });
     }
 

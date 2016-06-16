@@ -2,9 +2,7 @@ package nl.thehyve.ocdu.models.errors;
 
 import nl.thehyve.ocdu.models.OCEntities.OcEntity;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
+import java.util.*;
 
 /**
  * Created by piotrzakrzewski on 01/05/16.
@@ -13,7 +11,7 @@ import java.util.List;
 public class ValidationErrorMessage {
 
     private String message;
-    private List<String> offendingValues = new ArrayList<String>();
+    private List<String> offendingValues = new ArrayList<>();
     private boolean isError = true; // Error by default
 
     public boolean isError() {
@@ -34,7 +32,7 @@ public class ValidationErrorMessage {
 
     public void addAllOffendingValues(Collection<String> values) {offendingValues.addAll(values);}
 
-    public List<String> getOffendingValues() {
+    public Collection<String> getOffendingValues() {
         return offendingValues;
     }
 

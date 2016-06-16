@@ -3,6 +3,7 @@ package nl.thehyve.ocdu.soap;
 
 import nl.thehyve.ocdu.models.OCEntities.Study;
 import nl.thehyve.ocdu.soap.SOAPRequestDecorators.GetStudyMetadataRequestDecorator;
+import nl.thehyve.ocdu.soap.SOAPRequestDecorators.ImportDataRequestDecorator;
 import nl.thehyve.ocdu.soap.SOAPRequestDecorators.IsStudySubjectRequestDecorator;
 import nl.thehyve.ocdu.soap.SOAPRequestDecorators.listAllStudiesRequestDecorator;
 import org.openclinica.ws.beans.ListStudySubjectsInStudyType;
@@ -30,8 +31,14 @@ public class SOAPRequestFactory {
 
     private String apiVersion = "v1"; // OpenClinica uses v1 for all versions, no need to make it configurable
 
+    private static final String STUDY_NAME_SPACE = "http://openclinica.org/ws/study/";
+
+    private static final String STUDY_SUBJECT_NAME_SPACE = "http://openclinica.org/ws/studySubject/";
+
+    private static final String IMPORT_DATA_NAME_SPACE = "http://openclinica.org/ws/data/";
+
     public SOAPMessage createListStudiesRequest(String username, String passwordHash) throws Exception {
-        SOAPMessage soapMessage = getSoapMessage(username, passwordHash);
+        SOAPMessage soapMessage = getSoapMessage(username, passwordHash, STUDY_NAME_SPACE);
         SOAPEnvelope envelope = soapMessage.getSOAPPart().getEnvelope();
         listAllStudiesRequestDecorator decorator = new listAllStudiesRequestDecorator();
         decorator.decorateBody(envelope);
@@ -42,7 +49,7 @@ public class SOAPRequestFactory {
     }
 
     public SOAPMessage createGetStudyMetadataRequest(String username, String passwordHash, Study study) throws Exception {
-        SOAPMessage soapMessage = getSoapMessage(username, passwordHash);
+        SOAPMessage soapMessage = getSoapMessage(username, passwordHash, STUDY_NAME_SPACE);
         SOAPEnvelope envelope = soapMessage.getSOAPPart().getEnvelope();
         GetStudyMetadataRequestDecorator decorator = new GetStudyMetadataRequestDecorator();
         decorator.setStudy(study);
@@ -54,11 +61,23 @@ public class SOAPRequestFactory {
     }
 
 
+    public SOAPMessage createDataUploadRequest(String userName, String passwordHash, String odmString) throws Exception {
+        SOAPMessage soapMessage = getSoapMessage(userName, passwordHash, IMPORT_DATA_NAME_SPACE);
+        SOAPEnvelope envelope = soapMessage.getSOAPPart().getEnvelope();
+        ImportDataRequestDecorator importDataRequestDecorator =
+                new ImportDataRequestDecorator(odmString);
+        importDataRequestDecorator.decorateBody(envelope);
+
+        soapMessage.saveChanges();
+
+        return soapMessage;
+    }
+
     public SOAPMessage createIsStudySubjectRequest(String userName, String passwordHash, String studyLabel, String subjectLabel) throws Exception {
-        SOAPMessage soapMessage = getSoapMessage(userName, passwordHash);
+        SOAPMessage soapMessage = getSoapMessage(userName, passwordHash, STUDY_SUBJECT_NAME_SPACE);
         SOAPEnvelope envelope = soapMessage.getSOAPPart().getEnvelope();
         IsStudySubjectRequestDecorator isStudySubjectRequestDecorator =
-                new IsStudySubjectRequestDecorator(studyLabel, subjectLabel);
+                new IsStudySubjectRequestDecorator(subjectLabel, studyLabel);
 
         isStudySubjectRequestDecorator.decorateBody(envelope);
 
@@ -78,7 +97,7 @@ public class SOAPRequestFactory {
 
         JAXBElement<ListStudySubjectsInStudyType> body = objectFactory.createListAllByStudyRequest(listStudySubjectsInStudyType);
 
-        SOAPMessage soapMessage = getSoapMessage(userName, passwordHash);
+        SOAPMessage soapMessage = getSoapMessage(userName, passwordHash, STUDY_NAME_SPACE);
 
         Document doc = convertToDocument(body, ListStudySubjectsInStudyType.class);
         soapMessage.getSOAPBody().addDocument(doc);
@@ -108,17 +127,18 @@ public class SOAPRequestFactory {
         password.setTextContent(passwordHash);
     }
 
-    private void decorateEnvelope(SOAPEnvelope envelope) throws Exception {
-        envelope.addNamespaceDeclaration(apiVersion, "http://openclinica.org/ws/study/" + apiVersion);
+
+    private void decorateEnvelope(SOAPEnvelope envelope, String nameSpace) throws Exception {
+        envelope.addNamespaceDeclaration(apiVersion, nameSpace  + apiVersion);
         envelope.addNamespaceDeclaration("beans", "http://openclinica.org/ws/beans");
     }
 
-    private SOAPMessage getSoapMessage(String username, String passwordHash) throws Exception {
+    private SOAPMessage getSoapMessage(String username, String passwordHash, String nameSpace) throws Exception {
         MessageFactory messageFactory = MessageFactory.newInstance();
         SOAPMessage soapMessage = messageFactory.createMessage();
         SOAPPart soapPart = soapMessage.getSOAPPart();
         SOAPEnvelope envelope = soapPart.getEnvelope();
-        decorateEnvelope(envelope);
+        decorateEnvelope(envelope, nameSpace);
         decorateHeader(envelope, username, passwordHash);
 
         return soapMessage;

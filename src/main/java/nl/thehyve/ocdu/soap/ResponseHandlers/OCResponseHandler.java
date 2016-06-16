@@ -2,7 +2,6 @@ package nl.thehyve.ocdu.soap.ResponseHandlers;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
 
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;

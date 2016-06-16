@@ -1,14 +1,14 @@
 package nl.thehyve.ocdu.validators.clinicalDataChecks;
 
 import nl.thehyve.ocdu.models.OCEntities.ClinicalData;
+import nl.thehyve.ocdu.models.OcDefinitions.CRFDefinition;
+import nl.thehyve.ocdu.models.OcDefinitions.ItemDefinition;
 import nl.thehyve.ocdu.models.OcDefinitions.MetaData;
 import nl.thehyve.ocdu.models.errors.SSIDDuplicated;
 import nl.thehyve.ocdu.models.errors.ValidationErrorMessage;
 import org.openclinica.ws.beans.StudySubjectWithEventsType;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -16,7 +16,7 @@ import java.util.stream.Collectors;
  */
 public class SsidUniqueCrossCheck implements ClinicalDataCrossCheck {
     @Override
-    public ValidationErrorMessage getCorrespondingError(List<ClinicalData> data, MetaData metaData, List<StudySubjectWithEventsType> subjectWithEventsTypeList) {
+    public ValidationErrorMessage getCorrespondingError(List<ClinicalData> data, MetaData metaData, Map<ClinicalData, ItemDefinition> itemDefMap, List<StudySubjectWithEventsType> studySubjectWithEventsTypeList, Map<ClinicalData, Boolean> shownMap, Map<String, Set<CRFDefinition>> eventMap) {
         HashMap<String, List<String>> rowMap = new HashMap<>();
         data.stream().forEach(clinicalData -> {
             String rowString = toRowIdString(clinicalData);
@@ -40,7 +40,7 @@ public class SsidUniqueCrossCheck implements ClinicalDataCrossCheck {
 
     private List<String> getOffenders(HashMap<String, List<String>> rowMap) {
         List<String> offenders = new ArrayList<>();
-        for (String key: rowMap.keySet()) {
+        for (String key : rowMap.keySet()) {
             List<String> items = rowMap.get(key);
             List<String> uniqueItems = items.stream().distinct().collect(Collectors.toList());
             if (items.size() != uniqueItems.size()) {

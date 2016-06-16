@@ -1,6 +1,7 @@
 package nl.thehyve.ocdu.validators.clinicalDataChecks;
 
 import nl.thehyve.ocdu.models.OCEntities.ClinicalData;
+import nl.thehyve.ocdu.models.OcDefinitions.CRFDefinition;
 import nl.thehyve.ocdu.models.OcDefinitions.ItemDefinition;
 import nl.thehyve.ocdu.models.OcDefinitions.MetaData;
 import nl.thehyve.ocdu.models.OcDefinitions.RangeCheck;
@@ -15,11 +16,11 @@ import java.util.*;
  */
 public class RangeChecks implements ClinicalDataCrossCheck {
     @Override
-    public ValidationErrorMessage getCorrespondingError(List<ClinicalData> data, MetaData metaData, List<StudySubjectWithEventsType> subjectWithEventsTypeList) {
+    public ValidationErrorMessage getCorrespondingError(List<ClinicalData> data, MetaData metaData, Map<ClinicalData, ItemDefinition> itemDefMap, List<StudySubjectWithEventsType> studySubjectWithEventsTypeList, Map<ClinicalData, Boolean> shownMap, Map<String, Set<CRFDefinition>> eventMap) {
         RangeCheckViolation error = new RangeCheckViolation();
         Set<String> alreadyReported = new HashSet<>();
         data.forEach(clinicalData -> {
-            ItemDefinition itemDefinition = getMatching(clinicalData, metaData);
+            ItemDefinition itemDefinition = itemDefMap.get(clinicalData);
             if (itemDefinition != null) { // Nonexistent item is a separate error
                 List<RangeCheck> rangeCheckList = itemDefinition.getRangeCheckList();
                 rangeCheckList.forEach(rangeCheck -> {

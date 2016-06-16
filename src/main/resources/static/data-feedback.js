@@ -67,7 +67,7 @@ $.ajax({
     cache: false,
     success: displayMessages,
     error: function (jqXHR, textStatus, errorThrown) {
-        alert("validation of data fails");
+        console.log("Data Validation fails.");
         window.location.href = baseApp + "/views/data";
     }
 });

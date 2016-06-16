@@ -1,6 +1,7 @@
 package nl.thehyve.ocdu.soap.ResponseHandlers;
 
 import org.apache.commons.lang3.StringEscapeUtils;
+import org.springframework.xml.transform.StringResult;
 import org.w3c.dom.Document;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
@@ -10,11 +11,16 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.soap.*;
+import javax.xml.transform.OutputKeys;
+import javax.xml.transform.Source;
+import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
+import javax.xml.transform.stream.StreamSource;
 import java.io.IOException;
+import java.io.PrintStream;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.util.Iterator;
@@ -58,6 +64,16 @@ public class SoapUtils {
             e.printStackTrace();
         }
         return null;
+    }
+
+    public static String soapMessageToString(SOAPMessage soapMessage) throws Exception {
+        Source xmlInput = new DOMSource(soapMessage.getSOAPPart());
+        Transformer transformer = TransformerFactory.newInstance().newTransformer();
+        transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+        transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "2");
+        StringResult stringResult = new StringResult();
+        transformer.transform(xmlInput, stringResult);
+        return stringResult.toString();
     }
 
     private static String escapeAttributeValues(String xmlString) {

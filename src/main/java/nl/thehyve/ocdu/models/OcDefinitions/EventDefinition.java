@@ -8,7 +8,7 @@ import java.util.List;
  * Created by piotrzakrzewski on 01/05/16.
  */
 @Entity
-public class EventDefinition {
+public class EventDefinition implements ODMElement {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long id;

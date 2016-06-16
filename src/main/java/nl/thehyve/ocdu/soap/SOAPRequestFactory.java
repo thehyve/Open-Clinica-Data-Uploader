@@ -3,6 +3,7 @@ package nl.thehyve.ocdu.soap;
 
 import nl.thehyve.ocdu.models.OCEntities.Study;
 import nl.thehyve.ocdu.soap.SOAPRequestDecorators.GetStudyMetadataRequestDecorator;
+import nl.thehyve.ocdu.soap.SOAPRequestDecorators.IsStudySubjectRequestDecorator;
 import nl.thehyve.ocdu.soap.SOAPRequestDecorators.listAllStudiesRequestDecorator;
 import org.openclinica.ws.beans.ListStudySubjectsInStudyType;
 import org.openclinica.ws.beans.StudyRefType;
@@ -12,7 +13,13 @@ import org.w3c.dom.Document;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBElement;
 import javax.xml.namespace.QName;
-import javax.xml.soap.*;
+import javax.xml.soap.MessageFactory;
+import javax.xml.soap.SOAPElement;
+import javax.xml.soap.SOAPEnvelope;
+import javax.xml.soap.SOAPHeader;
+import javax.xml.soap.SOAPHeaderElement;
+import javax.xml.soap.SOAPMessage;
+import javax.xml.soap.SOAPPart;
 import javax.xml.transform.dom.DOMResult;
 
 
@@ -47,6 +54,20 @@ public class SOAPRequestFactory {
     }
 
 
+    public SOAPMessage createIsStudySubjectRequest(String userName, String passwordHash, String studyLabel, String subjectLabel) throws Exception {
+        SOAPMessage soapMessage = getSoapMessage(userName, passwordHash);
+        SOAPEnvelope envelope = soapMessage.getSOAPPart().getEnvelope();
+        IsStudySubjectRequestDecorator isStudySubjectRequestDecorator =
+                new IsStudySubjectRequestDecorator(studyLabel, subjectLabel);
+
+        isStudySubjectRequestDecorator.decorateBody(envelope);
+
+        soapMessage.saveChanges();
+
+        return soapMessage;
+    }
+
+
     public SOAPMessage createListAllByStudy(String userName, String passwordHash, Study study) throws Exception {
         ObjectFactory objectFactory = new ObjectFactory();
 
@@ -54,22 +75,20 @@ public class SOAPRequestFactory {
         StudyRefType studyRefType = new StudyRefType();
         studyRefType.setIdentifier(study.getIdentifier());
         listStudySubjectsInStudyType.setStudyRef(studyRefType);
+
         JAXBElement<ListStudySubjectsInStudyType> body = objectFactory.createListAllByStudyRequest(listStudySubjectsInStudyType);
 
         SOAPMessage soapMessage = getSoapMessage(userName, passwordHash);
-        SOAPEnvelope envelope = soapMessage.getSOAPPart().getEnvelope();
-        GetStudyMetadataRequestDecorator decorator = new GetStudyMetadataRequestDecorator();
-        decorator.setStudy(study);
-        decorator.decorateBody(envelope);
-        Document doc = convertToDocument(body);
+
+        Document doc = convertToDocument(body, ListStudySubjectsInStudyType.class);
         soapMessage.getSOAPBody().addDocument(doc);
-        return null;
+        return soapMessage;
     }
 
 
-    private Document convertToDocument(JAXBElement<?> jaxbElement) throws Exception {
+    private Document convertToDocument(JAXBElement<?> jaxbElement, Class... expectedClasses) throws Exception {
         DOMResult res = new DOMResult();
-        JAXBContext context = JAXBContext.newInstance(jaxbElement.getClass());
+        JAXBContext context = JAXBContext.newInstance(expectedClasses);
         context.createMarshaller().marshal(jaxbElement, res);
         return (Document) res.getNode();
     }

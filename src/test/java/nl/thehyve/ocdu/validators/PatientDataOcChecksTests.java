@@ -161,7 +161,7 @@ public class PatientDataOcChecksTests {
         //sites do not exist
         subject.setStudy("S_STUDY1");
         subject.setSite("myownsitethatdoesnotexist");
-        StudyPatientDataCheck check = new StudyPatientDataCheck();
+        SitePatientDataCheck check = new SitePatientDataCheck();
         ValidationErrorMessage error = check.getCorrespondingError(0, subject, metadata);
         assertThat(error.getMessage(), containsString("exist"));
     }
@@ -174,7 +174,7 @@ public class PatientDataOcChecksTests {
         //sites do not exist
         subject.setStudy("S_STUDY1");
         subject.setSite("Sjogren - Sjogren");
-        StudyPatientDataCheck check = new StudyPatientDataCheck();
+        SitePatientDataCheck check = new SitePatientDataCheck();
         ValidationErrorMessage error = check.getCorrespondingError(0, subject, metadata);
         assertNull(error);
 

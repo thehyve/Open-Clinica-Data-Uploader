@@ -67,6 +67,7 @@ public class ValidationTests {
     @Before
     public void setUp() throws Exception {
         try {
+            
             this.testUser = new OcUser();
             this.testUser.setUsername("tester");
             this.testSubjectWithEventsTypeList = createStudySubjectWithEventList();

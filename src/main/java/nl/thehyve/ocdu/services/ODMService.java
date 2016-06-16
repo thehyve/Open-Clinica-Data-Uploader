@@ -1,15 +1,20 @@
 package nl.thehyve.ocdu.services;
 
 import nl.thehyve.ocdu.models.OCEntities.ClinicalData;
+import nl.thehyve.ocdu.models.OcDefinitions.EventDefinition;
 import nl.thehyve.ocdu.models.OcDefinitions.MetaData;
+import nl.thehyve.ocdu.soap.SOAPRequestFactory;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.text.StrBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.GregorianCalendar;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -39,31 +44,37 @@ public class ODMService {
 
     private static final String ITEM_VALUE_PARAM = "${ITEM_VALUE_PARAM}";
 
+    private static final String STATUS_AFTER_UPLOAD_PARAM = "${STATUS_AFTER_UPLOAD_PARAM}";
+
     // TODO: add the post-upload CRF status to the template
     /**
      * Template for the subjects section in an ODM-file
      */
     private static final String ODM_SUBJECT_SECTION =
-            "<SubjectData subjectKey=\"" + STUDY_SUBJECT_PARAM + "\">"
-          + "\t<StudyEventData StudyEventOID=\""+ STUDY_EVENT_DATA_PARAM + "\" StudyEventRepeatKey=\"" + STUDY_EVENT_REPEAT_ORDINAL_PARAM + "\">"
-          + "\t\t<FormData FormOID=\"" + CRF_OID_PARAM + "\">"
-          + "\t\t\t<ItemGroupData ItemGroupOID=\"" + ITEM_GROUP_PARAM + "\" TransactionType=\"Insert\" >"
+            "<SubjectData SubjectKey=\"" + STUDY_SUBJECT_PARAM + "\">"
+          + "<StudyEventData StudyEventOID=\""+ STUDY_EVENT_DATA_PARAM + "\" StudyEventRepeatKey=\"" + STUDY_EVENT_REPEAT_ORDINAL_PARAM + "\">"
+          + "<FormData FormOID=\"" + CRF_OID_PARAM + "\" OpenClinica:Status=\"" + STATUS_AFTER_UPLOAD_PARAM + "\">"
+          + "<ItemGroupData ItemGroupOID=\"" + ITEM_GROUP_PARAM + "\" TransactionType=\"Insert\" >"
           + ITEM_DATA_PARAM
-          + "\t\t\t</ItemGroupData>"
-          + "\t\t</FormData>"
-          + "\t</StudyEventData>"
+          + "</ItemGroupData>"
+          + "</FormData>"
+          + "</StudyEventData>"
           + "</SubjectData>";
 
     /**
      * Template for the section of the individual items.
      */
     private static final String ODM_ITEM_SECTION =
-            "\t\t\t\t<ItemData ItemOID=\"" + ITEM_OID_PARAM + "\" Value=\"" + ITEM_VALUE_PARAM + "\"/>";
+            "<ItemData ItemOID=\"" + ITEM_OID_PARAM + "\" Value=\"" + ITEM_VALUE_PARAM + "\"/>";
 
     private static final Logger log = LoggerFactory.getLogger(ODMService.class);
 
-    public String generateODM(List<ClinicalData> clinicalDataList, MetaData metaData) throws Exception {
-        StringBuffer odmDocument = buildODM(clinicalDataList, metaData.getStudyOID());
+    public String generateODM(List<ClinicalData> clinicalDataList,
+                              MetaData metaData,
+                              String statusAfterUpload,
+                              Map<String, String> subjectLabelToOIDMap) throws Exception {
+        StringBuffer odmDocument =
+                buildODM(clinicalDataList, metaData.getStudyOID(), statusAfterUpload, metaData, subjectLabelToOIDMap);
         return odmDocument.toString();
     }
 
@@ -71,7 +82,9 @@ public class ODMService {
     private void addODMDocumentHeader(String studyOID, StringBuffer odmData) throws Exception {
 
         odmData.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
-        odmData.append("<ODM xmlns=\"http://www.cdisc.org/ns/odm/v1.3 https://dev.openclinica.com/tools/odm-doc/OpenClinica-ToODM1-3-0-OC2-0.xsd\"");
+        odmData.append("<ODM xmlns=\"http://www.cdisc.org/ns/odm/v1.3\" ");
+        odmData.append("xsi:schemaLocation=\"http://www.cdisc.org/ns/odm/v1.3 OpenClinica-ODM1-3-0-OC2-0.xsd\" ");
+        odmData.append("xmlns:OpenClinica=\"http://www.openclinica.org/ns/odm_ext_v130/v3.1\" ");
         odmData.append("xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" ");
         odmData.append("ODMVersion=\"1.3\" ");
         odmData.append("FileOID=\"");
@@ -89,6 +102,7 @@ public class ODMService {
         odmData.append(studyOID);
         odmData.append("\" ");
         odmData.append("MetaDataVersionOID=\"v1.0.0\">");
+        odmData.append("<UpsertOn NotStarted=\"true\" DataEntryStarted=\"true\" DataEntryComplete=\"true\"/>");
     }
 
     private void addClosingTags(StringBuffer odmData) {
@@ -96,13 +110,21 @@ public class ODMService {
         odmData.append("</ODM>");
     }
 
-    private void appendSubjectODMSection(StringBuffer odmData, List<ClinicalData> clinicalDataList) {
+    private void appendSubjectODMSection(StringBuffer odmData,
+                                         List<ClinicalData> clinicalDataList,
+                                         String statusAfterUpload,
+                                         Map<String, String> eventNameOIDMap,
+                                         Map<String, String> subjectLabelToOIDMap) {
         // should not be possible but we just to be sure
         if (clinicalDataList.size() == 0) {
             return;
         }
-        String subjectOID = clinicalDataList.get(0).getSsid();
-        String eventName = clinicalDataList.get(0).getEventName();
+        String subjectLabel = clinicalDataList.get(0).getSsid();
+        String subjectOID = subjectLabelToOIDMap.get(subjectLabel);
+        if (StringUtils.isEmpty(subjectOID)) {
+            throw new IllegalStateException("No subjectOID present in OpenClinica for subject with label: '" + subjectLabel + "'");
+        }
+        String eventName = eventNameOIDMap.get(clinicalDataList.get(0).getEventName());
         Integer eventRepeatOrdinal = clinicalDataList.get(0).getEventRepeat();
         String crfName = clinicalDataList.get(0).getCrfName();
         String crfVersion = clinicalDataList.get(0).getCrfVersion();
@@ -112,7 +134,7 @@ public class ODMService {
         builder.replaceAll(STUDY_EVENT_DATA_PARAM, eventName);
         builder.replaceAll(STUDY_EVENT_REPEAT_ORDINAL_PARAM, eventRepeatOrdinal.toString());
         builder.replaceAll(CRF_OID_PARAM, crfName);
-
+        builder.replaceAll(STATUS_AFTER_UPLOAD_PARAM, statusAfterUpload);
         StrBuilder itemDataBuilder = new StrBuilder();
         for (ClinicalData clinicalData : clinicalDataList) {
 
@@ -127,7 +149,7 @@ public class ODMService {
         odmData.append(builder.toStringBuffer());
     }
 
-    private StringBuffer buildODM(List<ClinicalData> clinicalDataList, String studyOID) throws Exception {
+    private StringBuffer buildODM(List<ClinicalData> clinicalDataList, String studyOID, String statusAfterUpload, MetaData metaData, Map<String, String> subjectLabelToOIDMap) throws Exception {
         long startTime = System.currentTimeMillis();
 
         StringBuffer odmData = new StringBuffer("");
@@ -136,13 +158,16 @@ public class ODMService {
         }
         addODMDocumentHeader(studyOID, odmData);
 
+        Map<String, String> eventNameOIDMap =
+                metaData.getEventDefinitions().stream().collect(Collectors.toMap(EventDefinition::getName, EventDefinition::getStudyEventOID));
+
         Map<String, List<ClinicalData>> outputMap = clinicalDataList.stream().collect(Collectors.groupingBy(ClinicalData::createODMKey,
                 Collectors.toList()));
 
         TreeMap<String, List<ClinicalData>> sortedMap = new TreeMap<>(outputMap);
         for (String key : sortedMap.keySet()) {
             List<ClinicalData> outputClinicalData = sortedMap.get(key);
-            appendSubjectODMSection(odmData, outputClinicalData);
+            appendSubjectODMSection(odmData, outputClinicalData, statusAfterUpload, eventNameOIDMap, subjectLabelToOIDMap);
         }
 
         addClosingTags(odmData);

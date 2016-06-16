@@ -22,7 +22,9 @@ import java.io.InputStream;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by jacob on 6/9/16.
@@ -66,12 +68,28 @@ public class ODMGenerationTests {
         return ListAllByStudyResponseHandler.retrieveStudySubjectsType(soapMessage);
     }
 
+    @Test(expected = IllegalStateException.class)
+    public void testSubjectOIDNotPresentInMap() throws Exception {
+        List<ClinicalData> correctClinicalData = factory.createClinicalData(testODMGenerationCorrect);
+        clinicalDataOcChecks = new ClinicalDataOcChecks(metaData, correctClinicalData, testSubjectWithEventsTypeList);
+        ODMService odmService = new ODMService();
+        Map<String, String> subjectLabelToOIDMap = new HashMap<>();
+        subjectLabelToOIDMap.put("jan", null);
+        String result = odmService.generateODM(correctClinicalData, metaData, "Data Entry Complete", subjectLabelToOIDMap);
+        System.out.println(result);
+    }
+
+
 
     @Test
     public void testODMGeneration() throws Exception {
         List<ClinicalData> correctClinicalData = factory.createClinicalData(testODMGenerationCorrect);
         clinicalDataOcChecks = new ClinicalDataOcChecks(metaData, correctClinicalData, testSubjectWithEventsTypeList);
         ODMService odmService = new ODMService();
-        String result = odmService.generateODM(correctClinicalData, metaData);
+        Map<String, String> subjectLabelToOIDMap = new HashMap<>();
+        subjectLabelToOIDMap.put("EV-00001", "SS_EV00001");
+        subjectLabelToOIDMap.put("EV-00002", "SS_EV00002");
+        String result = odmService.generateODM(correctClinicalData, metaData, "Data Entry Complete", subjectLabelToOIDMap);
+
     }
 }

@@ -1,0 +1,10 @@
+<SOAP-ENV:Envelope xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/">
+    <SOAP-ENV:Header/>
+    <SOAP-ENV:Body>
+        <createResponse xmlns="http://openclinica.org/ws/studySubject/v1">
+            <result>Fail</result>
+            <error>StudySubject label you specified "NON_EXISTING_SUBJECT_LABEL" does not correspond to the study "Eventful".</error>
+            <error>Fail</error>
+        </createResponse>
+    </SOAP-ENV:Body>
+</SOAP-ENV:Envelope>

@@ -3,6 +3,7 @@ package nl.thehyve.ocdu.soap;
 
 import nl.thehyve.ocdu.models.OCEntities.Study;
 import nl.thehyve.ocdu.soap.SOAPRequestDecorators.GetStudyMetadataRequestDecorator;
+import nl.thehyve.ocdu.soap.SOAPRequestDecorators.IsStudySubjectRequestDecorator;
 import nl.thehyve.ocdu.soap.SOAPRequestDecorators.listAllStudiesRequestDecorator;
 import org.openclinica.ws.beans.ListStudySubjectsInStudyType;
 import org.openclinica.ws.beans.StudyRefType;
@@ -46,6 +47,20 @@ public class SOAPRequestFactory {
         GetStudyMetadataRequestDecorator decorator = new GetStudyMetadataRequestDecorator();
         decorator.setStudy(study);
         decorator.decorateBody(envelope);
+
+        soapMessage.saveChanges();
+
+        return soapMessage;
+    }
+
+
+    public SOAPMessage createIsStudySubjectRequest(String userName, String passwordHash, String studyLabel, String subjectLabel) throws Exception {
+        SOAPMessage soapMessage = getSoapMessage(userName, passwordHash);
+        SOAPEnvelope envelope = soapMessage.getSOAPPart().getEnvelope();
+        IsStudySubjectRequestDecorator isStudySubjectRequestDecorator =
+                new IsStudySubjectRequestDecorator(studyLabel, subjectLabel);
+
+        isStudySubjectRequestDecorator.decorateBody(envelope);
 
         soapMessage.saveChanges();
 

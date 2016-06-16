@@ -4,8 +4,7 @@ package nl.thehyve.ocdu.validators;
 import nl.thehyve.ocdu.models.OCEntities.Subject;
 import nl.thehyve.ocdu.models.OcDefinitions.MetaData;
 import nl.thehyve.ocdu.models.errors.ValidationErrorMessage;
-import nl.thehyve.ocdu.validators.patientDataChecks.PatientDataCheck;
-import nl.thehyve.ocdu.validators.patientDataChecks.GenderPatientDataCheck;
+import nl.thehyve.ocdu.validators.patientDataChecks.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,12 +23,23 @@ public class PatientDataOcChecks {
         this.metadata = metadata;
         this.subjects = subjects;
         checks.add(new GenderPatientDataCheck());
+        checks.add(new DateOfBirthPatientDataCheck());
+        checks.add(new PersonIdPatientDataCheck());
+        checks.add(new DateOfEntrollmentPatientDataCheck());
+        checks.add(new SecondaryIdPatientDataCheck());
+        checks.add(new StudyPatientDataCheck());
     }
 
     public List<ValidationErrorMessage> getErrors() {
+        List<String> ssids = new ArrayList<>();
         List<ValidationErrorMessage> errors = new ArrayList<>();
         int index = 1;
         for (Subject subject : subjects) {
+            String ssid = subject.getSsid();
+            if(ssids.contains(ssid)) {
+                ValidationErrorMessage error = new ValidationErrorMessage("Line " + index + " subjectID " + ssid + " duplicate is found.");
+                errors.add(error);
+            }
             for (PatientDataCheck check : checks) {
                 ValidationErrorMessage error = check.getCorrespondingError(index, subject, metadata);
                 if (error != null) {

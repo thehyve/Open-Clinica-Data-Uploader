@@ -28,15 +28,19 @@ public class StudyPatientDataCheck implements PatientDataCheck {
             error = new ValidationErrorMessage(commonMessage + "Study should be provided.");
         } else {
             List<SiteDefinition> sites = metaData.getSiteDefinitions();
-            List<String> sitenames = new ArrayList<>();
-            for (SiteDefinition sd : sites) {
-                sitenames.add(sd.getName());
-            }
-            if (!sitenames.contains(subject.getSite())) {
+            if (sites == null) {
                 error = new ValidationErrorMessage(commonMessage + "Study site \"" + subject.getSite() + "\" does not exist.");
+            } else {
+                List<String> sitenames = new ArrayList<>();
+                for (SiteDefinition sd : sites) {
+                    sitenames.add(sd.getName());
+                }
+                if (!sitenames.contains(subject.getSite())) {
+                    error = new ValidationErrorMessage(commonMessage + "Study site \"" + subject.getSite() + "\" does not exist.");
+                }
             }
-        }
 
+        }
         return error;
     }
 }

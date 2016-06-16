@@ -5,8 +5,6 @@ import nl.thehyve.ocdu.models.OcDefinitions.MetaData;
 import nl.thehyve.ocdu.models.errors.ValidationErrorMessage;
 import org.apache.commons.lang3.StringUtils;
 
-import java.util.List;
-
 /**
  * Created by bo on 6/7/16.
  */

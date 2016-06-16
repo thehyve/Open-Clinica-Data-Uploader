@@ -54,6 +54,8 @@ public class TemplateController {
 
             //TODO: still not working, check the SOAP call
             Map<String, String> subjectMap = openClinicaService.createMapSubjectLabelToSubjectOID(username, pwdHash, url, clinicalDatas);
+            //key: subject id from user
+            //val: technical subject id
             List<String> test = new ArrayList<>();
             for (String key : subjectMap.keySet()) {
                 test.add(key);

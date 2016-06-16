@@ -13,6 +13,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.openclinica.ws.beans.StudySubjectWithEventsType;
 
+import javax.validation.constraints.AssertTrue;
 import javax.xml.soap.MessageFactory;
 import javax.xml.soap.MimeHeaders;
 import javax.xml.soap.SOAPMessage;
@@ -25,6 +26,8 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import static org.junit.Assert.assertEquals;
 
 /**
  * Created by jacob on 6/9/16.
@@ -75,11 +78,8 @@ public class ODMGenerationTests {
         ODMService odmService = new ODMService();
         Map<String, String> subjectLabelToOIDMap = new HashMap<>();
         subjectLabelToOIDMap.put("jan", null);
-        String result = odmService.generateODM(correctClinicalData, metaData, "Data Entry Complete", subjectLabelToOIDMap);
-        System.out.println(result);
+        odmService.generateODM(correctClinicalData, metaData, "Data Entry Complete", subjectLabelToOIDMap);
     }
-
-
 
     @Test
     public void testODMGeneration() throws Exception {
@@ -90,6 +90,6 @@ public class ODMGenerationTests {
         subjectLabelToOIDMap.put("EV-00001", "SS_EV00001");
         subjectLabelToOIDMap.put("EV-00002", "SS_EV00002");
         String result = odmService.generateODM(correctClinicalData, metaData, "Data Entry Complete", subjectLabelToOIDMap);
-
+        assertEquals(true, result.contains("c&quot;a&apos;r&lt;o&amp;t&gt;is"));
     }
 }

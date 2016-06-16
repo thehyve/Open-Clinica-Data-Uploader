@@ -4,6 +4,7 @@ import nl.thehyve.ocdu.models.OCEntities.ClinicalData;
 import nl.thehyve.ocdu.models.OcDefinitions.EventDefinition;
 import nl.thehyve.ocdu.models.OcDefinitions.MetaData;
 import nl.thehyve.ocdu.soap.SOAPRequestFactory;
+import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.text.StrBuilder;
 import org.slf4j.Logger;
@@ -139,8 +140,8 @@ public class ODMService {
         for (ClinicalData clinicalData : clinicalDataList) {
 
             StrBuilder itemBuilder = new StrBuilder(ODM_ITEM_SECTION);
-            itemBuilder.replaceAll(ITEM_OID_PARAM, clinicalData.getItem());
-            itemBuilder.replaceAll(ITEM_VALUE_PARAM, clinicalData.getValue());
+            itemBuilder.replaceAll(ITEM_OID_PARAM, StringEscapeUtils.escapeXml(clinicalData.getItem()));
+            itemBuilder.replaceAll(ITEM_VALUE_PARAM, StringEscapeUtils.escapeXml(clinicalData.getValue()));
             itemDataBuilder.append(itemBuilder);
 
         }

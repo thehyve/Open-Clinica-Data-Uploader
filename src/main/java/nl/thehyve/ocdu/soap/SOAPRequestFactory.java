@@ -2,12 +2,17 @@ package nl.thehyve.ocdu.soap;
 
 
 import nl.thehyve.ocdu.models.OCEntities.Study;
+import nl.thehyve.ocdu.models.OCEntities.Subject;
+import nl.thehyve.ocdu.models.OcDefinitions.SiteDefinition;
 import nl.thehyve.ocdu.soap.SOAPRequestDecorators.GetStudyMetadataRequestDecorator;
 import nl.thehyve.ocdu.soap.SOAPRequestDecorators.ImportDataRequestDecorator;
 import nl.thehyve.ocdu.soap.SOAPRequestDecorators.IsStudySubjectRequestDecorator;
 import nl.thehyve.ocdu.soap.SOAPRequestDecorators.listAllStudiesRequestDecorator;
 import org.openclinica.ws.beans.ListStudySubjectsInStudyType;
+import org.openclinica.ws.beans.SiteRefType;
 import org.openclinica.ws.beans.StudyRefType;
+import org.openclinica.ws.beans.StudySubjectType;
+import org.openclinica.ws.studysubject.v1.CreateRequest;
 import org.openclinica.ws.studysubject.v1.ObjectFactory;
 import org.w3c.dom.Document;
 
@@ -102,6 +107,20 @@ public class SOAPRequestFactory {
         Document doc = convertToDocument(body, ListStudySubjectsInStudyType.class);
         soapMessage.getSOAPBody().addDocument(doc);
         return soapMessage;
+    }
+
+    public SOAPMessage createCreateSubject(String userName, String passwordHash, Study study, Subject subject
+            , SiteDefinition site) throws Exception {
+        CreateRequest request = new CreateRequest();
+        StudySubjectType subj = new StudySubjectType();
+        StudyRefType stufyRef = new StudyRefType();
+        stufyRef.setIdentifier(study.getIdentifier());
+        SiteRefType siteRef  = new SiteRefType();
+        siteRef.setIdentifier(site.getSiteOID());
+        stufyRef.setSiteRef(siteRef);
+
+        subj.setStudyRef(stufyRef);
+        request.setStudySubject(subj);
     }
 
 

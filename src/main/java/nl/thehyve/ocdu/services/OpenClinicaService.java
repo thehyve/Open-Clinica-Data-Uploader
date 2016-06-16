@@ -2,6 +2,7 @@ package nl.thehyve.ocdu.services;
 
 import nl.thehyve.ocdu.models.OCEntities.ClinicalData;
 import nl.thehyve.ocdu.models.OCEntities.Study;
+import nl.thehyve.ocdu.models.OCEntities.Subject;
 import nl.thehyve.ocdu.models.OcDefinitions.MetaData;
 import nl.thehyve.ocdu.soap.ResponseHandlers.GetStudyMetadataResponseHandler;
 import nl.thehyve.ocdu.soap.ResponseHandlers.ImportDataResponseHandler;
@@ -21,6 +22,7 @@ import org.w3c.dom.Document;
 import javax.xml.soap.SOAPConnection;
 import javax.xml.soap.SOAPConnectionFactory;
 import javax.xml.soap.SOAPMessage;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -34,6 +36,11 @@ public class OpenClinicaService {
 
     SOAPRequestFactory requestFactory = new SOAPRequestFactory();
     private static final Logger log = LoggerFactory.getLogger(OpenClinicaService.class);
+
+
+    public void registerPatients(Collection<Subject> subjects) {
+
+    }
 
     public List<Study> listStudies(String username, String passwordHash, String url) throws Exception { //TODO: handle exceptions
         log.info("List studies initiated by: " + username + " on: " + url);

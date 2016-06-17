@@ -62,10 +62,12 @@ public class ValidationTests {
     Path testFileDupSsid;
     Path testFileRepeatInNonrepeatingEvent;
     Path testFileMismatchingCRFVersion;
+    Path testFileGroupRepeatError;
 
     @Before
     public void setUp() throws Exception {
         try {
+            
             this.testUser = new OcUser();
             this.testUser.setUsername("tester");
             this.testSubjectWithEventsTypeList = createStudySubjectWithEventList();
@@ -87,6 +89,7 @@ public class ValidationTests {
             this.testFileDupSsid = Paths.get("docs/exampleFiles/dupSSID.txt");
             this.testFileRepeatInNonrepeatingEvent = Paths.get("docs/exampleFiles/event_repeat.txt");
             this.testFileMismatchingCRFVersion = Paths.get("docs/exampleFiles/mismatchingCrfVersionID.txt");
+            this.testFileGroupRepeatError = Paths.get("docs/exampleFiles/group_repeat_error.txt");
 
             MessageFactory messageFactory = MessageFactory.newInstance();
             File testFile = new File("docs/responseExamples/getStudyMetadata2.xml"); //TODO: Replace File with Path
@@ -246,4 +249,14 @@ public class ValidationTests {
         assertEquals(1, errors.size());
         assertThat(errors, hasItem(isA(CRFVersionMismatchError.class)));
     }
+
+    @Test
+    public void repeatInNonrepeatingGroup() throws Exception {
+        List<ClinicalData> incorrectClinicalData = factory.createClinicalData(testFileGroupRepeatError);
+        clinicalDataOcChecks = new ClinicalDataOcChecks(metaData, incorrectClinicalData, testSubjectWithEventsTypeList);
+        List<ValidationErrorMessage> errors = clinicalDataOcChecks.getErrors();
+        assertEquals(1, errors.size());
+        assertThat(errors, hasItem(isA(RepeatInNonrepeatingItem.class)));
+    }
+
 }

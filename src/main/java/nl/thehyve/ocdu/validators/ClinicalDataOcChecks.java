@@ -57,6 +57,7 @@ public class ClinicalDataOcChecks {
         crossChecks.add(new CodeListCrossCheck());
         crossChecks.add(new HiddenValueEmptyCheck());
         crossChecks.add(new HiddenTogglePresent());
+        crossChecks.add(new ItemGroupRepeat());
     }
 
     public List<ValidationErrorMessage> getErrors() {

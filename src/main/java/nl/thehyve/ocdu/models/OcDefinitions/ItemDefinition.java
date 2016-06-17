@@ -19,10 +19,32 @@ public class ItemDefinition implements ODMElement {
     private int length;
     private boolean mandatoryInGroup = false;
     private boolean isMultiselect = false;
-    private  String codeListRef;
+    private String codeListRef;
 
     @OneToMany(targetEntity = RangeCheck.class)
     private List<DisplayRule> displayRules = new ArrayList<>();
+    private int significantDigits = 0;
+    @OneToMany(targetEntity = RangeCheck.class)
+    private List<RangeCheck> rangeCheckList;
+    @OneToOne(targetEntity = ItemGroupDefinition.class)
+    private ItemGroupDefinition group;
+
+    public ItemDefinition() {
+    }
+
+    public ItemDefinition(ItemDefinition prototype) {
+        this.name = prototype.getName();
+        this.length = prototype.getLength();
+        this.oid = prototype.getOid();
+        this.mandatoryInGroup = prototype.isMandatoryInGroup();
+        this.dataType = prototype.getDataType();
+        this.rangeCheckList = prototype.getRangeCheckList();
+        this.significantDigits = prototype.getSignificantDigits();
+        this.isMultiselect = prototype.isMultiselect();
+        this.codeListRef = prototype.getCodeListRef();
+        this.displayRules = prototype.getDisplayRules();
+        this.group = prototype.getGroup();
+    }
 
     public List<DisplayRule> getDisplayRules() {
         return displayRules;
@@ -48,8 +70,6 @@ public class ItemDefinition implements ODMElement {
         isMultiselect = multiselect;
     }
 
-    private int significantDigits = 0;
-
     public int getSignificantDigits() {
         return significantDigits;
     }
@@ -57,9 +77,6 @@ public class ItemDefinition implements ODMElement {
     public void setSignificantDigits(int significantDigits) {
         this.significantDigits = significantDigits;
     }
-
-    @OneToMany(targetEntity = RangeCheck.class)
-    private List<RangeCheck> rangeCheckList;
 
     public boolean isMandatoryInGroup() {
         return mandatoryInGroup;
@@ -109,28 +126,28 @@ public class ItemDefinition implements ODMElement {
         this.id = id;
     }
 
-    public ItemDefinition() {
-    }
-
-    public ItemDefinition(ItemDefinition prototype) {
-        this.name = prototype.getName();
-        this.length = prototype.getLength();
-        this.oid = prototype.getOid();
-        this.mandatoryInGroup = prototype.isMandatoryInGroup();
-        this.dataType = prototype.getDataType();
-        this.rangeCheckList = prototype.getRangeCheckList();
-        this.significantDigits = prototype.getSignificantDigits();
-        this.isMultiselect = prototype.isMultiselect();
-        this.codeListRef = prototype.getCodeListRef();
-        this.displayRules = prototype.getDisplayRules();
-    }
-
     public List<RangeCheck> getRangeCheckList() {
         return rangeCheckList;
     }
 
     public void setRangeCheckList(List<RangeCheck> rangeCheckList) {
         this.rangeCheckList = rangeCheckList;
+    }
+
+    public boolean isRepeating() {
+        if (group == null) {
+            return false; // ungrouped items cannot be repeating
+        } else {
+            return group.isRepeating();
+        }
+    }
+
+    public ItemGroupDefinition getGroup() {
+        return group;
+    }
+
+    public void setGroup(ItemGroupDefinition group) {
+        this.group = group;
     }
 
     @Override

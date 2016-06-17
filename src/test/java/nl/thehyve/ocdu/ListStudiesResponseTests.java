@@ -40,9 +40,7 @@ import static org.junit.Assert.assertThat;
 /**
  * Created by piotrzakrzewski on 16/04/16.
  */
-@RunWith(SpringJUnit4ClassRunner.class)
-@SpringApplicationConfiguration(classes = OcduApplication.class)
-@WebAppConfiguration
+
 public class ListStudiesResponseTests {
 
     private static final Logger log = LoggerFactory.getLogger(ListStudiesResponseTests.class);

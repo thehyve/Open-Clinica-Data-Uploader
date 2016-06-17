@@ -1,4 +1,4 @@
-package nl.thehyve.ocdu;
+package nl.thehyve.ocdu.validators;
 
 import nl.thehyve.ocdu.factories.ClinicalDataFactory;
 import nl.thehyve.ocdu.models.OCEntities.ClinicalData;
@@ -8,14 +8,9 @@ import nl.thehyve.ocdu.models.UploadSession;
 import nl.thehyve.ocdu.models.errors.*;
 import nl.thehyve.ocdu.soap.ResponseHandlers.GetStudyMetadataResponseHandler;
 import nl.thehyve.ocdu.soap.ResponseHandlers.ListAllByStudyResponseHandler;
-import nl.thehyve.ocdu.validators.ClinicalDataOcChecks;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.openclinica.ws.beans.StudySubjectWithEventsType;
-import org.springframework.boot.test.SpringApplicationConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.test.context.web.WebAppConfiguration;
 
 import javax.xml.soap.MessageFactory;
 import javax.xml.soap.MimeHeaders;
@@ -36,10 +31,8 @@ import static org.junit.Assert.assertThat;
 /**
  * Created by piotrzakrzewski on 04/05/16.
  */
-@RunWith(SpringJUnit4ClassRunner.class)
-@SpringApplicationConfiguration(classes = OcduApplication.class)
-@WebAppConfiguration
-public class ValidationTests {
+
+public class ClinicalDataOcChecksTests {
 
     ClinicalDataOcChecks clinicalDataOcChecks;
     MetaData metaData;
@@ -67,7 +60,6 @@ public class ValidationTests {
     @Before
     public void setUp() throws Exception {
         try {
-            
             this.testUser = new OcUser();
             this.testUser.setUsername("tester");
             this.testSubjectWithEventsTypeList = createStudySubjectWithEventList();

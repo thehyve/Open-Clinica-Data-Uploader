@@ -28,9 +28,7 @@ import static org.junit.Assert.assertEquals;
 /**
  * Created by piotrzakrzewski on 03/05/16.
  */
-@RunWith(SpringJUnit4ClassRunner.class)
-@SpringApplicationConfiguration(classes = OcduApplication.class)
-@WebAppConfiguration
+
 public class SoapUtilsTests {
 
     private SOAPMessage mockedResponseGetMetadata;

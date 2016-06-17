@@ -39,9 +39,7 @@ import static org.junit.Assert.assertEquals;
 /**
  * Created by piotrzakrzewski on 18/04/16.
  */
-@RunWith(SpringJUnit4ClassRunner.class)
-@SpringApplicationConfiguration(classes = OcduApplication.class)
-@WebAppConfiguration
+
 public class AuthenticationTests {
 
     private Document testDocumentAuthSuccess;

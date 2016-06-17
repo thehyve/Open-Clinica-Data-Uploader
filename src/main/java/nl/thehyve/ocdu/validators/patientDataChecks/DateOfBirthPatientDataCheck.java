@@ -15,40 +15,38 @@ import java.util.Date;
 /**
  * Created by bo on 6/15/16.
  */
-public class DateOfBirthPatientDataCheck implements PatientDataCheck{
+public class DateOfBirthPatientDataCheck implements PatientDataCheck {
     @Override
     public ValidationErrorMessage getCorrespondingError(int index, Subject subject, MetaData metaData) {
 
         String ssid = subject.getSsid();
         String commonMessage = getCommonErrorMessage(index, ssid);
 
-        DateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy", Locale.ENGLISH);
+        DateFormat dateFormat = new SimpleDateFormat("dd-MMM-yyyy", Locale.ENGLISH);
         dateFormat.setLenient(false);
 
         ValidationErrorMessage error = null;
         String dob = subject.getDateOfBirth();
-        if(!StringUtils.isBlank(dob)) {
-            if(dob.length() == 4) {//BIRTH YEAR
-                try{
+        if (!StringUtils.isBlank(dob)) {
+            if (dob.length() == 4) {//BIRTH YEAR
+                try {
                     int currentYear = Calendar.getInstance().get(Calendar.YEAR);
                     int birthYear = Integer.valueOf(dob);
-                    if(birthYear > currentYear) {
-                        error  = new ValidationErrorMessage(commonMessage+"Birth year format is invalid.");
+                    if (birthYear > currentYear) {
+                        error = new ValidationErrorMessage(commonMessage + "Birth year format is invalid.");
                     }
+                } catch (NumberFormatException e) {
+                    error = new ValidationErrorMessage(commonMessage + "Birth year format is invalid.");
                 }
-                catch (NumberFormatException e) {
-                    error  = new ValidationErrorMessage(commonMessage+"Birth year format is invalid.");
-                }
-            }
-            else{//FULL DATE
-                try{
+            } else {//FULL DATE
+                try {
                     Date date = dateFormat.parse(dob);
                     Date currentDate = new Date();
-                    if(currentDate.before(date)) {
-                        error  = new ValidationErrorMessage(commonMessage+"Birth date should be in the past.");
+                    if (currentDate.before(date)) {
+                        error = new ValidationErrorMessage(commonMessage + "Birth date should be in the past.");
                     }
-                }catch (ParseException e) {
-                    error  = new ValidationErrorMessage(commonMessage+"Birth date format is invalid.");
+                } catch (ParseException e) {
+                    error = new ValidationErrorMessage(commonMessage + "Birth date format is invalid.");
                 }
             }
         }

@@ -18,9 +18,14 @@ public class SiteDefinition {
 
     private String name;
 
-    private boolean isGenderRequired = true;
+    private boolean genderRequired = true;
 
-    private boolean isBirthdateRequired = true;
+    /*
+     * 1. yes, required
+     * 2. only year of birth
+     * 3. not required
+     */
+    private int birthdateRequired = 1;
 
     public long getId() {
         return id;
@@ -31,19 +36,19 @@ public class SiteDefinition {
     }
 
     public boolean isGenderRequired() {
-        return isGenderRequired;
+        return genderRequired;
     }
 
     public void setGenderRequired(boolean genderRequired) {
-        isGenderRequired = genderRequired;
+        this.genderRequired = genderRequired;
     }
 
-    public boolean isBirthdateRequired() {
-        return isBirthdateRequired;
+    public int getBirthdateRequired() {
+        return birthdateRequired;
     }
 
-    public void setBirthdateRequired(boolean birthdateRequired) {
-        isBirthdateRequired = birthdateRequired;
+    public void setBirthdateRequired(int birthdateRequired) {
+        this.birthdateRequired = birthdateRequired;
     }
 
     public String getSiteOID() {

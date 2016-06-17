@@ -16,6 +16,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 import static nl.thehyve.ocdu.soap.SOAPRequestFactories.StudyRefFactory.createStudyRef;
+import static nl.thehyve.ocdu.soap.SOAPRequestFactories.StudySubjectFactory.createStudySubject;
 
 /**
  * Created by piotrzakrzewski on 17/06/16.
@@ -23,7 +24,7 @@ import static nl.thehyve.ocdu.soap.SOAPRequestFactories.StudyRefFactory.createSt
 public class CreateSubjectRequestFactory {
 
 
-    public Collection<CreateRequest> getCreateRequests(Collection<Subject> subjects, Study study, SiteDefinition site) {
+    public static Collection<CreateRequest> getCreateRequests(Collection<Subject> subjects, Study study, SiteDefinition site) {
         List<CreateRequest> createRequests = subjects.stream().map(subject -> {
             try {
                 return getCreateRequest(subject, study, site);
@@ -35,19 +36,11 @@ public class CreateSubjectRequestFactory {
         return createRequests;
     }
 
-    private CreateRequest getCreateRequest(Subject subject, Study study, SiteDefinition site) throws DatatypeConfigurationException {
+    private static CreateRequest getCreateRequest(Subject subject, Study study, SiteDefinition site) throws DatatypeConfigurationException {
         CreateRequest request = new CreateRequest();
-        StudySubjectType subj = new StudySubjectType();
-        StudyRefType studyRef = createStudyRef(study, site);
-        subj.setStudyRef(studyRef);
-        subj.setLabel(subject.getSsid());
-        SubjectType subjType = new SubjectType();
-        XMLGregorianCalendar dateOfBirth = DatatypeFactory.newInstance().newXMLGregorianCalendar(subject.getDateOfBirth());
-        subjType.setDateOfBirth(dateOfBirth);
-        subj.setSubject(subjType);
-
-        request.setStudySubject(subj);
-        return null;
+        StudySubjectType studySubject = createStudySubject(subject, study, site);
+        request.setStudySubject(studySubject);
+        return request;
     }
 
 }

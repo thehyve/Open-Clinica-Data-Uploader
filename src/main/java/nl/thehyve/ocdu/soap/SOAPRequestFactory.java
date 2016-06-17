@@ -1,6 +1,7 @@
 package nl.thehyve.ocdu.soap;
 
 
+import com.sun.org.apache.xerces.internal.jaxp.datatype.XMLGregorianCalendarImpl;
 import nl.thehyve.ocdu.models.OCEntities.Study;
 import nl.thehyve.ocdu.models.OCEntities.Subject;
 import nl.thehyve.ocdu.models.OcDefinitions.SiteDefinition;
@@ -8,16 +9,16 @@ import nl.thehyve.ocdu.soap.SOAPRequestDecorators.GetStudyMetadataRequestDecorat
 import nl.thehyve.ocdu.soap.SOAPRequestDecorators.ImportDataRequestDecorator;
 import nl.thehyve.ocdu.soap.SOAPRequestDecorators.IsStudySubjectRequestDecorator;
 import nl.thehyve.ocdu.soap.SOAPRequestDecorators.listAllStudiesRequestDecorator;
-import org.openclinica.ws.beans.ListStudySubjectsInStudyType;
-import org.openclinica.ws.beans.SiteRefType;
-import org.openclinica.ws.beans.StudyRefType;
-import org.openclinica.ws.beans.StudySubjectType;
+import nl.thehyve.ocdu.soap.SOAPRequestFactories.CreateSubjectRequestFactory;
+import org.openclinica.ws.beans.*;
 import org.openclinica.ws.studysubject.v1.CreateRequest;
 import org.openclinica.ws.studysubject.v1.ObjectFactory;
 import org.w3c.dom.Document;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBElement;
+import javax.xml.datatype.DatatypeFactory;
+import javax.xml.datatype.XMLGregorianCalendar;
 import javax.xml.namespace.QName;
 import javax.xml.soap.MessageFactory;
 import javax.xml.soap.SOAPElement;
@@ -27,6 +28,7 @@ import javax.xml.soap.SOAPHeaderElement;
 import javax.xml.soap.SOAPMessage;
 import javax.xml.soap.SOAPPart;
 import javax.xml.transform.dom.DOMResult;
+import java.util.Collection;
 
 
 /**
@@ -109,18 +111,13 @@ public class SOAPRequestFactory {
         return soapMessage;
     }
 
-    public SOAPMessage createCreateSubject(String userName, String passwordHash, Study study, Subject subject
+    public SOAPMessage createCreateSubject(String userName, String passwordHash, Study study, Collection<Subject> subjects
             , SiteDefinition site) throws Exception {
-        CreateRequest request = new CreateRequest();
-        StudySubjectType subj = new StudySubjectType();
-        StudyRefType stufyRef = new StudyRefType();
-        stufyRef.setIdentifier(study.getIdentifier());
-        SiteRefType siteRef  = new SiteRefType();
-        siteRef.setIdentifier(site.getSiteOID());
-        stufyRef.setSiteRef(siteRef);
+        CreateSubjectRequestFactory factory = new CreateSubjectRequestFactory();
+        Collection<CreateRequest> createRequests =  factory.getCreateRequests(subjects, study, site);
 
-        subj.setStudyRef(stufyRef);
-        request.setStudySubject(subj);
+        SOAPMessage soapMessage = getSoapMessage(userName, passwordHash);
+        return soapMessage;
     }
 
 

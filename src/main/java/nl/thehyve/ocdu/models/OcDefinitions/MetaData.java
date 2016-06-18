@@ -99,24 +99,24 @@ public class MetaData {
         return siteDefinitions;
     }
 
-    private boolean isGenderRequired;
+    private boolean genderRequired;
+
+    private int birthdateRequired;
 
     public boolean isGenderRequired() {
-        return isGenderRequired;
+        return genderRequired;
     }
 
     public void setGenderRequired(boolean genderRequired) {
-        isGenderRequired = genderRequired;
+        this.genderRequired = genderRequired;
     }
 
-    private int isDateOfBirthRequired;
-
-    public int getIsDateOfBirthRequired() {
-        return isDateOfBirthRequired;
+    public int getBirthdateRequired() {
+        return birthdateRequired;
     }
 
-    public void setIsDateOfBirthRequired(int isDateOfBirthRequired) {
-        this.isDateOfBirthRequired = isDateOfBirthRequired;
+    public void setBirthdateRequired(int birthdateRequired) {
+        this.birthdateRequired = birthdateRequired;
     }
 
     public void setSiteDefinitions(List<SiteDefinition> siteDefinitions) {

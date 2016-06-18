@@ -83,7 +83,7 @@ public class GetStudyMetadataResponseHandler extends OCResponseHandler {
         metaData.setItemGroupDefinitions(itemGroups);
         String studyRequirementPath = STUDY_SELECTOR + "/MetaDataVersion";
         metaData.setGenderRequired(parseGenderRequired(odm, studyRequirementPath));
-        metaData.setIsDateOfBirthRequired(parseDateOfBirthRequired(odm, studyRequirementPath));
+        metaData.setBirthdateRequired(parseDateOfBirthRequired(odm, studyRequirementPath));
         return metaData;
     }
 

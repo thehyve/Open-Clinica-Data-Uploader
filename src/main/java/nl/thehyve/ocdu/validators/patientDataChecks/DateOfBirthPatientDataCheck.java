@@ -34,40 +34,58 @@ public class DateOfBirthPatientDataCheck implements PatientDataCheck {
         String ssid = subject.getSsid();
         String commonMessage = getCommonErrorMessage(index, ssid);
 
-        DateFormat dateFormat = new SimpleDateFormat("dd-MMM-yyyy", Locale.ENGLISH);
-        dateFormat.setLenient(false);
-
         ValidationErrorMessage error = null;
         String dob = subject.getDateOfBirth();
         if (!StringUtils.isBlank(dob) || DOBrequired < 3) {
-
+            String msg = null;
             if (DOBrequired == 1) {//FULL DATE
-                try {
-                    Date date = dateFormat.parse(dob);
-                    Date currentDate = new Date();
-                    if (currentDate.before(date)) {
-                        error = new ValidationErrorMessage(commonMessage + "Birth date should be in the past.");
-                    }
-                } catch (ParseException e) {
-                    error = new ValidationErrorMessage(commonMessage + "Birth date format is invalid.");
+                msg = checkFullDate(dob);
+            } else if(DOBrequired == 2) { // YEAR ONLY
+                msg = checkYearOnly(dob);
+            }
+            else { // DOBrequired == 3, but the string of dob is not empty
+                if(dob.length() == 4) {
+                    msg = checkYearOnly(dob);
                 }
-            } else { //i.e. DOBrequired == 2, YEAR ONLY
-                if (dob.length() == 4) {
-                    try {
-                        int currentYear = Calendar.getInstance().get(Calendar.YEAR);
-                        int birthYear = Integer.valueOf(dob);
-                        if (birthYear > currentYear) {
-                            error = new ValidationErrorMessage(commonMessage + "Birth year format is invalid.");
-                        }
-                    } catch (NumberFormatException e) {
-                        error = new ValidationErrorMessage(commonMessage + "Birth year format is invalid.");
-                    }
-                } else {
-                    error = new ValidationErrorMessage(commonMessage + "Birth date format is invalid.");
+                else{
+                    msg = checkFullDate(dob);
                 }
+            }
+
+            if(msg != null) {
+                error = new ValidationErrorMessage(commonMessage + msg);
             }
         }
 
         return error;
+    }
+
+    private String checkYearOnly(String dob) {
+        try {
+            int currentYear = Calendar.getInstance().get(Calendar.YEAR);
+            int birthYear = Integer.valueOf(dob);
+            if (birthYear > currentYear) {
+                return "Birth year format is invalid.";
+            }
+            return null;
+        } catch (NumberFormatException e) {
+            return "Birth year format is invalid.";
+        }
+    }
+
+    private String checkFullDate(String dob) {
+        DateFormat dateFormat = new SimpleDateFormat("dd-MMM-yyyy", Locale.ENGLISH);
+        dateFormat.setLenient(false);
+
+        try {
+            Date date = dateFormat.parse(dob);
+            Date currentDate = new Date();
+            if (currentDate.before(date)) {
+                return "Birth date should be in the past.";
+            }
+            return null;
+        } catch (ParseException e) {
+            return "Birth date format is invalid.";
+        }
     }
 }

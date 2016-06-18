@@ -20,13 +20,13 @@ public class MetaData {
     @OneToMany(targetEntity = EventDefinition.class, cascade = CascadeType.ALL)
     private List<EventDefinition> eventDefinitions;
 
-    @OneToMany(targetEntity = ItemGroupDefinition.class, cascade = CascadeType.ALL )
+    @OneToMany(targetEntity = ItemGroupDefinition.class, cascade = CascadeType.ALL)
     private List<ItemGroupDefinition> itemGroupDefinitions;
 
-    @OneToMany(targetEntity = CodeListDefinition.class, cascade = CascadeType.ALL )
+    @OneToMany(targetEntity = CodeListDefinition.class, cascade = CascadeType.ALL)
     private List<CodeListDefinition> codeListDefinitions;
 
-    @OneToMany(targetEntity = SiteDefinition.class, cascade = CascadeType.ALL )
+    @OneToMany(targetEntity = SiteDefinition.class, cascade = CascadeType.ALL)
     private List<SiteDefinition> siteDefinitions;
 
     public void addEventDefinition(EventDefinition eventDef) {
@@ -99,6 +99,26 @@ public class MetaData {
         return siteDefinitions;
     }
 
+    private boolean genderRequired;
+
+    private int birthdateRequired;
+
+    public boolean isGenderRequired() {
+        return genderRequired;
+    }
+
+    public void setGenderRequired(boolean genderRequired) {
+        this.genderRequired = genderRequired;
+    }
+
+    public int getBirthdateRequired() {
+        return birthdateRequired;
+    }
+
+    public void setBirthdateRequired(int birthdateRequired) {
+        this.birthdateRequired = birthdateRequired;
+    }
+
     public void setSiteDefinitions(List<SiteDefinition> siteDefinitions) {
         this.siteDefinitions = siteDefinitions;
     }
@@ -116,4 +136,5 @@ public class MetaData {
         this.itemGroupDefinitions = new ArrayList<>();
         this.eventDefinitions = new ArrayList<>();
     }
+
 }

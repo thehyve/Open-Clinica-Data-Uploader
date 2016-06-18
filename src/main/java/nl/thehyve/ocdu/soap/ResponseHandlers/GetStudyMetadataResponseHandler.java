@@ -81,11 +81,16 @@ public class GetStudyMetadataResponseHandler extends OCResponseHandler {
         metaData.setCodeListDefinitions(parseCodeListDefinitions(odm));
         metaData.setSiteDefinitions(parseSiteDefinitions(odm));
         metaData.setItemGroupDefinitions(itemGroups);
+        String studyRequirementPath = STUDY_SELECTOR + "/MetaDataVersion";
+        metaData.setGenderRequired(parseGenderRequired(odm, studyRequirementPath));
+        metaData.setBirthdateRequired(parseDateOfBirthRequired(odm, studyRequirementPath));
         return metaData;
     }
 
     private static List<SiteDefinition> parseSiteDefinitions(Document odm) throws XPathExpressionException {
         NodeList siteNodes = (NodeList) xpath.evaluate(SITES_SELECTOR, odm, XPathConstants.NODESET);
+
+        int site_index = 2;
 
         ArrayList<SiteDefinition> siteDefinitions = new ArrayList<>();
         for (int i = 0; i < siteNodes.getLength(); i++) {
@@ -99,7 +104,16 @@ public class GetStudyMetadataResponseHandler extends OCResponseHandler {
             if (siteNameOpt.isPresent()) {
                 siteDefinition.setName(siteNameOpt.get());
             }
+
+            String site_path = "(//Study)[" + site_index + "]/MetaDataVersion";
+            boolean genderRequired = parseGenderRequired(odm, site_path);
+            int DOBRequired = parseDateOfBirthRequired(odm, site_path);
+            siteDefinition.setGenderRequired(genderRequired);
+            siteDefinition.setBirthdateRequired(DOBRequired);
+
             siteDefinitions.add(siteDefinition);
+
+            site_index++;
         }
         return siteDefinitions;
     }
@@ -136,6 +150,102 @@ public class GetStudyMetadataResponseHandler extends OCResponseHandler {
             }
         }
         return Optional.empty();
+    }
+
+    private static boolean parseGenderRequired(Document odm, String mypath) throws XPathExpressionException {
+        boolean isGenderRequired = false;
+        Node n = (Node) xpath.evaluate(mypath, odm, XPathConstants.NODE);
+        Node study_details_node = null;
+        NodeList children = n.getChildNodes();
+        for (int i = 0; i < children.getLength(); i++) {
+            String name = children.item(i).getNodeName();
+            if (name.equals("OpenClinica:StudyDetails")) {
+                study_details_node = children.item(i);
+                break;
+            }
+        }
+
+        Node param_config_node = null;
+        if (study_details_node != null) {
+            NodeList details_children = study_details_node.getChildNodes();
+            for (int j = 0; j < details_children.getLength(); j++) {
+                String name = details_children.item(j).getNodeName();
+                if (name.equals("OpenClinica:StudyParameterConfiguration")) {
+                    param_config_node = details_children.item(j);
+                    break;
+                }
+            }
+        }
+
+        if (param_config_node != null) {
+            NodeList config_children = param_config_node.getChildNodes();
+            for (int j = 0; j < config_children.getLength(); j++) {
+                Node config_child = config_children.item(j);
+                NamedNodeMap attrs = config_child.getAttributes();
+                if (attrs != null) {
+                    Node listID_attr = attrs.getNamedItem("StudyParameterListID");
+                    if (listID_attr != null && listID_attr.getNodeValue().equals("SPL_genderRequired")) {
+                        Node value_attr = attrs.getNamedItem("Value");
+                        String isGenderRequiredStr = value_attr.getNodeValue();
+                        if (isGenderRequiredStr.equals("true")) {
+                            isGenderRequired = true;
+                            break;
+                        }
+                    }
+                }//if
+            }//for
+        }//if
+
+        return isGenderRequired;
+    }
+
+    private static int parseDateOfBirthRequired(Document odm, String mypath) throws XPathExpressionException {
+        /*
+         * 1. yes, required
+         * 2. only year of birth
+         * 3. not required
+         */
+        int isDOBRequired = 3;
+        Node n = (Node) xpath.evaluate(mypath, odm, XPathConstants.NODE);
+        Node study_details_node = null;
+        NodeList children = n.getChildNodes();
+        for (int i = 0; i < children.getLength(); i++) {
+            String name = children.item(i).getNodeName();
+            if (name.equals("OpenClinica:StudyDetails")) {
+                study_details_node = children.item(i);
+                break;
+            }
+        }
+
+        Node param_config_node = null;
+        if (study_details_node != null) {
+            NodeList details_children = study_details_node.getChildNodes();
+            for (int j = 0; j < details_children.getLength(); j++) {
+                String name = details_children.item(j).getNodeName();
+                if (name.equals("OpenClinica:StudyParameterConfiguration")) {
+                    param_config_node = details_children.item(j);
+                    break;
+                }
+            }
+        }
+
+        if (param_config_node != null) {
+            NodeList config_children = param_config_node.getChildNodes();
+            for (int j = 0; j < config_children.getLength(); j++) {
+                Node config_child = config_children.item(j);
+                NamedNodeMap attrs = config_child.getAttributes();
+                if (attrs != null) {
+                    Node listID_attr = attrs.getNamedItem("StudyParameterListID");
+                    if (listID_attr != null && listID_attr.getNodeValue().equals("SPL_collectDob")) {
+                        Node value_attr = attrs.getNamedItem("Value");
+                        String isDOBRequiredStr = value_attr.getNodeValue();
+                        isDOBRequired = Integer.valueOf(isDOBRequiredStr);
+                    }
+                }//if
+            }//for
+        }//if
+
+        return isDOBRequired;
     }
 
     private static List<CodeListDefinition> parseCodeListDefinitions(Document odm) throws XPathExpressionException {

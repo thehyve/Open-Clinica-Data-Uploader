@@ -11,6 +11,8 @@ $(document).ready(function () {
     contains_patients_without_data = true;
     contains_site_info_for_missing_paitents = false;
 
+    check_new_patients();
+
     if(contains_patients_without_data) {
         notify_user_that_additional_patient_info_is_required();
         if(!contains_site_info_for_missing_paitents) {
@@ -25,6 +27,19 @@ $(document).ready(function () {
         window.location.href = baseApp + "/views/feedback-subjects";
     }
 });
+
+function check_new_patients() {
+    $.ajax({
+        url: baseApp + "/template/check-new-patients",
+        type: "GET",
+        success: function () {
+            console.log('success');
+        },
+        error: function (jqXHR, textStatus, errorThrown) {
+            console.log('fail');
+        }
+    });
+}
 
 function notify_user_that_additional_patient_info_is_required() {
     var html = '<span class="alert-danger"><h3>Additional subject information is required.</h3></span><hr>';

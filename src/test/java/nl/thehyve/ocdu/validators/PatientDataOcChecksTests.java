@@ -64,7 +64,7 @@ public class PatientDataOcChecksTests {
     }
 
     @Test
-    public void testBirthdateFormat() {
+    public void testBirthdateFormatYearOnly() {
         Subject subject = new Subject();
         subject.setSsid("1234");
 
@@ -73,10 +73,17 @@ public class PatientDataOcChecksTests {
         DateOfBirthPatientDataCheck check = new DateOfBirthPatientDataCheck();
         ValidationErrorMessage error = check.getCorrespondingError(0, subject, metadata);
         assertThat(error.getMessage(), containsString("invalid"));
+    }
 
+    @Test
+    public void testBirthdateFormatFullDate() {
+        Subject subject = new Subject();
+        subject.setSsid("1234");
+        metadata.setBirthdateRequired(1);
         //future birthday
         subject.setDateOfBirth("01-JUN-3012");
-        error = check.getCorrespondingError(0, subject, metadata);
+        DateOfBirthPatientDataCheck check = new DateOfBirthPatientDataCheck();
+        ValidationErrorMessage error = check.getCorrespondingError(0, subject, metadata);
         assertThat(error.getMessage(), containsString("past"));
     }
 

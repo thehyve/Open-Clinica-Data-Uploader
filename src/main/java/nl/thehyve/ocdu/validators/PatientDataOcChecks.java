@@ -36,7 +36,7 @@ public class PatientDataOcChecks {
         int index = 1;
         for (Subject subject : subjects) {
             String ssid = subject.getSsid();
-            if(ssids.contains(ssid)) {
+            if (ssids.contains(ssid)) {
                 ValidationErrorMessage error = new ValidationErrorMessage("Line " + index + " subjectID " + ssid + " duplicate is found.");
                 errors.add(error);
             }

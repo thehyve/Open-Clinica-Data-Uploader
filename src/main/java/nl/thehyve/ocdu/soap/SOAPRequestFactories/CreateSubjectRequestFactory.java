@@ -14,6 +14,7 @@ import javax.xml.namespace.QName;
 import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
+
 import static nl.thehyve.ocdu.soap.SOAPRequestFactories.StudyRefFactory.createStudyRef;
 import static nl.thehyve.ocdu.soap.SOAPRequestFactories.StudySubjectFactory.createStudySubject;
 
@@ -21,11 +22,17 @@ import static nl.thehyve.ocdu.soap.SOAPRequestFactories.StudySubjectFactory.crea
  * Created by piotrzakrzewski on 17/06/16.
  */
 public class CreateSubjectRequestFactory {
-private static QName createRequestQname = new QName("http://openclinica.org/ws/studySubject/v1", "listAllByStudyRequest");
+    private static QName createRequestQname = new QName("http://openclinica.org/ws/studySubject/v1", "listAllByStudyRequest");
 
-    public static Collection<JAXBElement<CreateRequest>> getCreateRequests(Collection<Subject> subjects, Study study, SiteDefinition site) {
+    public static Collection<JAXBElement<CreateRequest>> getCreateRequests(Collection<Subject> subjects) {
         List<JAXBElement<CreateRequest>> createRequests = subjects.stream().map(subject -> {
             try {
+                Study study = new Study(subject.getStudy(), subject.getStudy(), subject.getStudy());  //TODO: check if it needs to be an identifier or a name
+                SiteDefinition site = new SiteDefinition();
+                String siteText = subject.getSite();
+                if (siteText != null) {
+                    site.setSiteOID(siteText); //TODO: We need to get an OID here and not name? Probably we need to use metadata here to get correct site
+                }
                 return getCreateRequest(subject, study, site);
             } catch (DatatypeConfigurationException e) {
                 e.printStackTrace();
@@ -39,7 +46,7 @@ private static QName createRequestQname = new QName("http://openclinica.org/ws/s
         CreateRequest request = new CreateRequest();
         StudySubjectType studySubject = createStudySubject(subject, study, site);
         request.setStudySubject(studySubject);
-        JAXBElement<CreateRequest>  requestWrapped = new  JAXBElement<> (createRequestQname, CreateRequest.class, null, request);
+        JAXBElement<CreateRequest> requestWrapped = new JAXBElement<>(createRequestQname, CreateRequest.class, null, request);
         return requestWrapped;
     }
 

@@ -111,10 +111,10 @@ public class SOAPRequestFactory {
         return soapMessage;
     }
 
-    public SOAPMessage createCreateSubject(String userName, String passwordHash, Study study, Collection<Subject> subjects
-            , SiteDefinition site) throws Exception {
+    public SOAPMessage createCreateSubject(String userName, String passwordHash, Collection<Subject> subjects
+            ) throws Exception {
         CreateSubjectRequestFactory factory = new CreateSubjectRequestFactory();
-        Collection<JAXBElement<CreateRequest>> createRequests =  factory.getCreateRequests(subjects, study, site);
+        Collection<JAXBElement<CreateRequest>> createRequests =  factory.getCreateRequests(subjects);
         SOAPMessage soapMessage = getSoapMessage(userName, passwordHash, STUDY_SUBJECT_NAME_SPACE);
         for(JAXBElement createRequest: createRequests) {
             Document xmlDoc = convertToDocument(createRequest, CreateRequest.class);

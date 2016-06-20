@@ -37,9 +37,7 @@ public class SOAPRequestFactoriesTests {
         Collection<Subject> subjects = new ArrayDeque<>();
         subjects.add(s1);
         subjects.add(s2);
-        Study study = new Study("study1","oid","study");
-        SiteDefinition site = null;
-        Collection<JAXBElement<CreateRequest>> createRequests = getCreateRequests(subjects, study, site);
+        Collection<JAXBElement<CreateRequest>> createRequests = getCreateRequests(subjects);
         assertThat(createRequests, iterableWithSize(2));
     }
 

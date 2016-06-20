@@ -39,9 +39,9 @@ public class OpenClinicaService {
     private static final Logger log = LoggerFactory.getLogger(OpenClinicaService.class);
 
 
-    public boolean registerPatients(String username, String passwordHash, String url, Collection<Subject> subjects,
-                                 Study study, SiteDefinition site) throws Exception {
-        SOAPMessage soapMessage = requestFactory.createCreateSubject(username, passwordHash, study, subjects, site);
+    public boolean registerPatients(String username, String passwordHash, String url, Collection<Subject> subjects)
+            throws Exception {
+        SOAPMessage soapMessage = requestFactory.createCreateSubject(username, passwordHash, subjects);
         SOAPConnectionFactory soapConnectionFactory = SOAPConnectionFactory.newInstance();
         SOAPConnection soapConnection = soapConnectionFactory.createConnection();
         SOAPMessage soapResponse = soapConnection.call(soapMessage, url + "/ws/studySubject/v1");

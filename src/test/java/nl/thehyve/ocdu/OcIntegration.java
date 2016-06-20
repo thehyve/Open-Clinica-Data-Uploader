@@ -1,5 +1,6 @@
 package nl.thehyve.ocdu;
 
+import nl.thehyve.ocdu.models.OCEntities.Subject;
 import nl.thehyve.ocdu.models.OcDefinitions.MetaData;
 import nl.thehyve.ocdu.models.OCEntities.Study;
 import nl.thehyve.ocdu.services.OpenClinicaService;
@@ -11,6 +12,9 @@ import org.springframework.boot.test.SpringApplicationConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 
+import java.util.ArrayDeque;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import static org.hamcrest.CoreMatchers.is;
@@ -62,11 +66,24 @@ public class OcIntegration {
                 everyItem(is(allOf(notNullValue(), instanceOf(Study.class)))));
     }
 
-    @Ignore("Not implemented yet...")
+    @Ignore("Too expensive for frequent checks")
     @Test
     public void getMetaDataTest() throws Exception {
         Study study = new Study("Study 1", "", ""); // Only Identifier should be used for this call
         MetaData metadat = openClinicaService.getMetadata(user, sha1hexDigest, ocUrl, study);
         assertThat(metadat, is(notNullValue()));
+    }
+
+    @Ignore("Not idempotent operation - OC database needs to be rolled-back after")
+    @Test
+    public void registerPatients() throws Exception {
+        Subject s1 = new Subject();
+        s1.setSsid("ssid1");
+        s1.setStudy("S_STUDY1");
+        s1.setDateOfBirth("16-May-1988");
+        s1.setGender("m");
+        Collection<Subject> subjects = new ArrayList<>();
+        subjects.add(s1);
+        openClinicaService.registerPatients(user, sha1hexDigest, ocUrl, subjects);
     }
 }

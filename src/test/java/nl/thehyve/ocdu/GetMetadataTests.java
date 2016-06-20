@@ -34,9 +34,7 @@ import static org.junit.Assert.assertTrue;
 /**
  * Created by piotrzakrzewski on 02/05/16.
  */
-@RunWith(SpringJUnit4ClassRunner.class)
-@SpringApplicationConfiguration(classes = OcduApplication.class)
-@WebAppConfiguration
+
 public class GetMetadataTests {
 
     private static final Logger log = LoggerFactory.getLogger(GetMetadataTests.class);

@@ -2,14 +2,10 @@ package nl.thehyve.ocdu.services;
 
 import nl.thehyve.ocdu.models.OCEntities.ClinicalData;
 import nl.thehyve.ocdu.models.OCEntities.Study;
+import nl.thehyve.ocdu.models.OCEntities.Subject;
 import nl.thehyve.ocdu.models.OcDefinitions.MetaData;
-import nl.thehyve.ocdu.soap.ResponseHandlers.GetStudyMetadataResponseHandler;
-import nl.thehyve.ocdu.soap.ResponseHandlers.ImportDataResponseHandler;
-import nl.thehyve.ocdu.soap.ResponseHandlers.IsStudySubjectResponseHandler;
-import nl.thehyve.ocdu.soap.ResponseHandlers.ListAllByStudyResponseHandler;
-import nl.thehyve.ocdu.soap.ResponseHandlers.ListStudiesResponseHandler;
-import nl.thehyve.ocdu.soap.ResponseHandlers.OCResponseHandler;
-import nl.thehyve.ocdu.soap.ResponseHandlers.SoapUtils;
+import nl.thehyve.ocdu.models.OcDefinitions.SiteDefinition;
+import nl.thehyve.ocdu.soap.ResponseHandlers.*;
 import nl.thehyve.ocdu.soap.SOAPRequestFactory;
 import org.apache.commons.lang3.StringUtils;
 import org.openclinica.ws.beans.StudySubjectWithEventsType;
@@ -21,9 +17,12 @@ import org.w3c.dom.Document;
 import javax.xml.soap.SOAPConnection;
 import javax.xml.soap.SOAPConnectionFactory;
 import javax.xml.soap.SOAPMessage;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import static nl.thehyve.ocdu.soap.ResponseHandlers.RegisterSubjectsResponseHandler.parseRegisterSubjectsResponse;
 
 /**
  * Created by piotrzakrzewski on 11/04/16.
@@ -34,6 +33,17 @@ public class OpenClinicaService {
 
     SOAPRequestFactory requestFactory = new SOAPRequestFactory();
     private static final Logger log = LoggerFactory.getLogger(OpenClinicaService.class);
+
+
+    public boolean registerPatients(String username, String passwordHash, String url, Collection<Subject> subjects)
+            throws Exception {
+        SOAPMessage soapMessage = requestFactory.createCreateSubject(username, passwordHash, subjects);
+        SOAPConnectionFactory soapConnectionFactory = SOAPConnectionFactory.newInstance();
+        SOAPConnection soapConnection = soapConnectionFactory.createConnection();
+        SOAPMessage soapResponse = soapConnection.call(soapMessage, url + "/ws/studySubject/v1");
+        String s = parseRegisterSubjectsResponse(soapResponse);
+        return true;
+    }
 
     public List<Study> listStudies(String username, String passwordHash, String url) throws Exception { //TODO: handle exceptions
         log.info("List studies initiated by: " + username + " on: " + url);
@@ -47,9 +57,9 @@ public class OpenClinicaService {
     }
 
     public Map<String, String> createMapSubjectLabelToSubjectOID(String username,
-                                                                  String passwordHash,
-                                                                  String url,
-                                                                  List<ClinicalData> clinicalDataList) throws Exception {
+                                                                 String passwordHash,
+                                                                 String url,
+                                                                 List<ClinicalData> clinicalDataList) throws Exception {
         // TODO this mapping can be made redundant if the subjectOID is also returned by the listAllByStudy
         // call. In this way you avoid N-calls toe isStudySubject for N-subjects.
         // We assume that all subject in the clinicalData-list are registered.
@@ -141,10 +151,11 @@ public class OpenClinicaService {
     /**
      * Retrieves the corresponding OpenClinica studySubjectOID of a <code>subjectLabel</code>with a SOAP-call to the
      * OpenClinica instance at <code>url</code>.
-     * @param username the user name
+     *
+     * @param username     the user name
      * @param passwordHash the SHA1 hashed password
-     * @param url the url to the OpenClinica-WS instance
-     * @param studyLabel the study label
+     * @param url          the url to the OpenClinica-WS instance
+     * @param studyLabel   the study label
      * @param subjectLabel the subject label
      * @return <code>null</code> if the subjectLabel does not exist in the study.
      * @throws Exception in case of problems

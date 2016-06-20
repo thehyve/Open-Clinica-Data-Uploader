@@ -9,6 +9,7 @@ import org.openclinica.ws.beans.StudySubjectType;
 import org.openclinica.ws.beans.SubjectType;
 import org.openclinica.ws.studysubject.v1.CreateRequest;
 
+import javax.xml.bind.JAXBElement;
 import javax.xml.datatype.XMLGregorianCalendar;
 
 import java.util.ArrayDeque;
@@ -38,7 +39,7 @@ public class SOAPRequestFactoriesTests {
         subjects.add(s2);
         Study study = new Study("study1","oid","study");
         SiteDefinition site = null;
-        Collection<CreateRequest> createRequests = getCreateRequests(subjects, study, site);
+        Collection<JAXBElement<CreateRequest>> createRequests = getCreateRequests(subjects, study, site);
         assertThat(createRequests, iterableWithSize(2));
     }
 

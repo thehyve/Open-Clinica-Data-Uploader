@@ -9,6 +9,11 @@ import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.XMLGregorianCalendar;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.GregorianCalendar;
+
 import static nl.thehyve.ocdu.soap.SOAPRequestFactories.StudyRefFactory.createStudyRef;
 
 /**
@@ -41,12 +46,29 @@ public class StudySubjectFactory {
     }
 
     public static XMLGregorianCalendar createXMLGregorianDate(String dateOfBirthString) {
-        try {
-            XMLGregorianCalendar dateOfBirth = DatatypeFactory.newInstance().newXMLGregorianCalendar(dateOfBirthString);
+        try { //TODO: unify OC date format checking in the application
+            GregorianCalendar cal = new GregorianCalendar();
+            String dateFormat;
+            if(isYearOnly(dateOfBirthString)) {
+                dateFormat = "yyyy";
+            } else{
+                dateFormat = "dd-MMM-yyyy";
+            }
+            DateFormat df = new SimpleDateFormat(dateFormat);
+            Date date = df.parse(dateOfBirthString);
+            cal.setTime(date);
+            XMLGregorianCalendar dateOfBirth = DatatypeFactory.newInstance().newXMLGregorianCalendar(cal);
             return dateOfBirth;
-        } catch (DatatypeConfigurationException e) {
+        } catch (Exception e) {
             e.printStackTrace();
             return null;
         }
+    }
+
+    private static boolean isYearOnly(String dateString) {
+        if (dateString.length() == 4) {
+            return true;
+        } else
+            return false;
     }
 }

@@ -56,7 +56,7 @@ public class SOAPRequestFactoriesTests {
     @Test
     public void createXMLGregorianDateTest() throws Exception {
         Subject subject = new Subject();
-        subject.setDateOfBirth("1996");
+        subject.setDateOfBirth("01-Jan-1996");
         XMLGregorianCalendar xmlGregorianDate = createXMLGregorianDate(subject.getDateOfBirth());
         int year = xmlGregorianDate.getYear();
         assertThat(year, equalTo(1996));

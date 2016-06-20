@@ -25,11 +25,14 @@ public class IsStudySubjectRequestDecorator implements SoapDecorator {
 
     public void decorateBody(SOAPEnvelope envelope) throws Exception {
         SOAPBody soapBody = envelope.getBody();
-        SOAPElement getMetaDataRequest = soapBody.addChildElement("isStudySubjectRequest", "v1");
-        SOAPElement studySubject = getMetaDataRequest.addChildElement("studySubject", "v1");
-        SOAPElement label = studySubject.addChildElement("label", "beans");
+        SOAPElement isStudySubjectRequest = soapBody.addChildElement("isStudySubjectRequest", "v1");
+        SOAPElement studySubjectElement = isStudySubjectRequest.addChildElement("studySubject", "v1");
+
+        SOAPElement label = studySubjectElement.addChildElement("label", "beans");
         label.setTextContent(subjectLabel);
-        SOAPElement studyRef = getMetaDataRequest.addChildElement("studyRef", "beans");
-        studyRef.setTextContent(studyName);
+        studySubjectElement.addChildElement("subject", "beans");
+        SOAPElement studyRef = studySubjectElement.addChildElement("studyRef", "beans");
+        SOAPElement identifier = studyRef.addChildElement("identifier", "beans");
+        identifier.setTextContent(studyName);
     }
 }

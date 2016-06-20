@@ -39,12 +39,13 @@ public class OpenClinicaService {
     private static final Logger log = LoggerFactory.getLogger(OpenClinicaService.class);
 
 
-    public void registerPatients(String username, String passwordHash, String url, Collection<Subject> subjects,
+    public boolean registerPatients(String username, String passwordHash, String url, Collection<Subject> subjects,
                                  Study study, SiteDefinition site) throws Exception {
-        SOAPMessage soapMessage = responseFactory.createCreateSubject(username, passwordHash, study, subjects, site);
+        SOAPMessage soapMessage = requestFactory.createCreateSubject(username, passwordHash, study, subjects, site);
         SOAPConnectionFactory soapConnectionFactory = SOAPConnectionFactory.newInstance();
         SOAPConnection soapConnection = soapConnectionFactory.createConnection();
         SOAPMessage soapResponse = soapConnection.call(soapMessage, url + "/ws/studySubject/v1");
+        return true;
     }
 
     public List<Study> listStudies(String username, String passwordHash, String url) throws Exception { //TODO: handle exceptions

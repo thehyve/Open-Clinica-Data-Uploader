@@ -115,7 +115,7 @@ public class SOAPRequestFactory {
             , SiteDefinition site) throws Exception {
         CreateSubjectRequestFactory factory = new CreateSubjectRequestFactory();
         Collection<JAXBElement<CreateRequest>> createRequests =  factory.getCreateRequests(subjects, study, site);
-        SOAPMessage soapMessage = getSoapMessage(userName, passwordHash);
+        SOAPMessage soapMessage = getSoapMessage(userName, passwordHash, STUDY_SUBJECT_NAME_SPACE);
         for(JAXBElement createRequest: createRequests) {
             Document xmlDoc = convertToDocument(createRequest, CreateRequest.class);
             soapMessage.getSOAPBody().addDocument(xmlDoc);

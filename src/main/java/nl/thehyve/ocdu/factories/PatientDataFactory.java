@@ -21,7 +21,7 @@ import java.util.stream.Stream;
  */
 public class PatientDataFactory extends UserSubmittedDataFactory {
 
-    public final static String STUDY_SUBJECT_ID = "StudySubjectID";
+    public final static String STUDY_SUBJECT_ID = "Study Subject ID";
     public final static String GENDER = "Gender";
     public final static String DATE_OF_BIRTH = "Date of Birth";
     public final static String DATE_OF_ENROLLMENT = "Date of Enrollment";

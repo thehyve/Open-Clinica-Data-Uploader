@@ -2,10 +2,21 @@ package nl.thehyve.ocdu.models.OCEntities;
 
 import nl.thehyve.ocdu.models.OcUser;
 import nl.thehyve.ocdu.models.UploadSession;
+import org.apache.commons.lang3.StringUtils;
+import org.openclinica.ws.beans.EventType;
+import org.openclinica.ws.beans.SiteRefType;
+import org.openclinica.ws.beans.StudyRefType;
+import org.openclinica.ws.beans.StudySubjectWithEventsType;;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.ManyToOne;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by piotrzakrzewski on 16/04/16.
@@ -226,7 +237,47 @@ public class ClinicalData implements OcEntity, UserSubmitted, EventReference {
         ret.append(crfName);
         ret.append(crfVersion);
         // TODO add the itemGroup level;
-        return ret.toString();
+        return ret.toString().toUpperCase();
+    }
+
+    /**
+     * creates a key to filter a list for all events present in a list of {@link ClinicalData}.
+     * @return
+     */
+    public String createEventKey() {
+        StringBuffer ret = new StringBuffer();
+        ret.append(ssid);
+        ret.append(eventName);
+        ret.append(eventRepeat);
+        return ret.toString().toUpperCase();
+    }
+
+
+    public EventType createEventType(Map<String, String> eventNameOIDMap) {
+        EventType ret = new EventType();
+        StudyRefType studyRefType = new StudyRefType();
+        studyRefType.setIdentifier(study);
+        SiteRefType siteRefType = new SiteRefType();
+        siteRefType.setIdentifier(site);
+        studyRefType.setSiteRef(siteRefType);
+        ret.setStudyRef(studyRefType);
+        String eventOID = eventNameOIDMap.get(eventName);
+        if (StringUtils.isEmpty(eventOID)) {
+            throw new IllegalStateException("No eventOID found for the event with name " + eventName);
+        }
+        ret.setEventDefinitionOID(eventName);
+        return ret;
+    }
+
+    /**
+     * returns <code>true</code> if the event defined in {@param studySubjectWithEventsType} is
+     * present present in this ClinicalData.
+     * @param studySubjectWithEventsType
+     * @return  returns <code>true</code> if the event defined in {@param studySubjectWithEventsType} is
+     * present present in this ClinicalData.
+     */
+    public boolean isEventPresent(StudySubjectWithEventsType studySubjectWithEventsType) {
+        return false;
     }
 
     public List<String> getValues() {

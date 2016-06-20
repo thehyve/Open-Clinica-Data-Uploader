@@ -3,9 +3,11 @@ package nl.thehyve.ocdu.services;
 import nl.thehyve.ocdu.models.OCEntities.ClinicalData;
 import nl.thehyve.ocdu.models.OCEntities.Study;
 import nl.thehyve.ocdu.models.OCEntities.Subject;
+import nl.thehyve.ocdu.models.OcDefinitions.EventDefinition;
 import nl.thehyve.ocdu.models.OcDefinitions.MetaData;
+import nl.thehyve.ocdu.models.OcDefinitions.RegisteredEventInformation;
 import nl.thehyve.ocdu.soap.ResponseHandlers.GetStudyMetadataResponseHandler;
-import nl.thehyve.ocdu.soap.ResponseHandlers.ImportDataResponseHandler;
+import nl.thehyve.ocdu.soap.ResponseHandlers.SOAPResponseHandler;
 import nl.thehyve.ocdu.soap.ResponseHandlers.IsStudySubjectResponseHandler;
 import nl.thehyve.ocdu.soap.ResponseHandlers.ListAllByStudyResponseHandler;
 import nl.thehyve.ocdu.soap.ResponseHandlers.ListStudiesResponseHandler;
@@ -13,6 +15,8 @@ import nl.thehyve.ocdu.soap.ResponseHandlers.OCResponseHandler;
 import nl.thehyve.ocdu.soap.ResponseHandlers.SoapUtils;
 import nl.thehyve.ocdu.soap.SOAPRequestFactory;
 import org.apache.commons.lang3.StringUtils;
+import org.openclinica.ws.beans.EventResponseType;
+import org.openclinica.ws.beans.EventType;
 import org.openclinica.ws.beans.StudySubjectWithEventsType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,10 +26,8 @@ import org.w3c.dom.Document;
 import javax.xml.soap.SOAPConnection;
 import javax.xml.soap.SOAPConnectionFactory;
 import javax.xml.soap.SOAPMessage;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
 
 import static nl.thehyve.ocdu.soap.ResponseHandlers.RegisterSubjectsResponseHandler.parseRegisterSubjectsResponse;
 
@@ -122,14 +124,62 @@ public class OpenClinicaService {
         SOAPConnection soapConnection = soapConnectionFactory.createConnection();
         SOAPMessage soapMessage = requestFactory.createDataUploadRequest(username, passwordHash, odm);
 
-        System.out.println("SOAP --->" + SoapUtils.soapMessageToString(soapMessage));
-
         SOAPMessage soapResponse = soapConnection.call(soapMessage, url + "/ws/data/v1");  // Add SOAP endopint to OCWS URL.
-        String responseError = ImportDataResponseHandler.parseImportDataResponse(soapResponse);
+        String responseError = SOAPResponseHandler.parseOpenClinicaResponse(soapResponse, "//importDataResponse");
         if (responseError != null) {
             log.error("ImportData request failed: " + responseError);
         }
         return responseError;
+    }
+
+    /**
+     * Schedule all the events found in {@param clinicalDataList} but which have not been scheduled yet in
+     * OpenClinica according to the information present in the {@param studyEventDefinitionTypeList}.
+     * @param username
+     * @param passwordHash
+     * @param url
+     * @param clinicalDataList
+     * @throws Exception
+     */
+    public String scheduleEvents(String username, String passwordHash, String url,
+                                 MetaData metaData,
+                               List<ClinicalData> clinicalDataList,
+                               List<StudySubjectWithEventsType> studySubjectWithEventsTypeList,
+                                 String studyIdentifier, String siteIdentifier) throws Exception {
+        log.info("Schedule events initiated by: " + username + " on: " + url);
+        if (StringUtils.isEmpty(username) ||
+                StringUtils.isEmpty(passwordHash) ||
+                StringUtils.isEmpty(url)) {
+            return "One of the required parameters is missing (username, password, url)";
+        }
+        Map<String, String> eventNameOIDMap =
+                metaData.getEventDefinitions().stream().collect(Collectors.toMap(EventDefinition::getName, EventDefinition::getStudyEventOID));
+
+        Map<String, EventResponseType> eventsRegisteredInOpenClinica =
+                RegisteredEventInformation.createEventKeyList(studyIdentifier, siteIdentifier, studySubjectWithEventsTypeList);
+        List<EventType> eventTypeList = new ArrayList<>();
+        for (ClinicalData clinicalData : clinicalDataList) {
+            String eventKey = clinicalData.createEventKey();
+            if ( ! eventsRegisteredInOpenClinica.containsKey(eventKey)) {
+                EventType eventType = clinicalData.createEventType(eventNameOIDMap);
+                eventTypeList.add(eventType);
+            }
+        }
+
+        SOAPConnectionFactory soapConnectionFactory = SOAPConnectionFactory.newInstance();
+        SOAPConnection soapConnection = soapConnectionFactory.createConnection();
+
+        StringBuffer errorMessage = new StringBuffer();
+        for (EventType eventType : eventTypeList) {
+            SOAPMessage soapMessage = requestFactory.createScheduleEventRequest(username, passwordHash, eventType);
+            SOAPMessage soapResponse = soapConnection.call(soapMessage, url + "/ws/event/v1");
+            String responseError = SOAPResponseHandler.parseOpenClinicaResponse(soapResponse, "//scheduleResponse");
+            if (responseError != null) {
+                log.error("ScheduleEvent request failed: " + responseError);
+                errorMessage.append(responseError);
+            }
+        }
+        return errorMessage.toString();
     }
 
 

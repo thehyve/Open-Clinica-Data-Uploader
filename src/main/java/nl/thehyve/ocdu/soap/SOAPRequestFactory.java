@@ -1,32 +1,21 @@
 package nl.thehyve.ocdu.soap;
 
 
-import com.sun.org.apache.xerces.internal.jaxp.datatype.XMLGregorianCalendarImpl;
 import nl.thehyve.ocdu.models.OCEntities.Study;
 import nl.thehyve.ocdu.models.OCEntities.Subject;
-import nl.thehyve.ocdu.models.OcDefinitions.SiteDefinition;
-import nl.thehyve.ocdu.soap.SOAPRequestDecorators.GetStudyMetadataRequestDecorator;
-import nl.thehyve.ocdu.soap.SOAPRequestDecorators.ImportDataRequestDecorator;
-import nl.thehyve.ocdu.soap.SOAPRequestDecorators.IsStudySubjectRequestDecorator;
-import nl.thehyve.ocdu.soap.SOAPRequestDecorators.listAllStudiesRequestDecorator;
+import nl.thehyve.ocdu.soap.SOAPRequestDecorators.*;
 import nl.thehyve.ocdu.soap.SOAPRequestFactories.CreateSubjectRequestFactory;
-import org.openclinica.ws.beans.*;
+import org.openclinica.ws.beans.EventType;
+import org.openclinica.ws.beans.ListStudySubjectsInStudyType;
+import org.openclinica.ws.beans.StudyRefType;
 import org.openclinica.ws.studysubject.v1.CreateRequest;
 import org.openclinica.ws.studysubject.v1.ObjectFactory;
 import org.w3c.dom.Document;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBElement;
-import javax.xml.datatype.DatatypeFactory;
-import javax.xml.datatype.XMLGregorianCalendar;
 import javax.xml.namespace.QName;
-import javax.xml.soap.MessageFactory;
-import javax.xml.soap.SOAPElement;
-import javax.xml.soap.SOAPEnvelope;
-import javax.xml.soap.SOAPHeader;
-import javax.xml.soap.SOAPHeaderElement;
-import javax.xml.soap.SOAPMessage;
-import javax.xml.soap.SOAPPart;
+import javax.xml.soap.*;
 import javax.xml.transform.dom.DOMResult;
 import java.util.Collection;
 
@@ -43,6 +32,8 @@ public class SOAPRequestFactory {
     private static final String STUDY_SUBJECT_NAME_SPACE = "http://openclinica.org/ws/studySubject/";
 
     private static final String IMPORT_DATA_NAME_SPACE = "http://openclinica.org/ws/data/";
+
+    private static final String EVENT_NAME_SPACE = "http://openclinica.org/ws/event/";
 
     public SOAPMessage createListStudiesRequest(String username, String passwordHash) throws Exception {
         SOAPMessage soapMessage = getSoapMessage(username, passwordHash, STUDY_NAME_SPACE);
@@ -123,6 +114,18 @@ public class SOAPRequestFactory {
         return soapMessage;
     }
 
+
+    public SOAPMessage createScheduleEventRequest(String userName, String passwordHash, EventType eventType) throws Exception {
+
+        SOAPMessage soapMessage = getSoapMessage(userName, passwordHash, EVENT_NAME_SPACE);
+        SOAPEnvelope envelope = soapMessage.getSOAPPart().getEnvelope();
+        ScheduleEventRequestDecorator scheduleEventRequestDecorator = new ScheduleEventRequestDecorator(eventType);
+
+        scheduleEventRequestDecorator.decorateBody(envelope);
+        soapMessage.saveChanges();
+
+        return soapMessage;
+    }
 
     private Document convertToDocument(JAXBElement<?> jaxbElement, Class... expectedClasses) throws Exception {
         DOMResult res = new DOMResult();

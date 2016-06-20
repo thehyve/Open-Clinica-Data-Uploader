@@ -2,6 +2,7 @@ package nl.thehyve.ocdu.soap.SOAPRequestFactories;
 
 import nl.thehyve.ocdu.models.OCEntities.Study;
 import nl.thehyve.ocdu.models.OcDefinitions.SiteDefinition;
+import org.apache.commons.lang3.StringUtils;
 import org.openclinica.ws.beans.SiteRefType;
 import org.openclinica.ws.beans.StudyRefType;
 
@@ -19,7 +20,7 @@ public class StudyRefFactory {
     public static StudyRefType createStudyRef(Study study, SiteDefinition siteDefinition) {
         StudyRefType studyRefType = new StudyRefType();
         studyRefType.setIdentifier(study.getIdentifier());
-        if (siteDefinition != null) {
+        if (siteDefinition != null && !siteDefinition.equals("")) {
             SiteRefType siteRef = createSiteRef(siteDefinition);
             studyRefType.setSiteRef(siteRef);
         }

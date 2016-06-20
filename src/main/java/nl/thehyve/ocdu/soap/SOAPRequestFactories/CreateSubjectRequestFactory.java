@@ -22,7 +22,7 @@ import static nl.thehyve.ocdu.soap.SOAPRequestFactories.StudySubjectFactory.crea
  * Created by piotrzakrzewski on 17/06/16.
  */
 public class CreateSubjectRequestFactory {
-    private static QName createRequestQname = new QName("http://openclinica.org/ws/studySubject/v1", "listAllByStudyRequest");
+    private static QName createRequestQname = new QName("http://openclinica.org/ws/studySubject/v1", "createRequest");
 
     public static Collection<JAXBElement<CreateRequest>> getCreateRequests(Collection<Subject> subjects) {
         List<JAXBElement<CreateRequest>> createRequests = subjects.stream().map(subject -> {
@@ -30,8 +30,10 @@ public class CreateSubjectRequestFactory {
                 Study study = new Study(subject.getStudy(), subject.getStudy(), subject.getStudy());  //TODO: check if it needs to be an identifier or a name
                 SiteDefinition site = new SiteDefinition();
                 String siteText = subject.getSite();
-                if (siteText != null) {
+                if (siteText != null && !siteText.equals("")) {
                     site.setSiteOID(siteText); //TODO: We need to get an OID here and not name? Probably we need to use metadata here to get correct site
+                } else {
+                    site = null;
                 }
                 return getCreateRequest(subject, study, site);
             } catch (DatatypeConfigurationException e) {

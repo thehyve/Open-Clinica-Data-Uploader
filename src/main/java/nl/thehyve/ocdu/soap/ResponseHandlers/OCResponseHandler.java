@@ -1,19 +1,23 @@
 package nl.thehyve.ocdu.soap.ResponseHandlers;
 
+import org.springframework.security.authentication.AuthenticationCredentialsNotFoundException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 
+import javax.xml.soap.SOAPMessage;
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
+
+import static nl.thehyve.ocdu.soap.ResponseHandlers.SoapUtils.toDocument;
 
 /**
  * Created by piotrzakrzewski on 18/04/16.
  */
 public class OCResponseHandler {
 
-    public final static String authFailXpathExpr =  "//faultcode";
+    public final static String authFailXpathExpr = "//faultcode";
 
     public static boolean isAuthFailure(Document xmlResponse) {
         XPath xpath = XPathFactory.newInstance().newXPath();
@@ -28,6 +32,21 @@ public class OCResponseHandler {
             return true; // Do not proceed when auth status cannot be resolved.
         }
         return true;
+    }
+
+    public static String parseGenericResponse(SOAPMessage response, String selector) throws Exception {
+        Document document = toDocument(response);
+        if (isAuthFailure(document)) {
+            throw new AuthenticationCredentialsNotFoundException("Authentication against OpenClinica unsuccessfull");
+        }
+        XPath xpath = XPathFactory.newInstance().newXPath();
+        Node importDataResponseNode = (Node) xpath.evaluate(selector, document, XPathConstants.NODE);
+        Node resultNode = (Node) xpath.evaluate("//result", importDataResponseNode, XPathConstants.NODE);
+        if ("fail".equalsIgnoreCase(resultNode.getTextContent())) {
+            Node errorNode = (Node) xpath.evaluate("//error", importDataResponseNode, XPathConstants.NODE);
+            return errorNode.getTextContent();
+        }
+        return null;
     }
 
 }

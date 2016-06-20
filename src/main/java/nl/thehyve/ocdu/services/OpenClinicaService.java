@@ -5,13 +5,7 @@ import nl.thehyve.ocdu.models.OCEntities.Study;
 import nl.thehyve.ocdu.models.OCEntities.Subject;
 import nl.thehyve.ocdu.models.OcDefinitions.MetaData;
 import nl.thehyve.ocdu.models.OcDefinitions.SiteDefinition;
-import nl.thehyve.ocdu.soap.ResponseHandlers.GetStudyMetadataResponseHandler;
-import nl.thehyve.ocdu.soap.ResponseHandlers.ImportDataResponseHandler;
-import nl.thehyve.ocdu.soap.ResponseHandlers.IsStudySubjectResponseHandler;
-import nl.thehyve.ocdu.soap.ResponseHandlers.ListAllByStudyResponseHandler;
-import nl.thehyve.ocdu.soap.ResponseHandlers.ListStudiesResponseHandler;
-import nl.thehyve.ocdu.soap.ResponseHandlers.OCResponseHandler;
-import nl.thehyve.ocdu.soap.ResponseHandlers.SoapUtils;
+import nl.thehyve.ocdu.soap.ResponseHandlers.*;
 import nl.thehyve.ocdu.soap.SOAPRequestFactory;
 import org.apache.commons.lang3.StringUtils;
 import org.openclinica.ws.beans.StudySubjectWithEventsType;
@@ -27,6 +21,8 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import static nl.thehyve.ocdu.soap.ResponseHandlers.RegisterSubjectsResponseHandler.parseRegisterSubjectsResponse;
 
 /**
  * Created by piotrzakrzewski on 11/04/16.
@@ -45,6 +41,7 @@ public class OpenClinicaService {
         SOAPConnectionFactory soapConnectionFactory = SOAPConnectionFactory.newInstance();
         SOAPConnection soapConnection = soapConnectionFactory.createConnection();
         SOAPMessage soapResponse = soapConnection.call(soapMessage, url + "/ws/studySubject/v1");
+        String s = parseRegisterSubjectsResponse(soapResponse);
         return true;
     }
 

@@ -12,11 +12,9 @@ import javax.xml.xpath.XPathFactory;
 import static nl.thehyve.ocdu.soap.ResponseHandlers.SoapUtils.toDocument;
 
 /**
- * Created by Jacob Rousseau on 16-Jun-2016.
- * Copyright CTMM-TraIT / NKI (c) 2016
+ * Created by piotrzakrzewski on 20/06/16.
  */
-public class ImportDataResponseHandler extends OCResponseHandler {
-
+public class RegisterSubjectsResponseHandler extends OCResponseHandler {
     /**
      * Checks if an error occurred on the OpenClinica-side and reports it back as the
      * return value
@@ -26,8 +24,7 @@ public class ImportDataResponseHandler extends OCResponseHandler {
      * instance at url. Returns <code>null</code> if everything went OK.
      * @throws Exception if a technical error occurs.
      */
-    public static String parseImportDataResponse(SOAPMessage response) throws Exception {
-        return parseGenericResponse(response, ".//importDataResponse");
+    public static String parseRegisterSubjectsResponse(SOAPMessage response) throws Exception {
+        return parseGenericResponse(response, ".//createResponse");
     }
-
 }

@@ -38,11 +38,19 @@ public class OpenClinicaService {
     public boolean registerPatients(String username, String passwordHash, String url, Collection<Subject> subjects)
             throws Exception {
         SOAPMessage soapMessage = requestFactory.createCreateSubject(username, passwordHash, subjects);
+        System.out.println("SOAP --->" + SoapUtils.soapMessageToString(soapMessage));
         SOAPConnectionFactory soapConnectionFactory = SOAPConnectionFactory.newInstance();
         SOAPConnection soapConnection = soapConnectionFactory.createConnection();
         SOAPMessage soapResponse = soapConnection.call(soapMessage, url + "/ws/studySubject/v1");
-        String s = parseRegisterSubjectsResponse(soapResponse);
-        return true;
+        String error = parseRegisterSubjectsResponse(soapResponse);
+        if (error != null) {
+            log.error("Registering subjects against instance " + url + " failed, OC error: " + error);
+            return false;
+        } else {
+            log.info("Registering subjects against instance " + url + " successfull, number of subjects:" +
+                    subjects.size());
+            return true;
+        }
     }
 
     public List<Study> listStudies(String username, String passwordHash, String url) throws Exception { //TODO: handle exceptions
@@ -89,11 +97,10 @@ public class OpenClinicaService {
     }
 
     /**
-     *
-     * @param username the user-account name
+     * @param username     the user-account name
      * @param passwordHash the SHA1 hash of the user's password
-     * @param url the URL of the OpenClinica-ws instance
-     * @param odm the ODM string to upload
+     * @param url          the URL of the OpenClinica-ws instance
+     * @param odm          the ODM string to upload
      * @return a non <code>null</code> error code.message if an error occurred. Some are reported by the OpenClinica-WS
      * instance at url. Returns <code>null</code> if everything went OK.
      * @throws Exception in case of a technical error

@@ -24,6 +24,7 @@ import static org.hamcrest.core.IsInstanceOf.instanceOf;
 import static org.hamcrest.core.IsNull.notNullValue;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
 
 /**
  * Created by piotrzakrzewski on 29/04/16.
@@ -78,12 +79,14 @@ public class OcIntegration {
     @Test
     public void registerPatients() throws Exception {
         Subject s1 = new Subject();
-        s1.setSsid("ssid1");
-        s1.setStudy("S_STUDY1");
-        s1.setDateOfBirth("16-May-1988");
+
+        s1.setSsid("createdByWebServ");
+        s1.setStudy("Sjogren");
+        s1.setYearOfBirth("1988");
         s1.setGender("m");
         Collection<Subject> subjects = new ArrayList<>();
         subjects.add(s1);
-        openClinicaService.registerPatients(user, sha1hexDigest, ocUrl, subjects);
+        boolean b = openClinicaService.registerPatients(user, sha1hexDigest, ocUrl, subjects);
+        assertTrue(b); // true if successful
     }
 }

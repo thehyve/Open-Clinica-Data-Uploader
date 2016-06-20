@@ -15,7 +15,7 @@ import static nl.thehyve.ocdu.soap.ResponseHandlers.SoapUtils.toDocument;
  * Created by Jacob Rousseau on 16-Jun-2016.
  * Copyright CTMM-TraIT / NKI (c) 2016
  */
-public class ImportDataResponseHandler extends OCResponseHandler {
+public class SOAPResponseHandler extends OCResponseHandler {
 
     /**
      * Checks if an error occurred on the OpenClinica-side and reports it back as the
@@ -25,13 +25,13 @@ public class ImportDataResponseHandler extends OCResponseHandler {
      * instance at url. Returns <code>null</code> if everything went OK.
      * @throws Exception if a technical error occurs.
      */
-    public static String parseImportDataResponse(SOAPMessage response) throws Exception {
+    public static String parseOpenClinicaResponse(SOAPMessage response, String xPathToResponse) throws Exception {
         Document document = toDocument(response);
         if (isAuthFailure(document)) {
-            throw new AuthenticationCredentialsNotFoundException("Authentication against OpenClinica unsuccessfull");
+            throw new AuthenticationCredentialsNotFoundException("Authentication against OpenClinica unsuccessful");
         }
         XPath xpath = XPathFactory.newInstance().newXPath();
-        Node importDataResponseNode = (Node) xpath.evaluate("//importDataResponse", document, XPathConstants.NODE);
+        Node importDataResponseNode = (Node) xpath.evaluate(xPathToResponse, document, XPathConstants.NODE);
         Node resultNode = (Node) xpath.evaluate("//result", importDataResponseNode, XPathConstants.NODE);
         if ("fail".equalsIgnoreCase(resultNode.getTextContent())) {
             Node errorNode = (Node) xpath.evaluate("//error", importDataResponseNode, XPathConstants.NODE);

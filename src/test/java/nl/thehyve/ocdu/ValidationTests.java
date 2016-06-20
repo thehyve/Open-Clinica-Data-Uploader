@@ -5,9 +5,23 @@ import nl.thehyve.ocdu.models.OCEntities.ClinicalData;
 import nl.thehyve.ocdu.models.OcDefinitions.MetaData;
 import nl.thehyve.ocdu.models.OcUser;
 import nl.thehyve.ocdu.models.UploadSession;
-import nl.thehyve.ocdu.models.errors.*;
+import nl.thehyve.ocdu.models.errors.CRFDoesNotExist;
+import nl.thehyve.ocdu.models.errors.CRFVersionMismatchError;
+import nl.thehyve.ocdu.models.errors.CrfCouldNotBeVerified;
+import nl.thehyve.ocdu.models.errors.EnumerationError;
+import nl.thehyve.ocdu.models.errors.EventDoesNotExist;
+import nl.thehyve.ocdu.models.errors.FieldLengthExceeded;
+import nl.thehyve.ocdu.models.errors.ItemDoesNotExist;
+import nl.thehyve.ocdu.models.errors.MandatoryItemInCrfMissing;
+import nl.thehyve.ocdu.models.errors.RangeCheckViolation;
+import nl.thehyve.ocdu.models.errors.RepeatInNonrepeatingEvent;
+import nl.thehyve.ocdu.models.errors.RepeatInNonrepeatingItem;
+import nl.thehyve.ocdu.models.errors.SSIDDuplicated;
+import nl.thehyve.ocdu.models.errors.SSIDTooLong;
+import nl.thehyve.ocdu.models.errors.TooManySignificantDigits;
+import nl.thehyve.ocdu.models.errors.TooManyValues;
+import nl.thehyve.ocdu.models.errors.ValidationErrorMessage;
 import nl.thehyve.ocdu.soap.ResponseHandlers.GetStudyMetadataResponseHandler;
-import nl.thehyve.ocdu.soap.ResponseHandlers.ListAllByStudyResponseHandler;
 import nl.thehyve.ocdu.validators.ClinicalDataOcChecks;
 import org.junit.Before;
 import org.junit.Test;
@@ -18,11 +32,9 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 
 import javax.xml.soap.MessageFactory;
-import javax.xml.soap.MimeHeaders;
 import javax.xml.soap.SOAPMessage;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.InputStream;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Date;
@@ -70,7 +82,7 @@ public class ValidationTests {
             
             this.testUser = new OcUser();
             this.testUser.setUsername("tester");
-            this.testSubjectWithEventsTypeList = createStudySubjectWithEventList();
+            this.testSubjectWithEventsTypeList = TestUtils.createStudySubjectWithEventList();
             this.testSubmission = new UploadSession("submission1", UploadSession.Step.MAPPING, new Date(), this.testUser);
             this.factory = new ClinicalDataFactory(testUser, testSubmission);
 
@@ -100,16 +112,6 @@ public class ValidationTests {
         } catch (Exception ex) {
             ex.printStackTrace();
         }
-    }
-
-
-    private List<StudySubjectWithEventsType> createStudySubjectWithEventList() throws Exception {
-        File mockResponseListAllByStudyFile = new File("docs/responseExamples/listAllByStudyResponse.xml");
-        InputStream mockResponseListAllByStudyFileInputStream = new FileInputStream(mockResponseListAllByStudyFile);
-
-        MessageFactory messageFactory = MessageFactory.newInstance();
-        SOAPMessage soapMessage = messageFactory.createMessage(new MimeHeaders(), mockResponseListAllByStudyFileInputStream);
-        return ListAllByStudyResponseHandler.retrieveStudySubjectsType(soapMessage);
     }
 
     @Test

@@ -5,7 +5,9 @@ import nl.thehyve.ocdu.models.OCEntities.Study;
 import nl.thehyve.ocdu.soap.SOAPRequestDecorators.GetStudyMetadataRequestDecorator;
 import nl.thehyve.ocdu.soap.SOAPRequestDecorators.ImportDataRequestDecorator;
 import nl.thehyve.ocdu.soap.SOAPRequestDecorators.IsStudySubjectRequestDecorator;
+import nl.thehyve.ocdu.soap.SOAPRequestDecorators.ScheduleEventRequestDecorator;
 import nl.thehyve.ocdu.soap.SOAPRequestDecorators.listAllStudiesRequestDecorator;
+import org.openclinica.ws.beans.EventType;
 import org.openclinica.ws.beans.ListStudySubjectsInStudyType;
 import org.openclinica.ws.beans.StudyRefType;
 import org.openclinica.ws.studysubject.v1.ObjectFactory;
@@ -36,6 +38,8 @@ public class SOAPRequestFactory {
     private static final String STUDY_SUBJECT_NAME_SPACE = "http://openclinica.org/ws/studySubject/";
 
     private static final String IMPORT_DATA_NAME_SPACE = "http://openclinica.org/ws/data/";
+
+    private static final String EVENT_NAME_SPACE = "http://openclinica.org/ws/event/";
 
     public SOAPMessage createListStudiesRequest(String username, String passwordHash) throws Exception {
         SOAPMessage soapMessage = getSoapMessage(username, passwordHash, STUDY_NAME_SPACE);
@@ -104,6 +108,18 @@ public class SOAPRequestFactory {
         return soapMessage;
     }
 
+
+    public SOAPMessage createScheduleEventRequest(String userName, String passwordHash, EventType eventType) throws Exception {
+
+        SOAPMessage soapMessage = getSoapMessage(userName, passwordHash, EVENT_NAME_SPACE);
+        SOAPEnvelope envelope = soapMessage.getSOAPPart().getEnvelope();
+        ScheduleEventRequestDecorator scheduleEventRequestDecorator = new ScheduleEventRequestDecorator(eventType);
+
+        scheduleEventRequestDecorator.decorateBody(envelope);
+        soapMessage.saveChanges();
+
+        return soapMessage;
+    }
 
     private Document convertToDocument(JAXBElement<?> jaxbElement, Class... expectedClasses) throws Exception {
         DOMResult res = new DOMResult();

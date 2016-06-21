@@ -14,6 +14,7 @@ import nl.thehyve.ocdu.repositories.ClinicalDataRepository;
 import nl.thehyve.ocdu.repositories.EventRepository;
 import nl.thehyve.ocdu.repositories.SubjectRepository;
 import nl.thehyve.ocdu.validators.ClinicalDataOcChecks;
+import nl.thehyve.ocdu.validators.EventDataOcChecks;
 import nl.thehyve.ocdu.validators.PatientDataOcChecks;
 import org.openclinica.ws.beans.StudySubjectWithEventsType;
 import org.slf4j.Logger;
@@ -69,10 +70,14 @@ public class ValidationService {
         return errors;
     }
 
-    public List<ValidationErrorMessage> getEventsErrors(UploadSession submission, String wsPwdHash) {
+    public List<ValidationErrorMessage> getEventsErrors(UploadSession submission, String wsPwdHash) throws Exception {
         List<Event> events = eventRepository.findBySubmission(submission);
-        ArrayList<ValidationErrorMessage> validationErrorMessages = new ArrayList<>();
-        //TODO: implement generating validation error messages
+        OcUser submitter = submission.getOwner();
+        Study study = dataService.findStudy(submission.getStudy(), submitter, wsPwdHash);
+        MetaData metadata = openClinicaService
+                .getMetadata(submitter.getUsername(), wsPwdHash, submitter.getOcEnvironment(), study);
+        EventDataOcChecks checks = new EventDataOcChecks(metadata, events);
+        List<ValidationErrorMessage> validationErrorMessages = checks.getErrors();
         return validationErrorMessages;
     }
 

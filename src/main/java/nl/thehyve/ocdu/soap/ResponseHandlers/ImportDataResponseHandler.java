@@ -20,24 +20,14 @@ public class ImportDataResponseHandler extends OCResponseHandler {
     /**
      * Checks if an error occurred on the OpenClinica-side and reports it back as the
      * return value
+     *
      * @param response the SOAP-response.
      * @return a non <code>null</code> error code.message if an error occurred. Some are reported by the OpenClinica-WS
      * instance at url. Returns <code>null</code> if everything went OK.
      * @throws Exception if a technical error occurs.
      */
     public static String parseImportDataResponse(SOAPMessage response) throws Exception {
-        Document document = toDocument(response);
-        if (isAuthFailure(document)) {
-            throw new AuthenticationCredentialsNotFoundException("Authentication against OpenClinica unsuccessfull");
-        }
-        XPath xpath = XPathFactory.newInstance().newXPath();
-        Node importDataResponseNode = (Node) xpath.evaluate("//importDataResponse", document, XPathConstants.NODE);
-        Node resultNode = (Node) xpath.evaluate("//result", importDataResponseNode, XPathConstants.NODE);
-        if ("fail".equalsIgnoreCase(resultNode.getTextContent())) {
-            Node errorNode = (Node) xpath.evaluate("//error", importDataResponseNode, XPathConstants.NODE);
-            return errorNode.getTextContent();
-        }
-        return null;
+        return parseGenericResponse(response, ".//importDataResponse");
     }
 
 }

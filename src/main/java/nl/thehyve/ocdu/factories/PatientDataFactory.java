@@ -1,18 +1,17 @@
 package nl.thehyve.ocdu.factories;
 
+import nl.thehyve.ocdu.models.OCEntities.Subject;
+import nl.thehyve.ocdu.models.OcDefinitions.MetaData;
 import nl.thehyve.ocdu.models.OcUser;
 import nl.thehyve.ocdu.models.UploadSession;
-import nl.thehyve.ocdu.models.OCEntities.Subject;
-import nl.thehyve.ocdu.repositories.SubjectRepository;
-import org.thymeleaf.expression.Dates;
 
 import java.io.IOException;
 import java.nio.file.Files;
-import java.text.DateFormat;
-import java.text.ParsePosition;
-import java.text.SimpleDateFormat;
-import java.util.*;
 import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -22,7 +21,7 @@ import java.util.stream.Stream;
  */
 public class PatientDataFactory extends UserSubmittedDataFactory {
 
-    public final static String STUDY_SUBJECT_ID = "StudySubjectID";
+    public final static String STUDY_SUBJECT_ID = "Study Subject ID";
     public final static String GENDER = "Gender";
     public final static String DATE_OF_BIRTH = "Date of Birth";
     public final static String DATE_OF_ENROLLMENT = "Date of Enrollment";
@@ -72,7 +71,7 @@ public class PatientDataFactory extends UserSubmittedDataFactory {
     }
 
     private void setValue(String[] row, Map<String, Integer> columnsIndex, String columnName,
-                            Consumer<String> consumer) {
+                          Consumer<String> consumer) {
         if (!columnsIndex.containsKey(columnName)) {
             return;
         }
@@ -81,5 +80,38 @@ public class PatientDataFactory extends UserSubmittedDataFactory {
         consumer.accept(cellValue);
     }
 
+
+    public List<String> generatePatientRegistrationTemplate(MetaData metadata, Map<String, String> subjectMap, boolean registerSite) {
+        List<String> result = new ArrayList<>();
+        String delim = "\t";
+        List<String> header = new ArrayList<>();
+
+        header.add("Study Subject ID");
+        if (metadata.isGenderRequired()) header.add("Gender");
+        if (metadata.getBirthdateRequired() != 3) header.add("Date of Birth");
+        header.add("Date of Enrollment");
+        header.add("Secondary ID");
+        header.add("Study");
+        if (registerSite) header.add("Site");
+        result.add(String.join(delim, header) + "\n");
+
+
+        for (String ssid : subjectMap.keySet()) {
+            String techId = subjectMap.get(ssid);
+            if (techId == null) {
+                List<String> line = new ArrayList<>();
+                line.add(ssid);//ssid
+                if (metadata.isGenderRequired()) line.add("");//gender
+                if (metadata.getBirthdateRequired() != 3) line.add("");//date of birth
+                line.add("");//date of enrollment
+                line.add("");//secondary id
+                line.add("");//study
+                if (registerSite) line.add("");//site
+                result.add(String.join(delim, line) + "\n");
+            }
+        }
+
+        return result;
+    }
 
 }

@@ -2,44 +2,47 @@
  * Created by bo on 5/12/16.
  */
 
-var contains_patients_without_data;
-var contains_site_info_for_missing_paitents;
+var contains_site_info_for_missing_paitents = false;
+var to_register_at_site = true;
+var template_str;
+var loading_html;
 
 $(document).ready(function () {
-    //TODO: backend checks
-    //for testing:
-    contains_patients_without_data = true;
-    contains_site_info_for_missing_paitents = false;
+    loading_html = '<div id="loading_div" class="loader"><br></div>';
+    $('#subject-registration-div').append(loading_html);
 
-    check_new_patients();
-
-    if(contains_patients_without_data) {
-        notify_user_that_additional_patient_info_is_required();
-        if(!contains_site_info_for_missing_paitents) {
-            ask_whether_patients_should_be_registered_at_sites();
-        }
-        provide_template_download();
-        provide_filled_template_upload();
-        next_btn();
-    }
-    else{
-        //go to the feedback view
-        window.location.href = baseApp + "/views/feedback-subjects";
-    }
+    check_new_patients(true);
 });
 
-function check_new_patients() {
+function check_new_patients(toRegisterSite) {
+
     $.ajax({
-        url: baseApp + "/template/check-new-patients",
+        url: baseApp + "/template/get-subject-template",
         type: "GET",
-        success: function () {
-            console.log('success');
+        data: {registerSite: toRegisterSite},
+        success: function (template) {
+            $('#loading_div').remove();
+            template_str = template;
+            if (template.length > 1) {
+                notify_user_that_additional_patient_info_is_required();
+                if (!contains_site_info_for_missing_paitents) {
+                    ask_whether_patients_should_be_registered_at_sites();
+                }
+                provide_template_download();
+                provide_filled_template_upload();
+                next_btn();
+            }
+            else {
+                window.location.href = baseApp + "/views/feedback-subjects";
+            }
         },
         error: function (jqXHR, textStatus, errorThrown) {
-            console.log('fail');
+            console.log(jqXHR.status + " " + textStatus + " " + errorThrown);
+            window.location.href = baseApp + "/views/feedback-subjects";
         }
     });
 }
+
 
 function notify_user_that_additional_patient_info_is_required() {
     var html = '<span class="alert-danger"><h3>Additional subject information is required.</h3></span><hr>';
@@ -48,13 +51,40 @@ function notify_user_that_additional_patient_info_is_required() {
 
 function ask_whether_patients_should_be_registered_at_sites() {
     var html = '<h4>Choose if subjects should be registered at sites:</h4>';
-    html += '<form role="form"><label class="radio-inline"><input type="radio" name="optradio" checked>Yes</label><label class="radio-inline"><input type="radio" name="optradio">No</label></form><hr>';
+    html += '<form role="form">' +
+        '<label class="radio-inline"><input id="userCheckSiteYes" type="radio" name="optradio" checked>Yes</label>' +
+        '<label class="radio-inline"><input id="userCheckSiteNo" type="radio" name="optradio">No</label>' +
+        '</form><hr>';
     $('#subject-registration-div').append(html);
+    $('#userCheckSiteYes').change(function () {
+        to_register_at_site = true;
+    });
+    $('#userCheckSiteNo').change(function () {
+        to_register_at_site = false;
+    });
 }
 
 function provide_template_download() {
-    var html = '<button id="download-subject-template-btn" type="button" class="btn btn-success">Download Subject Template</button><hr>';
+    var html = '<button id="download-subject-template-btn" type="button" class="btn btn-success">Download Subject Template</button><br><hr>';
     $('#subject-registration-div').append(html);
+    $('#download-subject-template-btn').click(function () {
+        $(loading_html).insertAfter('#download-subject-template-btn');
+        $.ajax({
+            url: baseApp + "/template/get-subject-template",
+            type: "GET",
+            data: {registerSite: to_register_at_site},
+            success: function (template) {
+                template_str = template;
+                $('#loading_div').remove();
+                var blob = new Blob(template_str, {type: "text/plain;charset=utf-8"});
+                saveAs(blob, "subject-registration-template.tsv");
+            },
+            error: function (jqXHR, textStatus, errorThrown) {
+                console.log(jqXHR.status + " " + textStatus + " " + errorThrown);
+                // window.location.href = baseApp + "/views/subjects";
+            }
+        });
+    });
 }
 
 function provide_filled_template_upload() {
@@ -81,7 +111,7 @@ function next_btn() {
                 window.location.href = baseApp + "/views/feedback-subjects";
             },
             error: function (jqXHR, textStatus, errorThrown) {
-                console.log(jqXHR.status+" "+textStatus+" "+errorThrown);
+                console.log(jqXHR.status + " " + textStatus + " " + errorThrown);
                 window.location.href = baseApp + "/views/subjects";
             }
         });

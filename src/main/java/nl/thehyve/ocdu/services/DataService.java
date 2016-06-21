@@ -45,6 +45,7 @@ public class DataService {
                 .collect(Collectors.toList());
     }
 
+
     public MetaDataTree getMetadataTree(UploadSession submission, String ocwsHash) throws Exception {
         MetaData metaData = getMetaData(submission, ocwsHash);
         MetaDataTree tree = buildTree(metaData);

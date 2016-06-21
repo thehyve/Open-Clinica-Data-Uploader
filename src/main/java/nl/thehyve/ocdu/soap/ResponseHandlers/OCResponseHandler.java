@@ -17,26 +17,35 @@ import static nl.thehyve.ocdu.soap.ResponseHandlers.SoapUtils.toDocument;
  */
 public class OCResponseHandler {
 
-    public final static String authFailXpathExpr = "//faultcode";
 
-    public static boolean isAuthFailure(Document xmlResponse) {
+    public final static String authFailXpathExpr =  "//faultstring";
+
+
+    /**
+     * Checks if an error occurred in the call to OpenCLinica. Returns a empty String if no error occurred else it
+     * returns the OpenClinica message.
+     * @param xmlResponse
+     * @return
+     */
+    public static String isAuthFailure(Document xmlResponse) {
         XPath xpath = XPathFactory.newInstance().newXPath();
+        Node faultNode;
         try {
-            Node faultNode = (Node) xpath.evaluate(authFailXpathExpr,  //TODO: make it more specific, can we distinguish between different faultcodes?
+            faultNode = (Node) xpath.evaluate(authFailXpathExpr,  //TODO: make it more specific, can we distinguish between different faultcodes?
                     xmlResponse, XPathConstants.NODE);
             if (faultNode == null) {
-                return false;
+                return "";
             }
         } catch (XPathExpressionException e) {
             e.printStackTrace();
-            return true; // Do not proceed when auth status cannot be resolved.
+            return e.getMessage(); // Do not proceed when auth status cannot be resolved.
         }
-        return true;
+        return faultNode.getTextContent();
     }
 
     public static String parseGenericResponse(SOAPMessage response, String selector) throws Exception {
         Document document = toDocument(response);
-        if (isAuthFailure(document)) {
+        if (isAuthFailure(document).equals("")) {
             throw new AuthenticationCredentialsNotFoundException("Authentication against OpenClinica unsuccessfull");
         }
         XPath xpath = XPathFactory.newInstance().newXPath();

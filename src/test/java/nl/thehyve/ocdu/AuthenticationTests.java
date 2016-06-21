@@ -42,6 +42,11 @@ import static org.junit.Assert.assertEquals;
 
 public class AuthenticationTests {
 
+    private static final String AUTHENTICATION_FAILURE_MESSAGE = "com.sun.xml.wss.impl.WssSoapFaultException: Authentication of Username Password\n" +
+            "                Token Failed; nested exception is com.sun.xml.wss.XWSSecurityException:\n" +
+            "                com.sun.xml.wss.impl.WssSoapFaultException: Authentication of Username Password Token Failed\n" +
+            "            ";
+
     private Document testDocumentAuthSuccess;
     private Document testDocumentAuthFail;
     private Document authFailPureXML;
@@ -66,14 +71,14 @@ public class AuthenticationTests {
 
     @Test
     public void isAuthenticatedTest1() throws Exception {
-        boolean result = OCResponseHandler.isAuthFailure(testDocumentAuthFail);
-        assertEquals(true, result);
+        String result = OCResponseHandler.isAuthFailure(testDocumentAuthFail);
+        assertEquals(AUTHENTICATION_FAILURE_MESSAGE, result);
     }
 
     @Test
     public void isAuthenticatedTest2() throws Exception {
-        boolean result = OCResponseHandler.isAuthFailure(authFailPureXML);
-        assertEquals(true, result);
+        String result = OCResponseHandler.isAuthFailure(authFailPureXML);
+        assertEquals(AUTHENTICATION_FAILURE_MESSAGE, result);
     }
 
     @Test

@@ -7,6 +7,7 @@ import nl.thehyve.ocdu.models.OcDefinitions.MetaData;
 import nl.thehyve.ocdu.models.OcUser;
 import nl.thehyve.ocdu.models.UploadSession;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.openclinica.ws.beans.StudySubjectWithEventsType;
 
@@ -32,30 +33,31 @@ public class OpenClinicaServiceTests {
         OpenClinicaService openClinicaService = new OpenClinicaService();
 
         String response = openClinicaService.scheduleEvents("",  "hashhashhash", "http://www.example.com",
-                metaData, clinicalDataList, studySubjectWithEventsTypeList, "Eventful", null);
+                metaData, clinicalDataList, studySubjectWithEventsTypeList);
         assertEquals("One of the required parameters is missing (username, password, url)", response);
 
         response = openClinicaService.scheduleEvents("root",  "", "http://www.example.com",
-                metaData, clinicalDataList, studySubjectWithEventsTypeList, "Eventful", null);
+                metaData, clinicalDataList, studySubjectWithEventsTypeList);
         assertEquals("One of the required parameters is missing (username, password, url)", response);
 
         response = openClinicaService.scheduleEvents("root",  "hashhashhash", "",
-                metaData, clinicalDataList, studySubjectWithEventsTypeList, "Eventful", null);
+                metaData, clinicalDataList, studySubjectWithEventsTypeList);
         assertEquals("One of the required parameters is missing (username, password, url)", response);
     }
 
     @Test
+    @Ignore("Ignored for now, developed on a personal OpenClinica instance")
     public void testScheduleEvents() throws Exception {
         OpenClinicaService openClinicaService = new OpenClinicaService();
 
-        String response = openClinicaService.scheduleEvents("root", "33a485cb146e1153c69b588c671ab474f2e5b800", "http://localhost:8080/OpenClinica-ws",
-                metaData, clinicalDataList, studySubjectWithEventsTypeList, "Eventful", null);
-        assertEquals(null, response);
+        String response = openClinicaService.scheduleEvents("root", "XXXXXXXX", "http://localhost:8080/OpenClinica-ws",
+                metaData, clinicalDataList, studySubjectWithEventsTypeList);
+        assertEquals("", response);
     }
 
     @BeforeClass
     public static void setup() throws Exception {
-        studySubjectWithEventsTypeList =  TestUtils.createStudySubjectWithEventList();
+        studySubjectWithEventsTypeList = TestUtils.createStudySubjectWithEventList();
         OcUser ocUser = new OcUser();
         Date now = GregorianCalendar.getInstance().getTime();
         UploadSession uploadSession = new UploadSession("MyFirstUploadSession", UploadSession.Step.EVENTS, now, ocUser);
@@ -68,8 +70,8 @@ public class OpenClinicaServiceTests {
         clinicalDataList.add(clinicalData);
         metaData = new MetaData();
         EventDefinition eventDefinition = new EventDefinition();
-        eventDefinition.setStudyEventOID("SE_BLOOMKOOLMETVETTEJUS");
-        eventDefinition.setName("Lekker vet");
+        eventDefinition.setStudyEventOID("SE_REPEATINGEVENT");
+        eventDefinition.setName("RepeatingEvent");
         metaData.addEventDefinition(eventDefinition);
     }
 }

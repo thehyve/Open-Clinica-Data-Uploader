@@ -1,5 +1,6 @@
 package nl.thehyve.ocdu.soap.ResponseHandlers;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.security.authentication.AuthenticationCredentialsNotFoundException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
@@ -29,8 +30,9 @@ public class SOAPResponseHandler extends OCResponseHandler {
 
     public static String parseOpenClinicaResponse(SOAPMessage response, String xPathToResponse) throws Exception {
         Document document = toDocument(response);
-        if (isAuthFailure(document)) {
-            throw new AuthenticationCredentialsNotFoundException("Authentication against OpenClinica unsuccessful");
+        String result = isAuthFailure(document);
+        if (! StringUtils.isEmpty(result)) {
+            throw new AuthenticationCredentialsNotFoundException("Problem calling OpenClinica web-services: " + result);
         }
         XPath xpath = XPathFactory.newInstance().newXPath();
         Node importDataResponseNode = (Node) xpath.evaluate(xPathToResponse, document, XPathConstants.NODE);

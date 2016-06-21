@@ -244,10 +244,11 @@ public class ClinicalData implements OcEntity, UserSubmitted, EventReference {
      * creates a key to filter a list for all events present in a list of {@link ClinicalData}.
      * @return
      */
-    public String createEventKey() {
+    public String createEventKey(String eventOID) {
         StringBuffer ret = new StringBuffer();
+        ret.append(study);
         ret.append(ssid);
-        ret.append(eventName);
+        ret.append(eventOID);
         ret.append(eventRepeat);
         return ret.toString().toUpperCase();
     }

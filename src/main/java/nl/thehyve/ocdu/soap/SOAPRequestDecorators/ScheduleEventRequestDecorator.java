@@ -1,5 +1,6 @@
 package nl.thehyve.ocdu.soap.SOAPRequestDecorators;
 
+import org.apache.commons.lang3.StringUtils;
 import org.openclinica.ws.beans.EventType;
 
 import javax.xml.datatype.XMLGregorianCalendar;
@@ -34,7 +35,8 @@ public class ScheduleEventRequestDecorator implements SoapDecorator {
         SOAPElement studyIdentifierElement = studyRefElement.addChildElement("identifier", BEANS_NAMESPACE );
         studyIdentifierElement.setTextContent(eventType.getStudyRef().getIdentifier());
 
-        if (eventType.getStudyRef().getSiteRef() != null) {
+        if ((eventType.getStudyRef().getSiteRef() != null) &&
+                (! StringUtils.isEmpty(eventType.getStudyRef().getSiteRef().getIdentifier()))) {
             SOAPElement siteRefElement = studyRefElement.addChildElement("siteRef", BEANS_NAMESPACE );
             SOAPElement siteIdentifierElement = siteRefElement.addChildElement("identifier", BEANS_NAMESPACE );
             siteIdentifierElement.setTextContent(eventType.getStudyRef().getSiteRef().getIdentifier());
@@ -43,20 +45,29 @@ public class ScheduleEventRequestDecorator implements SoapDecorator {
         SOAPElement eventDefinitionOIDElement = event.addChildElement("eventDefinitionOID", BEANS_NAMESPACE );
         eventDefinitionOIDElement.setTextContent(eventType.getEventDefinitionOID());
 
-        SOAPElement locationElement = event.addChildElement("location", BEANS_NAMESPACE );
+
+        SOAPElement locationElement = event.addChildElement("location", BEANS_NAMESPACE);
         locationElement.setTextContent(eventType.getLocation());
 
-        SOAPElement startDateElement = event.addChildElement("startDate", BEANS_NAMESPACE );
-        startDateElement.setTextContent(convertDate(eventType.getStartDate()));
+        if (eventType.getStartDate() != null) {
+            SOAPElement startDateElement = event.addChildElement("startDate", BEANS_NAMESPACE);
+            startDateElement.setTextContent(convertDate(eventType.getStartDate()));
+        }
 
-        SOAPElement startTimeElement = event.addChildElement("startTime", BEANS_NAMESPACE );
-        startTimeElement.setTextContent(convertTime(eventType.getStartTime()));
+        if (eventType.getStartTime() != null) {
+            SOAPElement startTimeElement = event.addChildElement("startTime", BEANS_NAMESPACE);
+            startTimeElement.setTextContent(convertTime(eventType.getStartTime()));
+        }
 
-        SOAPElement endDateElement = event.addChildElement("endDate", BEANS_NAMESPACE );
-        endDateElement.setTextContent(convertDate(eventType.getEndDate()));
+        if (eventType.getEndDate() != null) {
+            SOAPElement endDateElement = event.addChildElement("endDate", BEANS_NAMESPACE);
+            endDateElement.setTextContent(convertDate(eventType.getEndDate()));
+        }
 
-        SOAPElement endTimeElement = event.addChildElement("endTime", BEANS_NAMESPACE );
-        endTimeElement.setTextContent(convertTime(eventType.getEndTime()));
+        if (eventType.getEndTime() != null) {
+            SOAPElement endTimeElement = event.addChildElement("endTime", BEANS_NAMESPACE);
+            endTimeElement.setTextContent(convertTime(eventType.getEndTime()));
+        }
     }
 
     private String convertTime(XMLGregorianCalendar calendar) {

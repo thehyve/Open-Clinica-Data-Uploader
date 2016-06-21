@@ -23,6 +23,10 @@ public class PersonIdPatientDataCheck implements PatientDataCheck {
             error = new ValidationErrorMessage(commonMessage + "Person ID is not needed. ");
         }
 
+        if(error != null) {
+            error.addOffendingValue("Person ID: " + subject.getPersonId());
+        }
+
         return error;
     }
 

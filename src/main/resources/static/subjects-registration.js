@@ -8,9 +8,9 @@ var template_str;
 var loading_html;
 
 $(document).ready(function () {
-    loading_html = '<div id="loading_div" class="loader"><br></div>';
+    loading_html = '<div id="loading_div"><div class="loader"></div><hr></div>';
     $('#subject-registration-div').append(loading_html);
-
+    next_btn();
     check_new_patients(true);
 });
 
@@ -30,7 +30,6 @@ function check_new_patients(toRegisterSite) {
                 }
                 provide_template_download();
                 provide_filled_template_upload();
-                next_btn();
             }
             else {
                 window.location.href = baseApp + "/views/feedback-subjects";
@@ -46,7 +45,7 @@ function check_new_patients(toRegisterSite) {
 
 function notify_user_that_additional_patient_info_is_required() {
     var html = '<span class="alert-danger"><h3>Additional subject information is required.</h3></span><hr>';
-    $('#subject-registration-div').append(html);
+    $(html).insertBefore('#subject-back-btn');
 }
 
 function ask_whether_patients_should_be_registered_at_sites() {
@@ -55,7 +54,7 @@ function ask_whether_patients_should_be_registered_at_sites() {
         '<label class="radio-inline"><input id="userCheckSiteYes" type="radio" name="optradio" checked>Yes</label>' +
         '<label class="radio-inline"><input id="userCheckSiteNo" type="radio" name="optradio">No</label>' +
         '</form><hr>';
-    $('#subject-registration-div').append(html);
+    $(html).insertBefore('#subject-back-btn');
     $('#userCheckSiteYes').change(function () {
         to_register_at_site = true;
     });
@@ -66,7 +65,7 @@ function ask_whether_patients_should_be_registered_at_sites() {
 
 function provide_template_download() {
     var html = '<button id="download-subject-template-btn" type="button" class="btn btn-success">Download Subject Template</button><div id="template-download-anchor"></div><hr>';
-    $('#subject-registration-div').append(html);
+    $(html).insertBefore('#subject-back-btn');
     $('#download-subject-template-btn').click(function () {
         $(loading_html).insertAfter('#template-download-anchor');
         $.ajax({
@@ -89,7 +88,7 @@ function provide_template_download() {
 
 function provide_filled_template_upload() {
     var html = '<form id="upload-subject-template-form" class="form-horizontal"><div class="form-group"><label for="upload-subject-template-input">Upload Subject Template:</label><input id="upload-subject-template-input" type="file" name="uploadPatientData" accept="*" /></div></form><span id="message-board"></span><hr>';
-    $('#subject-registration-div').append(html);
+    $(html).insertBefore('#subject-back-btn');
 }
 
 function next_btn() {
@@ -108,7 +107,7 @@ function next_btn() {
 
 function upload_subjects() {
     $('#loading_div').remove();
-    $(loading_html).insertAfter('#template-download-anchor');
+    $(loading_html).insertAfter('#message-board');
     $('#message-board').empty();
     $.ajax({
         url: baseApp + "/upload/subjects",
@@ -119,37 +118,20 @@ function upload_subjects() {
         contentType: false,
         success: function (fileFormatErrors) {
             if(fileFormatErrors.length == 0) {
-                validate_subjects();
+                update_submission();
             }
             else{
                 log_errors(fileFormatErrors);
             }
         },
         error: function (jqXHR, textStatus, errorThrown) {
+            $('#loading_div').remove();
             console.log(jqXHR.status + " " + textStatus + " " + errorThrown);
         }
 
     });
 }
 
-function validate_subjects() {
-    $.ajax({
-        url: baseApp + "/validate/patients",
-        type: "GET",
-        success: function (validationErrors) {
-            if(validationErrors.length == 0) {
-                console.log("patient validation ok");
-                update_submission();
-            }
-            else{
-                log_errors(validationErrors);
-            }
-        },
-        error: function (jqXHR, textStatus, errorThrown) {
-            console.log(jqXHR.status + " " + textStatus + " " + errorThrown);
-        }
-    });
-}
 
 function update_submission() {
     $.ajax({
@@ -162,6 +144,7 @@ function update_submission() {
             window.location.href = baseApp + "/views/feedback-subjects";
         },
         error: function (jqXHR, textStatus, errorThrown) {
+            $('#loading_div').remove();
             console.log(jqXHR.status + " " + textStatus + " " + errorThrown);
             window.location.href = baseApp + "/views/subjects";
         }

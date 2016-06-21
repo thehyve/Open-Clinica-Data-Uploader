@@ -38,6 +38,10 @@ public class SitePatientDataCheck implements PatientDataCheck {
             }
         }
 
+        if(error != null) {
+            error.addOffendingValue("Site: " + subject.getSite());
+        }
+
         return error;
     }
 

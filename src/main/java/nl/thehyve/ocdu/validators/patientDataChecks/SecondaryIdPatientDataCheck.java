@@ -27,6 +27,10 @@ public class SecondaryIdPatientDataCheck implements PatientDataCheck {
             }
         }
 
+        if(error != null) {
+            error.addOffendingValue("Secondary ID: " + subject.getSecondaryId());
+        }
+
         return error;
     }
 }

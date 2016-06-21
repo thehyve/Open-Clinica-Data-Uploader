@@ -92,11 +92,6 @@ public class ValidationService {
 
         PatientDataOcChecks checksRunner = new PatientDataOcChecks(metadata, bySubmission);
         errors.addAll(checksRunner.getErrors());
-
-        if(errors.size() == 0) {
-            openClinicaService.registerPatients(submitter.getUsername(), wsPwdHash, submitter.getOcEnvironment(), bySubmission);
-        }
-
         return errors;
     }
 

@@ -36,6 +36,10 @@ public class GenderPatientDataCheck implements PatientDataCheck {
             }
         }
 
+        if(error != null) {
+            error.addOffendingValue("Gender: " + subject.getGender());
+        }
+
         return error;
     }
 }

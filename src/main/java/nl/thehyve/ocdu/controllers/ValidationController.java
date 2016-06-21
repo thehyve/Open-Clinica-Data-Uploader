@@ -1,11 +1,11 @@
 package nl.thehyve.ocdu.controllers;
 
+import nl.thehyve.ocdu.models.OCEntities.Subject;
+import nl.thehyve.ocdu.models.OcUser;
 import nl.thehyve.ocdu.models.UploadSession;
 import nl.thehyve.ocdu.models.errors.ValidationErrorMessage;
-import nl.thehyve.ocdu.services.OcUserService;
-import nl.thehyve.ocdu.services.UploadSessionNotFoundException;
-import nl.thehyve.ocdu.services.UploadSessionService;
-import nl.thehyve.ocdu.services.ValidationService;
+import nl.thehyve.ocdu.repositories.SubjectRepository;
+import nl.thehyve.ocdu.services.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -47,6 +47,11 @@ public class ValidationController {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
     }
+    @Autowired
+    OpenClinicaService openClinicaService;
+
+    @Autowired
+    SubjectRepository subjectRepository;
 
     @RequestMapping(value = "/patients", method = RequestMethod.GET)
     public ResponseEntity<List<ValidationErrorMessage>> validatePatients(HttpSession session) {
@@ -54,6 +59,12 @@ public class ValidationController {
             UploadSession currentUploadSession = uploadSessionService.getCurrentUploadSession(session);
             String pwdHash = ocUserService.getOcwsHash(session);
             List<ValidationErrorMessage> patientsErrors = validationService.getPatientsErrors(currentUploadSession, pwdHash);
+            if(patientsErrors.size() == 0) {
+                OcUser submitter = currentUploadSession.getOwner();
+                String wsPwdHash = ocUserService.getOcwsHash(session);
+                List<Subject> bySubmission = subjectRepository.findBySubmission(currentUploadSession);
+                openClinicaService.registerPatients(submitter.getUsername(), wsPwdHash, submitter.getOcEnvironment(), bySubmission);
+            }
             return new ResponseEntity<>(patientsErrors, HttpStatus.OK);
         } catch (UploadSessionNotFoundException e) {
             e.printStackTrace();

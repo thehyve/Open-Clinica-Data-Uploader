@@ -1,6 +1,7 @@
 package nl.thehyve.ocdu.soap.ResponseHandlers;
 
 import nl.thehyve.ocdu.models.OcDefinitions.*;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.security.authentication.AuthenticationCredentialsNotFoundException;
 import org.w3c.dom.Document;
 import org.w3c.dom.NamedNodeMap;
@@ -339,8 +340,9 @@ public class GetStudyMetadataResponseHandler extends OCResponseHandler {
 
     public static Document getOdm(SOAPMessage response) throws XPathExpressionException, SAXException, IOException, ParserConfigurationException, SOAPException, TransformerException {
         Document document = toDocument(response);
-        if (isAuthFailure(document)) {
-            throw new AuthenticationCredentialsNotFoundException("Authentication against OpenClinica unsuccessfull");
+        String result = isAuthFailure(document);
+        if (! StringUtils.isEmpty(result)) {
+            throw new AuthenticationCredentialsNotFoundException("Problem calling OpenClinica web-services: " + result);
         }
         Node odmCDATANode = (Node) xpath.evaluate(odmSelector, document, XPathConstants.NODE);
         if (odmCDATANode == null) {

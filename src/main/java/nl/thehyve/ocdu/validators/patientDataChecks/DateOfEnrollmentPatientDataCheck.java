@@ -14,7 +14,7 @@ import java.util.Locale;
 /**
  * Created by bo on 6/15/16.
  */
-public class DateOfEntrollmentPatientDataCheck implements PatientDataCheck {
+public class DateOfEnrollmentPatientDataCheck implements PatientDataCheck {
 
     @Override
     public ValidationErrorMessage getCorrespondingError(int index, Subject subject, MetaData metaData) {
@@ -41,6 +41,10 @@ public class DateOfEntrollmentPatientDataCheck implements PatientDataCheck {
             } catch (ParseException e) {
                 error = new ValidationErrorMessage(commonMessage + "Enrollment date format is invalid.");
             }
+        }
+
+        if(error != null) {
+            error.addOffendingValue("Date of Enrollment: " + subject.getDateOfEnrollment());
         }
 
         return error;

@@ -94,7 +94,7 @@ public class PatientDataOcChecksTests {
 
         //empty date of enrollment, today's date is used
         subject.setDateOfEnrollment("");
-        DateOfEntrollmentPatientDataCheck check = new DateOfEntrollmentPatientDataCheck();
+        DateOfEnrollmentPatientDataCheck check = new DateOfEnrollmentPatientDataCheck();
         ValidationErrorMessage error = check.getCorrespondingError(0, subject, metadata);
         assertThat(error.getMessage(), containsString("Today"));
     }
@@ -106,7 +106,7 @@ public class PatientDataOcChecksTests {
 
         //date of enrollment should be in the past
         subject.setDateOfEnrollment("01-JUN-3012");
-        DateOfEntrollmentPatientDataCheck check = new DateOfEntrollmentPatientDataCheck();
+        DateOfEnrollmentPatientDataCheck check = new DateOfEnrollmentPatientDataCheck();
         ValidationErrorMessage error = check.getCorrespondingError(0, subject, metadata);
         assertThat(error.getMessage(), containsString("past"));
     }
@@ -118,7 +118,7 @@ public class PatientDataOcChecksTests {
 
         //invalid date format
         subject.setDateOfEnrollment("01-JU");
-        DateOfEntrollmentPatientDataCheck check = new DateOfEntrollmentPatientDataCheck();
+        DateOfEnrollmentPatientDataCheck check = new DateOfEnrollmentPatientDataCheck();
         ValidationErrorMessage error = check.getCorrespondingError(0, subject, metadata);
         assertThat(error.getMessage(), containsString("invalid"));
     }

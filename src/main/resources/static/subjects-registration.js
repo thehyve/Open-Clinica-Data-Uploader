@@ -8,9 +8,9 @@ var template_str;
 var loading_html;
 
 $(document).ready(function () {
-    loading_html = '<div id="loading_div" class="loader"><br></div>';
+    loading_html = '<div id="loading_div"><div class="loader"></div><hr></div>';
     $('#subject-registration-div').append(loading_html);
-
+    next_btn();
     check_new_patients(true);
 });
 
@@ -30,7 +30,6 @@ function check_new_patients(toRegisterSite) {
                 }
                 provide_template_download();
                 provide_filled_template_upload();
-                next_btn();
             }
             else {
                 window.location.href = baseApp + "/views/feedback-subjects";
@@ -46,7 +45,7 @@ function check_new_patients(toRegisterSite) {
 
 function notify_user_that_additional_patient_info_is_required() {
     var html = '<span class="alert-danger"><h3>Additional subject information is required.</h3></span><hr>';
-    $('#subject-registration-div').append(html);
+    $(html).insertBefore('#subject-back-btn');
 }
 
 function ask_whether_patients_should_be_registered_at_sites() {
@@ -55,7 +54,7 @@ function ask_whether_patients_should_be_registered_at_sites() {
         '<label class="radio-inline"><input id="userCheckSiteYes" type="radio" name="optradio" checked>Yes</label>' +
         '<label class="radio-inline"><input id="userCheckSiteNo" type="radio" name="optradio">No</label>' +
         '</form><hr>';
-    $('#subject-registration-div').append(html);
+    $(html).insertBefore('#subject-back-btn');
     $('#userCheckSiteYes').change(function () {
         to_register_at_site = true;
     });
@@ -65,10 +64,10 @@ function ask_whether_patients_should_be_registered_at_sites() {
 }
 
 function provide_template_download() {
-    var html = '<button id="download-subject-template-btn" type="button" class="btn btn-success">Download Subject Template</button><br><hr>';
-    $('#subject-registration-div').append(html);
+    var html = '<button id="download-subject-template-btn" type="button" class="btn btn-success">Download Subject Template</button><div id="template-download-anchor"></div><hr>';
+    $(html).insertBefore('#subject-back-btn');
     $('#download-subject-template-btn').click(function () {
-        $(loading_html).insertAfter('#download-subject-template-btn');
+        $(loading_html).insertAfter('#template-download-anchor');
         $.ajax({
             url: baseApp + "/template/get-subject-template",
             type: "GET",
@@ -88,8 +87,8 @@ function provide_template_download() {
 }
 
 function provide_filled_template_upload() {
-    var html = '<form id="upload-subject-template-form" class="form-horizontal"><div class="form-group"><label for="upload-subject-template-input">Upload Subject Template:</label><input id="upload-subject-template-input" type="file" name="upload-subject-template" accept="*" /></div></form><hr>';
-    $('#subject-registration-div').append(html);
+    var html = '<form id="upload-subject-template-form" class="form-horizontal"><div class="form-group"><label for="upload-subject-template-input">Upload Subject Template:</label><input id="upload-subject-template-input" type="file" name="uploadPatientData" accept="*" /></div></form><span id="message-board"></span><hr>';
+    $(html).insertBefore('#subject-back-btn');
 }
 
 function next_btn() {
@@ -101,22 +100,63 @@ function next_btn() {
     });
 
     $('#subject-next-btn').click(function () {
-
-        $.ajax({
-            url: baseApp + "/submission/update",
-            type: "POST",
-            data: {step: "feedback-subjects"},
-            success: function () {
-                //handle subject file upload
-                window.location.href = baseApp + "/views/feedback-subjects";
-            },
-            error: function (jqXHR, textStatus, errorThrown) {
-                console.log(jqXHR.status + " " + textStatus + " " + errorThrown);
-                window.location.href = baseApp + "/views/subjects";
-            }
-        });
-
+        upload_subjects();
     });
 
 }
 
+function upload_subjects() {
+    $('#loading_div').remove();
+    $(loading_html).insertAfter('#message-board');
+    $('#message-board').empty();
+    $.ajax({
+        url: baseApp + "/upload/subjects",
+        type: "POST",
+        data: new FormData($("#upload-subject-template-form")[0]),
+        enctype: 'multipart/form-data',
+        processData: false,
+        contentType: false,
+        success: function (fileFormatErrors) {
+            if(fileFormatErrors.length == 0) {
+                update_submission();
+            }
+            else{
+                log_errors(fileFormatErrors);
+            }
+        },
+        error: function (jqXHR, textStatus, errorThrown) {
+            $('#loading_div').remove();
+            console.log(jqXHR.status + " " + textStatus + " " + errorThrown);
+        }
+
+    });
+}
+
+
+function update_submission() {
+    $.ajax({
+        url: baseApp + "/submission/update",
+        type: "POST",
+        data: {step: "feedback-subjects"},
+        success: function () {
+            $('#loading_div').remove();
+            //handle subject file upload
+            window.location.href = baseApp + "/views/feedback-subjects";
+        },
+        error: function (jqXHR, textStatus, errorThrown) {
+            $('#loading_div').remove();
+            console.log(jqXHR.status + " " + textStatus + " " + errorThrown);
+            window.location.href = baseApp + "/views/subjects";
+        }
+    });
+}
+
+function log_errors(errors) {
+    var info = '<div class="alert alert-danger"><ul>';
+    errors.forEach(function (error) {
+        var errDiv = '<li><span>' + error.message + '</span></li>';
+        info += errDiv;
+    });
+    info += '</div></ul>';
+    $("#message-board").append(info);
+}

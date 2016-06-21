@@ -25,7 +25,7 @@ public class PatientDataOcChecks {
         checks.add(new GenderPatientDataCheck());
         checks.add(new DateOfBirthPatientDataCheck());
         checks.add(new PersonIdPatientDataCheck());
-        checks.add(new DateOfEntrollmentPatientDataCheck());
+        checks.add(new DateOfEnrollmentPatientDataCheck());
         checks.add(new SecondaryIdPatientDataCheck());
         checks.add(new StudyPatientDataCheck());
     }
@@ -37,7 +37,8 @@ public class PatientDataOcChecks {
         for (Subject subject : subjects) {
             String ssid = subject.getSsid();
             if (ssids.contains(ssid)) {
-                ValidationErrorMessage error = new ValidationErrorMessage("Line " + index + " subjectID " + ssid + " duplicate is found.");
+                ValidationErrorMessage error = new ValidationErrorMessage("Line " + index + " Study Subject ID: " + ssid + " duplicate is found.");
+                error.addOffendingValue("ssid = " + ssid);
                 errors.add(error);
             }
             for (PatientDataCheck check : checks) {

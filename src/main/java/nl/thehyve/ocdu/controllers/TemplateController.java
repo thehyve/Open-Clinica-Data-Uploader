@@ -6,12 +6,8 @@ import nl.thehyve.ocdu.models.OCEntities.Study;
 import nl.thehyve.ocdu.models.OcDefinitions.MetaData;
 import nl.thehyve.ocdu.models.OcUser;
 import nl.thehyve.ocdu.models.UploadSession;
-import nl.thehyve.ocdu.models.errors.ValidationErrorMessage;
 import nl.thehyve.ocdu.repositories.ClinicalDataRepository;
-import nl.thehyve.ocdu.services.DataService;
-import nl.thehyve.ocdu.services.OcUserService;
-import nl.thehyve.ocdu.services.OpenClinicaService;
-import nl.thehyve.ocdu.services.UploadSessionService;
+import nl.thehyve.ocdu.services.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,7 +15,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpSession;
 import java.util.List;
@@ -47,6 +42,7 @@ public class TemplateController {
     @Autowired
     ClinicalDataRepository clinicalDataRepository;
 
+
     @RequestMapping(value = "/get-subject-template", method = RequestMethod.GET)
     public ResponseEntity<List<String>> getSubjectTemplate(@RequestParam("registerSite") boolean registerSite, HttpSession session) {
         try {
@@ -68,16 +64,6 @@ public class TemplateController {
             return new ResponseEntity<>(result, HttpStatus.OK);
         } catch (Exception e) {
             e.printStackTrace();
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        }
-    }
-
-    @RequestMapping(value = "/upload-subjects", method = RequestMethod.POST)
-    public ResponseEntity<List<ValidationErrorMessage>> uploadSubjects(@RequestParam("newSubjects") MultipartFile newSubjectsFile, HttpSession session) {
-        try {
-            return new ResponseEntity<>(HttpStatus.OK);
-        } catch (Exception e) {
-            System.out.println(e.getMessage());
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
     }

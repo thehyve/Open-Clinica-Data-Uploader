@@ -17,6 +17,8 @@ import java.util.stream.Stream;
 public class GenericFileValidator implements FileFormatValidator {
 
 
+    public static final int MAX_ALLOWED_FIELD_LENGTH = 4000;
+
     public GenericFileValidator(String[] mandatoryColumns, String[] positiveIntegerColumns) {
         this.mandatoryHeaders = mandatoryColumns;
         this.positiveIntegerColumns = positiveIntegerColumns;
@@ -66,6 +68,7 @@ public class GenericFileValidator implements FileFormatValidator {
                 int index = getColumnIndex(header, intHeader);
                 columnPositiveInteger(body, index);
             }
+            fieldsWithinLengthLimit(body);
 
         } catch (IOException e) {
             this.valid = false;
@@ -128,6 +131,18 @@ public class GenericFileValidator implements FileFormatValidator {
             if (!split.contains(mandatoryHeader)) {
                 errors.add(new FileFormatError("Column missing: " + mandatoryHeader));
                 valid = false;
+            }
+        }
+    }
+
+    private void fieldsWithinLengthLimit(String[] body) {
+        for (String line : body) {
+            List<String> split = splitLine(line);
+            for (String field: split) {
+                if (field.length() > MAX_ALLOWED_FIELD_LENGTH) {
+                    errors.add(new FileFormatError("Following line has different number of fields than the header:" + line));
+                    valid = false;
+                }
             }
         }
     }

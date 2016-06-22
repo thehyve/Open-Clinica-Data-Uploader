@@ -30,6 +30,7 @@ public class SOAPResponseHandler extends OCResponseHandler {
 
     public static String parseOpenClinicaResponse(SOAPMessage response, String xPathToResponse) throws Exception {
         Document document = toDocument(response);
+        System.out.println("SOAP:----->\n" + SoapUtils.soapMessageToString(response));
         String result = isAuthFailure(document);
         if (! StringUtils.isEmpty(result)) {
             throw new AuthenticationCredentialsNotFoundException("Problem calling OpenClinica web-services: " + result);

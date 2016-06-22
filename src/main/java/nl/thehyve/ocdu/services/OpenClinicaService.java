@@ -188,6 +188,7 @@ public class OpenClinicaService {
         StringBuffer errorMessage = new StringBuffer();
         for (EventType eventType : eventTypeList) {
             SOAPMessage soapMessage = requestFactory.createScheduleEventRequest(username, passwordHash, eventType);
+            System.out.println("SOAP:----->\n" + SoapUtils.soapMessageToString(soapMessage));
             SOAPMessage soapResponse = soapConnection.call(soapMessage, url + "/ws/event/v1");
             String responseError = SOAPResponseHandler.parseOpenClinicaResponse(soapResponse, "//scheduleResponse");
             if (responseError != null) {

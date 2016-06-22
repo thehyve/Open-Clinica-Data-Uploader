@@ -50,7 +50,7 @@ public class OpenClinicaServiceTests {
     public void testScheduleEvents() throws Exception {
         OpenClinicaService openClinicaService = new OpenClinicaService();
 
-        String response = openClinicaService.scheduleEvents("root", "XXXXXXXX", "http://localhost:8080/OpenClinica-ws",
+        String response = openClinicaService.scheduleEvents("rootsite", "XXXXXXXXX", "http://localhost:8080/OpenClinica-ws",
                 metaData, clinicalDataList, studySubjectWithEventsTypeList);
         assertEquals("", response);
     }
@@ -62,10 +62,11 @@ public class OpenClinicaServiceTests {
         Date now = GregorianCalendar.getInstance().getTime();
         UploadSession uploadSession = new UploadSession("MyFirstUploadSession", UploadSession.Step.EVENTS, now, ocUser);
         Integer groupRepeat = 1;
-        Integer eventRepeat = 3;
+        Integer eventRepeat = 4;
         ClinicalData clinicalData =
-                new ClinicalData("Eventful", " I_MUSTF_AGE", "EV-00006", "RepeatingEvent", eventRepeat,
+                new ClinicalData("Eventful", " I_MUSTF_AGE", "EVS-00001", "RepeatingEvent", eventRepeat,
                         "MUST-FOR_NON_TTP_STUDY", uploadSession, "0.10 ", groupRepeat, ocUser, "64");
+        clinicalData.setSite("EventfulSite");
         clinicalDataList = new ArrayList<>();
         clinicalDataList.add(clinicalData);
         metaData = new MetaData();

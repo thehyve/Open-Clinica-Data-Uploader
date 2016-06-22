@@ -28,9 +28,9 @@ public class RegisteredEventInformationTests {
         Map<String, EventResponseType> eventsRegisteredInOpenClinica =
                 RegisteredEventInformation.createEventKeyList(studySubjectWithEventsTypeList);
         assertEquals(true, eventsRegisteredInOpenClinica.containsKey("EVENTFULEV-00006SE_REPEATINGEVENT3"));
-        assertEquals(false, eventsRegisteredInOpenClinica.containsKey("EVENTFULEV-00006SE_REPEATINGEVENT4"));
-        assertEquals(true, eventsRegisteredInOpenClinica.containsKey("EVENTFULSITEEVS-00001SE_REPEATINGEVENT1"));
-        assertEquals(false, eventsRegisteredInOpenClinica.containsKey("EVENTFULSITEEVS-00001SE_REPEATINGEVENT2"));
+        assertEquals(false, eventsRegisteredInOpenClinica.containsKey("EVENTFULEV-00006SE_REPEATINGEVENT8"));
+        assertEquals(true, eventsRegisteredInOpenClinica.containsKey("EVENTFULEVENTFULSITEEVS-00001SE_REPEATINGEVENT1"));
+        assertEquals(false, eventsRegisteredInOpenClinica.containsKey("EVENTFULEVENTFULSITEEVS-00001SE_REPEATINGEVENT5"));
     }
 
     @BeforeClass

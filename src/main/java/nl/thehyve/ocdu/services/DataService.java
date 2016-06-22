@@ -1,10 +1,12 @@
 package nl.thehyve.ocdu.services;
 
+import nl.thehyve.ocdu.models.MetaDataTree;
 import nl.thehyve.ocdu.models.OCEntities.ClinicalData;
 import nl.thehyve.ocdu.models.OCEntities.Study;
 import nl.thehyve.ocdu.models.OcDefinitions.EventDefinition;
 import nl.thehyve.ocdu.models.OcDefinitions.ItemDefinition;
 import nl.thehyve.ocdu.models.OcDefinitions.MetaData;
+import nl.thehyve.ocdu.models.OcTreePath;
 import nl.thehyve.ocdu.models.OcUser;
 import nl.thehyve.ocdu.models.UploadSession;
 import nl.thehyve.ocdu.repositories.ClinicalDataRepository;
@@ -45,13 +47,35 @@ public class DataService {
                 .collect(Collectors.toList());
     }
 
+
     public MetaDataTree getMetadataTree(UploadSession submission, String ocwsHash) throws Exception {
         MetaData metaData = getMetaData(submission, ocwsHash);
         MetaDataTree tree = buildTree(metaData);
+        OcTreePath selection = inferSelection(submission);
+        tree = OcTreePath.filter(tree, selection);
         return tree;
     }
 
-    private MetaDataTree buildTree(MetaData metaData) {
+    /**
+     * Selection is needed for filtering metadata tree.
+     * It is assumed that there is only one CRF and CRF Version in the data file.
+     * Adherence to this is checked by validation rules.
+     * Therefore here we just take first clinical data variable and retreie its CRF and CRF version.
+     * @param submission
+     * @return selection
+     */
+    private OcTreePath inferSelection(UploadSession submission) {
+        List<ClinicalData> bySubmission = clinicalDataRepository.findBySubmission(submission);
+        ClinicalData clinicalData = bySubmission.stream().findFirst().get();
+        String crfName = clinicalData.getCrfName();
+        String crfVersion = clinicalData.getCrfVersion();
+        OcTreePath selection = new OcTreePath();
+        selection.setCrf(crfName);
+        selection.setVersion(crfVersion);
+        return selection;
+    }
+
+    public static MetaDataTree buildTree(MetaData metaData) { //TODO: move to some utils class? Tree builder?
         String studyIdentifier = metaData.getStudyOID();
 
         MetaDataTree studyNode = new MetaDataTree();
@@ -165,39 +189,6 @@ public class DataService {
 
         public void setCrfVersion(String crfVersion) {
             this.crfVersion = crfVersion;
-        }
-    }
-
-    public class MetaDataTree {
-        private String name;
-        //private MetaDataTree parent;
-        private List<MetaDataTree> children = new ArrayList<>();
-
-        public MetaDataTree(String name) {
-            this.name = name;
-        }
-
-        public MetaDataTree() {
-        }
-
-        public String getName() {
-            return name;
-        }
-
-        public void setName(String name) {
-            this.name = name;
-        }
-
-        public List<MetaDataTree> getChildren() {
-            return children;
-        }
-
-        public void setChildren(List<MetaDataTree> children) {
-            this.children = children;
-        }
-
-        public void addChild(MetaDataTree node) {
-            this.children.add(node);
         }
     }
 }

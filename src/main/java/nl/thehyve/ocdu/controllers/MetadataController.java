@@ -1,5 +1,6 @@
 package nl.thehyve.ocdu.controllers;
 
+import nl.thehyve.ocdu.models.MetaDataTree;
 import nl.thehyve.ocdu.models.UploadSession;
 import nl.thehyve.ocdu.services.DataService;
 import nl.thehyve.ocdu.services.OcUserService;
@@ -43,7 +44,7 @@ public class MetadataController {
         try {
             UploadSession currentUploadSession = uploadSessionService.getCurrentUploadSession(session);
             String pwd = ocUserService.getOcwsHash(session);
-            DataService.MetaDataTree tree = dataService.getMetadataTree(currentUploadSession, pwd );
+            MetaDataTree tree = dataService.getMetadataTree(currentUploadSession, pwd );
             return new ResponseEntity<>(tree, HttpStatus.OK);
         } catch (UploadSessionNotFoundException e) {
             e.printStackTrace();

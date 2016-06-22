@@ -1,16 +1,19 @@
 package nl.thehyve.ocdu.soap.ResponseHandlers;
 
-import org.apache.commons.lang3.StringEscapeUtils;
 import org.springframework.xml.transform.StringResult;
 import org.w3c.dom.Document;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
-import javax.xml.namespace.QName;
+import javax.xml.datatype.DatatypeConfigurationException;
+import javax.xml.datatype.DatatypeConstants;
+import javax.xml.datatype.DatatypeFactory;
+import javax.xml.datatype.XMLGregorianCalendar;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.soap.*;
+import javax.xml.soap.SOAPException;
+import javax.xml.soap.SOAPMessage;
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Source;
 import javax.xml.transform.Transformer;
@@ -18,12 +21,11 @@ import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
-import javax.xml.transform.stream.StreamSource;
 import java.io.IOException;
-import java.io.PrintStream;
 import java.io.StringReader;
 import java.io.StringWriter;
-import java.util.Iterator;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
 
 /**
  * Created by piotrzakrzewski on 15/04/16.
@@ -64,6 +66,16 @@ public class SoapUtils {
             e.printStackTrace();
         }
         return null;
+    }
+
+    public static XMLGregorianCalendar getFullXmlDate(GregorianCalendar cal) {
+        try {
+            return DatatypeFactory.newInstance().newXMLGregorianCalendarDate(cal.get(Calendar.YEAR),
+                    cal.get(Calendar.MONTH) + 1, cal.get(Calendar.DAY_OF_MONTH), DatatypeConstants.FIELD_UNDEFINED);
+        } catch (DatatypeConfigurationException e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 
     public static String soapMessageToString(SOAPMessage soapMessage) throws Exception {

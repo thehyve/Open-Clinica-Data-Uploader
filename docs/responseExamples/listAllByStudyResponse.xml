@@ -1,7 +1,6 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
-<soap-env:Envelope xmlns:soap-env="http://schemas.xmlsoap.org/soap/envelope/">
-    <soap-env:Header/>
-    <soap-env:Body>
+<SOAP-ENV:Envelope xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/">
+    <SOAP-ENV:Header/>
+    <SOAP-ENV:Body>
         <ns4:listAllByStudyResponse xmlns:ns4="http://openclinica.org/ws/studySubject/v1" xmlns:ns2="http://openclinica.org/ws/beans" xmlns:ns3="http://openclinica.org/ws/crf/v1">
             <ns4:result>Success</ns4:result>
             <ns4:studySubjects>
@@ -13,6 +12,9 @@
                         <ns2:uniqueIdentifier>EV-00001</ns2:uniqueIdentifier>
                         <ns2:gender>m</ns2:gender>
                     </ns2:subject>
+                    <ns2:studyRef>
+                        <ns2:identifier>Eventful</ns2:identifier>
+                    </ns2:studyRef>
                     <ns2:events>
                         <ns2:event>
                             <ns2:eventDefinitionOID>SE_REPEATINGEVENT</ns2:eventDefinitionOID>
@@ -41,6 +43,9 @@
                         <ns2:uniqueIdentifier>EV-00002</ns2:uniqueIdentifier>
                         <ns2:gender>m</ns2:gender>
                     </ns2:subject>
+                    <ns2:studyRef>
+                        <ns2:identifier>Eventful</ns2:identifier>
+                    </ns2:studyRef>
                     <ns2:events>
                         <ns2:event>
                             <ns2:eventDefinitionOID>SE_EVENTFUL</ns2:eventDefinitionOID>
@@ -104,6 +109,9 @@
                         <ns2:uniqueIdentifier/>
                         <ns2:gender>m</ns2:gender>
                     </ns2:subject>
+                    <ns2:studyRef>
+                        <ns2:identifier>Eventful</ns2:identifier>
+                    </ns2:studyRef>
                     <ns2:events>
                         <ns2:event>
                             <ns2:eventDefinitionOID>SE_REPEATINGEVENT</ns2:eventDefinitionOID>
@@ -138,6 +146,9 @@
                         <ns2:uniqueIdentifier/>
                         <ns2:gender>m</ns2:gender>
                     </ns2:subject>
+                    <ns2:studyRef>
+                        <ns2:identifier>Eventful</ns2:identifier>
+                    </ns2:studyRef>
                     <ns2:events>
                         <ns2:event>
                             <ns2:eventDefinitionOID>SE_REPEATINGEVENT</ns2:eventDefinitionOID>
@@ -172,6 +183,9 @@
                         <ns2:uniqueIdentifier/>
                         <ns2:gender>m</ns2:gender>
                     </ns2:subject>
+                    <ns2:studyRef>
+                        <ns2:identifier>Eventful</ns2:identifier>
+                    </ns2:studyRef>
                     <ns2:events>
                         <ns2:event>
                             <ns2:eventDefinitionOID>SE_REPEATINGEVENT</ns2:eventDefinitionOID>
@@ -247,6 +261,9 @@
                         <ns2:uniqueIdentifier>EV-00006</ns2:uniqueIdentifier>
                         <ns2:gender>f</ns2:gender>
                     </ns2:subject>
+                    <ns2:studyRef>
+                        <ns2:identifier>Eventful</ns2:identifier>
+                    </ns2:studyRef>
                     <ns2:events>
                         <ns2:event>
                             <ns2:eventDefinitionOID>SE_REPEATINGEVENT</ns2:eventDefinitionOID>
@@ -265,6 +282,26 @@
                                 </ns2:eventCrf>
                             </ns2:eventCrfInformation>
                         </ns2:event>
+                        <ns2:event>
+                            <ns2:eventDefinitionOID>SE_REPEATINGEVENT</ns2:eventDefinitionOID>
+                            <ns2:occurrence>2</ns2:occurrence>
+                            <ns2:status>available</ns2:status>
+                            <ns2:subjectEventStatus>scheduled</ns2:subjectEventStatus>
+                            <ns2:location>Rotjeknor</ns2:location>
+                            <ns2:startDate>1977-10-01</ns2:startDate>
+                            <ns2:startTime>03:45:00</ns2:startTime>
+                            <ns2:eventCrfInformation/>
+                        </ns2:event>
+                        <ns2:event>
+                            <ns2:eventDefinitionOID>SE_REPEATINGEVENT</ns2:eventDefinitionOID>
+                            <ns2:occurrence>3</ns2:occurrence>
+                            <ns2:status>available</ns2:status>
+                            <ns2:subjectEventStatus>scheduled</ns2:subjectEventStatus>
+                            <ns2:location>Rotjeknor</ns2:location>
+                            <ns2:startDate>1977-10-01</ns2:startDate>
+                            <ns2:startTime>03:45:00</ns2:startTime>
+                            <ns2:eventCrfInformation/>
+                        </ns2:event>
                     </ns2:events>
                 </ns2:studySubject>
                 <ns2:studySubject>
@@ -275,6 +312,9 @@
                         <ns2:uniqueIdentifier>EVS-00001</ns2:uniqueIdentifier>
                         <ns2:gender>m</ns2:gender>
                     </ns2:subject>
+                    <ns2:studyRef>
+                        <ns2:identifier>EventfulSite</ns2:identifier>
+                    </ns2:studyRef>
                     <ns2:events>
                         <ns2:event>
                             <ns2:eventDefinitionOID>SE_EVENTFUL</ns2:eventDefinitionOID>
@@ -299,6 +339,23 @@
                                 </ns2:eventCrf>
                             </ns2:eventCrfInformation>
                         </ns2:event>
+                        <ns2:event>
+                            <ns2:eventDefinitionOID>SE_REPEATINGEVENT</ns2:eventDefinitionOID>
+                            <ns2:occurrence>1</ns2:occurrence>
+                            <ns2:status>available</ns2:status>
+                            <ns2:subjectEventStatus>data entry started</ns2:subjectEventStatus>
+                            <ns2:location/>
+                            <ns2:startDate>2016-06-21</ns2:startDate>
+                            <ns2:startTime>12:00:00</ns2:startTime>
+                            <ns2:eventCrfInformation>
+                                <ns2:eventCrf>
+                                    <ns2:name>MUST-FOR_NON_TTP_STUDY</ns2:name>
+                                    <ns2:oid>F_MUSTFOR_NON__010</ns2:oid>
+                                    <ns2:status>initial data entry</ns2:status>
+                                    <ns2:version>0.10</ns2:version>
+                                </ns2:eventCrf>
+                            </ns2:eventCrfInformation>
+                        </ns2:event>
                     </ns2:events>
                 </ns2:studySubject>
                 <ns2:studySubject>
@@ -309,6 +366,9 @@
                         <ns2:uniqueIdentifier>EVS-00002</ns2:uniqueIdentifier>
                         <ns2:gender>f</ns2:gender>
                     </ns2:subject>
+                    <ns2:studyRef>
+                        <ns2:identifier>EventfulSite</ns2:identifier>
+                    </ns2:studyRef>
                     <ns2:events>
                         <ns2:event>
                             <ns2:eventDefinitionOID>SE_EVENTFUL</ns2:eventDefinitionOID>
@@ -329,7 +389,35 @@
                         </ns2:event>
                     </ns2:events>
                 </ns2:studySubject>
+                <ns2:studySubject>
+                    <ns2:label>EV-00007</ns2:label>
+                    <ns2:secondaryLabel>?</ns2:secondaryLabel>
+                    <ns2:enrollmentDate>2016-06-15</ns2:enrollmentDate>
+                    <ns2:subject>
+                        <ns2:uniqueIdentifier>?</ns2:uniqueIdentifier>
+                        <ns2:gender>m</ns2:gender>
+                        <ns2:dateOfBirth>1988-12-06</ns2:dateOfBirth>
+                    </ns2:subject>
+                    <ns2:studyRef>
+                        <ns2:identifier>Eventful</ns2:identifier>
+                    </ns2:studyRef>
+                    <ns2:events/>
+                </ns2:studySubject>
+                <ns2:studySubject>
+                    <ns2:label>ssid1</ns2:label>
+                    <ns2:secondaryLabel/>
+                    <ns2:enrollmentDate>2016-06-15</ns2:enrollmentDate>
+                    <ns2:subject>
+                        <ns2:uniqueIdentifier/>
+                        <ns2:gender>m</ns2:gender>
+                        <ns2:dateOfBirth>1988-05-16</ns2:dateOfBirth>
+                    </ns2:subject>
+                    <ns2:studyRef>
+                        <ns2:identifier>Eventful</ns2:identifier>
+                    </ns2:studyRef>
+                    <ns2:events/>
+                </ns2:studySubject>
             </ns4:studySubjects>
         </ns4:listAllByStudyResponse>
-    </soap-env:Body>
-</soap-env:Envelope>
+    </SOAP-ENV:Body>
+</SOAP-ENV:Envelope>

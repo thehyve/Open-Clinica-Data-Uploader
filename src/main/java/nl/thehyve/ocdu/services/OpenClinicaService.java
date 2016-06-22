@@ -200,14 +200,14 @@ public class OpenClinicaService {
     }
 
 
-    public List<StudySubjectWithEventsType> getStudySubjectsType(String username, String passwordHash, String url, Study study) throws Exception {
-        log.info("Get listAllByStudy by: " + username + " on: " + url + " study: " + study);
-        if (study == null || username == null || passwordHash == null || url == null) {
+    public List<StudySubjectWithEventsType> getStudySubjectsType(String username, String passwordHash, String url, String studyIdentifier, String siteIdentifier) throws Exception {
+        log.info("Get listAllByStudy by: " + username + " on: " + url + " study: " + siteIdentifier + " site: " + siteIdentifier);
+        if (studyIdentifier == null || username == null || passwordHash == null || url == null) {
             return null;
         }
         SOAPConnectionFactory soapConnectionFactory = SOAPConnectionFactory.newInstance();
         SOAPConnection soapConnection = soapConnectionFactory.createConnection();
-        SOAPMessage soapMessage = requestFactory.createListAllByStudy(username, passwordHash, study);
+        SOAPMessage soapMessage = requestFactory.createListAllByStudy(username, passwordHash, studyIdentifier, siteIdentifier);
         SOAPMessage soapResponse = soapConnection.call(soapMessage, url + "/ws/studySubject/v1");  // Add SOAP endopint to OCWS URL.
         List<StudySubjectWithEventsType> subjectsTypeList =
                 ListAllByStudyResponseHandler.retrieveStudySubjectsType(soapResponse);

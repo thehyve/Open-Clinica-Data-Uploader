@@ -27,6 +27,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
 /**
@@ -58,10 +59,11 @@ public class ValidationService {
         determineStudy(bySubmission, submission);
         OcUser submitter = submission.getOwner();
         Study study = dataService.findStudy(submission.getStudy(), submitter, wsPwdHash);
+
         MetaData metadata = openClinicaService
                 .getMetadata(submitter.getUsername(), wsPwdHash, submitter.getOcEnvironment(), study);
         List<StudySubjectWithEventsType> subjectWithEventsTypes = openClinicaService
-                .getStudySubjectsType(submitter.getUsername(), wsPwdHash, submitter.getOcEnvironment(), study);
+                .getStudySubjectsType(submitter.getUsername(), wsPwdHash, submitter.getOcEnvironment(), study.getIdentifier(), "");
         List<ValidationErrorMessage> errors = new ArrayList<>();
         if (study == null || metadata == null) {
             StudyDoesNotExist studyError = new StudyDoesNotExist();
@@ -117,7 +119,7 @@ public class ValidationService {
         MetaData metadata = openClinicaService
                 .getMetadata(submitter.getUsername(), wsPwdHash, submitter.getOcEnvironment(), study);
         List<StudySubjectWithEventsType> subjectWithEventsTypes = openClinicaService
-                .getStudySubjectsType(submitter.getUsername(), wsPwdHash, submitter.getOcEnvironment(), study);
+                .getStudySubjectsType(submitter.getUsername(), wsPwdHash, submitter.getOcEnvironment(), study.getIdentifier(), "");
         List<ValidationErrorMessage> errors = new ArrayList<>();
 
         ClinicalDataChecksRunner checksRunner = new DataPreMappingValidator(metadata, bySubmission, subjectWithEventsTypes);

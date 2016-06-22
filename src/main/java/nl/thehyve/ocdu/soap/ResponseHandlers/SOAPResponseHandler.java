@@ -21,11 +21,13 @@ public class SOAPResponseHandler extends OCResponseHandler {
     /**
      * Checks if an error occurred on the OpenClinica-side and reports it back as the
      * return value
+     *
      * @param response the SOAP-response.
      * @return a non <code>null</code> error code.message if an error occurred. Some are reported by the OpenClinica-WS
      * instance at url. Returns <code>null</code> if everything went OK.
      * @throws Exception if a technical error occurs.
      */
+
     public static String parseOpenClinicaResponse(SOAPMessage response, String xPathToResponse) throws Exception {
         Document document = toDocument(response);
         String result = isAuthFailure(document);

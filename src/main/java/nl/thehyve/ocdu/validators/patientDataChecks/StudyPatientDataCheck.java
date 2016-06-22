@@ -23,6 +23,10 @@ public class StudyPatientDataCheck implements PatientDataCheck {
             error = new ValidationErrorMessage(commonMessage + "Study should be provided.");
         }
 
+        if(error != null) {
+            error.addOffendingValue("Study: " + subject.getStudy());
+        }
+
         return error;
     }
 }

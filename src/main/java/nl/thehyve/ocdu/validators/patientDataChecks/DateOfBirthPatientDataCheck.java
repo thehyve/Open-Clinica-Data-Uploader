@@ -54,6 +54,7 @@ public class DateOfBirthPatientDataCheck implements PatientDataCheck {
 
             if(msg != null) {
                 error = new ValidationErrorMessage(commonMessage + msg);
+                error.addOffendingValue("Date of Birth: " + subject.getDateOfBirth());
             }
         }
 

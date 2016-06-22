@@ -2,28 +2,22 @@ package nl.thehyve.ocdu.soap;
 
 
 import nl.thehyve.ocdu.models.OCEntities.Study;
-import nl.thehyve.ocdu.soap.SOAPRequestDecorators.GetStudyMetadataRequestDecorator;
-import nl.thehyve.ocdu.soap.SOAPRequestDecorators.ImportDataRequestDecorator;
-import nl.thehyve.ocdu.soap.SOAPRequestDecorators.IsStudySubjectRequestDecorator;
-import nl.thehyve.ocdu.soap.SOAPRequestDecorators.ScheduleEventRequestDecorator;
-import nl.thehyve.ocdu.soap.SOAPRequestDecorators.listAllStudiesRequestDecorator;
+import nl.thehyve.ocdu.models.OCEntities.Subject;
+import nl.thehyve.ocdu.soap.SOAPRequestDecorators.*;
+import nl.thehyve.ocdu.soap.SOAPRequestFactories.CreateSubjectRequestFactory;
 import org.openclinica.ws.beans.EventType;
 import org.openclinica.ws.beans.ListStudySubjectsInStudyType;
 import org.openclinica.ws.beans.StudyRefType;
+import org.openclinica.ws.studysubject.v1.CreateRequest;
 import org.openclinica.ws.studysubject.v1.ObjectFactory;
 import org.w3c.dom.Document;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBElement;
 import javax.xml.namespace.QName;
-import javax.xml.soap.MessageFactory;
-import javax.xml.soap.SOAPElement;
-import javax.xml.soap.SOAPEnvelope;
-import javax.xml.soap.SOAPHeader;
-import javax.xml.soap.SOAPHeaderElement;
-import javax.xml.soap.SOAPMessage;
-import javax.xml.soap.SOAPPart;
+import javax.xml.soap.*;
 import javax.xml.transform.dom.DOMResult;
+import java.util.Collection;
 
 
 /**
@@ -105,6 +99,18 @@ public class SOAPRequestFactory {
 
         Document doc = convertToDocument(body, ListStudySubjectsInStudyType.class);
         soapMessage.getSOAPBody().addDocument(doc);
+        return soapMessage;
+    }
+
+    public SOAPMessage createCreateSubject(String userName, String passwordHash, Collection<Subject> subjects
+            ) throws Exception {
+        CreateSubjectRequestFactory factory = new CreateSubjectRequestFactory();
+        Collection<JAXBElement<CreateRequest>> createRequests =  factory.getCreateRequests(subjects);
+        SOAPMessage soapMessage = getSoapMessage(userName, passwordHash, STUDY_SUBJECT_NAME_SPACE);
+        for(JAXBElement createRequest: createRequests) {
+            Document xmlDoc = convertToDocument(createRequest, CreateRequest.class);
+            soapMessage.getSOAPBody().addDocument(xmlDoc);
+        }
         return soapMessage;
     }
 

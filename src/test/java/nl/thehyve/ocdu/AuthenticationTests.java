@@ -39,9 +39,7 @@ import static org.junit.Assert.assertEquals;
 /**
  * Created by piotrzakrzewski on 18/04/16.
  */
-@RunWith(SpringJUnit4ClassRunner.class)
-@SpringApplicationConfiguration(classes = OcduApplication.class)
-@WebAppConfiguration
+
 public class AuthenticationTests {
 
     private static final String AUTHENTICATION_FAILURE_MESSAGE = "com.sun.xml.wss.impl.WssSoapFaultException: Authentication of Username Password\n" +

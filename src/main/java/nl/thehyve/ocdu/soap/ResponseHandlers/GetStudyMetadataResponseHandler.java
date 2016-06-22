@@ -44,6 +44,8 @@ public class GetStudyMetadataResponseHandler extends OCResponseHandler {
     public static final String STUDY_SELECTOR = "//Study[1]";
     public static final String SITES_SELECTOR = "//Study[position()>1]";
     public static final String ITEM_PRESENT_IN_FORM_SELECTOR = ".//*[local-name()='ItemPresentInForm']";
+    public static final String STUDY_DESCRIPTION_SELECTOR = ".//*[local-name()='StudyDescriptionAndStatus']";
+    public static final String STUDY_STATUS_SELECTOR = ".//*[local-name()='StudySytemStatus'][1]";
 
 
     public static MetaData parseGetStudyMetadataResponse(SOAPMessage response) throws Exception { //TODO: handle exception
@@ -57,6 +59,7 @@ public class GetStudyMetadataResponseHandler extends OCResponseHandler {
         NodeList eventDefsNodes = (NodeList) xpath.evaluate(eventDefSelector, odm, XPathConstants.NODESET);
         NodeList itemGroupDefNodes = (NodeList) xpath.evaluate(itemGroupDefSelector, odm, XPathConstants.NODESET);
         NodeList itemDefNodes = (NodeList) xpath.evaluate(ITEM_DEFINITION_SELECTOR, odm, XPathConstants.NODESET);
+        Node studyDescNode = (Node) xpath.evaluate(STUDY_DESCRIPTION_SELECTOR, studyNode, XPathConstants.NODE);
 
         Map eventMap = parseEvents(eventDefsNodes);
         List<CRFDefinition> crfDefs = parseCrfs(crfDefsNodes, eventMap);
@@ -68,6 +71,8 @@ public class GetStudyMetadataResponseHandler extends OCResponseHandler {
 
         List<ItemDefinition> items = parseItemDefinitions(itemDefNodes);
         List<ItemGroupDefinition> itemGroups = parseItemGroupDefinitions(itemGroupDefNodes, crfDefs, items);
+
+        String studyStatus = parseStudyStatus(studyDescNode);
 
         MetaData metaData = new MetaData();
         Optional<String> studyIdOpt = parseStudyOid(studyNode);
@@ -85,7 +90,14 @@ public class GetStudyMetadataResponseHandler extends OCResponseHandler {
         String studyRequirementPath = STUDY_SELECTOR + "/MetaDataVersion";
         metaData.setGenderRequired(parseGenderRequired(odm, studyRequirementPath));
         metaData.setBirthdateRequired(parseDateOfBirthRequired(odm, studyRequirementPath));
+        metaData.setStatus(studyStatus);
         return metaData;
+    }
+
+    private static String parseStudyStatus(Node studyDescNode) throws XPathExpressionException {
+        Node statusNode = (Node) xpath.evaluate(STUDY_STATUS_SELECTOR,
+                studyDescNode, XPathConstants.NODE);
+        return statusNode.getTextContent();
     }
 
     private static List<SiteDefinition> parseSiteDefinitions(Document odm) throws XPathExpressionException {
@@ -341,7 +353,7 @@ public class GetStudyMetadataResponseHandler extends OCResponseHandler {
     public static Document getOdm(SOAPMessage response) throws XPathExpressionException, SAXException, IOException, ParserConfigurationException, SOAPException, TransformerException {
         Document document = toDocument(response);
         String result = isAuthFailure(document);
-        if (! StringUtils.isEmpty(result)) {
+        if (!StringUtils.isEmpty(result)) {
             throw new AuthenticationCredentialsNotFoundException("Problem calling OpenClinica web-services: " + result);
         }
         Node odmCDATANode = (Node) xpath.evaluate(odmSelector, document, XPathConstants.NODE);

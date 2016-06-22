@@ -4,6 +4,7 @@ import nl.thehyve.ocdu.models.OcItemMapping;
 import nl.thehyve.ocdu.models.OcUser;
 import nl.thehyve.ocdu.models.UploadSession;
 import nl.thehyve.ocdu.models.errors.FileFormatError;
+import nl.thehyve.ocdu.models.errors.ValidationErrorMessage;
 import nl.thehyve.ocdu.services.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,6 +22,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -46,9 +49,12 @@ public class UploadController {
     @Autowired
     MappingService mappingService;
 
+    @Autowired
+    ValidationService validationService;
+
     @RequestMapping(value = "/data", method = RequestMethod.POST)
     @ResponseBody
-    public ResponseEntity<List<FileFormatError>> uploadFile(
+    public ResponseEntity<Collection<ValidationErrorMessage>> uploadFile(
             @RequestParam("uploadfile") MultipartFile uploadfile, HttpSession session) {
 
         try {
@@ -56,8 +62,12 @@ public class UploadController {
             Path locallySavedDataFile = saveFile(uploadfile);
             UploadSession currentUploadSession = uploadSessionService.getCurrentUploadSession(session);
             String pwd = ocUserService.getOcwsHash(session);
-            List<FileFormatError> fileFormatErrors = fileService.depositDataFile(locallySavedDataFile, user, currentUploadSession, pwd);
-            return new ResponseEntity<>(fileFormatErrors, HttpStatus.OK);
+            Collection<ValidationErrorMessage> fileFormatErrors = fileService.depositDataFile(locallySavedDataFile, user, currentUploadSession, pwd);
+            Collection<ValidationErrorMessage> mappingPreventingErrors = validationService.dataPremappingValidation(currentUploadSession, pwd);
+            Collection<ValidationErrorMessage> allErrors = new ArrayList<>();
+            allErrors.addAll(fileFormatErrors);
+            allErrors.addAll(mappingPreventingErrors);
+            return new ResponseEntity<>(allErrors, HttpStatus.OK);
         } catch (Exception e) {
             System.out.println(e.getMessage());
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
@@ -67,14 +77,14 @@ public class UploadController {
 
     @RequestMapping(value = "/eventsData", method = RequestMethod.POST)
     @ResponseBody
-    public ResponseEntity<List<FileFormatError>> uploadEventsDataFile(
+    public ResponseEntity<Collection<ValidationErrorMessage>> uploadEventsDataFile(
             @RequestParam("uploadfile") MultipartFile uploadfile, HttpSession session) {
 
         try {
             OcUser user = ocUserService.getCurrentOcUser(session);
             Path locallySavedDataFile = saveFile(uploadfile);
             UploadSession currentUploadSession = uploadSessionService.getCurrentUploadSession(session);
-            List<FileFormatError> fileFormatErrors = fileService
+            Collection<ValidationErrorMessage> fileFormatErrors = fileService
                     .depositEventsDataFile(locallySavedDataFile, user, currentUploadSession);
             return new ResponseEntity<>(fileFormatErrors, HttpStatus.OK);
         } catch (Exception e) {
@@ -132,7 +142,7 @@ public class UploadController {
 
     @RequestMapping(value = "/subjects", method = RequestMethod.POST)
     @ResponseBody
-    public ResponseEntity<List<FileFormatError>> uploadPatientFile(
+    public ResponseEntity<Collection<ValidationErrorMessage>> uploadPatientFile(
             @RequestParam("uploadPatientData") MultipartFile uploadPatientData, HttpSession session) {
 
         try {
@@ -140,7 +150,7 @@ public class UploadController {
             Path locallySavedDataFile = saveFile(uploadPatientData);
             UploadSession currentUploadSession = uploadSessionService.getCurrentUploadSession(session);
             String pwd = ocUserService.getOcwsHash(session);
-            List<FileFormatError> fileFormatErrors = fileService.depositPatientFile(locallySavedDataFile, user, currentUploadSession, pwd);
+            Collection<ValidationErrorMessage> fileFormatErrors = fileService.depositPatientFile(locallySavedDataFile, user, currentUploadSession, pwd);
             return new ResponseEntity<>(fileFormatErrors, HttpStatus.OK);
         } catch (Exception e) {
             System.out.println(e.getMessage());

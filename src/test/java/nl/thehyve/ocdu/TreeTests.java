@@ -41,13 +41,13 @@ public class TreeTests {
         MetaDataTree metaDataTree = buildTree(metaData);
         OcTreePath selection = new OcTreePath();
         selection.setEvent("Non-repeating event");
-        selection.setCrf("SuperSimpleCRF");
-        selection.setVersion("0.1");
+        selection.setCrf("TESTBED_DATA_UPLOAD_TOOL");
+        selection.setVersion("v0.03");
         MetaDataTree result = OcTreePath.filter(metaDataTree, selection);
         assertThat(result, is(notNullValue()));
         assertThat(result, hasProperty("children"));
-        assertThat(result, hasProperty("name", is("0.1")));
+        assertThat(result, hasProperty("name", is("v0.03")));
         List<MetaDataTree> children = result.getChildren();
-        assertThat(children, hasSize(7));
+        assertThat(children, hasSize(34));
     }
 }

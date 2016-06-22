@@ -16,6 +16,7 @@ import java.util.Set;
 public class DataFileValidator extends GenericFileValidator {
 
     private final List<Study> studies;
+    private String crfSep = "-"; // - is a forbidden character in CRF and CRF version, it is safe to use as a separator
 
     public DataFileValidator(List<Study> studies) {
         super(ClinicalDataFactory.MANDATORY_HEADERS, new String[]{ClinicalDataFactory.EventRepeat});
@@ -72,6 +73,31 @@ public class DataFileValidator extends GenericFileValidator {
             }
         }
         return usedStudies;
+    }
+
+    private void combinationOfCrfAndVersionExists(Set<String> usedCrfs) {
+
+    }
+
+    private void onlyOneCRF(Set<String> usedCrfs) {
+        if (usedCrfs.size() != 1) {
+            FileFormatError error = new FileFormatError("Data file must contain one and only one CRF and CRF version");
+            addError(error);
+        }
+    }
+
+    private Set<String> getUsedCRFs(String[] body, int crfColumnIndex, int versionColumnIndex) {
+        Set<String> usedCRFs = new HashSet<>();
+        for (int i = 0; i < body.length; i++) {
+            String line = body[i];
+            String[] split = line.split(ClinicalDataFactory.COLUMNS_DELIMITER);
+            if (split.length > crfColumnIndex && split.length > versionColumnIndex) {
+                String crfName = split[crfColumnIndex];
+                String crfVersion = split[versionColumnIndex];
+                usedCRFs.add(crfName + crfSep + crfVersion);
+            }
+        }
+        return usedCRFs;
     }
 
 }

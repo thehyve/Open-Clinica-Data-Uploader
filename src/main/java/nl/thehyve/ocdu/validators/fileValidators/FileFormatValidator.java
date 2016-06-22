@@ -1,9 +1,11 @@
 package nl.thehyve.ocdu.validators.fileValidators;
 
 import nl.thehyve.ocdu.models.errors.FileFormatError;
+import nl.thehyve.ocdu.models.errors.ValidationErrorMessage;
 
 import java.io.File;
 import java.nio.file.Path;
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -13,7 +15,7 @@ public interface FileFormatValidator {
 
     boolean isValid();
 
-    List<FileFormatError> getErrorMessages();
+    Collection<ValidationErrorMessage> getErrorMessages();
 
     void validateFile(Path file);
 }

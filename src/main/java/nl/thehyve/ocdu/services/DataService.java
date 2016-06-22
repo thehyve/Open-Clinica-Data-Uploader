@@ -13,10 +13,7 @@ import nl.thehyve.ocdu.repositories.ClinicalDataRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -61,6 +58,7 @@ public class DataService {
      * It is assumed that there is only one CRF and CRF Version in the data file.
      * Adherence to this is checked by validation rules.
      * Therefore here we just take first clinical data variable and retreie its CRF and CRF version.
+     *
      * @param submission
      * @return selection
      */
@@ -69,7 +67,9 @@ public class DataService {
         ClinicalData clinicalData = bySubmission.stream().findFirst().get();
         String crfName = clinicalData.getCrfName();
         String crfVersion = clinicalData.getCrfVersion();
+        String eventName = clinicalData.getEventName();
         OcTreePath selection = new OcTreePath();
+        selection.setEvent(eventName);
         selection.setCrf(crfName);
         selection.setVersion(crfVersion);
         return selection;
@@ -150,6 +150,30 @@ public class DataService {
         } else {
             throw new Exception("Multiple studies match name: " + studyName + " fatal data inconsistency.");
         }
+    }
+
+    public Collection<String> getTargetCrf(UploadSession submission, String ocwsHash) throws Exception {
+        OcTreePath selection = inferSelection(submission);
+        MetaDataTree metadataTree = getMetadataTree(submission, ocwsHash, selection);
+        if (metadataTree == null) {
+            return Collections.emptyList();
+        }
+        String pathSep = "\\";
+        Collection rootPathElements = new ArrayList();
+        rootPathElements.add(selection.getEvent());
+        rootPathElements.add(selection.getCrf());
+        rootPathElements.add(selection.getVersion());
+        String rootPath = String.join(pathSep, rootPathElements);
+        List<String> targetedPaths = metadataTree.getChildren().stream()
+                .map(node -> rootPath + pathSep + node.getName()).collect(Collectors.toList());
+        return targetedPaths;
+    }
+
+    private MetaDataTree getMetadataTree(UploadSession submission, String ocwsHash, OcTreePath selection) throws Exception {
+        MetaData metaData = getMetaData(submission, ocwsHash);
+        MetaDataTree tree = buildTree(metaData);
+        tree = OcTreePath.filter(tree, selection);
+        return tree;
     }
 
 

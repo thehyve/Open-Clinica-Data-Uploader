@@ -2,12 +2,14 @@ package nl.thehyve.ocdu.validators.fileValidators;
 
 import nl.thehyve.ocdu.factories.ClinicalDataFactory;
 import nl.thehyve.ocdu.models.errors.FileFormatError;
+import nl.thehyve.ocdu.models.errors.ValidationErrorMessage;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 import java.util.stream.Stream;
 
@@ -16,6 +18,8 @@ import java.util.stream.Stream;
  */
 public class GenericFileValidator implements FileFormatValidator {
 
+
+    public static final int MAX_ALLOWED_FIELD_LENGTH = 4000;
 
     public GenericFileValidator(String[] mandatoryColumns, String[] positiveIntegerColumns) {
         this.mandatoryHeaders = mandatoryColumns;
@@ -26,7 +30,7 @@ public class GenericFileValidator implements FileFormatValidator {
     private String[] mandatoryHeaders;
     private String[] positiveIntegerColumns;
     private boolean valid = true;
-    private List<FileFormatError> errors = new ArrayList<>();
+    private Collection<ValidationErrorMessage> errors = new ArrayList<>();
 
     @Override
     public boolean isValid() {
@@ -34,7 +38,7 @@ public class GenericFileValidator implements FileFormatValidator {
     }
 
     @Override
-    public List<FileFormatError> getErrorMessages() {
+    public Collection<ValidationErrorMessage> getErrorMessages() {
         return this.errors;
     }
 
@@ -66,6 +70,7 @@ public class GenericFileValidator implements FileFormatValidator {
                 int index = getColumnIndex(header, intHeader);
                 columnPositiveInteger(body, index);
             }
+            fieldsWithinLengthLimit(body);
 
         } catch (IOException e) {
             this.valid = false;
@@ -128,6 +133,18 @@ public class GenericFileValidator implements FileFormatValidator {
             if (!split.contains(mandatoryHeader)) {
                 errors.add(new FileFormatError("Column missing: " + mandatoryHeader));
                 valid = false;
+            }
+        }
+    }
+
+    private void fieldsWithinLengthLimit(String[] body) {
+        for (String line : body) {
+            List<String> split = splitLine(line);
+            for (String field: split) {
+                if (field.length() > MAX_ALLOWED_FIELD_LENGTH) {
+                    errors.add(new FileFormatError("Following line has different number of fields than the header:" + line));
+                    valid = false;
+                }
             }
         }
     }

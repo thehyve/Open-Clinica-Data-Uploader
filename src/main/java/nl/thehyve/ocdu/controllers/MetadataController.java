@@ -17,6 +17,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpSession;
 
+import java.util.Collection;
+
 import static org.springframework.http.HttpStatus.OK;
 
 /**
@@ -46,6 +48,23 @@ public class MetadataController {
             String pwd = ocUserService.getOcwsHash(session);
             MetaDataTree tree = dataService.getMetadataTree(currentUploadSession, pwd );
             return new ResponseEntity<>(tree, HttpStatus.OK);
+        } catch (UploadSessionNotFoundException e) {
+            e.printStackTrace();
+            String errorMessage = "no submission active";
+            return new ResponseEntity<>(errorMessage, HttpStatus.BAD_REQUEST);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @RequestMapping(value = "/targetedCrf", method = RequestMethod.GET)
+    public ResponseEntity<?> targetedCrf(HttpSession session) {
+        try {
+            UploadSession currentUploadSession = uploadSessionService.getCurrentUploadSession(session);
+            String pwd = ocUserService.getOcwsHash(session);
+            Collection<String> targetPaths = dataService.getTargetCrf(currentUploadSession, pwd );
+            return new ResponseEntity<>(targetPaths, HttpStatus.OK);
         } catch (UploadSessionNotFoundException e) {
             e.printStackTrace();
             String errorMessage = "no submission active";

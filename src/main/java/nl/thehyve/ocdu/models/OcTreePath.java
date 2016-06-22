@@ -29,19 +29,27 @@ public class OcTreePath {
      * @return null if no node matches selection, single node if it does
      */
     public static MetaDataTree filter(MetaDataTree metaDataTree, OcTreePath selection) {
-        if (metaDataTree.getName().equals(selection.getCrf())) {
-            for (MetaDataTree node : metaDataTree.getChildren()) {
-                if (node.getName().equals(selection.getVersion())) {
-                    return node;
+        if (matchesFilter(metaDataTree, selection)) {
+            return metaDataTree.getChildren().stream()
+                    .filter(childNode -> childNode.getName().equals(selection.getVersion())).findFirst().get();
+        } else {
+            for (MetaDataTree childNode: metaDataTree.getChildren()) {
+                MetaDataTree matching = filter(childNode, selection);
+                if (matching != null) {
+                    return matching;
                 }
             }
             return null;
+        }
+    }
+
+    private static boolean matchesFilter(MetaDataTree node, OcTreePath selection) {
+        if (node.getName().equals(selection.getCrf()) && node.getChildren().size() > 0  ) {
+            boolean versionMatch = node.getChildren().stream().anyMatch(childNode -> childNode.getName().equals(selection.getVersion()));
+            if (versionMatch) return true;
+            else return false;
         } else {
-            for (MetaDataTree node : metaDataTree.getChildren()) {
-                MetaDataTree found = filter(node, selection);
-                if (node != null) return found;
-            }
-            return null;
+            return false;
         }
     }
 

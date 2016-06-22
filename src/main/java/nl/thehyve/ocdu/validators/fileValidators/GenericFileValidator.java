@@ -2,12 +2,14 @@ package nl.thehyve.ocdu.validators.fileValidators;
 
 import nl.thehyve.ocdu.factories.ClinicalDataFactory;
 import nl.thehyve.ocdu.models.errors.FileFormatError;
+import nl.thehyve.ocdu.models.errors.ValidationErrorMessage;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 import java.util.stream.Stream;
 
@@ -28,7 +30,7 @@ public class GenericFileValidator implements FileFormatValidator {
     private String[] mandatoryHeaders;
     private String[] positiveIntegerColumns;
     private boolean valid = true;
-    private List<FileFormatError> errors = new ArrayList<>();
+    private Collection<ValidationErrorMessage> errors = new ArrayList<>();
 
     @Override
     public boolean isValid() {
@@ -36,7 +38,7 @@ public class GenericFileValidator implements FileFormatValidator {
     }
 
     @Override
-    public List<FileFormatError> getErrorMessages() {
+    public Collection<ValidationErrorMessage> getErrorMessages() {
         return this.errors;
     }
 

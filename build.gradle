@@ -108,6 +108,7 @@ test {
     afterTest { desc, result ->
         println "Executing test ${desc.name} [${desc.className}] with result: ${result.resultType}"
     }
+    maxHeapSize "2g"
 }
 
 

@@ -10,6 +10,7 @@ import nl.thehyve.ocdu.models.OCEntities.Subject;
 import nl.thehyve.ocdu.models.OcUser;
 import nl.thehyve.ocdu.models.UploadSession;
 import nl.thehyve.ocdu.models.errors.FileFormatError;
+import nl.thehyve.ocdu.models.errors.ValidationErrorMessage;
 import nl.thehyve.ocdu.repositories.ClinicalDataRepository;
 import nl.thehyve.ocdu.repositories.EventRepository;
 import nl.thehyve.ocdu.repositories.SubjectRepository;
@@ -21,6 +22,7 @@ import org.springframework.stereotype.Service;
 
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
@@ -43,11 +45,11 @@ public class FileService {
     @Autowired
     OpenClinicaService openClinicaService;
 
-    public List<FileFormatError> depositDataFile(Path dataFile, OcUser user, UploadSession submission, String pwd) throws Exception {
+    public Collection<ValidationErrorMessage> depositDataFile(Path dataFile, OcUser user, UploadSession submission, String pwd) throws Exception {
         List<Study> studies = openClinicaService.listStudies(user.getUsername(), pwd, user.getOcEnvironment());
         DataFileValidator validator = new DataFileValidator(studies);
         validator.validateFile(dataFile);
-        List<FileFormatError> errorMsgs = new ArrayList<>();
+        Collection<ValidationErrorMessage> errorMsgs = new ArrayList<>();
         if (validator.isValid()) {
             ClinicalDataFactory factory = new ClinicalDataFactory(user, submission);
             List<ClinicalData> newEntries = factory.createClinicalData(dataFile);
@@ -59,10 +61,10 @@ public class FileService {
         }
     }
 
-    public List<FileFormatError> depositPatientFile(Path patientFile, OcUser user, UploadSession submission, String pwd) throws Exception {
+    public Collection<ValidationErrorMessage> depositPatientFile(Path patientFile, OcUser user, UploadSession submission, String pwd) throws Exception {
         PatientsFileValidator validator = new PatientsFileValidator();
         validator.validateFile(patientFile);
-        List<FileFormatError> errorMsgs = new ArrayList<>();
+        Collection<ValidationErrorMessage> errorMsgs = new ArrayList<>();
         if (validator.isValid()) {
             PatientDataFactory factory = new PatientDataFactory(user, submission);
             List<Subject> newEntries = factory.createPatientData(patientFile);
@@ -74,7 +76,7 @@ public class FileService {
         }
     }
 
-    public List<FileFormatError> depositEventsDataFile(Path dataFile,
+    public Collection<ValidationErrorMessage> depositEventsDataFile(Path dataFile,
                                                        OcUser user,
                                                        UploadSession submission) throws Exception {
         //TODO Check study ids, sites

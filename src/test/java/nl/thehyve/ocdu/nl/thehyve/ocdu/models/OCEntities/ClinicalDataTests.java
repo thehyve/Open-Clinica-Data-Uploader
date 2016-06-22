@@ -31,7 +31,8 @@ public class ClinicalDataTests {
     public void testCreateEventKey() {
         ClinicalData clinicalData = new ClinicalData("TestStudy", "Bloodpressure",
                 "SUBJECT_0001", "EventfulDay", 1, "CRF-Baseline", uploadSession, "v10.3", 3, user, "80/120");
-        assertEquals("TESTSTUDYSUBJECT_0001SE_EVENTFULDAY1", clinicalData.createEventKey("SE_EVENTFULDAY"));
+        clinicalData.setSite("SITE");
+        assertEquals("TESTSTUDYSITESUBJECT_0001SE_EVENTFULDAY1", clinicalData.createEventKey("SE_EVENTFULDAY"));
     }
 
 

@@ -95,8 +95,11 @@ public class GetStudyMetadataResponseHandler extends OCResponseHandler {
     }
 
     private static String parseStudyStatus(Node studyDescNode) throws XPathExpressionException {
+        String unspecified = "UNSPECIFIED";
+        if (studyDescNode == null) return unspecified;
         Node statusNode = (Node) xpath.evaluate(STUDY_STATUS_SELECTOR,
                 studyDescNode, XPathConstants.NODE);
+        if (statusNode == null) return unspecified;
         return statusNode.getTextContent();
     }
 

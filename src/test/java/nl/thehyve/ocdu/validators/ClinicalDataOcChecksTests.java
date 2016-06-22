@@ -6,23 +6,11 @@ import nl.thehyve.ocdu.models.OCEntities.ClinicalData;
 import nl.thehyve.ocdu.models.OcDefinitions.MetaData;
 import nl.thehyve.ocdu.models.OcUser;
 import nl.thehyve.ocdu.models.UploadSession;
-import nl.thehyve.ocdu.models.errors.CRFDoesNotExist;
-import nl.thehyve.ocdu.models.errors.CRFVersionMismatchError;
-import nl.thehyve.ocdu.models.errors.CrfCouldNotBeVerified;
-import nl.thehyve.ocdu.models.errors.EnumerationError;
-import nl.thehyve.ocdu.models.errors.EventDoesNotExist;
-import nl.thehyve.ocdu.models.errors.FieldLengthExceeded;
-import nl.thehyve.ocdu.models.errors.ItemDoesNotExist;
-import nl.thehyve.ocdu.models.errors.MandatoryItemInCrfMissing;
-import nl.thehyve.ocdu.models.errors.RangeCheckViolation;
-import nl.thehyve.ocdu.models.errors.RepeatInNonrepeatingEvent;
-import nl.thehyve.ocdu.models.errors.RepeatInNonrepeatingItem;
-import nl.thehyve.ocdu.models.errors.SSIDDuplicated;
-import nl.thehyve.ocdu.models.errors.SSIDTooLong;
-import nl.thehyve.ocdu.models.errors.TooManySignificantDigits;
-import nl.thehyve.ocdu.models.errors.TooManyValues;
-import nl.thehyve.ocdu.models.errors.ValidationErrorMessage;
+import nl.thehyve.ocdu.models.errors.*;
 import nl.thehyve.ocdu.soap.ResponseHandlers.GetStudyMetadataResponseHandler;
+import nl.thehyve.ocdu.validators.clinicalDataChecks.ClinicalDataCrossCheck;
+import nl.thehyve.ocdu.validators.clinicalDataChecks.StudyStatusAvailable;
+import nl.thehyve.ocdu.validators.fileValidators.DataPreMappingValidator;
 import org.junit.Before;
 import org.junit.Test;
 import org.openclinica.ws.beans.StudySubjectWithEventsType;
@@ -33,9 +21,11 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
+import static org.hamcrest.Matchers.*;
 import static org.hamcrest.core.Is.isA;
 import static org.hamcrest.core.IsCollectionContaining.hasItem;
 import static org.junit.Assert.assertEquals;
@@ -241,6 +231,7 @@ public class ClinicalDataOcChecksTests {
         MetaData crfVersionMetaData = GetStudyMetadataResponseHandler.parseGetStudyMetadataResponse(mockedResponseGetMetadata);
         clinicalDataOcChecks = new ClinicalDataOcChecks(crfVersionMetaData, incorrectClinicalData, testSubjectWithEventsTypeList);
         List<ValidationErrorMessage> errors = clinicalDataOcChecks.getErrors();
+        in.close();
         assertEquals(1, errors.size());
         assertThat(errors, hasItem(isA(CRFVersionMismatchError.class)));
     }
@@ -254,4 +245,22 @@ public class ClinicalDataOcChecksTests {
         assertThat(errors, hasItem(isA(RepeatInNonrepeatingItem.class)));
     }
 
+    @Test
+    public void studyStatusTest() throws Exception {
+        ClinicalDataCrossCheck statusCheck = new StudyStatusAvailable();
+        MetaData metaData = new MetaData();
+        metaData.setStatus("whatever");
+        ValidationErrorMessage correspondingError = statusCheck.getCorrespondingError(null, metaData, null, null, null, null);
+        assertThat(correspondingError, is(notNullValue()));
+        assertThat(correspondingError, is(instanceOf(StudyStatusError.class)) );
+    }
+
+    @Test
+    public void dataPreMappingValidatorTest() throws Exception {
+        List<ClinicalData> incorrectClinicalData = factory.createClinicalData(testFileNonExistentCRF);
+        DataPreMappingValidator validator = new DataPreMappingValidator(metaData, incorrectClinicalData, Collections.emptyList());
+        List<ValidationErrorMessage> errors = validator.getErrors();
+        assertEquals(1, errors.size());
+        assertThat(errors, hasItem(isA(CRFDoesNotExist.class)));
+    }
 }

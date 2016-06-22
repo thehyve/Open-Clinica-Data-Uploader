@@ -19,7 +19,7 @@
                         <ns2:event>
                             <ns2:eventDefinitionOID>SE_REPEATINGEVENT</ns2:eventDefinitionOID>
                             <ns2:occurrence>1</ns2:occurrence>
-                            <ns2:status>available</ns2:status>
+                            <ns2:status>completed</ns2:status>
                             <ns2:subjectEventStatus>completed</ns2:subjectEventStatus>
                             <ns2:location/>
                             <ns2:startDate>2016-04-05</ns2:startDate>
@@ -439,7 +439,7 @@
                         <ns2:event>
                             <ns2:eventDefinitionOID>SE_EVENTFUL</ns2:eventDefinitionOID>
                             <ns2:occurrence>1</ns2:occurrence>
-                            <ns2:status>available</ns2:status>
+                            <ns2:status>unavailable</ns2:status>
                             <ns2:subjectEventStatus>completed</ns2:subjectEventStatus>
                             <ns2:location/>
                             <ns2:startDate>2016-05-30</ns2:startDate>

@@ -5,6 +5,6 @@ package nl.thehyve.ocdu.models.errors;
  */
 public class IncorrectNumberOfStudies extends ValidationErrorMessage {
     public IncorrectNumberOfStudies() {
-        super("Data file must reference one and only study name.");
+        super("Data file must reference one and only one study name.");
     }
 }

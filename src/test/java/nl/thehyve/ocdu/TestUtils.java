@@ -19,11 +19,19 @@ import java.util.List;
 public class TestUtils {
 
     public static List<StudySubjectWithEventsType> createStudySubjectWithEventList() throws Exception {
-        File mockResponseListAllByStudyFile = new File("docs/responseExamples/listAllByStudyResponse.xml");
+        return parseStudySubjectWEvType("docs/responseExamples/listAllByStudyResponse.xml");
+    }
+
+    private static List<StudySubjectWithEventsType> parseStudySubjectWEvType(String path) throws Exception {
+        File mockResponseListAllByStudyFile = new File(path);
         InputStream mockResponseListAllByStudyFileInputStream = new FileInputStream(mockResponseListAllByStudyFile);
 
         MessageFactory messageFactory = MessageFactory.newInstance();
         SOAPMessage soapMessage = messageFactory.createMessage(new MimeHeaders(), mockResponseListAllByStudyFileInputStream);
         return ListAllByStudyResponseHandler.retrieveStudySubjectsType(soapMessage);
+    }
+
+    public static List<StudySubjectWithEventsType> incorrectEventStatusExample() throws Exception {
+        return  parseStudySubjectWEvType("docs/responseExamples/incorrectEventStatus.xml");
     }
 }

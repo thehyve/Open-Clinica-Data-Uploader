@@ -28,6 +28,7 @@ public class MetaData {
 
     @OneToMany(targetEntity = SiteDefinition.class, cascade = CascadeType.ALL)
     private List<SiteDefinition> siteDefinitions;
+    private String status;
 
     public void addEventDefinition(EventDefinition eventDef) {
         eventDefinitions.add(eventDef);
@@ -137,4 +138,11 @@ public class MetaData {
         this.eventDefinitions = new ArrayList<>();
     }
 
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    public String getStatus() {
+        return status;
+    }
 }

@@ -125,6 +125,7 @@ public class GetMetadataTests {
         });
         assertEquals(totalExpectedItemDefs, allItemdefs.size());
         assertEquals(totalExpectedItemNames, allItemNames.size());
+        assertThat(metaData.getStatus(), is("available"));
     }
 
 

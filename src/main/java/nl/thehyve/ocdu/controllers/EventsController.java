@@ -16,6 +16,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpSession;
 import java.util.List;
@@ -24,6 +25,8 @@ import java.util.List;
  * Created by Jacob Rousseau on 22-Jun-2016.
  * Copyright CTMM-TraIT / NKI (c) 2016
  */
+@RestController
+@RequestMapping("/events")
 public class EventsController {
 
     @Autowired
@@ -42,8 +45,7 @@ public class EventsController {
     ClinicalDataRepository clinicalDataRepository;
 
 
-
-    //  @RequestMapping(value = "/register", method = RequestMethod.GET)
+    @RequestMapping(value = "/register", method = RequestMethod.GET)
     public ResponseEntity<String> registerEvents(HttpSession session) {
         try {
             UploadSession uploadSession = uploadSessionService.getCurrentUploadSession(session);

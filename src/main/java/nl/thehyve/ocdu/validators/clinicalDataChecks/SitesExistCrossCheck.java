@@ -22,9 +22,12 @@ import java.util.stream.Collectors;
  */
 public class SitesExistCrossCheck implements ClinicalDataCrossCheck {
 
+    public static final String EMPTY_SITE_DENOTATION = "";
+
     @Override
     public ValidationErrorMessage getCorrespondingError(List<ClinicalData> data, MetaData metaData, Map<ClinicalData, ItemDefinition> itemDefMap, List<StudySubjectWithEventsType> studySubjectWithEventsTypeList, Map<ClinicalData, Boolean> shownMap, Map<String, Set<CRFDefinition>> eventMap) {
         Set<String> siteNamesPresentInStudy = new HashSet<>();
+        siteNamesPresentInStudy.add(EMPTY_SITE_DENOTATION);
         metaData.getSiteDefinitions().stream().forEach(siteDefinition -> siteNamesPresentInStudy.add(siteDefinition.getName()));
         List<ClinicalData> violators = data.stream()
                 .filter(clinicalData -> !siteNamesPresentInStudy.contains(clinicalData.getSite()))

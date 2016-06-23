@@ -21,10 +21,12 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
+import static nl.thehyve.ocdu.TestUtils.incorrectEventStatusExample;
 import static org.hamcrest.Matchers.*;
 import static org.hamcrest.core.Is.isA;
 import static org.hamcrest.core.IsCollectionContaining.hasItem;
@@ -252,7 +254,7 @@ public class ClinicalDataOcChecksTests {
         metaData.setStatus("whatever");
         ValidationErrorMessage correspondingError = statusCheck.getCorrespondingError(null, metaData, null, null, null, null);
         assertThat(correspondingError, is(notNullValue()));
-        assertThat(correspondingError, is(instanceOf(StudyStatusError.class)) );
+        assertThat(correspondingError, is(instanceOf(StudyStatusError.class)));
     }
 
     @Test
@@ -262,5 +264,25 @@ public class ClinicalDataOcChecksTests {
         List<ValidationErrorMessage> errors = validator.getErrors();
         assertEquals(1, errors.size());
         assertThat(errors, hasItem(isA(CRFDoesNotExist.class)));
+    }
+
+    @Test
+    public void eventStatusCheck() throws Exception {
+        File testFile = new File("docs/responseExamples/getStudyMetadata3.xml");
+        FileInputStream in = new FileInputStream(testFile);
+        MessageFactory messageFactory = MessageFactory.newInstance();
+        SOAPMessage mockedResponseGetMetadata = messageFactory.createMessage(null, in);//soapMessage;
+        MetaData crfVersionMetaData = GetStudyMetadataResponseHandler.parseGetStudyMetadataResponse(mockedResponseGetMetadata);
+        List<StudySubjectWithEventsType> incorrectEventStatus = incorrectEventStatusExample();
+        List<ClinicalData> incorrectData = new ArrayList<>();
+        ClinicalData dPoint = new ClinicalData("Eventful", "age", "ssid1",
+                "RepeatingEvent", 1, "MUST-FOR_NON_TTP_STUDY", null, "0.08", null, null, "12");
+        incorrectData.add(dPoint);
+        clinicalDataOcChecks = new ClinicalDataOcChecks(crfVersionMetaData, incorrectData, incorrectEventStatus);
+        in.close();
+        List<ValidationErrorMessage> errors = clinicalDataOcChecks.getErrors();
+        assertThat(errors, hasSize(2));
+        assertThat(errors, hasItem(isA(EventStatusNotAllowed.class)));
+        assertThat(errors, hasItem(isA(MandatoryItemInCrfMissing.class)));
     }
 }

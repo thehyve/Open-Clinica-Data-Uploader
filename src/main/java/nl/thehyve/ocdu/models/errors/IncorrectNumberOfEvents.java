@@ -5,6 +5,6 @@ package nl.thehyve.ocdu.models.errors;
  */
 public class IncorrectNumberOfEvents extends ValidationErrorMessage {
     public IncorrectNumberOfEvents() {
-        super("Only one event is allowed per data file.");
+        super("One (and only one) event is allowed per data file.");
     }
 }

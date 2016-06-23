@@ -38,6 +38,7 @@ public class ClinicalDataOcChecks extends ClinicalDataChecksRunner{
         crossChecks.add(new HiddenTogglePresent());
         crossChecks.add(new ItemGroupRepeat());
         crossChecks.add(new DataFieldWidthCheck());
+        crossChecks.add(new EventStatusCheck());
 
         this.setChecks(crossChecks);
     }

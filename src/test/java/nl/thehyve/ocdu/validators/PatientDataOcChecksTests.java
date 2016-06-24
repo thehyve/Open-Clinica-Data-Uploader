@@ -206,12 +206,17 @@ public class PatientDataOcChecksTests {
         int notRequired = 3;
         metaData.setBirthdateRequired(notRequired);
         Subject subjectWithDOB = new Subject();
+        Subject subjectWithDOBFull = new Subject();
+        subjectWithDOBFull.setDateOfBirth("01-JUN-2000");
         subjectWithDOB.setDateOfBirth("1997");
         DateOfBirthPatientDataCheck check = new DateOfBirthPatientDataCheck();
         int bogusLineNumber = 1;
         ValidationErrorMessage error = check.getCorrespondingError(bogusLineNumber, subjectWithDOB, metaData);
+        ValidationErrorMessage errorFullYear = check.getCorrespondingError(bogusLineNumber, subjectWithDOBFull, metaData);
         assertThat(error, is(notNullValue()));
         assertThat(error.getMessage(), containsString("Date of birth submission is not allowed by the study protocol"));
+        assertThat(errorFullYear.getMessage(), is(notNullValue()));
+        assertThat(errorFullYear.getMessage(), containsString("Date of birth submission is not allowed by the study protocol"));
     }
 
 }

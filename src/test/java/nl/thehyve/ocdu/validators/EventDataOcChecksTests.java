@@ -3,6 +3,7 @@ package nl.thehyve.ocdu.validators;
 import nl.thehyve.ocdu.models.OCEntities.Event;
 import nl.thehyve.ocdu.models.OcDefinitions.EventDefinition;
 import nl.thehyve.ocdu.models.OcDefinitions.MetaData;
+import nl.thehyve.ocdu.models.OcDefinitions.ProtocolFieldRequirementSetting;
 import nl.thehyve.ocdu.models.OcDefinitions.SiteDefinition;
 import nl.thehyve.ocdu.models.errors.ValidationErrorMessage;
 import org.junit.Before;
@@ -392,4 +393,53 @@ public class EventDataOcChecksTests {
         event.setRepeatNumber("2");
         event.setLocation("Test Location");
     }
+
+    @Test
+    public void locationBannedTest() throws Exception {
+        metadata.setLocationRequirementSetting(ProtocolFieldRequirementSetting.BANNED);
+        List<Event> events = new ArrayList<>();
+        events.add(event);
+        EventDataOcChecks checks = new EventDataOcChecks(metadata, events);
+        List<ValidationErrorMessage> errors = checks.getErrors();
+        assertThat(errors, notNullValue());
+        assertThat(errors, hasSize(1));
+        assertThat(errors.get(0).getMessage(), containsString("Location is not allowed in this study") );
+    }
+
+    @Test
+    public void locationRequiredTest() throws Exception {
+        metadata.setLocationRequirementSetting(ProtocolFieldRequirementSetting.MANDATORY);
+        List<Event> events = new ArrayList<>();
+        event.setLocation("");
+        events.add(event);
+        EventDataOcChecks checks = new EventDataOcChecks(metadata, events);
+        List<ValidationErrorMessage> errors = checks.getErrors();
+        assertThat(errors, notNullValue());
+        assertThat(errors, hasSize(1));
+        assertThat(errors.get(0).getMessage(), containsString("Location is required") );
+    }
+
+    @Test
+    public void locationOptionalEmptyTest() throws Exception {
+        metadata.setLocationRequirementSetting(ProtocolFieldRequirementSetting.OPTIONAL);
+        List<Event> events = new ArrayList<>();
+        event.setLocation("");
+        events.add(event);
+        EventDataOcChecks checks = new EventDataOcChecks(metadata, events);
+        List<ValidationErrorMessage> errors = checks.getErrors();
+        assertThat(errors, notNullValue());
+        assertThat(errors, hasSize(0));
+    }
+
+    @Test
+    public void locationOptionalFilledTest() throws Exception {
+        metadata.setLocationRequirementSetting(ProtocolFieldRequirementSetting.OPTIONAL);
+        List<Event> events = new ArrayList<>();
+        events.add(event);
+        EventDataOcChecks checks = new EventDataOcChecks(metadata, events);
+        List<ValidationErrorMessage> errors = checks.getErrors();
+        assertThat(errors, notNullValue());
+        assertThat(errors, hasSize(0));
+    }
+
 }

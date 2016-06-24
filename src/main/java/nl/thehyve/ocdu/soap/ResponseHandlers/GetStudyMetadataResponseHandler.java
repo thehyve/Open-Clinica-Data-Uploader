@@ -91,7 +91,33 @@ public class GetStudyMetadataResponseHandler extends OCResponseHandler {
         metaData.setGenderRequired(parseGenderRequired(odm, studyRequirementPath));
         metaData.setBirthdateRequired(parseDateOfBirthRequired(odm, studyRequirementPath));
         metaData.setStatus(studyStatus);
+        Node studyRequirements = (Node) xpath.evaluate(studyRequirementPath , odm, XPathConstants.NODE);
+        metaData.setLocationRequirementSetting(getLocationRequirements(studyRequirements));
         return metaData;
+    }
+
+    private static ProtocolFieldRequirementSetting getLocationRequirements(Node studyRequirements) throws XPathExpressionException {
+        NodeList stdyParams = (NodeList) xpath.evaluate(".//*[local-name()='StudyParameterListRef']",
+                studyRequirements, XPathConstants.NODESET);
+            for (int j = 0; j < stdyParams.getLength(); j++) {
+                Node config_child = stdyParams.item(j);
+                NamedNodeMap attrs = config_child.getAttributes();
+                if (attrs != null) {
+                    Node listID_attr = attrs.getNamedItem("StudyParameterListID");
+                    if (listID_attr != null && listID_attr.getNodeValue().equals("SPL_eventLocationRequired")) {
+                        Node value_attr = attrs.getNamedItem("Value");
+                        String isLocationRequired = value_attr.getNodeValue();
+                        if (isLocationRequired.equals("not_used")) {
+                            return ProtocolFieldRequirementSetting.BANNED;
+                        } else if (isLocationRequired.equals("required")) {
+                            return ProtocolFieldRequirementSetting.MANDATORY;
+                        } else if (isLocationRequired.equals("optional")) {
+                            return ProtocolFieldRequirementSetting.OPTIONAL;
+                        }
+                    }
+                }
+            }
+        return ProtocolFieldRequirementSetting.OPTIONAL;
     }
 
     private static String parseStudyStatus(Node studyDescNode) throws XPathExpressionException {

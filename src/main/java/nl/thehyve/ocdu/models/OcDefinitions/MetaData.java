@@ -145,4 +145,14 @@ public class MetaData {
     public String getStatus() {
         return status;
     }
+
+    public void setLocationRequirementSetting(ProtocolFieldRequirementSetting protocolFieldRequirementSetting) {
+        this.locationRequirementSetting = protocolFieldRequirementSetting;
+    }
+
+    public ProtocolFieldRequirementSetting getLocationRequirementSetting() {
+        return locationRequirementSetting;
+    }
+
+    private ProtocolFieldRequirementSetting locationRequirementSetting = ProtocolFieldRequirementSetting.OPTIONAL;
 }

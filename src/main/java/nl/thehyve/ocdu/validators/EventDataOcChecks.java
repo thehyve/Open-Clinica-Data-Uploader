@@ -4,6 +4,7 @@ package nl.thehyve.ocdu.validators;
 import nl.thehyve.ocdu.models.OCEntities.Event;
 import nl.thehyve.ocdu.models.OcDefinitions.EventDefinition;
 import nl.thehyve.ocdu.models.OcDefinitions.MetaData;
+import nl.thehyve.ocdu.models.OcDefinitions.ProtocolFieldRequirementSetting;
 import nl.thehyve.ocdu.models.OcDefinitions.SiteDefinition;
 import nl.thehyve.ocdu.models.errors.ValidationErrorMessage;
 import org.apache.commons.lang3.StringUtils;
@@ -134,6 +135,19 @@ public class EventDataOcChecks {
                     "It has not to exceed " + LOCATION_STRING_MAX_LENGTH + " character in length.");
             locationTooLong.addOffendingValue(event.getLocation());
             errors.add(locationTooLong);
+        }
+
+        if (StringUtils.isNotBlank(event.getLocation()) &&
+                metadata.getLocationRequirementSetting().equals(ProtocolFieldRequirementSetting.BANNED) ) {
+                ValidationErrorMessage locationBannedButPresent = new ValidationErrorMessage("Location is not " +
+                        "allowed in this study, remove the column or leave fields empty");
+                errors.add(locationBannedButPresent);
+        }
+        if (StringUtils.isBlank(event.getLocation()) &&
+                metadata.getLocationRequirementSetting().equals(ProtocolFieldRequirementSetting.MANDATORY)) {
+            ValidationErrorMessage locationRequiredButAbsent = new ValidationErrorMessage("Location is " +
+                    "required in this study, but one or more of events in your file lack it");
+            errors.add(locationRequiredButAbsent);
         }
 
         Optional<Date> startDateOpt = Optional.empty();

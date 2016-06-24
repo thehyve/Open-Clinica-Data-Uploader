@@ -27,7 +27,7 @@ public class MetaData {
     private List<CodeListDefinition> codeListDefinitions;
 
     @OneToMany(targetEntity = SiteDefinition.class, cascade = CascadeType.ALL)
-    private List<SiteDefinition> siteDefinitions;
+    private List<SiteDefinition> siteDefinitions = new ArrayList<>();
     private String status;
 
     public void addEventDefinition(EventDefinition eventDef) {

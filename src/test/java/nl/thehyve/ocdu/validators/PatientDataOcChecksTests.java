@@ -15,8 +15,7 @@ import java.io.FileInputStream;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.hamcrest.Matchers.containsString;
-import static org.hamcrest.Matchers.empty;
+import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertThat;
 
@@ -185,6 +184,34 @@ public class PatientDataOcChecksTests {
         ValidationErrorMessage error = check.getCorrespondingError(0, subject, metadata);
         assertNull(error);
 
+    }
+
+    @Test
+    public void bannedGenderTest() throws Exception {
+        MetaData metaData = new MetaData();
+
+        metaData.setGenderRequired(false);
+        Subject subjectWithGender = new Subject();
+        subjectWithGender.setGender("m");
+        GenderPatientDataCheck check = new GenderPatientDataCheck();
+        int bogusLineNumber = 1;
+        ValidationErrorMessage error = check.getCorrespondingError(bogusLineNumber, subjectWithGender, metaData);
+        assertThat(error, is(notNullValue()));
+        assertThat(error.getMessage(), containsString("It is not allowed to upload gender by the study protocol"));
+    }
+
+    @Test
+    public void bannedDobTest() throws Exception {
+        MetaData metaData = new MetaData();
+        int notRequired = 3;
+        metaData.setBirthdateRequired(notRequired);
+        Subject subjectWithDOB = new Subject();
+        subjectWithDOB.setDateOfBirth("1997");
+        DateOfBirthPatientDataCheck check = new DateOfBirthPatientDataCheck();
+        int bogusLineNumber = 1;
+        ValidationErrorMessage error = check.getCorrespondingError(bogusLineNumber, subjectWithDOB, metaData);
+        assertThat(error, is(notNullValue()));
+        assertThat(error.getMessage(), containsString("Date of birth submission is not allowed by the study protocol"));
     }
 
 }

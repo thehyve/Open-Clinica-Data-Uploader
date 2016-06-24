@@ -19,7 +19,7 @@ public class SiteDefinition {
     private String name;
 
     private boolean genderRequired = true;
-
+    //TODO: refactor birthdateRequired into Enumeration
     /*
      * 1. yes, required
      * 2. only year of birth

@@ -36,23 +36,24 @@ public class DateOfBirthPatientDataCheck implements PatientDataCheck {
 
         ValidationErrorMessage error = null;
         String dob = subject.getDateOfBirth();
-        if (!StringUtils.isBlank(dob) || DOBrequired < 3) {
+        if (!StringUtils.isBlank(dob) && DOBrequired == 3) { // 3 means not required
+            error = new ValidationErrorMessage(commonMessage + "Date of birth submission is not allowed by the study protocol");
+            error.addOffendingValue("Date of Birth: " + subject.getDateOfBirth());
+        } else if (!StringUtils.isBlank(dob) || DOBrequired < 3) {
             String msg = null;
             if (DOBrequired == 1) {//FULL DATE
                 msg = checkFullDate(dob);
-            } else if(DOBrequired == 2) { // YEAR ONLY
+            } else if (DOBrequired == 2) { // YEAR ONLY
                 msg = checkYearOnly(dob);
-            }
-            else { // DOBrequired == 3, but the string of dob is not empty
-                if(dob.length() == 4) {
+            } else { // DOBrequired == 3, but the string of dob is not empty
+                if (dob.length() == 4) {
                     msg = checkYearOnly(dob);
-                }
-                else{
+                } else {
                     msg = checkFullDate(dob);
                 }
             }
 
-            if(msg != null) {
+            if (msg != null) {
                 error = new ValidationErrorMessage(commonMessage + msg);
                 error.addOffendingValue("Date of Birth: " + subject.getDateOfBirth());
             }

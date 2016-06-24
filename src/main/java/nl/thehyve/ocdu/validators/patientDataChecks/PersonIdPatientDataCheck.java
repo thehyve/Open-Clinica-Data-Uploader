@@ -20,7 +20,7 @@ public class PersonIdPatientDataCheck implements PatientDataCheck {
         String personId = subject.getPersonId();
 
         if (!StringUtils.isBlank(personId)) {
-            error = new ValidationErrorMessage(commonMessage + "Person ID is not needed. ");
+            error = new ValidationErrorMessage(commonMessage + "Person ID is not allowed during registration via web services. Please delete this column from your file or leave the fields empty ");
         }
 
         if(error != null) {

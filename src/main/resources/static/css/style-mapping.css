@@ -1,91 +1,136 @@
-.node {
-    cursor: pointer;
+
+body, html {
+    margin: 0;
+    overflow: hidden;
+    height:100%;
 }
 
-.overlay{
-    background-color:#EEE;
+hr {
+    display: block;
+    height: 1px;
+    border: 0;
+    border-top: 1px solid #ccc;
+    margin-top: 1px;
+    margin-bottom: 1px;
+    margin-left: -9px;
+    margin-right: -3px;
 }
 
-.nodeCircle {
-    /*fill: steelblue;*/
-    stroke: steelblue;
-    stroke-width: 2px;
+.oc-label-item {
+    margin-top: 2px;
+    margin-bottom: 2px;
+    height: 26px;
+    font-family: Georgia;
+    font-size: 17px;
+    display: block;
+    border-radius: 10px;
+    text-align: right;
+    vertical-align: top;
 }
 
-.nodeRect {
-    stroke: steelblue;
-    stroke-width: 2px;
+.oc-item {
+    /*margin-left: -20px;*/
+    margin-top: 2px;
+    margin-bottom: 2px;
+    height: 26px;
+    font-family: Georgia;
+    font-size: 17px;
+    font-weight: bold;
+    vertical-align: top;
+    display: block;
+    border-style: dotted;
+    border-color: grey;
+    stroke-opacity: 0.5;
+    border-radius: 6px;
+    text-align: left;
 }
 
-.nodeShape {
-    stroke: steelblue;
-    stroke-width: 2px;
-    stroke-opacity: .3;
-    fill-opacity: .7;
+.usr-item {
+    /*margin-left: 5px;*/
+    margin-top: 2px;
+    margin-bottom: 2px;
+    height: 26px;
+    font-family: Georgia;
+    font-size: 17px;
+    display: block;
+    border-radius: 6px;
+    text-align: left;
+    vertical-align: top;
 }
 
-.itemRect {
-    fill: white;
-    fill-opacity: .9;
-    stroke: steelblue ;
-    stroke-width: 1.5px;
-    stroke-opacity: .3;
-    /*font-family: "Courier";*/
+.all-col {
+    min-width: 600px;
+    min-height: 600px;
+    width: 1050px;
+    height: 200px;
+}
+.left-col {
+    width: 60%;
+    height: 90%;
+    float: left;
+    border-color: steelblue;
+    padding: 1px;
+    overflow-x: hidden;
+    overflow-y: scroll;
+}
+.right-col {
+
+    width: 30%;
+    height: 90%;
+    border-color: steelblue;
+    padding: 1px;
+    float: left;
+    overflow-x: hidden;
+    overflow-y: scroll;
 }
 
-.highlighted {
-    stroke: red;
-    stroke-width: 5px;
-    stroke-opacity: .6;
+.left-col-heading {
+    width: 60%;
+    height: 5%;
+    float: left;
+    padding: 1px;
+    font-family: Georgia;
+    font-size: 20px;
+    color: grey;
+    text-align: center;
 }
 
-.node text {
-    font-size:15px;
-    font-family:sans-serif;
+.right-col-heading {
+    width: 30%;
+    height: 5%;
+    padding: 1px;
+    float: left;
+    font-family: Georgia;
+    font-size: 20px;
+    color: grey;
 }
 
-.link {
-    fill: none;
-    stroke: #C0C0C0 ;
-    stroke-width: 1.5px;
-    stroke-opacity: .7;
+.oc-label-col {
+    width: 49%;
+    float: left;
+}
+.oc-col {
+    width: 49%;
+    padding-left: 3px;
+    float: left;
 }
 
-.connector {
-    fill: lightgrey;
-    stroke: grey;
+input.oc-filter {
+    width: 35%;
+    float: left;
 }
 
-.connector:hover {
-    stroke: orange;
-}
-
-.usritem {
-    cursor: pointer;
-}
-
-.usritem rect {
-    fill: LightSteelBlue;
-    fill-opacity: .5;
-    stroke: darkgrey;
-    stroke-width: 1;
-}
-
-.usritem text {
-    /*text-anchor: middle;*/
-    /*alignment-baseline: central;*/
-    font-size:15px;
-    font-family:sans-serif;
+input.usr-filter {
+    width: 70%;
+    float: right;
 }
 
 div.tooltip {
-    font-size: 30;
     position: absolute;
     text-align: center;
     float: left;
     padding: 3px;
     margin: 3px;
-    font: 12px sans-serif;
     background: white;
     border: 0px;
     border-radius: 5px;

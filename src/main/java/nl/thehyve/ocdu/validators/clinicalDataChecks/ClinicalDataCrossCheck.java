@@ -5,6 +5,7 @@ import nl.thehyve.ocdu.models.OcDefinitions.ItemDefinition;
 import nl.thehyve.ocdu.models.OcDefinitions.MetaData;
 import nl.thehyve.ocdu.models.OCEntities.ClinicalData;
 import nl.thehyve.ocdu.models.errors.ValidationErrorMessage;
+import org.apache.commons.lang3.time.DateUtils;
 import org.openclinica.ws.beans.StudySubjectWithEventsType;
 
 import java.text.DateFormat;
@@ -30,18 +31,40 @@ public interface ClinicalDataCrossCheck {
         format.setLenient(false);
         try {
             Date date = format.parse(input);
+            String[] split = input.split("-");
+            Integer day = Integer.parseInt(split[2]);
+            Integer month = Integer.parseInt(split[1]);
+            if (day > 31 || month > 12) return false;
         } catch (ParseException e) {
             return false;
         }
         return true;
     }
 
+    /**
+     *  Should not be used directly - when this interface is refactored into a class this should be a private method
+     * @param input
+     * @return
+     */
+    default boolean isDateString(String input) {
+        String[] split = input.split("-");
+        if (split.length > 3) return false; //TODO: look for a lib maybe in Apache Commons to do Date Validation
+        if (!input.matches(".*[0-9]{4}$")) return false; // contains 4 digits at the end
+        if (input.matches("[0-9]{1,2}-.*")) { // if starts with days, then days cannot exceed 31
+            String s = split[0];
+            Integer day = Integer.parseInt(s);
+            if (day > 31) return false;
+        }
+        return true;
+    }
+
     default boolean isPDate(String input) {
-        DateFormat format1 = new SimpleDateFormat("DD-MMM-YYYY", Locale.ENGLISH);
+        if (!isDateString(input)) return false;
+        DateFormat format1 = new SimpleDateFormat("dd-MMM-yyyy", Locale.ENGLISH);
         format1.setLenient(false);
-        DateFormat format2 = new SimpleDateFormat("MMM-YYYY", Locale.ENGLISH);
+        DateFormat format2 = new SimpleDateFormat("MMM-yyyy", Locale.ENGLISH);
         format2.setLenient(false);
-        DateFormat format3 = new SimpleDateFormat("YYYY", Locale.ENGLISH);
+        DateFormat format3 = new SimpleDateFormat("yyyy", Locale.ENGLISH);
         format3.setLenient(false);
         boolean format1correct = true;
         boolean format2correct = true;
@@ -58,6 +81,7 @@ public interface ClinicalDataCrossCheck {
         }
         try {
             Date date = format3.parse(input);
+            if (input.length() != 4) format3correct = false;
         } catch (ParseException e) {
             format3correct = false;
         }

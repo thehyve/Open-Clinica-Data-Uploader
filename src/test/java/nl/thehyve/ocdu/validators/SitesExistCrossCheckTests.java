@@ -26,7 +26,7 @@ public class SitesExistCrossCheckTests {
     @Test
     public void testSiteExistValidationAllSitesOK() {
         SiteDefinition siteDefinition = new SiteDefinition();
-        siteDefinition.setName("Wrong site");
+        siteDefinition.setUniqueID("Wrong site");
         metaData.getSiteDefinitions().add(siteDefinition);
 
         SitesExistCrossCheck sitesExistCrossCheck = new SitesExistCrossCheck();
@@ -49,17 +49,17 @@ public class SitesExistCrossCheckTests {
     public void setUp() throws Exception {
         clinicalDataList = new ArrayList<>();
         //public ClinicalData(String study, String item, String ssid, String eventName, Integer eventRepeat, String crfName, UploadSession submission, String crfVersion, Integer groupRepeat, OcUser owner, String value) {
-        ClinicalData data = new ClinicalData("HematologyStudySeven", "bloodpressure", "Subject_0001", "FUP", 1, "BaseLine-FUP", null, "0.5", 1, null, "80/120");
-        data.setSite("Wrong site");
-        clinicalDataList.add(data);
+        ClinicalData data1 = new ClinicalData("HematologyStudySeven", "bloodpressure", "Subject_0001", "FUP", 1, "BaseLine-FUP", null, "0.5", 1, null, "80/120");
+        data1.setSite("Wrong site");
+        clinicalDataList.add(data1);
 
-        data = new ClinicalData("HematologyStudySeven", "bloodpressure", "Subject_0002", "FUP", 1, "BaseLine-FUP", null, "0.5", 1, null, "80/120");
-        data.setSite("Correct site");
-        clinicalDataList.add(data);
+        ClinicalData data2 = new ClinicalData("HematologyStudySeven", "bloodpressure", "Subject_0002", "FUP", 1, "BaseLine-FUP", null, "0.5", 1, null, "80/120");
+        data2.setSite("Correct site");
+        clinicalDataList.add(data2);
 
         List<SiteDefinition> siteDefinitionList = new ArrayList<>();
         SiteDefinition siteDefinition = new SiteDefinition();
-        siteDefinition.setName("Correct site");
+        siteDefinition.setUniqueID("Correct site");
         siteDefinitionList.add(siteDefinition);
         metaData = new MetaData();
         metaData.setSiteDefinitions(siteDefinitionList);

@@ -241,37 +241,6 @@ public class ClinicalData implements OcEntity, UserSubmitted, EventReference {
     }
 
     /**
-     * creates a key to filter a list for all events present in a list of {@link ClinicalData}.
-     * @return a key uniquely identifying an event
-     */
-    public String createEventKey(String eventOID) {
-        StringBuffer ret = new StringBuffer();
-        ret.append(study);
-        ret.append(site);
-        ret.append(ssid);
-        ret.append(eventOID);
-        ret.append(eventRepeat);
-        return ret.toString().toUpperCase();
-    }
-
-
-    public EventType createEventType(Map<String, String> eventNameOIDMap) {
-        EventType ret = new EventType();
-        StudyRefType studyRefType = new StudyRefType();
-        studyRefType.setIdentifier(study);
-        SiteRefType siteRefType = new SiteRefType();
-        siteRefType.setIdentifier(site);
-        studyRefType.setSiteRef(siteRefType);
-        ret.setStudyRef(studyRefType);
-        String eventOID = eventNameOIDMap.get(eventName);
-        if (StringUtils.isEmpty(eventOID)) {
-            throw new IllegalStateException("No eventOID found for the event with name " + eventName);
-        }
-        ret.setEventDefinitionOID(eventName);
-        return ret;
-    }
-
-    /**
      * returns <code>true</code> if the event defined in {@param studySubjectWithEventsType} is
      * present present in this ClinicalData.
      * @param studySubjectWithEventsType

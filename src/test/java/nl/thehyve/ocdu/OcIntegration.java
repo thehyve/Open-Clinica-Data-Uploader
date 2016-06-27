@@ -86,7 +86,7 @@ public class OcIntegration {
         s1.setGender("m");
         Collection<Subject> subjects = new ArrayList<>();
         subjects.add(s1);
-        boolean b = openClinicaService.registerPatients(user, sha1hexDigest, ocUrl, subjects);
-        assertTrue(b); // true if successful
+        String result = openClinicaService.registerPatients(user, sha1hexDigest, ocUrl, subjects);
+        assertTrue("".equals(result)); // true if successful
     }
 }

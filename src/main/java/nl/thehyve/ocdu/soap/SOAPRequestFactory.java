@@ -5,8 +5,10 @@ import nl.thehyve.ocdu.models.OCEntities.Study;
 import nl.thehyve.ocdu.models.OCEntities.Subject;
 import nl.thehyve.ocdu.soap.SOAPRequestDecorators.*;
 import nl.thehyve.ocdu.soap.SOAPRequestFactories.CreateSubjectRequestFactory;
+import org.apache.commons.lang3.StringUtils;
 import org.openclinica.ws.beans.EventType;
 import org.openclinica.ws.beans.ListStudySubjectsInStudyType;
+import org.openclinica.ws.beans.SiteRefType;
 import org.openclinica.ws.beans.StudyRefType;
 import org.openclinica.ws.studysubject.v1.CreateRequest;
 import org.openclinica.ws.studysubject.v1.ObjectFactory;
@@ -85,12 +87,17 @@ public class SOAPRequestFactory {
     }
 
 
-    public SOAPMessage createListAllByStudy(String userName, String passwordHash, Study study) throws Exception {
+    public SOAPMessage createListAllByStudy(String userName, String passwordHash, String studyIdentifier, String siteIdentifier) throws Exception {
         ObjectFactory objectFactory = new ObjectFactory();
 
         ListStudySubjectsInStudyType listStudySubjectsInStudyType = new ListStudySubjectsInStudyType();
         StudyRefType studyRefType = new StudyRefType();
-        studyRefType.setIdentifier(study.getIdentifier());
+        studyRefType.setIdentifier(studyIdentifier);
+        if (! StringUtils.isEmpty(siteIdentifier)) {
+            SiteRefType siteRefType = new SiteRefType();
+            siteRefType.setIdentifier(siteIdentifier);
+            studyRefType.setSiteRef(siteRefType);
+        }
         listStudySubjectsInStudyType.setStudyRef(studyRefType);
 
         JAXBElement<ListStudySubjectsInStudyType> body = objectFactory.createListAllByStudyRequest(listStudySubjectsInStudyType);

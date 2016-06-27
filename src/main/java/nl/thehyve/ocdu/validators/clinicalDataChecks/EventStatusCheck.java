@@ -45,7 +45,7 @@ public class EventStatusCheck implements ClinicalDataCrossCheck {
     }
 
     private boolean isInvalidStatus(String status) {
-        if (!status.equals("available")) {
+        if (! (status.equals("available") || status.equals("unavailable"))) {
             return true;
         } else return false;
     }

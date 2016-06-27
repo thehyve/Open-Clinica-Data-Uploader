@@ -59,11 +59,11 @@ $('#feedback-tables').append(loadinghtml);
 
 //TODO: connect backend
 $.ajax({
-    // url: baseApp+"/validate/data",
-    // type: "GET",
-    // cache: false,
-    // success: displayMessages,
-    // error: function (jqXHR, textStatus, errorThrown) {
-    //     window.location.href = baseApp + "/views/data";
-    // }
+    url: baseApp+"/validate/events",
+    type: "GET",
+     success: displayMessages,
+     cache: false,
+     error: function (jqXHR, textStatus, errorThrown) {
+     //window.location.href = baseApp + "/views/data";
+    }
 });

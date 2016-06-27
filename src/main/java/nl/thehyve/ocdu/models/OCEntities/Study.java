@@ -2,39 +2,38 @@ package nl.thehyve.ocdu.models.OCEntities;
 
 import nl.thehyve.ocdu.models.OcDefinitions.ODMElement;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
+
 /**
  * Created by piotrzakrzewski on 15/04/16.
  */
-public class Study implements ODMElement {
+public class Study extends AbstractStudySiteBase implements ODMElement {
 
-    private final String identifier;
-    private final  String oid;
-    private final String name;
+    private List<Site> siteList = new ArrayList<>();
 
     public Study(String identifier, String oid, String name) {
-        this.identifier = identifier;
-        this.oid = oid;
-        this.name = name;
+        super(identifier, oid, name);
     }
 
-    public String getIdentifier() {
-        return identifier;
+    public List<Site> getSiteList() {
+        return siteList;
     }
 
-    public String getOid() {
-        return oid;
-    }
-
-    public String getName() {
-        return name;
+    public void addSite(Site site) {
+        siteList.add(site);
     }
 
     @Override
     public String toString() {
+        String sites = siteList.stream()
+                                .map(Object::toString)
+                                .collect(Collectors.joining("{",",","}"));
         return "Study{" +
                 "identifier='" + identifier + '\'' +
                 ", oid='" + oid + '\'' +
                 ", name='" + name + '\'' +
-                '}';
+                '}' + sites;
     }
 }

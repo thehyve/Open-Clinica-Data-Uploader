@@ -9,6 +9,7 @@ import nl.thehyve.ocdu.models.UploadSession;
 import nl.thehyve.ocdu.models.errors.*;
 import nl.thehyve.ocdu.soap.ResponseHandlers.GetStudyMetadataResponseHandler;
 import nl.thehyve.ocdu.validators.clinicalDataChecks.ClinicalDataCrossCheck;
+import nl.thehyve.ocdu.validators.clinicalDataChecks.SitesExistCrossCheck;
 import nl.thehyve.ocdu.validators.clinicalDataChecks.StudyStatusAvailable;
 import nl.thehyve.ocdu.validators.fileValidators.DataPreMappingValidator;
 import org.junit.Before;
@@ -262,8 +263,9 @@ public class ClinicalDataOcChecksTests {
         List<ClinicalData> incorrectClinicalData = factory.createClinicalData(testFileNonExistentCRF);
         DataPreMappingValidator validator = new DataPreMappingValidator(metaData, incorrectClinicalData, Collections.emptyList());
         List<ValidationErrorMessage> errors = validator.getErrors();
-        assertEquals(1, errors.size());
+        assertEquals(2, errors.size());
         assertThat(errors, hasItem(isA(CRFDoesNotExist.class)));
+        assertThat(errors, hasItem(isA(SiteDoesNotExist.class)));
     }
 
     @Test

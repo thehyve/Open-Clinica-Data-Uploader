@@ -6,6 +6,8 @@ import nl.thehyve.ocdu.validators.ClinicalDataChecksRunner;
 import nl.thehyve.ocdu.validators.clinicalDataChecks.ClinicalDataCrossCheck;
 import nl.thehyve.ocdu.validators.clinicalDataChecks.CrfCouldNotBeVerifiedCrossCheck;
 import nl.thehyve.ocdu.validators.clinicalDataChecks.CrfExistsCrossCheck;
+import nl.thehyve.ocdu.validators.clinicalDataChecks.SiteSubjectMatchCrossCheck;
+import nl.thehyve.ocdu.validators.clinicalDataChecks.SitesExistCrossCheck;
 import nl.thehyve.ocdu.validators.clinicalDataChecks.StudyStatusAvailable;
 import org.openclinica.ws.beans.StudySubjectWithEventsType;
 
@@ -21,6 +23,8 @@ public class DataPreMappingValidator extends ClinicalDataChecksRunner {
     public DataPreMappingValidator(MetaData metadata, List<ClinicalData> clinicalData, List<StudySubjectWithEventsType> subjectWithEventsTypes) {
         super(metadata, clinicalData, subjectWithEventsTypes);
         Collection<ClinicalDataCrossCheck> checks = new ArrayList<>();
+        checks.add(new SitesExistCrossCheck());
+        checks.add(new SiteSubjectMatchCrossCheck());
         checks.add(new CrfExistsCrossCheck());
         checks.add(new StudyStatusAvailable());
         checks.add(new CrfCouldNotBeVerifiedCrossCheck());

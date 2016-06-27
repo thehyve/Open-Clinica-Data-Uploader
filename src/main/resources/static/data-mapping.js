@@ -424,6 +424,10 @@ $(function () {
     function init() {
         test();
         build_oc_list();
+        //disable "Apply the mapping file" button if MAPPING_FILE_ENABLED (config.js) is false
+        if(!MAPPING_FILE_ENABLED) {
+            $('#apply-map-btn').hide();
+        }
     }
 
     function stepback() {

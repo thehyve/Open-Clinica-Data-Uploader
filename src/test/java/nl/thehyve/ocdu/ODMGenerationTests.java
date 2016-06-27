@@ -69,7 +69,7 @@ public class ODMGenerationTests {
     }
 
     @Test
-    public void testODMGeneration() throws Exception {
+    public void testODMGenerationXMLEscaping() throws Exception {
         List<ClinicalData> correctClinicalData = factory.createClinicalData(testODMGenerationCorrect);
         clinicalDataOcChecks = new ClinicalDataOcChecks(metaData, correctClinicalData, testSubjectWithEventsTypeList);
         ODMService odmService = new ODMService();
@@ -78,5 +78,17 @@ public class ODMGenerationTests {
         subjectLabelToOIDMap.put("EV-00002", "SS_EV00002");
         String result = odmService.generateODM(correctClinicalData, metaData, "Data Entry Complete", subjectLabelToOIDMap);
         assertEquals(true, result.contains("c&quot;a&apos;r&lt;o&amp;t&gt;is"));
+    }
+
+    @Test
+    public void testODMGenerationItemGroupGeneration() throws Exception {
+        List<ClinicalData> correctClinicalData = factory.createClinicalData(testODMGenerationCorrect);
+        clinicalDataOcChecks = new ClinicalDataOcChecks(metaData, correctClinicalData, testSubjectWithEventsTypeList);
+        ODMService odmService = new ODMService();
+        Map<String, String> subjectLabelToOIDMap = new HashMap<>();
+        subjectLabelToOIDMap.put("EV-00001", "SS_EV00001");
+        subjectLabelToOIDMap.put("EV-00002", "SS_EV00002");
+        String result = odmService.generateODM(correctClinicalData, metaData, "Data Entry Complete", subjectLabelToOIDMap);
+        assertEquals(true, result.contains("<ItemGroupData ItemGroupOID=\"IG_MUSTF_OCCLUSION_CHARS\""));
     }
 }

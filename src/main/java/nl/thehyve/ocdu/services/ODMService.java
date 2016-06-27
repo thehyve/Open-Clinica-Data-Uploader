@@ -2,6 +2,8 @@ package nl.thehyve.ocdu.services;
 
 import nl.thehyve.ocdu.models.OCEntities.ClinicalData;
 import nl.thehyve.ocdu.models.OcDefinitions.EventDefinition;
+import nl.thehyve.ocdu.models.OcDefinitions.ItemDefinition;
+import nl.thehyve.ocdu.models.OcDefinitions.ItemGroupDefinition;
 import nl.thehyve.ocdu.models.OcDefinitions.MetaData;
 import nl.thehyve.ocdu.soap.SOAPRequestFactory;
 import org.apache.commons.lang3.StringEscapeUtils;
@@ -14,10 +16,13 @@ import org.springframework.stereotype.Service;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.TreeMap;
 import java.util.stream.Collectors;
 
@@ -115,6 +120,7 @@ public class ODMService {
                                          List<ClinicalData> clinicalDataList,
                                          String statusAfterUpload,
                                          Map<String, String> eventNameOIDMap,
+                                         Map<String, String> itemNameOIDMap,
                                          Map<String, String> subjectLabelToOIDMap) {
         // should not be possible but we just to be sure
         if (clinicalDataList.size() == 0) {
@@ -129,6 +135,7 @@ public class ODMService {
         Integer eventRepeatOrdinal = clinicalDataList.get(0).getEventRepeat();
         String crfName = clinicalDataList.get(0).getCrfName();
         String crfVersion = clinicalDataList.get(0).getCrfVersion();
+        String itemGroupOID = clinicalDataList.get(0).getItemGroupOID();
 
         StrBuilder builder = new StrBuilder(ODM_SUBJECT_SECTION);
         builder.replaceAll(STUDY_SUBJECT_PARAM, subjectOID);
@@ -137,10 +144,13 @@ public class ODMService {
         builder.replaceAll(CRF_OID_PARAM, crfName);
         builder.replaceAll(STATUS_AFTER_UPLOAD_PARAM, statusAfterUpload);
         StrBuilder itemDataBuilder = new StrBuilder();
+
+        builder.replaceAll(ITEM_GROUP_PARAM, itemGroupOID);
+
         for (ClinicalData clinicalData : clinicalDataList) {
 
             StrBuilder itemBuilder = new StrBuilder(ODM_ITEM_SECTION);
-            itemBuilder.replaceAll(ITEM_OID_PARAM, StringEscapeUtils.escapeXml(clinicalData.getItem()));
+            itemBuilder.replaceAll(ITEM_OID_PARAM, StringEscapeUtils.escapeXml(itemNameOIDMap.get(clinicalData.getItem())));
             itemBuilder.replaceAll(ITEM_VALUE_PARAM, StringEscapeUtils.escapeXml(clinicalData.getValue()));
             itemDataBuilder.append(itemBuilder);
 
@@ -150,6 +160,19 @@ public class ODMService {
         odmData.append(builder.toStringBuffer());
     }
 
+    private void addItemGroupOID(List<ClinicalData> clinicalDataList, MetaData metaData) {
+        Map<String, String> itemNameItemGroupOIDMap = new HashMap<>();
+        for (ItemGroupDefinition itemGroupDefinition : metaData.getItemGroupDefinitions()) {
+            for (ItemDefinition itemDefinition : itemGroupDefinition.getItems()) {
+                itemNameItemGroupOIDMap.put(itemDefinition.getName(), itemGroupDefinition.getOid());
+            }
+        }
+
+        for (ClinicalData clinicalData : clinicalDataList) {
+            clinicalData.setItemGroupOID(itemNameItemGroupOIDMap.get(clinicalData.getItem()));
+        }
+    }
+
     private StringBuffer buildODM(List<ClinicalData> clinicalDataList, String studyOID, String statusAfterUpload, MetaData metaData, Map<String, String> subjectLabelToOIDMap) throws Exception {
         long startTime = System.currentTimeMillis();
 
@@ -157,10 +180,19 @@ public class ODMService {
         if (clinicalDataList.size() == 0) {
             return odmData;
         }
+
+        addItemGroupOID(clinicalDataList, metaData);
+
         addODMDocumentHeader(studyOID, odmData);
 
         Map<String, String> eventNameOIDMap =
                 metaData.getEventDefinitions().stream().collect(Collectors.toMap(EventDefinition::getName, EventDefinition::getStudyEventOID));
+
+        Set<ItemDefinition> allItemDefinitions = new HashSet<>();
+                metaData.getItemGroupDefinitions().forEach(itemGroupDefinition -> allItemDefinitions.addAll(itemGroupDefinition.getItems()));
+
+        Map<String, String> itemNameOIDMap =
+                allItemDefinitions.stream().collect(Collectors.toMap(ItemDefinition::getName, ItemDefinition::getOid));
 
         Map<String, List<ClinicalData>> outputMap = clinicalDataList.stream().collect(Collectors.groupingBy(ClinicalData::createODMKey,
                 Collectors.toList()));
@@ -168,7 +200,7 @@ public class ODMService {
         TreeMap<String, List<ClinicalData>> sortedMap = new TreeMap<>(outputMap);
         for (String key : sortedMap.keySet()) {
             List<ClinicalData> outputClinicalData = sortedMap.get(key);
-            appendSubjectODMSection(odmData, outputClinicalData, statusAfterUpload, eventNameOIDMap, subjectLabelToOIDMap);
+            appendSubjectODMSection(odmData, outputClinicalData, statusAfterUpload, eventNameOIDMap, itemNameOIDMap, subjectLabelToOIDMap);
         }
 
         addClosingTags(odmData);

@@ -252,6 +252,10 @@ public class ClinicalData implements OcEntity, UserSubmitted, EventReference {
         return ret.toString().toUpperCase();
     }
 
+    public String createODMGroupingKey() {
+        return ssid;
+    }
+
     /**
      * returns <code>true</code> if the event defined in {@param studySubjectWithEventsType} is
      * present present in this ClinicalData.

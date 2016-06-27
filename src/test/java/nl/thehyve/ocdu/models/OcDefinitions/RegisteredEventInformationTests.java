@@ -8,12 +8,14 @@ import org.junit.Test;
 import org.openclinica.ws.beans.EventResponseType;
 import org.openclinica.ws.beans.StudySubjectWithEventsType;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThat;
 
 /**
  * Created by Jacob Rousseau on 20-Jun-2016.
@@ -22,6 +24,8 @@ import static org.junit.Assert.assertEquals;
 public class RegisteredEventInformationTests {
 
     private static List<StudySubjectWithEventsType> studySubjectWithEventsTypeList;
+
+    private static MetaData metaData;
 
     @Test
     public void testEventPresentInOC() {
@@ -33,8 +37,37 @@ public class RegisteredEventInformationTests {
         assertEquals(false, eventsRegisteredInOpenClinica.containsKey("EVENTFULEVENTFULSITEEVS-00001SE_REPEATINGEVENT5"));
     }
 
+    @Test
+    public void testMissingEventPerSubject() {
+        Map<String, List<EventDefinition>> missingEventsInOpenClinicaPerSubject =
+                RegisteredEventInformation.getMissingEventsPerSubject(metaData, studySubjectWithEventsTypeList);
+        List<EventDefinition> missingList = missingEventsInOpenClinicaPerSubject.get("EV-00003");
+        assertEquals(1, missingList.size());
+        assertEquals("SE_EVENTFUL", missingList.get(0).getStudyEventOID());
+
+        missingList = missingEventsInOpenClinicaPerSubject.get("EV-00007");
+        assertEquals(2, missingList.size());
+
+        missingList = missingEventsInOpenClinicaPerSubject.get("EV-00002");
+        assertEquals(0, missingList.size());
+    }
+
     @BeforeClass
     public static void setup() throws Exception {
         studySubjectWithEventsTypeList =  TestUtils.createStudySubjectWithEventList();
+        metaData = new MetaData();
+        EventDefinition eventDefinitionRepeatingEvent = new EventDefinition();
+        eventDefinitionRepeatingEvent.setStudyEventOID("SE_REPEATINGEVENT");
+
+        EventDefinition eventDefinitionEvent = new EventDefinition();
+        eventDefinitionEvent.setStudyEventOID("SE_EVENTFUL");
+
+
+        List<EventDefinition> eventDefinitionList = new ArrayList<>();
+        eventDefinitionList.add(eventDefinitionRepeatingEvent);
+        eventDefinitionList.add(eventDefinitionEvent);
+
+
+        metaData.setEventDefinitions(eventDefinitionList);
     }
 }

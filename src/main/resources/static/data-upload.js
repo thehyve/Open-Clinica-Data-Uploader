@@ -99,7 +99,7 @@ function uploadFile() {
                 } else {
                     var info = '<div class="alert alert-danger"><ul>';
                     fileFormatErrors.forEach(function (error) {
-                        var errDiv = '<li><span>' + error.message + '</span></li>';
+                        var errDiv = '<li><span>' + error.message +': '+ error.offendingValues+'</span></li>';
                         info += errDiv;
                     });
                     info += '</div></ul>';

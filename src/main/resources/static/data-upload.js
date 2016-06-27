@@ -25,7 +25,7 @@ function uploadFile() {
     var mappingFileUpload = function () {
         if (isMappingSelected) {
             //upload the mapping file and direct to mapping view, also enable the mapping button by MAPPING_FILE_ENABLED = true;
-            MAPPING_FILE_ENABLED = true;
+            // MAPPING_FILE_ENABLED = true;
             // var upload_mapping_data = new FormData($("#upload-mapping-form")[0]);
             // $.ajax({
             //     headers: {

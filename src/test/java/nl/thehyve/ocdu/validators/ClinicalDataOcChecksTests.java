@@ -10,6 +10,7 @@ import nl.thehyve.ocdu.models.errors.*;
 import nl.thehyve.ocdu.soap.ResponseHandlers.GetStudyMetadataResponseHandler;
 import nl.thehyve.ocdu.validators.clinicalDataChecks.ClinicalDataCrossCheck;
 import nl.thehyve.ocdu.validators.clinicalDataChecks.DataTypeCrossCheck;
+import nl.thehyve.ocdu.validators.clinicalDataChecks.MandatoryInCrfCrossCheck;
 import nl.thehyve.ocdu.validators.clinicalDataChecks.StudyStatusAvailable;
 import nl.thehyve.ocdu.validators.fileValidators.DataPreMappingValidator;
 import org.junit.Before;
@@ -62,6 +63,7 @@ public class ClinicalDataOcChecksTests {
     Path testFileRepeatInNonrepeatingEvent;
     Path testFileMismatchingCRFVersion;
     Path testFileGroupRepeatError;
+    Path emptyMandatory;
 
     @Before
     public void setUp() throws Exception {
@@ -88,6 +90,7 @@ public class ClinicalDataOcChecksTests {
             this.testFileRepeatInNonrepeatingEvent = Paths.get("docs/exampleFiles/event_repeat.txt");
             this.testFileMismatchingCRFVersion = Paths.get("docs/exampleFiles/mismatchingCrfVersionID.txt");
             this.testFileGroupRepeatError = Paths.get("docs/exampleFiles/group_repeat_error.txt");
+            this.emptyMandatory = Paths.get("docs/exampleFiles/emptyMandatory.txt");
 
             MessageFactory messageFactory = MessageFactory.newInstance();
             File testFile = new File("docs/responseExamples/getStudyMetadata2.xml"); //TODO: Replace File with Path
@@ -319,5 +322,15 @@ public class ClinicalDataOcChecksTests {
         assertThat(check.isDate(invalid4 ), is(false));
         String invalid5 = "2000-13-10";
         assertThat(check.isDate(invalid5 ), is(false));
+    }
+
+    @Test
+    public void ignoredMandatoryItem() throws Exception {
+        List<ClinicalData> incorrectClinicalData = factory.createClinicalData(emptyMandatory);
+        clinicalDataOcChecks = new ClinicalDataOcChecks(metaData, incorrectClinicalData, testSubjectWithEventsTypeList);
+        List<ValidationErrorMessage> errors = clinicalDataOcChecks.getErrors();
+        assertThat(errors, notNullValue());
+        assertThat(errors, hasSize(1));
+        assertThat(errors, hasItem(isA(MandatoryItemInCrfMissing.class)));
     }
 }

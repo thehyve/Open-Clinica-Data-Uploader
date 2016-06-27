@@ -2,7 +2,6 @@
  * Created by bo on 5/12/16.
  */
 
-var contains_site_info_for_missing_paitents = false;
 var to_register_at_site = true;
 var template_str;
 var loading_html;
@@ -25,9 +24,6 @@ function check_new_patients(toRegisterSite) {
             template_str = template;
             if (template.length > 1) {
                 notify_user_that_additional_patient_info_is_required();
-                if (!contains_site_info_for_missing_paitents) {
-                    ask_whether_patients_should_be_registered_at_sites();
-                }
                 provide_template_download();
                 provide_filled_template_upload();
             }
@@ -48,20 +44,6 @@ function notify_user_that_additional_patient_info_is_required() {
     $(html).insertBefore('#subject-back-btn');
 }
 
-function ask_whether_patients_should_be_registered_at_sites() {
-    var html = '<h4>Choose if subjects should be registered at sites:</h4>';
-    html += '<form role="form">' +
-        '<label class="radio-inline"><input id="userCheckSiteYes" type="radio" name="optradio" checked>Yes</label>' +
-        '<label class="radio-inline"><input id="userCheckSiteNo" type="radio" name="optradio">No</label>' +
-        '</form><hr>';
-    $(html).insertBefore('#subject-back-btn');
-    $('#userCheckSiteYes').change(function () {
-        to_register_at_site = true;
-    });
-    $('#userCheckSiteNo').change(function () {
-        to_register_at_site = false;
-    });
-}
 
 function provide_template_download() {
     var html = '<button id="download-subject-template-btn" type="button" class="btn btn-success">Download Subject Template</button><div id="template-download-anchor"></div><hr>';

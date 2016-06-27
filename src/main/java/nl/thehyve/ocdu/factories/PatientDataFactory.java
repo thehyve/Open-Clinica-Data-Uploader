@@ -92,7 +92,7 @@ public class PatientDataFactory extends UserSubmittedDataFactory {
         header.add("Date of Enrollment");
         header.add("Secondary ID");
         header.add("Study");
-        if (registerSite) header.add("Site");
+        if (registerSite) header.add("Site (optional)");
         result.add(String.join(delim, header) + "\n");
 
 

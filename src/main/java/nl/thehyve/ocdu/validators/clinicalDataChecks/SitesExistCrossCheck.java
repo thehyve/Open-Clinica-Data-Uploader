@@ -26,11 +26,11 @@ public class SitesExistCrossCheck implements ClinicalDataCrossCheck {
 
     @Override
     public ValidationErrorMessage getCorrespondingError(List<ClinicalData> data, MetaData metaData, Map<ClinicalData, ItemDefinition> itemDefMap, List<StudySubjectWithEventsType> studySubjectWithEventsTypeList, Map<ClinicalData, Boolean> shownMap, Map<String, Set<CRFDefinition>> eventMap) {
-        Set<String> siteNamesPresentInStudy = new HashSet<>();
-        siteNamesPresentInStudy.add(EMPTY_SITE_DENOTATION);
-        metaData.getSiteDefinitions().stream().forEach(siteDefinition -> siteNamesPresentInStudy.add(siteDefinition.getName()));
+        Set<String> siteUniqueIDsPresentInStudy = new HashSet<>();
+        siteUniqueIDsPresentInStudy.add(EMPTY_SITE_DENOTATION);
+        metaData.getSiteDefinitions().stream().forEach(siteDefinition -> siteUniqueIDsPresentInStudy.add(siteDefinition.getUniqueID()));
         List<ClinicalData> violators = data.stream()
-                .filter(clinicalData -> !siteNamesPresentInStudy.contains(clinicalData.getSite()))
+                .filter(clinicalData -> !siteUniqueIDsPresentInStudy.contains(clinicalData.getSite()))
                 .collect(Collectors.toList());
         if (violators.size() > 0) {
             ValidationErrorMessage error =

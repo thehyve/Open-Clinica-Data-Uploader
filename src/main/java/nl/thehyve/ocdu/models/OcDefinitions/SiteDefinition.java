@@ -18,6 +18,8 @@ public class SiteDefinition {
 
     private String name;
 
+    private String uniqueID;
+
     private boolean genderRequired = true;
     //TODO: refactor birthdateRequired into Enumeration
     /*
@@ -55,6 +57,8 @@ public class SiteDefinition {
         return siteOID;
     }
 
+
+
     public void setSiteOID(String siteOID) {
         this.siteOID = siteOID;
     }
@@ -65,5 +69,13 @@ public class SiteDefinition {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getUniqueID() {
+        return uniqueID;
+    }
+
+    public void setUniqueID(String uniqueID) {
+        this.uniqueID = uniqueID;
     }
 }

@@ -59,13 +59,10 @@ public class ValidationController {
             UploadSession currentUploadSession = uploadSessionService.getCurrentUploadSession(session);
             String pwdHash = ocUserService.getOcwsHash(session);
             List<ValidationErrorMessage> patientsErrors = validationService.getPatientsErrors(currentUploadSession, pwdHash);
-            if(patientsErrors.size() == 0) {
-                OcUser submitter = currentUploadSession.getOwner();
-                String wsPwdHash = ocUserService.getOcwsHash(session);
-                List<Subject> bySubmission = subjectRepository.findBySubmission(currentUploadSession);
-                openClinicaService.registerPatients(submitter.getUsername(), wsPwdHash, submitter.getOcEnvironment(), bySubmission);
+            if(patientsErrors.isEmpty()) {
+                return new ResponseEntity<>(HttpStatus.OK);
             }
-            return new ResponseEntity<>(patientsErrors, HttpStatus.OK);
+            return new ResponseEntity<>(patientsErrors, HttpStatus.BAD_REQUEST);
         } catch (UploadSessionNotFoundException e) {
             e.printStackTrace();
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);

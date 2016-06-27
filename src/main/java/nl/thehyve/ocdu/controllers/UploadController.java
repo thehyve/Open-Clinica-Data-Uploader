@@ -75,7 +75,7 @@ public class UploadController {
 
     }
 
-    @RequestMapping(value = "/eventsData", method = RequestMethod.POST)
+    @RequestMapping(value = "/events", method = RequestMethod.POST)
     @ResponseBody
     public ResponseEntity<Collection<ValidationErrorMessage>> uploadEventsDataFile(
             @RequestParam("uploadfile") MultipartFile uploadfile, HttpSession session) {

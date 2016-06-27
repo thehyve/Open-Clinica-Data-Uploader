@@ -8,6 +8,7 @@ import nl.thehyve.ocdu.services.OcUserService;
 import nl.thehyve.ocdu.services.OpenClinicaService;
 import nl.thehyve.ocdu.services.UploadSessionNotFoundException;
 import nl.thehyve.ocdu.services.UploadSessionService;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -47,8 +48,14 @@ public class SubjectsController {
             String pwdHash = ocUserService.getOcwsHash(session);
             String url = user.getOcEnvironment();
             Collection<Subject> subjects = subjectRepository.findBySubmission(uploadSession);
-            openClinicaService.registerPatients(username, pwdHash, url, subjects);
-            return new ResponseEntity<>("", HttpStatus.OK);
+            if (! subjects.isEmpty()) {
+                String result = openClinicaService.registerPatients(username, pwdHash, url, subjects);
+                if (StringUtils.isEmpty(result)) {
+                    return new ResponseEntity<>("", HttpStatus.OK);
+                }
+                return new ResponseEntity(result, HttpStatus.OK);
+            }
+
         } catch (UploadSessionNotFoundException e) {
             e.printStackTrace();
             return new ResponseEntity<>("", HttpStatus.BAD_REQUEST);

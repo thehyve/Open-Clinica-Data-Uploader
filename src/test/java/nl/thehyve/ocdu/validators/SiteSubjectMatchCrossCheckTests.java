@@ -23,20 +23,56 @@ public class SiteSubjectMatchCrossCheckTests {
 
     private List<ClinicalData> clinicalDataList;
 
+    private List<StudySubjectWithEventsType> studySubjectWithEventsTypeList;
+
+    @Test
+    public void matchingSubjectIDSite_ExistingSubject() {
+        SiteSubjectMatchCrossCheck siteSubjectMatchCrossCheck = new SiteSubjectMatchCrossCheck();
+
+        // now the correct happy flow, with a site.
+        clinicalDataList.get(0).setSite("Correct site");
+        ValidationErrorMessage  validationErrorMessage =
+                siteSubjectMatchCrossCheck.getCorrespondingError(clinicalDataList, null, null, studySubjectWithEventsTypeList, null, null);
+
+        Assert.assertNull(validationErrorMessage);
+    }
+
+    @Test
+    public void matchingSubjectIDSite_ExistingSubject_NoSite() {
+        SiteSubjectMatchCrossCheck siteSubjectMatchCrossCheck = new SiteSubjectMatchCrossCheck();
+        clinicalDataList.get(0).setSite("");
+        ValidationErrorMessage validationErrorMessage =
+                siteSubjectMatchCrossCheck.getCorrespondingError(clinicalDataList, null, null, studySubjectWithEventsTypeList, null, null);
+
+        Assert.assertNull(validationErrorMessage);
+    }
+
+    @Test
+    public void matchingSubjectIDSite_NewSubject_NoSite() {
+        // next happy case: subject does not exist in study without a site
+        SiteSubjectMatchCrossCheck siteSubjectMatchCrossCheck = new SiteSubjectMatchCrossCheck();
+        clinicalDataList.get(0).setSite("");
+        clinicalDataList.get(0).setSsid("Subject_0003");
+        ValidationErrorMessage validationErrorMessage =
+                siteSubjectMatchCrossCheck.getCorrespondingError(clinicalDataList, null, null, studySubjectWithEventsTypeList, null, null);
+
+        Assert.assertNull(validationErrorMessage);
+    }
+
+    @Test
+    public void matchingSubjectIDSite_NewSubject_WithSite() {
+        // last happy case: subject does not exist in study with a correct site
+        SiteSubjectMatchCrossCheck siteSubjectMatchCrossCheck = new SiteSubjectMatchCrossCheck();
+        clinicalDataList.get(0).setSite("Correct site");
+        clinicalDataList.get(0).setSsid("Subject_0003");
+        ValidationErrorMessage validationErrorMessage =
+                siteSubjectMatchCrossCheck.getCorrespondingError(clinicalDataList, null, null, studySubjectWithEventsTypeList, null, null);
+
+        Assert.assertNull(validationErrorMessage);
+    }
+
     @Test
     public void mismatchingSubjectIDSite() {
-        List<StudySubjectWithEventsType> studySubjectWithEventsTypeList = new ArrayList<>();
-        StudySubjectWithEventsType subjectWithEventsType = new StudySubjectWithEventsType();
-        subjectWithEventsType.setLabel("Subject_0001");
-        StudyRefType studyRefType = new StudyRefType();
-        studyRefType.setIdentifier("HematologyStudyForty");
-        SiteRefType siteRefType = new SiteRefType();
-        // Subject_0001 is associated with the site "Wrong site" in the clinicalData created below.
-        siteRefType.setIdentifier("Correct site");
-        studyRefType.setSiteRef(siteRefType);
-        subjectWithEventsType.setStudyRef(studyRefType);
-
-        studySubjectWithEventsTypeList.add(subjectWithEventsType);
 
         SiteSubjectMatchCrossCheck siteSubjectMatchCrossCheck = new SiteSubjectMatchCrossCheck();
 
@@ -46,13 +82,6 @@ public class SiteSubjectMatchCrossCheckTests {
         Assert.assertEquals("One or more existing subjects have a mismatching site specified in your data file", validationErrorMessage.getMessage());
         Assert.assertEquals(1, validationErrorMessage.getOffendingValues().size());
         Assert.assertEquals("[Subject_0001]", validationErrorMessage.getOffendingValues().toString());
-
-        // now the correct happy flow
-        clinicalDataList.get(0).setSite("Correct site");
-        validationErrorMessage =
-                siteSubjectMatchCrossCheck.getCorrespondingError(clinicalDataList, null, null, studySubjectWithEventsTypeList, null, null);
-
-        Assert.assertNull(validationErrorMessage);
     }
 
     @Before
@@ -71,5 +100,18 @@ public class SiteSubjectMatchCrossCheckTests {
         SiteDefinition siteDefinition = new SiteDefinition();
         siteDefinition.setName("Correct site");
         siteDefinitionList.add(siteDefinition);
+
+        studySubjectWithEventsTypeList = new ArrayList<>();
+        StudySubjectWithEventsType subjectWithEventsType = new StudySubjectWithEventsType();
+        subjectWithEventsType.setLabel("Subject_0001");
+        StudyRefType studyRefType = new StudyRefType();
+        studyRefType.setIdentifier("HematologyStudyForty");
+        SiteRefType siteRefType = new SiteRefType();
+        // Subject_0001 is associated with the site "Wrong site" in the clinicalData created below.
+        siteRefType.setIdentifier("Correct site");
+        studyRefType.setSiteRef(siteRefType);
+        subjectWithEventsType.setStudyRef(studyRefType);
+
+        studySubjectWithEventsTypeList.add(subjectWithEventsType);
     }
 }

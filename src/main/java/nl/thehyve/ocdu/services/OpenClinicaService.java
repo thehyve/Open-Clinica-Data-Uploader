@@ -1,11 +1,14 @@
 package nl.thehyve.ocdu.services;
 
 import nl.thehyve.ocdu.models.OCEntities.ClinicalData;
+import nl.thehyve.ocdu.models.OCEntities.Event;
+import nl.thehyve.ocdu.models.OCEntities.Site;
 import nl.thehyve.ocdu.models.OCEntities.Study;
 import nl.thehyve.ocdu.models.OCEntities.Subject;
 import nl.thehyve.ocdu.models.OcDefinitions.EventDefinition;
 import nl.thehyve.ocdu.models.OcDefinitions.MetaData;
 import nl.thehyve.ocdu.models.OcDefinitions.RegisteredEventInformation;
+import nl.thehyve.ocdu.models.OcDefinitions.SiteDefinition;
 import nl.thehyve.ocdu.soap.ResponseHandlers.GetStudyMetadataResponseHandler;
 import nl.thehyve.ocdu.soap.ResponseHandlers.IsStudySubjectResponseHandler;
 import nl.thehyve.ocdu.soap.ResponseHandlers.ListAllByStudyResponseHandler;
@@ -24,7 +27,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.w3c.dom.Document;
 
-import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.XMLGregorianCalendar;
 import javax.xml.soap.SOAPConnection;
 import javax.xml.soap.SOAPConnectionFactory;
@@ -45,21 +47,22 @@ public class OpenClinicaService {
     private static final Logger log = LoggerFactory.getLogger(OpenClinicaService.class);
 
 
-    public boolean registerPatients(String username, String passwordHash, String url, Collection<Subject> subjects)
+    public String registerPatients(String username, String passwordHash, String url, Collection<Subject> subjects)
             throws Exception {
+        log.info("Register patients initialized by: " + username + " on: " + url);
         SOAPMessage soapMessage = requestFactory.createCreateSubject(username, passwordHash, subjects);
-        System.out.println("SOAP --->" + SoapUtils.soapMessageToString(soapMessage));
         SOAPConnectionFactory soapConnectionFactory = SOAPConnectionFactory.newInstance();
         SOAPConnection soapConnection = soapConnectionFactory.createConnection();
         SOAPMessage soapResponse = soapConnection.call(soapMessage, url + "/ws/studySubject/v1");
         String error = parseRegisterSubjectsResponse(soapResponse);
         if (error != null) {
-            log.error("Registering subjects against instance " + url + " failed, OC error: " + error);
-            return false;
+            String detailedErrorMessage = "Registering subjects against instance " + url + " failed, OC error: " + error;
+            log.error(detailedErrorMessage);
+            return detailedErrorMessage;
         } else {
             log.info("Registering subjects against instance " + url + " successfull, number of subjects:" +
                     subjects.size());
-            return true;
+            return "";
         }
     }
 
@@ -103,6 +106,7 @@ public class OpenClinicaService {
         SOAPMessage soapResponse = soapConnection.call(message, url + "/ws/study/v1");  // Add SOAP endopint to OCWS URL.
         MetaData metaData = GetStudyMetadataResponseHandler.parseGetStudyMetadataResponse(soapResponse);
         soapConnection.close();
+        addSiteInformationToMetaData(metaData, study);
         return metaData;
     }
 
@@ -136,17 +140,17 @@ public class OpenClinicaService {
     }
 
     /**
-     * Schedule all the events found in {@param clinicalDataList} but which have not been scheduled yet in
+     * Schedule all the events found in {@param eventList} but which have not been scheduled yet in
      * OpenClinica according to the information present in the {@param studyEventDefinitionTypeList}.
      * @param username
      * @param passwordHash
      * @param url
-     * @param clinicalDataList
+     * @param eventList
      * @throws Exception
      */
     public String scheduleEvents(String username, String passwordHash, String url,
                                  MetaData metaData,
-                               List<ClinicalData> clinicalDataList,
+                               List<Event> eventList,
                                List<StudySubjectWithEventsType> studySubjectWithEventsTypeList) throws Exception {
         log.info("Schedule events initiated by: " + username + " on: " + url);
         if (StringUtils.isEmpty(username) ||
@@ -160,17 +164,17 @@ public class OpenClinicaService {
         Map<String, EventResponseType> eventsRegisteredInOpenClinica =
                 RegisteredEventInformation.createEventKeyList(studySubjectWithEventsTypeList);
         List<EventType> eventTypeList = new ArrayList<>();
-        for (ClinicalData clinicalData : clinicalDataList) {
-            String eventOID = eventNameOIDMap.get(clinicalData.getEventName());
-            String eventKey = clinicalData.createEventKey(eventOID);
+        for (Event event : eventList) {
+            String eventOID = eventNameOIDMap.get(event.getEventName());
+            String eventKey = event.createEventKey(eventOID);
             if ( ! eventsRegisteredInOpenClinica.containsKey(eventKey)) {
-                EventType eventType = clinicalData.createEventType(eventNameOIDMap);
+                EventType eventType = event.createEventType(eventNameOIDMap);
                 StudySubjectRefType studySubjectRefType = new StudySubjectRefType();
-                studySubjectRefType.setLabel(clinicalData.getSsid());
+                studySubjectRefType.setLabel(event.getSsid());
                 eventType.setStudySubjectRef(studySubjectRefType);
 
                 if (StringUtils.isEmpty(eventOID)) {
-                    throw new IllegalStateException("No eventName specified in the input for subject " + clinicalData.getSsid());
+                    throw new IllegalStateException("No eventName specified in the input for subject " + event.getSsid());
                 }
                 eventType.setEventDefinitionOID(eventOID);
                 // TODO remove these hardcoded values and obtain them from the BusinessLogic bean still to be
@@ -253,5 +257,18 @@ public class OpenClinicaService {
         String studySubjectOID = IsStudySubjectResponseHandler.parseIsStudySubjectResponse(soapResponse);
 
         return studySubjectOID;
+    }
+
+    private void addSiteInformationToMetaData(MetaData metaData, Study study) {
+        // TODO change outer loop to Lambda
+        for (SiteDefinition siteDefinition : metaData.getSiteDefinitions()) {
+            String searchOID = siteDefinition.getSiteOID();
+            List<Site> searchSiteList =
+                    study.getSiteList().stream().filter(site -> site.getOid().equals(searchOID)).collect(Collectors.toList());
+            if (! searchSiteList.isEmpty()) {
+                Site searchSite = searchSiteList.get(0);
+                siteDefinition.setUniqueID(searchSite.getIdentifier());
+            }
+        }
     }
 }

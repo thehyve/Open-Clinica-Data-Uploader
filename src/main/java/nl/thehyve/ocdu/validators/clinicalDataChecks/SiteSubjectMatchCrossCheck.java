@@ -30,8 +30,9 @@ public class SiteSubjectMatchCrossCheck implements ClinicalDataCrossCheck {
                 stream().forEach(studySubjectWithEventsType -> subjectSiteCombinationsPresentInStudy.put(studySubjectWithEventsType.getLabel(), studySubjectWithEventsType.getStudyRef().getSiteRef() != null ? studySubjectWithEventsType.getStudyRef().getSiteRef().getIdentifier() : ""));
 
         List<ClinicalData> violators = data.stream()
-                .filter(clinicalData -> (( SitesExistCrossCheck.EMPTY_SITE_DENOTATION.equals(clinicalData.getSite())) && ( subjectSiteCombinationsPresentInStudy.containsKey(clinicalData.getSsid()) &&
-                                           (! subjectSiteCombinationsPresentInStudy.get(clinicalData.getSsid()).equals(clinicalData.getSite())))))
+                .filter(clinicalData -> (((! SitesExistCrossCheck.EMPTY_SITE_DENOTATION.equals(clinicalData.getSite()) &&
+                                        (subjectSiteCombinationsPresentInStudy.containsKey(clinicalData.getSsid()))) &&
+                                        (!(subjectSiteCombinationsPresentInStudy.get(clinicalData.getSsid()).equals(clinicalData.getSite()))))))
                 .collect(Collectors.toList());
         if (violators.size() > 0) {
             ValidationErrorMessage error =

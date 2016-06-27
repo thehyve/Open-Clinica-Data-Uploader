@@ -35,9 +35,9 @@ public class EventDataOcChecks {
     private final Set<String> eventNames;
     private final Set<String> siteNames;
 
-    public EventDataOcChecks(MetaData metadata, List<Event> subjects) {
+    public EventDataOcChecks(MetaData metadata, List<Event> eventList) {
         this.metadata = metadata;
-        this.events = subjects;
+        this.events = eventList;
 
 
         if (metadata.getEventDefinitions() == null) {

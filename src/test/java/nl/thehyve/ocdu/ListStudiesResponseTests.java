@@ -82,6 +82,12 @@ public class ListStudiesResponseTests {
         assertThat(studies.get(0), hasProperty("identifier", equalTo("Study 1")));
         assertThat(studies.get(0), hasProperty("oid", equalTo("S_STUDY1")));
         assertThat(studies.get(0), hasProperty("name", equalTo("Test Study 1")));
+
+
+        assertEquals(1, studies.get(1).getSiteList().size());
+        assertThat(studies.get(1).getSiteList().get(0), hasProperty("identifier", equalTo("Study 2 - MSS")));
+        assertThat(studies.get(1).getSiteList().get(0), hasProperty("oid", equalTo("S_STUDY2MS")));
+        assertThat(studies.get(1).getSiteList().get(0), hasProperty("name", equalTo("My Second Site")));
     }
 
     @Test

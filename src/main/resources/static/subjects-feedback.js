@@ -41,10 +41,12 @@ function feedbackNext() {
         data: {step: "events"},
         success: function () {
             //handle subject file upload
+            alert('Success: feedback next success');
             window.location.href = baseApp + "/views/events";
         },
         error: function (jqXHR, textStatus, errorThrown) {
             console.log(jqXHR.status + " " + textStatus + " " + errorThrown);
+            alert('Fail: feedback next success' + jqXHR.status + " " + textStatus + " " + errorThrown);
             window.location.href = baseApp + "/views/subjects-feedback";
         }
     });

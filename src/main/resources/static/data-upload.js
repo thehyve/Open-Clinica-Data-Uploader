@@ -6,6 +6,20 @@
  */
 var sessions = [];
 
+var _deleteCurrentSubmission = function() {
+    $.ajax({
+        url: baseApp + "/submission/delete",
+        type: "post",
+        data: {},
+        success: function () {
+            console.log('submission deleted');
+        },
+        error: function (jqXHR, textStatus, errorThrown) {
+            console.log(jqXHR.status + " " + textStatus + " " + errorThrown);
+        }
+    });
+};
+
 function uploadFile() {
 
     var isSessionNameDefined = ($('#upload-session-input').val() !== "");
@@ -92,17 +106,7 @@ function uploadFile() {
                     $("#message-board").append(info);
 
                     //since this is format error, we delete the just created submission
-                    $.ajax({
-                        url: baseApp + "/submission/delete",
-                        type: "post",
-                        data: {},
-                        success: function () {
-                            console.log('submission deleted');
-                        },
-                        error: function (jqXHR, textStatus, errorThrown) {
-                            console.log(jqXHR.status + " " + textStatus + " " + errorThrown);
-                        }
-                    });
+                    _deleteCurrentSubmission();
                 }
             },
             error: function (jqXHR, textStatus, errorThrown) {
@@ -111,6 +115,7 @@ function uploadFile() {
                 var info = '<div id="data-alert" class="alert alert-danger">' + message + '</div>';
                 $("#message-board").append(info);
                 console.log(jqXHR.status + " " + textStatus + " " + errorThrown);
+               _deleteCurrentSubmission();
             }
         });
     };

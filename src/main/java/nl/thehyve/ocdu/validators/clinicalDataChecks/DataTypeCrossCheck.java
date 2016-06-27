@@ -24,6 +24,17 @@ public class DataTypeCrossCheck implements ClinicalDataCrossCheck {
     public final static String FLOAT_DATA_TYPE = "float";
     public final static String DATE_DATA_TYPE = "date";
     public final static String PARTIAL_DATE_DATA_TYPE = "partialDate";
+    private static Map<String, String> humanReadbleTypes = initHumanReadbleTypes();
+
+    private static Map<String, String> initHumanReadbleTypes() {
+        Map<String, String>  humanReadble = new HashMap<>();
+        humanReadble.put(TEXT_DATA_TYPE, "Text" );
+        humanReadble.put(INTEGER_DATA_TYPE, "Integer Number (e.g. 2)" );
+        humanReadble.put(FLOAT_DATA_TYPE, "Real Number (e.g. 12.3)" );
+        humanReadble.put(PARTIAL_DATE_DATA_TYPE, "Partial date (e.g: 1996)" );
+        humanReadble.put(DATE_DATA_TYPE, "Full date (e.g: 1988-05-16)" );
+        return humanReadble;
+    }
 
     @Override
     public ValidationErrorMessage getCorrespondingError(List<ClinicalData> data, MetaData metaData, Map<ClinicalData, ItemDefinition> itemDefMap, List<StudySubjectWithEventsType> studySubjectWithEventsTypeList, Map<ClinicalData, Boolean> shownMap, Map<String, Set<CRFDefinition>> eventMap) {
@@ -35,7 +46,10 @@ public class DataTypeCrossCheck implements ClinicalDataCrossCheck {
         if (offenders.size() > 0) {
             DataTypeMismatch error = new DataTypeMismatch();
             offenders.stream().
-                    forEach(offender -> error.addOffendingValue("Item: " + offender.left + " expected: " + offender.right));
+                    forEach(offender -> {
+                        String typeMsg = humanReadbleTypes.get(offender.right);
+                        error.addOffendingValue("Item: " + offender.left + " expected: " + typeMsg);
+                    });
             return error;
         } else return null;
     }

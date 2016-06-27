@@ -63,10 +63,13 @@ public class UploadController {
             UploadSession currentUploadSession = uploadSessionService.getCurrentUploadSession(session);
             String pwd = ocUserService.getOcwsHash(session);
             Collection<ValidationErrorMessage> fileFormatErrors = fileService.depositDataFile(locallySavedDataFile, user, currentUploadSession, pwd);
-            Collection<ValidationErrorMessage> mappingPreventingErrors = validationService.dataPremappingValidation(currentUploadSession, pwd);
             Collection<ValidationErrorMessage> allErrors = new ArrayList<>();
+            if (fileFormatErrors.size() == 0) {
+                Collection<ValidationErrorMessage> mappingPreventingErrors =
+                        validationService.dataPremappingValidation(currentUploadSession, pwd);
+                allErrors.addAll(mappingPreventingErrors);
+            }
             allErrors.addAll(fileFormatErrors);
-            allErrors.addAll(mappingPreventingErrors);
             return new ResponseEntity<>(allErrors, HttpStatus.OK);
         } catch (Exception e) {
             System.out.println(e.getMessage());

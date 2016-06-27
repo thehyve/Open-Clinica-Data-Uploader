@@ -204,12 +204,20 @@ $(function () {
 
     function generate_mapping() {
         var output = [];
+        var eventName = oc_path[0];
+        var crfName = oc_path[1];
+        var crfVersion = oc_path[2];
+
         for (var oc_label in mapping) {
             var usr_label = mapping[oc_label];
             if (usr_label !== null) {
                 var matching = {};
-                matching['Open Clinica Item'] = oc_label;
-                matching['User Defined Item'] = usr_label;
+                matching['study'] = '';
+                matching['eventName'] = eventName;
+                matching['crfName'] = crfName;
+                matching['crfVersion'] = crfVersion;
+                matching['ocItemName'] = oc_label;//'Open Clinica Item'
+                matching['usrItemName'] = usr_label;//'User Defined Item'
                 output.push(matching);
             }
         }

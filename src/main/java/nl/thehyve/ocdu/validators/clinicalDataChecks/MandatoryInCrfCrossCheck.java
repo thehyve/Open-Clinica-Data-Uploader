@@ -37,6 +37,30 @@ public class MandatoryInCrfCrossCheck implements ClinicalDataCrossCheck {
                 error.addOffendingValue("Item: " + item + " cannot be empty as it is mandatory in CRF: " + crfId + " but was empty for subject: " + clinicalData.getSsid());
             }
         });
+        Map<String, Set<String>> userItems = new HashMap<>();
+        Map<String, Set<String>> mandatoryForSubject = new HashMap<>();
+
+        data.stream().forEach(clinicalData -> {
+            String crfId = clinicalData.getCrfName() + clinicalData.getCrfVersion();
+            Set<String> mandatoryItems = mandatoryMap.get(crfId);
+            if (!userItems.containsKey(clinicalData.getSsid())) {
+                userItems.put(clinicalData.getSsid(), new HashSet<>());
+                mandatoryForSubject.put(clinicalData.getSsid(), mandatoryItems);
+            }
+            Set<String> items = userItems.get(clinicalData.getSsid());
+            items.add(clinicalData.getItem());
+        });
+        userItems.keySet().forEach(subject -> {
+            Set<String> itemsUploadedForUser = userItems.get(subject);
+            Set<String> mandatory = mandatoryForSubject.get(subject);
+            if (mandatory != null) {
+                for (String mandatoryItem : mandatory) {
+                    if (!itemsUploadedForUser.contains(mandatoryItem)) {
+                        error.addOffendingValue("Subject: " + subject + " is missing mandatory item: " + mandatoryItem);
+                    }
+                }
+            }
+        });
     }
 
 

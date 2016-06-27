@@ -3,6 +3,7 @@ package nl.thehyve.ocdu.factories;
 import nl.thehyve.ocdu.models.OCEntities.ClinicalData;
 import nl.thehyve.ocdu.models.OcUser;
 import nl.thehyve.ocdu.models.UploadSession;
+import org.apache.commons.lang3.StringUtils;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -100,7 +101,8 @@ public class ClinicalDataFactory extends UserSubmittedDataFactory {
             ClinicalData dat = new ClinicalData(study, item, ssid, eventName, eventRepeat, crf,
                     getSubmission(), crfVer, groupRepeat, getUser(), value.trim()); // Mind the trim() on value.
             dat.setSite(site);
-            aggregation.add(dat);
+            if (StringUtils.isNotEmpty(value)) // ignore empty
+                aggregation.add(dat);
         }
         return aggregation;
     }

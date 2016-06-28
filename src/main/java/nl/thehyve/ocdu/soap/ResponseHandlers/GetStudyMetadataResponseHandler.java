@@ -460,7 +460,7 @@ public class GetStudyMetadataResponseHandler extends OCResponseHandler {
         for (int i = 0; i < itemPresentInFormNode.getLength(); i++) {
             Node item = itemPresentInFormNode.item(i);
             DisplayRule displayRule = getDisplayRule(item);
-            displayRules.add(displayRule);
+            if (displayRule != null) displayRules.add(displayRule);
         }
         return displayRules;
     }
@@ -490,6 +490,9 @@ public class GetStudyMetadataResponseHandler extends OCResponseHandler {
         }
         rule.setAppliesInCrf(crfOID);
         rule.setShow(show);
+        if (StringUtils.isBlank(rule.getControlItemName()) || StringUtils.isBlank(rule.getOptionValue())) {
+            return null;
+        }
         return rule;
     }
 
@@ -510,6 +513,7 @@ public class GetStudyMetadataResponseHandler extends OCResponseHandler {
         List<RangeCheck> rangeChecks = parseRangeChecks(item);
         boolean isMultiSelect = isMultiSelect(item);
         String codeListRef = determineCodeListRef(item);
+        List<DisplayRule> displayRules = getDisplayRules(item);
         ItemDefinition itemDef = new ItemDefinition();
         itemDef.setOid(oid);
         itemDef.setName(name);
@@ -519,6 +523,7 @@ public class GetStudyMetadataResponseHandler extends OCResponseHandler {
         itemDef.setSignificantDigits(Integer.parseInt(significantDigitsText));
         itemDef.setMultiselect(isMultiSelect);
         itemDef.setCodeListRef(codeListRef);
+        itemDef.setDisplayRules(displayRules);
         return itemDef;
     }
 

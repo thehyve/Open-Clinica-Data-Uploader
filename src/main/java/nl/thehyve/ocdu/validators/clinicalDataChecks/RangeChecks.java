@@ -9,6 +9,7 @@ import nl.thehyve.ocdu.models.errors.RangeCheckViolation;
 import nl.thehyve.ocdu.models.errors.ValidationErrorMessage;
 import org.openclinica.ws.beans.StudySubjectWithEventsType;
 
+import java.math.BigDecimal;
 import java.util.*;
 
 /**
@@ -27,7 +28,7 @@ public class RangeChecks implements ClinicalDataCrossCheck {
                     List<String> values = clinicalData.getValues();
                     for (String value : values) {
                         if (isFloat(value) || isInteger(value)) {
-                            int intValue = (int) Double.parseDouble(value); // Do not attempt floating point comparison
+                            BigDecimal intValue =  BigDecimal.valueOf(Double.parseDouble(value)); // Do not attempt floating point comparison
                             if (!rangeCheck.isInRange(intValue)) {
                                 String msg = clinicalData.getItem() + " " + rangeCheck.violationMessage()
                                         + " but was: " + intValue + " for subject: "+ clinicalData.getSsid();

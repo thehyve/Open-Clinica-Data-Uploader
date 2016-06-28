@@ -186,6 +186,8 @@ public class ClinicalDataOcChecksTests {
         assertEquals(2, errors.size());
         assertThat(errors, hasItem(isA(RangeCheckViolation.class)));
         assertThat(errors, hasItem(isA(MandatoryItemInCrfMissing.class)));
+        ValidationErrorMessage errorMessage = errors.get(1);
+        assertThat(errorMessage.getOffendingValues(), hasSize(3));
     }
 
     @Test

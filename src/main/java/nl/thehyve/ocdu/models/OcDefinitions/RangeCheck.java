@@ -4,6 +4,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import java.math.BigDecimal;
 
 /**
  * Created by piotrzakrzewski on 15/05/16.
@@ -15,13 +16,13 @@ public class RangeCheck {
     private long id;
 
     private COMPARATOR comparator;
-    private int value;
+    private BigDecimal value;
 
-    public int getValue() {
+    public BigDecimal getValue() {
         return value;
     }
 
-    public void setValue(int value) {
+    public void setValue(BigDecimal value) {
         this.value = value;
     }
 
@@ -45,19 +46,19 @@ public class RangeCheck {
         LE, GE, LT, GT, NE, EQ
     }
 
-    public boolean isInRange(int comparedValue) {
+    public boolean isInRange(BigDecimal comparedValue) {
         if (comparator == COMPARATOR.GE) {
-            return comparedValue >= value;
+            return comparedValue.compareTo(value) >= 0;//comparedValue >= value;
         } else if (comparator == COMPARATOR.GT) {
-            return comparedValue > value;
+            return comparedValue.compareTo(value) > 0;
         } else if (comparator == COMPARATOR.LE) {
-            return comparedValue <= value;
+            return comparedValue.compareTo(value) <= 0;
         } else if (comparator == COMPARATOR.LT) {
-            return comparedValue < value;
+            return comparedValue.compareTo(value) < 0;
         } else if (comparator == COMPARATOR.EQ) {
-            return comparedValue == value;
+            return comparedValue.compareTo(value) == 0;
         } else if (comparator == COMPARATOR.NE) {
-            return comparedValue != value;
+            return comparedValue.compareTo(value) != 0;
         } else {
             return false;
         }

@@ -121,7 +121,8 @@ public class ClinicalDataFactory extends UserSubmittedDataFactory {
         Integer gRep = null;
         if (splt.length > 1) {
             try {
-                gRep = Integer.parseInt(splt[1]);
+                int lastPart = splt.length - 1;
+                gRep = Integer.parseInt(splt[lastPart]);
             } catch (NumberFormatException e) {
                 gRep = null; // Do nothing
             }

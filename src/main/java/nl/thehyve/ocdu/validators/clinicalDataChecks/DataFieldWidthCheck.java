@@ -28,7 +28,8 @@ public class DataFieldWidthCheck implements ClinicalDataCrossCheck {
         Set<String> violators = new HashSet<>();
         for (ClinicalData dataPoint : data) {
             if (isTooLong(dataPoint)) {
-                violators.add("Item: " + dataPoint.getItem() + " of value " + dataPoint.getValue());
+                String gRepMsg = dataPoint.getGroupRepeat() != null ? " group repeat: " + dataPoint.getGroupRepeat() : "";
+                violators.add("Item: " + dataPoint.getItem() + gRepMsg + " of value " + dataPoint.getValue());
             }
         }
         error.addAllOffendingValues(violators);

@@ -28,10 +28,11 @@ public class RangeChecks implements ClinicalDataCrossCheck {
                     List<String> values = clinicalData.getValues();
                     for (String value : values) {
                         if (isFloat(value) || isInteger(value)) {
-                            BigDecimal intValue =  BigDecimal.valueOf(Double.parseDouble(value)); // Do not attempt floating point comparison
+                            BigDecimal intValue = BigDecimal.valueOf(Double.parseDouble(value)); // Do not attempt floating point comparison
                             if (!rangeCheck.isInRange(intValue)) {
-                                String msg = clinicalData.getItem() + " " + rangeCheck.violationMessage()
-                                        + " but was: " + intValue + " for subject: "+ clinicalData.getSsid();
+                                String gRepMsg = clinicalData.getGroupRepeat() != null ? " group repeat: " + clinicalData.getGroupRepeat() : "";
+                                String msg = clinicalData.getItem() + gRepMsg + " " + rangeCheck.violationMessage()
+                                        + " but was: " + intValue + " for subject: " + clinicalData.getSsid();
                                 if (!alreadyReported.contains(msg)) {
                                     error.addOffendingValue(msg);
                                     alreadyReported.add(msg);

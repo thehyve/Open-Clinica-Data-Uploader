@@ -20,12 +20,13 @@ public class ValuesNumberCrossCheck implements ClinicalDataCrossCheck {
     @Override
     public ValidationErrorMessage getCorrespondingError(List<ClinicalData> data, MetaData metaData, Map<ClinicalData, ItemDefinition> itemDefMap, List<StudySubjectWithEventsType> studySubjectWithEventsTypeList, Map<ClinicalData, Boolean> shownMap, Map<String, Set<CRFDefinition>> eventMap) {
         List<ClinicalData> violators = data.stream()
-                .filter(clinicalData -> isViolator(clinicalData, itemDefMap) && shownMap.get(clinicalData) ).collect(Collectors.toList());
+                .filter(clinicalData -> isViolator(clinicalData, itemDefMap) && shownMap.get(clinicalData)).collect(Collectors.toList());
         if (violators.size() > 0) {
             TooManyValues error = new TooManyValues();
             violators.forEach(clinicalData -> {
-                String msg = "Value: " + clinicalData.getValue() + " in item: "+ clinicalData.getItem()
-                        + " for subject: "+ clinicalData.getSsid();
+                String gRepMsg = clinicalData.getGroupRepeat() != null ? "group repeat: " + clinicalData.getGroupRepeat() : "";
+                String msg = "Value: " + clinicalData.getValue() + " in item: " + clinicalData.getItem()
+                        + " for subject: " + clinicalData.getSsid() + gRepMsg;
                 error.addOffendingValue(msg);
             });
             return error;

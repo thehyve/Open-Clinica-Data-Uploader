@@ -2,6 +2,7 @@ package nl.thehyve.ocdu.validators;
 
 import nl.thehyve.ocdu.models.OCEntities.Subject;
 import nl.thehyve.ocdu.models.OcDefinitions.MetaData;
+import nl.thehyve.ocdu.models.OcDefinitions.SiteDefinition;
 import nl.thehyve.ocdu.models.errors.ValidationErrorMessage;
 import nl.thehyve.ocdu.soap.ResponseHandlers.GetStudyMetadataResponseHandler;
 import nl.thehyve.ocdu.validators.patientDataChecks.*;
@@ -179,8 +180,13 @@ public class PatientDataOcChecksTests {
 
         //sites do not exist
         subject.setStudy("S_STUDY1");
-        subject.setSite("Sjogren - Sjogren");
+        subject.setSite("SjogrenSjogren");
         SitePatientDataCheck check = new SitePatientDataCheck();
+        List<SiteDefinition> siteDefs = new ArrayList<>();
+        SiteDefinition sjogrenSite = new SiteDefinition();
+        sjogrenSite.setSiteOID("SjogrenSjogren");
+        siteDefs.add(sjogrenSite);
+        metadata.setSiteDefinitions(siteDefs);
         ValidationErrorMessage error = check.getCorrespondingError(0, subject, metadata);
         assertNull(error);
 

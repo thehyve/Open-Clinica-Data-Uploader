@@ -31,6 +31,7 @@ import org.w3c.dom.Document;
 import javax.xml.datatype.XMLGregorianCalendar;
 import javax.xml.soap.SOAPConnection;
 import javax.xml.soap.SOAPConnectionFactory;
+import javax.xml.soap.SOAPException;
 import javax.xml.soap.SOAPMessage;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -104,13 +105,19 @@ public class OpenClinicaService {
         if (study == null || username == null || passwordHash == null || url == null) {
             return null;
         }
+        MetaData metaData = getMetadataSoapCall(username, passwordHash, url, study);
+        addSiteDefinitions(metaData, username, passwordHash, url, study);
+        addSiteInformationToMetaData(metaData, study);
+        return metaData;
+    }
+
+    private MetaData getMetadataSoapCall(String username, String passwordHash, String url, Study study) throws Exception {
         SOAPConnectionFactory soapConnectionFactory = SOAPConnectionFactory.newInstance();
         SOAPConnection soapConnection = soapConnectionFactory.createConnection();
         SOAPMessage message = requestFactory.createGetStudyMetadataRequest(username, passwordHash, study);
         SOAPMessage soapResponse = soapConnection.call(message, url + "/ws/study/v1");  // Add SOAP endopint to OCWS URL.
         MetaData metaData = GetStudyMetadataResponseHandler.parseGetStudyMetadataResponse(soapResponse);
         soapConnection.close();
-        addSiteInformationToMetaData(metaData, study);
         return metaData;
     }
 
@@ -124,7 +131,7 @@ public class OpenClinicaService {
         log.info("Upload initiated by: " + username + " on: " + url);
         List<String> resultList = new ArrayList();
 
-        if (    StringUtils.isEmpty(username) ||
+        if (StringUtils.isEmpty(username) ||
                 StringUtils.isEmpty(passwordHash) ||
                 StringUtils.isEmpty(url)) {
             resultList.add("One of the required parameters is missing (username, password or URL)");
@@ -140,12 +147,26 @@ public class OpenClinicaService {
             String uploadResult = uploadODMString(username, passwordHash, url, odmString);
             if (uploadResult == null) {
                 resultList.add("Successfully uploaded data for subject " + key);
-            }
-            else {
+            } else {
                 resultList.add("Failed upload for subject " + key + ". Cause: " + uploadResult);
             }
         }
         return resultList;
+    }
+    private void addSiteDefinitions(MetaData metaData, String username, String passwordHash, String url, Study study) throws Exception {
+        List<SiteDefinition> siteDefs = new ArrayList<>();
+        for(Site site: study.getSiteList()) {
+            Study siteAsAStudy = new Study(site.getIdentifier(), site.getOid(), site.getName());
+            MetaData siteMetadata = getMetadataSoapCall(username, passwordHash, url, siteAsAStudy);
+            SiteDefinition siteDef = new SiteDefinition();
+            siteDef.setSiteOID(site.getOid());
+            siteDef.setName(site.getName());
+            siteDef.setUniqueID(site.getIdentifier());
+            siteDef.setBirthdateRequired(siteMetadata.getBirthdateRequired());
+            siteDef.setGenderRequired(siteMetadata.isGenderRequired());
+            siteDefs.add(siteDef);
+        }
+        metaData.setSiteDefinitions(siteDefs);
     }
 
     /**

@@ -30,7 +30,7 @@ public class SitePatientDataCheck implements PatientDataCheck {
             } else {
                 List<String> sitenames = new ArrayList<>();
                 for (SiteDefinition sd : sites) {
-                    sitenames.add(sd.getName());
+                    sitenames.add(sd.getSiteOID()); // User needs to put UniqueProtocol ID in, not name
                 }
                 if (!sitenames.contains(subject.getSite())) {
                     error = new ValidationErrorMessage(commonMessage + "Study site \"" + subject.getSite() + "\" does not exist.");

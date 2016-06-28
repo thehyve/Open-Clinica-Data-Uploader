@@ -1,11 +1,19 @@
 package nl.thehyve.ocdu.factories;
 
+import nl.thehyve.ocdu.TestUtils;
 import nl.thehyve.ocdu.models.OCEntities.Event;
+import nl.thehyve.ocdu.models.OcDefinitions.MetaData;
 import nl.thehyve.ocdu.models.OcUser;
 import nl.thehyve.ocdu.models.UploadSession;
+import nl.thehyve.ocdu.soap.ResponseHandlers.GetStudyMetadataResponseHandler;
 import org.junit.Before;
 import org.junit.Test;
+import org.openclinica.ws.beans.StudySubjectWithEventsType;
 
+import javax.xml.soap.MessageFactory;
+import javax.xml.soap.SOAPMessage;
+import java.io.File;
+import java.io.FileInputStream;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Date;
@@ -17,12 +25,14 @@ import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.hasProperty;
 import static org.hamcrest.core.AllOf.allOf;
 import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
 
 public class EventDataFactoryTests {
 
     private EventDataFactory factory;
     private UploadSession testSubmission;
     private OcUser testUser;
+    private MetaData metadata;
 
     @Test
     public void testMapRowWithOnlySomeColumns() {
@@ -119,11 +129,30 @@ public class EventDataFactoryTests {
         ));
     }
 
+    @Test
+    public void testGenerateEventSchedulingTemplate() throws Exception{
+        List<StudySubjectWithEventsType> studySubjectWithEventsTypeList = TestUtils.createStudySubjectWithEventList();
+
+        List<String> result = this.factory.generateEventSchedulingTemplate(this.metadata, studySubjectWithEventsTypeList);
+        assertTrue(result.contains("EV-00007\tRepeatingEvent\t\t\t\t\t\t\t\n"));
+        assertTrue(result.contains("EV-00007\tNon-repeating Event\t\t\t\t\t\t\t\n"));
+
+    }
+
     @Before
     public void setUp() throws Exception {
         this.testUser = new OcUser();
         this.testUser.setUsername("tester");
         this.testSubmission = new UploadSession("submission1", UploadSession.Step.MAPPING, new Date(), this.testUser);
         this.factory = new EventDataFactory(testUser, testSubmission);
+        try {
+            MessageFactory messageFactory = MessageFactory.newInstance();
+            FileInputStream in = new FileInputStream(new File("docs/responseExamples/getStudyMetadata3.xml"));
+
+            SOAPMessage mockedResponseGetMetadata = messageFactory.createMessage(null, in);
+            this.metadata = GetStudyMetadataResponseHandler.parseGetStudyMetadataResponse(mockedResponseGetMetadata);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }

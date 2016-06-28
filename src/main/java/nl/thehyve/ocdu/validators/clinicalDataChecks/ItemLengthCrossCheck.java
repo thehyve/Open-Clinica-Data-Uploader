@@ -18,17 +18,19 @@ import java.util.Set;
  */
 public class ItemLengthCrossCheck implements ClinicalDataCrossCheck {
     @Override
-    public ValidationErrorMessage getCorrespondingError(List<ClinicalData> data, MetaData metaData, Map<ClinicalData, ItemDefinition> itemDefMap, List<StudySubjectWithEventsType> studySubjectWithEventsTypeList, Map<ClinicalData, Boolean> shownMap, Map<String, Set<CRFDefinition>> eventMap)  {
+    public ValidationErrorMessage getCorrespondingError(List<ClinicalData> data, MetaData metaData, Map<ClinicalData, ItemDefinition> itemDefMap, List<StudySubjectWithEventsType> studySubjectWithEventsTypeList, Map<ClinicalData, Boolean> shownMap, Map<String, Set<CRFDefinition>> eventMap) {
         Map<ClinicalData, Integer> lengthMap = buildFieldLengthMap(data, itemDefMap);
         FieldLengthExceeded error = new FieldLengthExceeded();
         data.stream().forEach(clinicalData -> {
             String value = clinicalData.getValue();
             String itemName = clinicalData.getItem();
             if (lengthMap.get(clinicalData) != null && value.length() > lengthMap.get(clinicalData)) {
-                if (lengthMap.get(clinicalData) != 0) // Length does not have to be defined, in this case it is 0
-                    error.addOffendingValue("Item: " + itemName + " value: " + value + " allowed length: "
+                if (lengthMap.get(clinicalData) != 0) { // Length does not have to be defined, in this case it is 0
+                    String gRepMsg = clinicalData.getGroupRepeat() != null ? " group repeat: " + clinicalData.getGroupRepeat() : "";
+                    error.addOffendingValue("Item: " + itemName + gRepMsg + " value: " + value + " allowed length: "
                             + lengthMap.get(clinicalData)
                             + " for subject: " + clinicalData.getSsid());
+                }
             }
         });
         if (error.getOffendingValues().size() > 0) {

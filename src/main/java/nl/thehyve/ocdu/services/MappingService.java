@@ -34,11 +34,11 @@ public class MappingService {
     private void matchAndMap(OcItemMapping mapping, List<ClinicalData> data) {
         data.stream().filter(clinicalData -> match(mapping, clinicalData)).
                 forEach(clinicalData -> clinicalData.setItem(mapping.getOcItemName()));
+        clinicalDataRepository.save(data);
     }
 
     private boolean match(OcItemMapping mapping, ClinicalData data) {
         if (data.getEventName().equals(mapping.getEventName()) &&
-                data.getStudy().equals(mapping.getStudy()) &&
                 data.getCrfName().equals(mapping.getCrfName()) &&
                 data.getCrfVersion().equals(mapping.getCrfVersion()) &&
                 data.getItem().equals(mapping.getUsrItemName())

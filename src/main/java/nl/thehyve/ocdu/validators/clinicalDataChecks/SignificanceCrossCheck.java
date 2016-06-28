@@ -35,7 +35,8 @@ public class SignificanceCrossCheck implements ClinicalDataCrossCheck {
         for (String value : clinicalData.getValues()) {
             int digitsAfterDM = getDigitsAfterDM(value);
             if (digitsAfterDM > definition.getSignificantDigits()) {
-                error.addOffendingValue("Item: " + clinicalData.getItem() +
+                String gRepMsg = clinicalData.getGroupRepeat() != null ? "group repeat: " + clinicalData.getGroupRepeat() : "";
+                error.addOffendingValue("Item: " + clinicalData.getItem() + gRepMsg +
                         " value: " + value + " expected number of significant digits: "
                         + definition.getSignificantDigits()+ " for subject: "+ clinicalData.getSsid() ) ;
             }

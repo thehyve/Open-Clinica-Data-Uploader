@@ -23,23 +23,23 @@ import java.util.stream.Stream;
  */
 public class EventDataFactory extends UserSubmittedDataFactory {
 
-    public static final String STUDY_SUBJECT_ID = "StudySubjectID";
-    public static final String EVENT_NAME = "EventName";
+    public static final String STUDY_SUBJECT_ID = "Study Subject ID";
+    public static final String EVENT_NAME = "Event Name";
     public static final String STUDY = "Study";
     public static final String SITE = "Site";
     public static final String LOCATION = "Location";
-    public static final String START_DATE = "StartDate";
-    public static final String START_TIME = "StartTime";
-    public static final String END_DATE = "EndDate";
-    public static final String END_TIME = "EndTime";
-    public static final String REPEAT_NUMBER = "RepeatNumber";
+    public static final String START_DATE = "Start Date";
+    public static final String START_TIME = "Start Time";
+    public static final String END_DATE = "End Date";
+    public static final String END_TIME = "End Time";
+    public static final String REPEAT_NUMBER = "Repeat Number";
 
     public EventDataFactory(OcUser user, UploadSession submission) {
         super(user, submission);
     }
 
     public final static String[] MANDATORY_HEADERS =
-            {STUDY_SUBJECT_ID, EVENT_NAME, STUDY, SITE, START_DATE, REPEAT_NUMBER};
+            {STUDY_SUBJECT_ID, EVENT_NAME, STUDY, START_DATE, REPEAT_NUMBER};
     public final static String[] POSITIVE_INTEGERS = { REPEAT_NUMBER };
 
     public List<Event> createEventsData(Path tabularFilePath) {

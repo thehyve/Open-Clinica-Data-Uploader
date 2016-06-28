@@ -50,10 +50,9 @@ function provide_event_template_download() {
 }
 
 function provide_event_template_upload() {
-    var html = '<h4>&#9755; Once you have filled out the template, select it using the file chooser below.</h4> <form id="upload-event-template-form" class="form-horizontal"><input id="upload-event-template-input" type="file" name="uploadEventData" accept="*" /></form> <span id="message-board"></span> <hr>';
+    var html = '<h4>&#9755; Once you have filled out the template, select it using the file chooser below.</h4> <form id="upload-event-template-form" class="form-horizontal"><input id="upload-event-template-input" type="file" name="uploadEventFile" accept="*" /></form> <span id="message-board"></span> <hr>';
     $(html).insertBefore('#event-back-btn');
 }
-
 
 function next_btn() {
     var html = '<button type="button" class="btn btn-primary" id="event-back-btn">Back</button>&nbsp;' +
@@ -66,7 +65,6 @@ function next_btn() {
     $('#event-next-btn').click(function () {
         upload_event_data();
     });
-
 }
 
 

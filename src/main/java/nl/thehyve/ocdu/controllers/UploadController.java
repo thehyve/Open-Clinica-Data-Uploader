@@ -3,7 +3,6 @@ package nl.thehyve.ocdu.controllers;
 import nl.thehyve.ocdu.models.OcItemMapping;
 import nl.thehyve.ocdu.models.OcUser;
 import nl.thehyve.ocdu.models.UploadSession;
-import nl.thehyve.ocdu.models.errors.FileFormatError;
 import nl.thehyve.ocdu.models.errors.ValidationErrorMessage;
 import nl.thehyve.ocdu.services.*;
 import org.slf4j.Logger;
@@ -81,7 +80,7 @@ public class UploadController {
     @RequestMapping(value = "/events", method = RequestMethod.POST)
     @ResponseBody
     public ResponseEntity<Collection<ValidationErrorMessage>> uploadEventsDataFile(
-            @RequestParam("uploadfile") MultipartFile uploadfile, HttpSession session) {
+            @RequestParam("uploadEventFile") MultipartFile uploadfile, HttpSession session) {
 
         try {
             OcUser user = ocUserService.getCurrentOcUser(session);

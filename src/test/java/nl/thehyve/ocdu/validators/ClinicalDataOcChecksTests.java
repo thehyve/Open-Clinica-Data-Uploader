@@ -64,6 +64,8 @@ public class ClinicalDataOcChecksTests {
     Path testFileMismatchingCRFVersion;
     Path testFileGroupRepeatError;
     Path emptyMandatory;
+    Path missingToggle;
+    Path hiddenVal;
 
     @Before
     public void setUp() throws Exception {
@@ -91,6 +93,8 @@ public class ClinicalDataOcChecksTests {
             this.testFileMismatchingCRFVersion = Paths.get("docs/exampleFiles/mismatchingCrfVersionID.txt");
             this.testFileGroupRepeatError = Paths.get("docs/exampleFiles/group_repeat_error.txt");
             this.emptyMandatory = Paths.get("docs/exampleFiles/emptyMandatory.txt");
+            this.missingToggle = Paths.get("docs/exampleFiles/missingToggle.txt");
+            this.hiddenVal = Paths.get("docs/exampleFiles/hiddenVal.txt");
 
             MessageFactory messageFactory = MessageFactory.newInstance();
             File testFile = new File("docs/responseExamples/getStudyMetadata2.xml"); //TODO: Replace File with Path
@@ -335,4 +339,27 @@ public class ClinicalDataOcChecksTests {
         assertThat(errors, hasSize(1));
         assertThat(errors, hasItem(isA(MandatoryItemInCrfMissing.class)));
     }
+
+    @Test
+    public void missingToggleTest() throws Exception {
+        List<ClinicalData> incorrectClinicalData = factory.createClinicalData(missingToggle);
+        clinicalDataOcChecks = new ClinicalDataOcChecks(metaData, incorrectClinicalData, testSubjectWithEventsTypeList);
+        List<ValidationErrorMessage> errors = clinicalDataOcChecks.getErrors();
+        assertThat(errors, notNullValue());
+        assertThat(errors, hasSize(2));
+        assertThat(errors, hasItem(isA(ToggleVarForDisplayRuleAbsent.class)));
+        assertThat(errors, hasItem(isA(MandatoryItemInCrfMissing.class)));
+    }
+
+    @Test
+    public void hiddenValueTest() throws Exception {
+        List<ClinicalData> incorrectClinicalData = factory.createClinicalData(hiddenVal);
+        clinicalDataOcChecks = new ClinicalDataOcChecks(metaData, incorrectClinicalData, testSubjectWithEventsTypeList);
+        List<ValidationErrorMessage> errors = clinicalDataOcChecks.getErrors();
+        assertThat(errors, notNullValue());
+        assertThat(errors, hasSize(2));
+        assertThat(errors, hasItem(isA(HiddenValueError.class)));
+        assertThat(errors, hasItem(isA(MandatoryItemInCrfMissing.class)));
+    }
+
 }

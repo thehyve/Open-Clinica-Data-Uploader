@@ -1,0 +1,2 @@
+StudySubjectID	Study	Site	EventName	CRFName	CRFVersion	EventRepeat	STRING_TYPE_TOGGLED
+ssid1	Test Study 1	site1	Non-repeating event	TESTBED_DATA_UPLOAD_TOOL	v0.03	1	123

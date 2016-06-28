@@ -465,10 +465,9 @@ public class GetStudyMetadataResponseHandler extends OCResponseHandler {
         return displayRules;
     }
 
-    private static DisplayRule getDisplayRule(Node itemPresentInFormNode) {
+    private static DisplayRule getDisplayRule(Node itemPresentInFormNode) throws XPathExpressionException {
         Node formOIDNode = itemPresentInFormNode.getAttributes().getNamedItem("FormOID");
         Node showItemNode = itemPresentInFormNode.getAttributes().getNamedItem("ShowItem");
-        NodeList childNodes = itemPresentInFormNode.getChildNodes();
         assert formOIDNode != null;
         assert showItemNode != null;
 
@@ -478,15 +477,13 @@ public class GetStudyMetadataResponseHandler extends OCResponseHandler {
         if (showItemNode.getTextContent().equals("No")) {
             show = false;
         }
-        for (int i = 0; i < childNodes.getLength(); i++) {
-            Node child = childNodes.item(i);
-            if (child.getNodeName().equals("ControlItemName")) {
-                String item = child.getTextContent();
-                rule.setControlItemName(item);
-            } else if (child.getNodeName().equals("OptionValue")) {
-                String item = child.getTextContent();
-                rule.setOptionValue(item);
-            }
+        Node ctrlItem = (Node) xpath.evaluate(".//*[local-name()='ControlItemName'][1]", itemPresentInFormNode, XPathConstants.NODE);
+        if (ctrlItem != null) {
+            rule.setControlItemName(ctrlItem.getTextContent());
+        }
+        Node optionsValue = (Node) xpath.evaluate(".//*[local-name()='OptionValue'][1]", itemPresentInFormNode, XPathConstants.NODE);
+        if (optionsValue  != null) {
+            rule.setOptionValue(optionsValue.getTextContent());
         }
         rule.setAppliesInCrf(crfOID);
         rule.setShow(show);

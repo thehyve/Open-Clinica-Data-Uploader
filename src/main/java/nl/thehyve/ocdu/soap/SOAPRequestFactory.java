@@ -160,6 +160,7 @@ public class SOAPRequestFactory {
     private void decorateEnvelope(SOAPEnvelope envelope, String nameSpace) throws Exception {
         envelope.addNamespaceDeclaration(apiVersion, nameSpace  + apiVersion);
         envelope.addNamespaceDeclaration("beans", "http://openclinica.org/ws/beans");
+        envelope.addNamespaceDeclaration("OpenClinica", "http://www.openclinica.org/ns/odm_ext_v130/v3.1");
     }
 
     private SOAPMessage getSoapMessage(String username, String passwordHash, String nameSpace) throws Exception {

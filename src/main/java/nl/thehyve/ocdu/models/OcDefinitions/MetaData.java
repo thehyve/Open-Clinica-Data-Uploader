@@ -1,8 +1,11 @@
 package nl.thehyve.ocdu.models.OcDefinitions;
 
+import org.apache.commons.lang3.StringUtils;
+
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Created by piotrzakrzewski on 01/05/16.
@@ -53,6 +56,29 @@ public class MetaData {
 
     public void removeCodeListDefinition(CodeListDefinition codeListDefinition) {
         codeListDefinitions.remove(codeListDefinition);
+    }
+
+    /**
+     * Returns a clinical data form's OID based on the name and version.
+     * @param crfName the form name
+     * @param crfVersion the form version
+     * @return an empty {@link String} if the crfName or crfVersion are empty or if
+     * the form's OID can not be found. In other cases it returns the form's OID.
+     */
+    public String findFormOID(String crfName, String crfVersion) {
+        if ((StringUtils.isEmpty(crfName)) ||
+                (StringUtils.isEmpty(crfVersion))) {
+            return "";
+        }
+        for (EventDefinition eventDefinition : eventDefinitions) {
+            for (CRFDefinition crfDefinition : eventDefinition.getCrfDefinitions()) {
+                if ((crfName.equals(crfDefinition.getName())) &&
+                    (crfVersion.equals(crfDefinition.getVersion()))) {
+                    return crfDefinition.getOid();
+                }
+            }
+        }
+        return "";
     }
 
 

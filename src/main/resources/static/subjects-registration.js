@@ -23,7 +23,6 @@ function check_new_patients(toRegisterSite) {
             $('#loading_div').remove();
             template_str = template;
             if (template.length > 1) {
-                notify_user_that_additional_patient_info_is_required();
                 provide_template_download();
                 provide_filled_template_upload();
             }
@@ -39,15 +38,10 @@ function check_new_patients(toRegisterSite) {
 }
 
 
-function notify_user_that_additional_patient_info_is_required() {
-    var html = '<span class="alert-danger"><h3>Additional subject information is required.</h3></span><hr>';
-    $(html).insertBefore('#subject-back-btn');
-}
-
-
 function provide_template_download() {
-    var html = '<button id="download-subject-template-btn" type="button" class="btn btn-success">Download Subject Template</button><div id="template-download-anchor"></div><hr>';
-    $(html).insertBefore('#subject-back-btn');
+    var info = '<h4>&#9755; Unregistered subjects are found in the dataset. These subjects should be registered with a "subject registration template", which can be downloaded<button id="download-subject-template-btn" class="btn btn-link btn-lg text-left" style="text-align: left">here</button></h4><div id="template-download-anchor"></div><hr>';
+    $(info).insertBefore('#subject-back-btn');
+
     $('#download-subject-template-btn').click(function () {
         $(loading_html).insertAfter('#template-download-anchor');
         $.ajax({
@@ -69,7 +63,7 @@ function provide_template_download() {
 }
 
 function provide_filled_template_upload() {
-    var html = '<form id="upload-subject-template-form" class="form-horizontal"><div class="form-group"><label for="upload-subject-template-input">Upload Subject Template:</label><input id="upload-subject-template-input" type="file" name="uploadPatientData" accept="*" /></div></form><span id="message-board"></span><hr>';
+    var html = '<h4>&#9755; Once you have filled out the template, select it using the file chooser below.</h4> <form id="upload-subject-template-form" class="form-horizontal"><input id="upload-subject-template-input" type="file" name="uploadPatientData" accept="*" /></form> <span id="message-board"></span> <hr>';
     $(html).insertBefore('#subject-back-btn');
 }
 

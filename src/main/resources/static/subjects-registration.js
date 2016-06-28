@@ -103,6 +103,7 @@ function upload_subjects() {
         error: function (jqXHR, textStatus, errorThrown) {
             $('#loading_div').remove();
             console.log(jqXHR.status + " " + textStatus + " " + errorThrown);
+            $('#message-board').append('<div class="alert-danger">Subject upload fails.</div>')
         }
 
     });

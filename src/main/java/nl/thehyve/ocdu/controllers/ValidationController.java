@@ -1,7 +1,5 @@
 package nl.thehyve.ocdu.controllers;
 
-import nl.thehyve.ocdu.models.OCEntities.Subject;
-import nl.thehyve.ocdu.models.OcUser;
 import nl.thehyve.ocdu.models.UploadSession;
 import nl.thehyve.ocdu.models.errors.ValidationErrorMessage;
 import nl.thehyve.ocdu.repositories.SubjectRepository;
@@ -62,7 +60,7 @@ public class ValidationController {
             if(patientsErrors.isEmpty()) {
                 return new ResponseEntity<>(HttpStatus.OK);
             }
-            return new ResponseEntity<>(patientsErrors, HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(patientsErrors, HttpStatus.OK);
         } catch (UploadSessionNotFoundException e) {
             e.printStackTrace();
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);

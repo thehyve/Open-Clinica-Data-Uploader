@@ -86,7 +86,6 @@ public class GetStudyMetadataResponseHandler extends OCResponseHandler {
         }
         metaData.setEventDefinitions(events);
         metaData.setCodeListDefinitions(parseCodeListDefinitions(odm));
-        metaData.setSiteDefinitions(parseSiteDefinitions(odm));
         metaData.setItemGroupDefinitions(itemGroups);
         String studyRequirementPath = STUDY_SELECTOR + "/MetaDataVersion";
         metaData.setGenderRequired(parseGenderRequired(odm, studyRequirementPath));
@@ -128,37 +127,6 @@ public class GetStudyMetadataResponseHandler extends OCResponseHandler {
                 studyDescNode, XPathConstants.NODE);
         if (statusNode == null) return unspecified;
         return statusNode.getTextContent();
-    }
-
-    private static List<SiteDefinition> parseSiteDefinitions(Document odm) throws XPathExpressionException {
-        NodeList siteNodes = (NodeList) xpath.evaluate(SITES_SELECTOR, odm, XPathConstants.NODESET);
-
-        int site_index = 2;
-
-        ArrayList<SiteDefinition> siteDefinitions = new ArrayList<>();
-        for (int i = 0; i < siteNodes.getLength(); i++) {
-            Node siteNode = siteNodes.item(i);
-            SiteDefinition siteDefinition = new SiteDefinition();
-            Optional<String> siteOidOpt = parseStudyOid(siteNode);
-            if (siteOidOpt.isPresent()) {
-                siteDefinition.setSiteOID(siteOidOpt.get());
-            }
-            Optional<String> siteNameOpt = parseStudyName(siteNode);
-            if (siteNameOpt.isPresent()) {
-                siteDefinition.setName(siteNameOpt.get());
-            }
-
-            String site_path = "(//Study)[" + site_index + "]/MetaDataVersion";
-            boolean genderRequired = parseGenderRequired(odm, site_path);
-            int DOBRequired = parseDateOfBirthRequired(odm, site_path);
-            siteDefinition.setGenderRequired(genderRequired);
-            siteDefinition.setBirthdateRequired(DOBRequired);
-
-            siteDefinitions.add(siteDefinition);
-
-            site_index++;
-        }
-        return siteDefinitions;
     }
 
     private static Optional<String> parseStudyOid(Node studyNode) {
@@ -282,7 +250,11 @@ public class GetStudyMetadataResponseHandler extends OCResponseHandler {
                     if (listID_attr != null && listID_attr.getNodeValue().equals("SPL_collectDob")) {
                         Node value_attr = attrs.getNamedItem("Value");
                         String isDOBRequiredStr = value_attr.getNodeValue();
-                        isDOBRequired = Integer.valueOf(isDOBRequiredStr);
+                        try {
+                            isDOBRequired = Integer.valueOf(isDOBRequiredStr);
+                        } catch (NumberFormatException e) {
+                            isDOBRequired = 3; // Not required
+                        }
                     }
                 }//if
             }//for

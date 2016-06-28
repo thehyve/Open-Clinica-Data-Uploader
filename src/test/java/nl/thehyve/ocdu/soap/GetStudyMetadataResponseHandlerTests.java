@@ -51,20 +51,7 @@ public class GetStudyMetadataResponseHandlerTests {
                 ))
         ));
     }
-
-    @Test
-    public void testMeteDataSiteDefinitionsRetrieval() throws Exception {
-        MetaData metaData = GetStudyMetadataResponseHandler.parseGetStudyMetadataResponse(getStudyMetadata3);
-
-        assertThat(metaData, allOf(
-                hasProperty("siteDefinitions", contains(
-                        allOf(
-                                hasProperty("siteOID", is("S_EVENTFUL_4878")),
-                                hasProperty("name", is("Eventful - Eventful-Site"))
-                        )
-                ))
-        ));
-    }
+    
 
     @BeforeClass
     public static void beforeClass() throws Exception {

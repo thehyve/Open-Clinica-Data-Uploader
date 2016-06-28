@@ -1,6 +1,8 @@
 package nl.thehyve.ocdu.soap.SOAPRequestDecorators;
 
-import org.w3c.dom.CDATASection;
+import nl.thehyve.ocdu.soap.ResponseHandlers.SoapUtils;
+import org.w3c.dom.Document;
+import org.w3c.dom.Node;
 
 import javax.xml.soap.SOAPBody;
 import javax.xml.soap.SOAPElement;
@@ -22,8 +24,9 @@ public class ImportDataRequestDecorator implements SoapDecorator {
     public void decorateBody(SOAPEnvelope envelope) throws Exception {
         SOAPBody soapBody = envelope.getBody();
         SOAPElement importRequestElement = soapBody.addChildElement("importRequest", "v1");
-        SOAPElement odmElement = importRequestElement.addChildElement("odm");
-        CDATASection odmCData  = soapBody.getOwnerDocument().createCDATASection(odm);
-        odmElement.appendChild(odmCData);
+        Document odmContentDoc = SoapUtils.simpleString2XmlDoc(odm);
+        Node odmRoot = importRequestElement.getOwnerDocument().importNode(odmContentDoc.getFirstChild(), true);
+
+        importRequestElement.appendChild(odmRoot);
     }
 }

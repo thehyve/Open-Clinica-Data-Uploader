@@ -163,7 +163,7 @@ public class OpenClinicaService {
         SOAPConnectionFactory soapConnectionFactory = SOAPConnectionFactory.newInstance();
         SOAPConnection soapConnection = soapConnectionFactory.createConnection();
         SOAPMessage soapMessage = requestFactory.createDataUploadRequest(username, passwordHash, odm);
-
+        System.out.println("-->" + SoapUtils.soapMessageToString(soapMessage));
         SOAPMessage soapResponse = soapConnection.call(soapMessage, url + "/ws/data/v1");  // Add SOAP endopint to OCWS URL.
         String responseError = SOAPResponseHandler.parseOpenClinicaResponse(soapResponse, "//importDataResponse");
         if (responseError != null) {

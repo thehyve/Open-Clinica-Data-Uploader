@@ -80,7 +80,6 @@ public class PatientDataFactory extends UserSubmittedDataFactory {
         consumer.accept(cellValue);
     }
 
-
     public List<String> generatePatientRegistrationTemplate(MetaData metadata, Map<String, String> subjectMap, boolean registerSite) {
         List<String> result = new ArrayList<>();
         String delim = "\t";

@@ -43,22 +43,8 @@ function provide_template_download() {
     $(info).insertBefore('#subject-back-btn');
 
     $('#download-subject-template-btn').click(function () {
-        $(loading_html).insertAfter('#template-download-anchor');
-        $.ajax({
-            url: baseApp + "/template/get-subject-template",
-            type: "GET",
-            data: {registerSite: to_register_at_site},
-            success: function (template) {
-                template_str = template;
-                $('#loading_div').remove();
-                var blob = new Blob(template_str, {type: "text/plain;charset=utf-8"});
-                saveAs(blob, "subject-registration-template.tsv");
-            },
-            error: function (jqXHR, textStatus, errorThrown) {
-                console.log(jqXHR.status + " " + textStatus + " " + errorThrown);
-                // window.location.href = baseApp + "/views/subjects";
-            }
-        });
+        var blob = new Blob(template_str, {type: "text/plain;charset=utf-8"});
+        saveAs(blob, "subject-registration-template.txt");
     });
 }
 

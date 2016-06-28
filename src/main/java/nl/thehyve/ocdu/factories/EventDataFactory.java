@@ -1,12 +1,17 @@
 package nl.thehyve.ocdu.factories;
 
 import nl.thehyve.ocdu.models.OCEntities.Event;
+import nl.thehyve.ocdu.models.OcDefinitions.EventDefinition;
+import nl.thehyve.ocdu.models.OcDefinitions.MetaData;
+import nl.thehyve.ocdu.models.OcDefinitions.RegisteredEventInformation;
 import nl.thehyve.ocdu.models.OcUser;
 import nl.thehyve.ocdu.models.UploadSession;
+import org.openclinica.ws.beans.StudySubjectWithEventsType;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -81,5 +86,43 @@ public class EventDataFactory extends UserSubmittedDataFactory {
         }
         String cellValue = row[columnsIndex.get(columnName)];
         consumer.accept(cellValue);
+    }
+
+    public List<String> generateEventSchedulingTemplate(MetaData metaData, List<StudySubjectWithEventsType> studySubjectWithEventsTypeList) {
+        Map<String, List<EventDefinition>> eventsPerSubject = RegisteredEventInformation.getMissingEventsPerSubject(metaData, studySubjectWithEventsTypeList);
+
+        List<String> result = new ArrayList<>();
+        String delim = "\t";
+        List<String> header = new ArrayList<>();
+        header.add("Study Subject ID");
+        header.add("Event Name");
+        header.add("Study");
+        header.add("Location");
+        header.add("Start Date");
+        header.add("Start Time");
+        header.add("End Date");
+        header.add("End Time");
+        header.add("Repeat Number");
+        result.add(String.join(delim, header) + "\n");
+
+        for(String ssid: eventsPerSubject.keySet()) {
+            List<EventDefinition> events = eventsPerSubject.get(ssid);
+            for(EventDefinition ed: events) {
+                String eventname = ed.getName();
+                List<String> row = new ArrayList<>();
+                row.add(ssid);//study subject id
+                row.add(eventname);//event name
+                row.add("");//study
+                row.add("");//location
+                row.add("");//Start Date
+                row.add("");//Start Time
+                row.add("");//End Date
+                row.add("");//End Time
+                row.add("");//Repeat Number
+                result.add(String.join(delim, row) + "\n");
+            }//for
+        }//for
+
+        return result;
     }
 }

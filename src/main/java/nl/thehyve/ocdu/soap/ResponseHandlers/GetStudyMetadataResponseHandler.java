@@ -18,6 +18,7 @@ import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -579,10 +580,9 @@ public class GetStudyMetadataResponseHandler extends OCResponseHandler {
             String value = valueNode.getTextContent();
             RangeCheck rangeCheck = new RangeCheck();
             RangeCheck.COMPARATOR comparatorEnum = RangeCheck.COMPARATOR.valueOf(comparator);
-            double valueDouble = Double.parseDouble(value);
-            int valueInt = (int) valueDouble; // We will not attempt floating point comparisons.
+            BigDecimal valueBigDec = BigDecimal.valueOf(Double.parseDouble(value));
             rangeCheck.setComparator(comparatorEnum);
-            rangeCheck.setValue(valueInt);
+            rangeCheck.setValue(valueBigDec);
             rangeChecks.add(rangeCheck);
         }
         return rangeChecks;

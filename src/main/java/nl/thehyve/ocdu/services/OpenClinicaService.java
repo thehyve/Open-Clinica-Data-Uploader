@@ -24,6 +24,7 @@ import org.openclinica.ws.beans.StudySubjectRefType;
 import org.openclinica.ws.beans.StudySubjectWithEventsType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.w3c.dom.Document;
 
@@ -42,6 +43,9 @@ import static nl.thehyve.ocdu.soap.ResponseHandlers.RegisterSubjectsResponseHand
 
 @Service
 public class OpenClinicaService {
+
+    @Autowired
+    ODMService odmService;
 
     SOAPRequestFactory requestFactory = new SOAPRequestFactory();
     private static final Logger log = LoggerFactory.getLogger(OpenClinicaService.class);
@@ -110,6 +114,40 @@ public class OpenClinicaService {
         return metaData;
     }
 
+    public List<String> uploadClinicalData(String username,
+                                           String passwordHash,
+                                           String url,
+                                           List<ClinicalData> clinicalDataList,
+                                           MetaData metaData,
+                                           String statusAfterUpload,
+                                           Map<String, String> subjectLabelToOIDMap) throws Exception {
+        log.info("Upload initiated by: " + username + " on: " + url);
+        List<String> resultList = new ArrayList();
+
+        if (    StringUtils.isEmpty(username) ||
+                StringUtils.isEmpty(passwordHash) ||
+                StringUtils.isEmpty(url)) {
+            resultList.add("One of the required parameters is missing (username, password or URL)");
+            return resultList;
+        }
+
+        Map<String, List<ClinicalData>> outputMap = clinicalDataList.stream().collect(Collectors.groupingBy(ClinicalData::createODMGroupingKey,
+                Collectors.toList()));
+        TreeMap<String, List<ClinicalData>> sortedMap = new TreeMap<>(outputMap);
+        for (String key : sortedMap.keySet()) {
+            List<ClinicalData> outputClinicalData = sortedMap.get(key);
+            String odmString = odmService.generateODM(outputClinicalData, metaData, statusAfterUpload, subjectLabelToOIDMap);
+            String uploadResult = uploadODMString(username, passwordHash, url, odmString);
+            if (uploadResult == null) {
+                resultList.add("Successfully uploaded data for subject " + key);
+            }
+            else {
+                resultList.add("Failed upload for subject " + key + ". Cause: " + uploadResult);
+            }
+        }
+        return resultList;
+    }
+
     /**
      * @param username     the user-account name
      * @param passwordHash the SHA1 hash of the user's password
@@ -119,14 +157,9 @@ public class OpenClinicaService {
      * instance at url. Returns <code>null</code> if everything went OK.
      * @throws Exception in case of a technical error
      */
-    public String uploadODMString(String username, String passwordHash, String url, String odm) throws Exception {
-        log.info("Get upload initiated by: " + username + " on: " + url);
-        if (StringUtils.isEmpty(odm) ||
-                StringUtils.isEmpty(username) ||
-                StringUtils.isEmpty(passwordHash) ||
-                StringUtils.isEmpty(url)) {
-            return "One of the required parameters is missing (username, password, URL or ODM)";
-        }
+    private String uploadODMString(String username, String passwordHash, String url, String odm) throws Exception {
+
+
         SOAPConnectionFactory soapConnectionFactory = SOAPConnectionFactory.newInstance();
         SOAPConnection soapConnection = soapConnectionFactory.createConnection();
         SOAPMessage soapMessage = requestFactory.createDataUploadRequest(username, passwordHash, odm);

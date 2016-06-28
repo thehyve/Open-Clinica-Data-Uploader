@@ -2,11 +2,7 @@ package nl.thehyve.ocdu.models.OCEntities;
 
 import nl.thehyve.ocdu.models.OcUser;
 import nl.thehyve.ocdu.models.UploadSession;
-import org.apache.commons.lang3.StringUtils;
-import org.openclinica.ws.beans.EventType;
-import org.openclinica.ws.beans.SiteRefType;
-import org.openclinica.ws.beans.StudyRefType;
-import org.openclinica.ws.beans.StudySubjectWithEventsType;;
+import org.openclinica.ws.beans.StudySubjectWithEventsType;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -16,7 +12,8 @@ import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
+
+;
 
 /**
  * Created by piotrzakrzewski on 16/04/16.
@@ -47,9 +44,12 @@ public class ClinicalData implements OcEntity, UserSubmitted, EventReference {
     @Column(columnDefinition = "TEXT")
     private String crfName;
 
-
     @Column(columnDefinition = "TEXT")
     private String crfVersion;
+
+    @Column(columnDefinition = "TEXT")
+    private String itemGroupOID;
+
     private Integer groupRepeat;
 
     @Column(columnDefinition = "TEXT")
@@ -64,6 +64,7 @@ public class ClinicalData implements OcEntity, UserSubmitted, EventReference {
         this.crfName = crfName;
         this.submission = submission;
         this.crfVersion = crfVersion;
+        this.itemGroupOID = "";
         this.groupRepeat = groupRepeat;
         this.owner = owner;
         this.value = value;
@@ -180,10 +181,19 @@ public class ClinicalData implements OcEntity, UserSubmitted, EventReference {
         return crfVersion;
     }
 
+    public String getItemGroupOID() {
+        return itemGroupOID;
+    }
+
+    public void setItemGroupOID(String itemGroupOID) {
+        this.itemGroupOID = itemGroupOID;
+    }
 
     public Integer getGroupRepeat() {
         return groupRepeat;
     }
+
+
 
     @Override
     public String toString() {
@@ -196,6 +206,7 @@ public class ClinicalData implements OcEntity, UserSubmitted, EventReference {
                 ", eventRepeat=" + eventRepeat +
                 ", crfName='" + crfName + '\'' +
                 ", crfVersion='" + crfVersion + '\'' +
+                ", itemGroupOID='" + itemGroupOID + '\'' +
                 ", groupRepeat=" + groupRepeat +
                 ", value='" + value + '\'' +
                 '}';
@@ -236,8 +247,13 @@ public class ClinicalData implements OcEntity, UserSubmitted, EventReference {
         ret.append(eventRepeat);
         ret.append(crfName);
         ret.append(crfVersion);
-        // TODO add the itemGroup level;
+        ret.append(itemGroupOID);
+//        ret.append(groupRepeat.toString());
         return ret.toString().toUpperCase();
+    }
+
+    public String createODMGroupingKey() {
+        return ssid;
     }
 
     /**

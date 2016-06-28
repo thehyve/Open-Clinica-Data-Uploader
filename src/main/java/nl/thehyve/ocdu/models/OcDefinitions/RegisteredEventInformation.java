@@ -1,5 +1,6 @@
 package nl.thehyve.ocdu.models.OcDefinitions;
 
+import nl.thehyve.ocdu.models.OCEntities.Event;
 import org.openclinica.ws.beans.EventResponseType;
 import org.openclinica.ws.beans.EventsType;
 import org.openclinica.ws.beans.SiteRefType;
@@ -7,8 +8,11 @@ import org.openclinica.ws.beans.StudyRefType;
 import org.openclinica.ws.beans.StudySubjectWithEventsType;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * Class responsible for providing a {@link Map} with which a check can be performed if an event / event-repeat
@@ -46,6 +50,20 @@ public class RegisteredEventInformation {
                 buffer.append(eventResponseType.getOccurrence());
                 ret.put(buffer.toString().toUpperCase(), eventResponseType);
             }
+        }
+        return ret;
+    }
+
+    public static Map<String, List<EventDefinition>> getMissingEventsPerSubject(MetaData metaData,
+                                                                      List<StudySubjectWithEventsType> studySubjectWithEventsTypeList) {
+        Map<String, List<EventDefinition>> ret = new HashMap<>();
+        for (StudySubjectWithEventsType subjectWithEventsType : studySubjectWithEventsTypeList) {
+            Set<String> existingEventOIDSet = new HashSet<>();
+                subjectWithEventsType.getEvents().getEvent().forEach(eventResponseType -> existingEventOIDSet.add(eventResponseType.getEventDefinitionOID()));
+            List<EventDefinition> missingEventsPerSubject =
+                 metaData.getEventDefinitions().stream().
+                         filter(eventDefinition -> (! existingEventOIDSet.contains(eventDefinition.getStudyEventOID()))).collect(Collectors.toList());
+            ret.put(subjectWithEventsType.getLabel(), missingEventsPerSubject);
         }
         return ret;
     }

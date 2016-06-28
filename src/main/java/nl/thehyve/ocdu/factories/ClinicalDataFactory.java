@@ -1,6 +1,7 @@
 package nl.thehyve.ocdu.factories;
 
 import nl.thehyve.ocdu.models.OCEntities.ClinicalData;
+import nl.thehyve.ocdu.models.OcDefinitions.MetaData;
 import nl.thehyve.ocdu.models.OcUser;
 import nl.thehyve.ocdu.models.UploadSession;
 import org.apache.commons.lang3.StringUtils;

@@ -20,7 +20,7 @@ function check_new_events() {
     $.ajax({
         url: baseApp + "/template/get-event-template",
         type: "GET",
-        success: function (template) { console.log(template);
+        success: function (template) {
             $('#loading_div').remove();
             template_arr = template;
             if (template.length > 1) {
@@ -56,8 +56,8 @@ function provide_event_template_upload() {
 
 
 function next_btn() {
-    var html = '<button type="button" class="btn btn-primary" id="subject-back-btn">Back</button>&nbsp;' +
-        '<button type="button" class="btn btn-primary" id="subject-next-btn">Next</button>';
+    var html = '<button type="button" class="btn btn-primary" id="event-back-btn">Back</button>&nbsp;' +
+        '<button type="button" class="btn btn-primary" id="event-next-btn">Next</button>';
     $('#event-registration-div').append(html);
     $('#event-back-btn').click(function () {
         window.location.href = baseApp + "/views/feedback-subjects";

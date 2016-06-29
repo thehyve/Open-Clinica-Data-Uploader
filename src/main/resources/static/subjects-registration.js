@@ -99,6 +99,8 @@ function upload_subjects() {
 
 
 function update_submission() {
+    $('#template_error').remove();
+
     $.ajax({
         url: baseApp + "/submission/update",
         type: "POST",
@@ -111,7 +113,8 @@ function update_submission() {
         error: function (jqXHR, textStatus, errorThrown) {
             $('#loading_div').remove();
             console.log(jqXHR.status + " " + textStatus + " " + errorThrown);
-            window.location.href = baseApp + "/views/subjects";
+            var html = "<div id='template_error' class='alert alert-warning'>The update of submission has failed.</div>"
+            $('#subject-registration-div').append(html);
         }
     });
 }

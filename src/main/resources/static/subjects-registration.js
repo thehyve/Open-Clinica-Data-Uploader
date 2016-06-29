@@ -2,7 +2,6 @@
  * Created by bo on 5/12/16.
  */
 
-var to_register_at_site = true;
 var template_str;
 var loading_html;
 
@@ -14,6 +13,7 @@ $(document).ready(function () {
 });
 
 function check_new_patients(toRegisterSite) {
+    $('#template_error').remove();
 
     $.ajax({
         url: baseApp + "/template/get-subject-template",
@@ -27,12 +27,14 @@ function check_new_patients(toRegisterSite) {
                 provide_filled_template_upload();
             }
             else {
-                window.location.href = baseApp + "/views/feedback-subjects";
+                var html = "<div id='template_error' class='alert alert-warning'>Template is empty.</div>"
+                $('#subject-registration-div').append(html);
             }
         },
         error: function (jqXHR, textStatus, errorThrown) {
             console.log(jqXHR.status + " " + textStatus + " " + errorThrown);
-            window.location.href = baseApp + "/views/feedback-subjects";
+            var html = "<div id='template_error' class='alert alert-warning'>The retrieval of template has failed.</div>"
+            $('#subject-registration-div').append(html);
         }
     });
 }

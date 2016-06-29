@@ -228,12 +228,36 @@ public class ClinicalData implements OcEntity, UserSubmitted, EventReference {
                 (this.crfVersion == null)) {
             throw new IllegalStateException("Unable to determine conflict state; a field is null");
         }
-        return ((this.study.equals(that.study) &&
+        if (! (this.study.equals(that.study) &&
                 (this.ssid.equals(that.ssid)) &&
                 (this.eventName.equals(that.eventName)) &&
                 (this.eventRepeat.equals(that.eventRepeat)) &&
-                (this.crfName.equals(that.crfName)) &&
-                (this.crfVersion.equals(that.crfVersion))));
+                (this.crfName.equals(that.crfName)))) {
+            return false;
+        }
+        return this.crfVersion.equals(that.crfVersion);
+    }
+
+    /**
+     * Tests if a OCItemMapping has a conflicting CRF version. This is required to avoid uploads with similar study,
+     * subject, event, event-ordinal and CRF-name but with a different CRF-versions. In such a situation OpenClinica web-services
+     * adds 2 CRF's to the event. (TODO add the reference to the OC-bug)
+     * @param that
+     * @return <code>true</code> if a conflicting CRF is present.
+     */
+    public boolean isSameCRF(ClinicalData that) {
+        if ((this.study == null) ||
+                (this.ssid == null) ||
+                (this.eventName == null) ||
+                (this.eventRepeat == null) ||
+                (this.crfName == null)) {
+            throw new IllegalStateException("Unable to determine conflict state; a field is null");
+        }
+        return (this.study.equals(that.study) &&
+                (this.ssid.equals(that.ssid)) &&
+                (this.eventName.equals(that.eventName)) &&
+                (this.eventRepeat.equals(that.eventRepeat)) &&
+                (this.crfName.equals(that.crfName)));
     }
 
     /**

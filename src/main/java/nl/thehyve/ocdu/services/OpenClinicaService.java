@@ -155,6 +155,7 @@ public class OpenClinicaService {
         }
         return resultList;
     }
+
     private void addSiteDefinitions(MetaData metaData, String username, String passwordHash, String url, Study study) throws Exception {
         List<SiteDefinition> siteDefs = new ArrayList<>();
         for(Site site: study.getSiteList()) {
@@ -233,9 +234,7 @@ public class OpenClinicaService {
                     throw new IllegalStateException("No eventName specified in the input for subject " + event.getSsid());
                 }
                 eventType.setEventDefinitionOID(eventOID);
-                // TODO remove these hardcoded values and obtain them from the BusinessLogic bean still to be
-                // created
-                eventType.setLocation("Utrecht");
+                eventType.setLocation(event.getLocation());
                 XMLGregorianCalendar startDate = SoapUtils.getFullXmlDate((GregorianCalendar) GregorianCalendar.getInstance());
                 eventType.setStartDate(startDate);
                 eventTypeList.add(eventType);

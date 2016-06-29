@@ -37,11 +37,11 @@ public class EventDataFactoryTests {
     @Test
     public void testMapRowWithOnlySomeColumns() {
         HashMap<String, Integer> columnsIndes = new HashMap<>();
-        columnsIndes.put("StudySubjectID", 0);
-        columnsIndes.put("EventName", 1);
+        columnsIndes.put("Study Subject ID", 0);
+        columnsIndes.put("Event Name", 1);
         columnsIndes.put("Study", 2);
-        columnsIndes.put("StartDate", 3);
-        columnsIndes.put("RepeatNumber", 4);
+        columnsIndes.put("Start Date", 3);
+        columnsIndes.put("Repeat Number", 4);
         String[] row = new String[]{"Ssid0", "Event Name", "Study", "11-Jun-2014", "5"};
 
         Event event = factory.mapRow(row, columnsIndes);
@@ -60,16 +60,16 @@ public class EventDataFactoryTests {
     @Test
     public void testMapRow() {
         HashMap<String, Integer> columnsIndes = new HashMap<>();
-        columnsIndes.put("StudySubjectID", 0);
-        columnsIndes.put("EventName", 1);
+        columnsIndes.put("Study Subject ID", 0);
+        columnsIndes.put("Event Name", 1);
         columnsIndes.put("Study", 2);
         columnsIndes.put("Site", 3);
         columnsIndes.put("Location", 4);
-        columnsIndes.put("StartDate", 5);
-        columnsIndes.put("StartTime", 6);
-        columnsIndes.put("EndDate", 7);
-        columnsIndes.put("EndTime", 8);
-        columnsIndes.put("RepeatNumber", 9);
+        columnsIndes.put("Start Date", 5);
+        columnsIndes.put("Start Time", 6);
+        columnsIndes.put("End Date", 7);
+        columnsIndes.put("End Time", 8);
+        columnsIndes.put("Repeat Number", 9);
         String[] row = new String[]{"Ssid", "Event Name", "Study", "Site", "Location",
                 "21-Feb-2011", "12:00", "22-Feb-2011", "18:00", "3"};
 

@@ -81,10 +81,10 @@ function upload_subjects() {
         processData: false,
         contentType: false,
         success: function (fileFormatErrors) {
-            if(fileFormatErrors.length == 0) {
+            if (fileFormatErrors.length == 0) {
                 update_submission();
             }
-            else{
+            else {
                 log_errors(fileFormatErrors);
             }
         },

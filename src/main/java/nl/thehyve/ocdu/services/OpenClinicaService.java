@@ -9,6 +9,8 @@ import nl.thehyve.ocdu.models.OcDefinitions.EventDefinition;
 import nl.thehyve.ocdu.models.OcDefinitions.MetaData;
 import nl.thehyve.ocdu.models.OcDefinitions.RegisteredEventInformation;
 import nl.thehyve.ocdu.models.OcDefinitions.SiteDefinition;
+import nl.thehyve.ocdu.models.errors.ODMUploadErrorMessage;
+import nl.thehyve.ocdu.models.errors.ValidationErrorMessage;
 import nl.thehyve.ocdu.soap.ResponseHandlers.GetStudyMetadataResponseHandler;
 import nl.thehyve.ocdu.soap.ResponseHandlers.IsStudySubjectResponseHandler;
 import nl.thehyve.ocdu.soap.ResponseHandlers.ListAllByStudyResponseHandler;
@@ -121,22 +123,24 @@ public class OpenClinicaService {
         return metaData;
     }
 
-    public List<String> uploadClinicalData(String username,
-                                           String passwordHash,
-                                           String url,
-                                           List<ClinicalData> clinicalDataList,
-                                           MetaData metaData,
-                                           String statusAfterUpload,
-                                           Map<String, String> subjectLabelToOIDMap) throws Exception {
+    public Collection<ValidationErrorMessage> uploadClinicalData(String username,
+                                                                   String passwordHash,
+                                                                   String url,
+                                                                   List<ClinicalData> clinicalDataList,
+                                                                   MetaData metaData,
+                                                                   String statusAfterUpload) throws Exception {
         log.info("Upload initiated by: " + username + " on: " + url);
-        List<String> resultList = new ArrayList();
+        List<ValidationErrorMessage> resultList = new ArrayList();
 
         if (StringUtils.isEmpty(username) ||
                 StringUtils.isEmpty(passwordHash) ||
                 StringUtils.isEmpty(url)) {
-            resultList.add("One of the required parameters is missing (username, password or URL)");
+            resultList.add(new ODMUploadErrorMessage("One of the required parameters is missing (username, password or URL)"));
             return resultList;
         }
+
+        Map<String, String> subjectLabelToOIDMap =
+                createMapSubjectLabelToSubjectOID(username, passwordHash, url, clinicalDataList);
 
         Map<String, List<ClinicalData>> outputMap = clinicalDataList.stream().collect(Collectors.groupingBy(ClinicalData::createODMGroupingKey,
                 Collectors.toList()));
@@ -145,14 +149,13 @@ public class OpenClinicaService {
             List<ClinicalData> outputClinicalData = sortedMap.get(key);
             String odmString = odmService.generateODM(outputClinicalData, metaData, statusAfterUpload, subjectLabelToOIDMap);
             String uploadResult = uploadODMString(username, passwordHash, url, odmString);
-            if (uploadResult == null) {
-                resultList.add("Successfully uploaded data for subject " + key);
-            } else {
-                resultList.add("Failed upload for subject " + key + ". Cause: " + uploadResult);
+            if (uploadResult != null) {
+                resultList.add(new ODMUploadErrorMessage("Failed upload for subject " + key + ". Cause: " + uploadResult));
             }
         }
         return resultList;
     }
+
     private void addSiteDefinitions(MetaData metaData, String username, String passwordHash, String url, Study study) throws Exception {
         List<SiteDefinition> siteDefs = new ArrayList<>();
         for(Site site: study.getSiteList()) {
@@ -231,9 +234,7 @@ public class OpenClinicaService {
                     throw new IllegalStateException("No eventName specified in the input for subject " + event.getSsid());
                 }
                 eventType.setEventDefinitionOID(eventOID);
-                // TODO remove these hardcoded values and obtain them from the BusinessLogic bean still to be
-                // created
-                eventType.setLocation("Utrecht");
+                eventType.setLocation(event.getLocation());
                 XMLGregorianCalendar startDate = SoapUtils.getFullXmlDate((GregorianCalendar) GregorianCalendar.getInstance());
                 eventType.setStartDate(startDate);
                 eventTypeList.add(eventType);

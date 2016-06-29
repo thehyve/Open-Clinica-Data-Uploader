@@ -17,6 +17,8 @@ $(document).ready(function () {
 
 function check_new_events() {
 
+    $('#template_error').remove();
+
     $.ajax({
         url: baseApp + "/template/get-event-template",
         type: "GET",
@@ -28,12 +30,14 @@ function check_new_events() {
                 provide_event_template_upload();
             }
             else {
-                window.location.href = baseApp + "/views/feedback-events";
+                var html = "<div id='template_error' class='alert alert-warning'>Template is empty.</div>"
+                $('#subject-registration-div').append(html);
             }
         },
         error: function (jqXHR, textStatus, errorThrown) {
             console.log(jqXHR.status + " " + textStatus + " " + errorThrown);
-            window.location.href = baseApp + "/views/feedback-events";
+            var html = "<div id='template_error' class='alert alert-warning'>The retrieval of template has failed.</div>"
+            $('#subject-registration-div').append(html);
         }
     });
 }
@@ -69,6 +73,7 @@ function next_btn() {
 
 
 function update_submission() {
+    $('#template_error').remove();
     $.ajax({
         url: baseApp + "/submission/update",
         type: "POST",
@@ -81,13 +86,15 @@ function update_submission() {
         error: function (jqXHR, textStatus, errorThrown) {
             $('#loading_div').remove();
             console.log(jqXHR.status + " " + textStatus + " " + errorThrown);
-            window.location.href = baseApp + "/views/events";
+            var html = "<div id='template_error' class='alert alert-danger'>The submission update has failed.</div>"
+            $('#subject-registration-div').append(html);
         }
     });
 }
 
 function upload_event_data() {
     $('#loading_div').remove();
+    $('#template_error').remove();
     $(loading_html).insertAfter('#message-board');
     $('#message-board').empty();
     $.ajax({
@@ -109,6 +116,8 @@ function upload_event_data() {
         error: function (jqXHR, textStatus, errorThrown) {
             $('#loading_div').remove();
             console.log(jqXHR.status + " " + textStatus + " " + errorThrown);
+            var html = "<div id='template_error' class='alert alert-danger'>The upload for event registration has failed.</div>"
+            $('#subject-registration-div').append(html);
         }
 
     });

@@ -151,8 +151,7 @@ public class UploadController {
             OcUser user = ocUserService.getCurrentOcUser(session);
             Path locallySavedDataFile = saveFile(uploadPatientData);
             UploadSession currentUploadSession = uploadSessionService.getCurrentUploadSession(session);
-            String pwd = ocUserService.getOcwsHash(session);
-            Collection<ValidationErrorMessage> fileFormatErrors = fileService.depositPatientFile(locallySavedDataFile, user, currentUploadSession, pwd);
+            Collection<ValidationErrorMessage> fileFormatErrors = fileService.depositPatientFile(locallySavedDataFile, user, currentUploadSession);
             return new ResponseEntity<>(fileFormatErrors, HttpStatus.OK);
         } catch (Exception e) {
             System.out.println(e.getMessage());

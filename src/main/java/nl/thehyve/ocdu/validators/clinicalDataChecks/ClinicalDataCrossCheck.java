@@ -35,7 +35,7 @@ public interface ClinicalDataCrossCheck {
             Integer day = Integer.parseInt(split[2]);
             Integer month = Integer.parseInt(split[1]);
             if (day > 31 || month > 12) return false;
-        } catch (ParseException e) {
+        } catch (Exception e) {
             return false;
         }
         return true;

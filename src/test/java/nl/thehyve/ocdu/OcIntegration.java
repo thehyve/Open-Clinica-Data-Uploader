@@ -3,6 +3,7 @@ package nl.thehyve.ocdu;
 import nl.thehyve.ocdu.models.OCEntities.Subject;
 import nl.thehyve.ocdu.models.OcDefinitions.MetaData;
 import nl.thehyve.ocdu.models.OCEntities.Study;
+import nl.thehyve.ocdu.models.errors.ValidationErrorMessage;
 import nl.thehyve.ocdu.services.OpenClinicaService;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -86,7 +87,7 @@ public class OcIntegration {
         s1.setGender("m");
         Collection<Subject> subjects = new ArrayList<>();
         subjects.add(s1);
-        String result = openClinicaService.registerPatients(user, sha1hexDigest, ocUrl, subjects);
-        assertTrue("".equals(result)); // true if successful
+        Collection<ValidationErrorMessage> result = openClinicaService.registerPatients(user, sha1hexDigest, ocUrl, subjects);
+        assertTrue(result.isEmpty()); // true if successful
     }
 }

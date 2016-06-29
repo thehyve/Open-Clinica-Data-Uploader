@@ -38,9 +38,9 @@ function feedbackNext() {
     $.ajax({
         url: baseApp + "/submission/update",
         type: "POST",
-        data: {step: "overview"},
+        data: {step: "odm-upload"},
         success: function () {
-            window.location.href = baseApp + "/views/final";
+            window.location.href = baseApp + "/views/odm-upload";
         },
         error: function (jqXHR, textStatus, errorThrown) {
             console.log(jqXHR.status+" "+textStatus+" "+errorThrown);

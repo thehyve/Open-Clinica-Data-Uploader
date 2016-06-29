@@ -54,9 +54,10 @@ public class OpenClinicaService {
     private static final Logger log = LoggerFactory.getLogger(OpenClinicaService.class);
 
 
-    public String registerPatients(String username, String passwordHash, String url, Collection<Subject> subjects)
+    public Collection<ValidationErrorMessage> registerPatients(String username, String passwordHash, String url, Collection<Subject> subjects)
             throws Exception {
         log.info("Register patients initialized by: " + username + " on: " + url);
+        Collection<ValidationErrorMessage> ret = new ArrayList<>();
         SOAPMessage soapMessage = requestFactory.createCreateSubject(username, passwordHash, subjects);
         SOAPConnectionFactory soapConnectionFactory = SOAPConnectionFactory.newInstance();
         SOAPConnection soapConnection = soapConnectionFactory.createConnection();
@@ -65,11 +66,12 @@ public class OpenClinicaService {
         if (error != null) {
             String detailedErrorMessage = "Registering subjects against instance " + url + " failed, OC error: " + error;
             log.error(detailedErrorMessage);
-            return detailedErrorMessage;
+            ret.add(new ValidationErrorMessage(detailedErrorMessage));
+            return ret;
         } else {
-            log.info("Registering subjects against instance " + url + " successfull, number of subjects:" +
+            log.info("Registering subjects against instance " + url + " successful, number of subjects:" +
                     subjects.size());
-            return "";
+            return ret;
         }
     }
 
@@ -205,15 +207,17 @@ public class OpenClinicaService {
      * @param eventList
      * @throws Exception
      */
-    public String scheduleEvents(String username, String passwordHash, String url,
+    public Collection<ValidationErrorMessage> scheduleEvents(String username, String passwordHash, String url,
                                  MetaData metaData,
                                List<Event> eventList,
                                List<StudySubjectWithEventsType> studySubjectWithEventsTypeList) throws Exception {
+        Collection<ValidationErrorMessage> ret = new ArrayList<>();
         log.info("Schedule events initiated by: " + username + " on: " + url);
         if (StringUtils.isEmpty(username) ||
                 StringUtils.isEmpty(passwordHash) ||
                 StringUtils.isEmpty(url)) {
-            return "One of the required parameters is missing (username, password, url)";
+            ret.add(new ValidationErrorMessage("One of the required parameters is missing (username, password, url)"));
+            return ret;
         }
         Map<String, String> eventNameOIDMap =
                 metaData.getEventDefinitions().stream().collect(Collectors.toMap(EventDefinition::getName, EventDefinition::getStudyEventOID));
@@ -247,7 +251,6 @@ public class OpenClinicaService {
         StringBuffer errorMessage = new StringBuffer();
         for (EventType eventType : eventTypeList) {
             SOAPMessage soapMessage = requestFactory.createScheduleEventRequest(username, passwordHash, eventType);
-            System.out.println("SOAP:----->\n" + SoapUtils.soapMessageToString(soapMessage));
             SOAPMessage soapResponse = soapConnection.call(soapMessage, url + "/ws/event/v1");
             String responseError = SOAPResponseHandler.parseOpenClinicaResponse(soapResponse, "//scheduleResponse");
             if (responseError != null) {
@@ -255,7 +258,11 @@ public class OpenClinicaService {
                 errorMessage.append(responseError);
             }
         }
-        return errorMessage.toString();
+
+        if (! StringUtils.isEmpty(errorMessage.toString())) {
+            ret.add(new ValidationErrorMessage(errorMessage.toString()));
+        }
+        return ret;
     }
 
 

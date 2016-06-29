@@ -4,19 +4,18 @@ import nl.thehyve.ocdu.TestUtils;
 import nl.thehyve.ocdu.models.OCEntities.Event;
 import nl.thehyve.ocdu.models.OcDefinitions.EventDefinition;
 import nl.thehyve.ocdu.models.OcDefinitions.MetaData;
-import nl.thehyve.ocdu.models.OcUser;
-import nl.thehyve.ocdu.models.UploadSession;
+import nl.thehyve.ocdu.models.errors.ValidationErrorMessage;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.openclinica.ws.beans.StudySubjectWithEventsType;
 
 import java.util.ArrayList;
-import java.util.Date;
-import java.util.GregorianCalendar;
+import java.util.Collection;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 /**
  * Created by Jacob Rousseau on 20-Jun-2016.
@@ -32,17 +31,18 @@ public class OpenClinicaServiceTests {
     public void testScheduleEventsEmptyParameters() throws Exception {
         OpenClinicaService openClinicaService = new OpenClinicaService();
 
-        String response = openClinicaService.scheduleEvents("",  "hashhashhash", "http://www.example.com",
+        Collection<ValidationErrorMessage> response = openClinicaService.scheduleEvents("",  "hashhashhash", "http://www.example.com",
                 metaData, eventList, studySubjectWithEventsTypeList);
-        assertEquals("One of the required parameters is missing (username, password, url)", response);
+
+        assertTrue(response.contains(new ValidationErrorMessage("One of the required parameters is missing (username, password, url)")));
 
         response = openClinicaService.scheduleEvents("root",  "", "http://www.example.com",
                 metaData, eventList, studySubjectWithEventsTypeList);
-        assertEquals("One of the required parameters is missing (username, password, url)", response);
+        assertTrue(response.contains(new ValidationErrorMessage("One of the required parameters is missing (username, password, url)")));
 
         response = openClinicaService.scheduleEvents("root",  "hashhashhash", "",
                 metaData, eventList, studySubjectWithEventsTypeList);
-        assertEquals("One of the required parameters is missing (username, password, url)", response);
+        assertTrue(response.contains(new ValidationErrorMessage("One of the required parameters is missing (username, password, url)")));
     }
 
     @Test
@@ -50,18 +50,15 @@ public class OpenClinicaServiceTests {
     public void testScheduleEvents() throws Exception {
         OpenClinicaService openClinicaService = new OpenClinicaService();
 
-        String response = openClinicaService.scheduleEvents("rootsite", "XXXXXXXXX", "http://localhost:8080/OpenClinica-ws",
+        Collection<ValidationErrorMessage> response = openClinicaService.scheduleEvents("rootsite", "XXXXXXXXX", "http://localhost:8080/OpenClinica-ws",
                 metaData, eventList, studySubjectWithEventsTypeList);
-        assertEquals("", response);
+        assertTrue(response.isEmpty());
     }
 
     @BeforeClass
     public static void setup() throws Exception {
         studySubjectWithEventsTypeList = TestUtils.createStudySubjectWithEventList();
-        OcUser ocUser = new OcUser();
-        Date now = GregorianCalendar.getInstance().getTime();
-        UploadSession uploadSession = new UploadSession("MyFirstUploadSession", UploadSession.Step.EVENTS, now, ocUser);
-        Integer groupRepeat = 1;
+
         Integer eventRepeat = 4;
 
         Event event = new Event();

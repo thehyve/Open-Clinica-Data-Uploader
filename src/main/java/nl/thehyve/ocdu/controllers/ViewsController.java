@@ -61,4 +61,9 @@ public class ViewsController {
         return "feedback-events";
     }
 
+    @RequestMapping(value = "/odm-upload", method = RequestMethod.GET)
+    public String uploadODM() {
+        return "odm-upload";
+    }
+
 }

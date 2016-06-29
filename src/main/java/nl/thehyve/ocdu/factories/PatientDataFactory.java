@@ -28,7 +28,7 @@ public class PatientDataFactory extends UserSubmittedDataFactory {
     public final static String PERSON_ID = "Person ID";
     public final static String SECONDARY_ID = "Secondary ID";
     public final static String STUDY = "Study";
-    public final static String SITE = "Site";
+    public final static String SITE = "Site (optional)";
     public final static String[] MANDATORY_HEADERS = {STUDY_SUBJECT_ID, STUDY, SITE};
 
     public PatientDataFactory(OcUser user, UploadSession submission) {
@@ -85,13 +85,13 @@ public class PatientDataFactory extends UserSubmittedDataFactory {
         String delim = "\t";
         List<String> header = new ArrayList<>();
 
-        header.add("Study Subject ID");
-        if (metadata.isGenderRequired()) header.add("Gender");
-        if (metadata.getBirthdateRequired() != 3) header.add("Date of Birth");
-        header.add("Date of Enrollment");
-        header.add("Secondary ID");
-        header.add("Study");
-        if (registerSite) header.add("Site (optional)");
+        header.add(STUDY_SUBJECT_ID);
+        if (metadata.isGenderRequired()) header.add(GENDER);
+        if (metadata.getBirthdateRequired() != 3) header.add(DATE_OF_BIRTH);
+        header.add(DATE_OF_ENROLLMENT);
+        header.add(SECONDARY_ID);
+        header.add(STUDY);
+        if (registerSite) header.add(SITE);
         result.add(String.join(delim, header) + "\n");
 
 

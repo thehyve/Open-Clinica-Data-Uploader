@@ -499,8 +499,8 @@ public class GetStudyMetadataResponseHandler extends OCResponseHandler {
         String dataType = item.getAttributes().getNamedItem("DataType").getTextContent();
         Node length1 = item.getAttributes().getNamedItem("Length");
         Node significantDigits = item.getAttributes().getNamedItem("SignificantDigits");
-        String length = "0"; // Can be empty, zero means no restriction on length
-        String significantDigitsText = "0";
+        String length = "20"; // Can be empty, zero means default of 20 (default in OC)
+        String significantDigitsText = "4"; // default for OC is 4
         if (length1 != null) {
             length = length1.getTextContent();
         }

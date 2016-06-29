@@ -1,3 +1,3 @@
-Study Subject ID	Gender	Date of Birth	Date of Enrollment	Secondary ID	Study	Site
+Study Subject ID	Gender	Date of Birth	Date of Enrollment	Secondary ID	Study	Site (optional)
 test_ssid_1	m	01-JAN-1980	01-FEB-2000	1234567	test_study_1	test_site_1
 test_ssid_2	f	01-JAN-1981	01-FEB-2001	12345678	test_study_2	test_site_2

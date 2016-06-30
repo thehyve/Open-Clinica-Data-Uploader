@@ -44,6 +44,15 @@ public class FileService {
     @Autowired
     OpenClinicaService openClinicaService;
 
+    @Autowired
+    UploadSessionService uploadSessionService;
+
+    @Autowired
+    DataService dataService;
+
+    @Autowired
+    OcUserService ocUserService;
+
     public Collection<ValidationErrorMessage> depositDataFile(Path dataFile, OcUser user, UploadSession submission, String pwd) throws Exception {
         List<Study> studies = openClinicaService.listStudies(user.getUsername(), pwd, user.getOcEnvironment());
         DataFileValidator validator = new DataFileValidator(studies);
@@ -70,6 +79,7 @@ public class FileService {
             List<Subject> bySubmission = subjectRepository.findBySubmission(submission);
             subjectRepository.delete(bySubmission);
             PatientDataFactory factory = new PatientDataFactory(user, submission);
+
             List<Subject> newEntries = factory.createPatientData(patientFile);
             subjectRepository.save(newEntries);
             return errorMsgs;

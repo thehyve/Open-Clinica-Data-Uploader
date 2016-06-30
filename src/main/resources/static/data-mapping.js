@@ -1,7 +1,7 @@
 $(function () {
 
     //switches and thresholds
-    var TESTING = true;
+    var TESTING = false;
     var MAX_NUM_LABEL_CHARS = 30;
 
 

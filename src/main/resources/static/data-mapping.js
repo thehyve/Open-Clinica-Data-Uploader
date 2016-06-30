@@ -2,7 +2,7 @@ $(function () {
 
     //switches and thresholds
     var TESTING = false;
-    var MAX_NUM_LABEL_CHARS = 30;
+    var MAX_NUM_LABEL_CHARS = 20;
 
 
     //data obtained from backend
@@ -282,7 +282,7 @@ $(function () {
     function shorten_label(label) {
         var slabel = label;
         if(slabel.length > MAX_NUM_LABEL_CHARS) {
-            slabel = slabel.substring(0,MAX_NUM_LABEL_CHARS-5);
+            slabel = slabel.substring(0,MAX_NUM_LABEL_CHARS);
             slabel += '...';
         }
         return slabel;
@@ -430,6 +430,13 @@ $(function () {
             usr_list.push('OC_Label_3');
             usr_list.push('oc_label_5');
             usr_list.push('a_Very_loooooooooooooooooooooooooooong_label');
+            usr_list.push('a_Very_looooooooppppppppppp');
+            usr_list.push('a_Very_loooooooopppppppppp');
+            usr_list.push('XXXXXXXXXXXXXXXXXXXXXXXXXX');//26 Xs
+            usr_list.push('XXXXXXXXXXXXXXXXXXXXXXXXX');//25 Xs
+            usr_list.push('XXXXXXXXXXXXXXXXXXXXXXXXXXX');//27 Xs
+            usr_list.push('XXXXXX_XPQXXXXXXXXXXXXXXX');//25 Xs
+            usr_list.push('xxxxxxxxxxxxxxxxxxxxxxxxx');//25 Xs
 
             for(var i=0; i<50; i++) {
                 var usrlabel = 'usr_label_'+i;

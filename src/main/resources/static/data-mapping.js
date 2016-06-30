@@ -1,7 +1,7 @@
 $(function () {
 
     //switches and thresholds
-    var TESTING = false;
+    var TESTING = true;
     var MAX_NUM_LABEL_CHARS = 30;
 
 
@@ -13,6 +13,7 @@ $(function () {
 
     //mapping data
     var mapping = {};//oc_label --> usr_label
+    var mapped_usr_item_ids = [];//[draggable_id]
     var oc_usr_id_mapping = {};// #droppable_id --> draggable_id
     var usr_label_mapping = {};// full-usr-label --> shortened-usr-label
     var oc_label_mapping = {}; //full-oc-label --> shortened-oc-label
@@ -24,7 +25,7 @@ $(function () {
     
     function build_filters() {
         $('#oc-filter-input').keyup(function () {
-            var query = $(this).val();
+            var query = $(this).val().toLowerCase();
             if(query == '') {
                 $('.oc-label-item').each(function (index, obj) {
                     $(obj).show();
@@ -34,7 +35,7 @@ $(function () {
             else {
                 $('.oc-label-item').each(function (index, obj) {
                     var item = $(obj);
-                    var label = item.html();
+                    var label = item.attr('data-oc-label').toLowerCase();
                     if(label.indexOf(query) > -1) {
                         item.show(); $('#oc_'+index).show();
                     }
@@ -46,21 +47,25 @@ $(function () {
         });
 
         $('#usr-filter-input').keyup(function () {
-            var query = $(this).val();
+            var query = $(this).val().toLowerCase();
             if(query == '') {
                 $('.usr-item').each(function (index, obj) {
-                    $(obj).show();
+                    var usr_id = $(obj).attr('id');
+                    if(mapped_usr_item_ids.indexOf(usr_id) == -1) $(obj).show();
                 });
             }
             else {
                 $('.usr-item').each(function (index, obj) {
                     var item = $(obj);
-                    var label = item.html();
-                    if(label.indexOf(query) > -1) {
-                        item.show();
-                    }
-                    else{
-                        item.hide();
+                    var usr_id = item.attr('id');
+                    if(mapped_usr_item_ids.indexOf(usr_id) == -1) {
+                        var label = item.attr('data-usr-label').toLowerCase();
+                        if(label.indexOf(query) > -1) {
+                            item.show();
+                        }
+                        else{
+                            item.hide();
+                        }
                     }
                 });
             }
@@ -172,6 +177,7 @@ $(function () {
             var usr_id = oc_usr_id_mapping[oc_id];
             $('#' + usr_id).show();
             oc_usr_id_mapping[oc_id] = null;
+            mapped_usr_item_ids.splice($.inArray(usr_id, mapped_usr_item_ids),1);
         }
     }
 
@@ -197,6 +203,7 @@ $(function () {
                     var short_usr_label = usr_label_mapping[usr_label];
                     oc_obj.html(short_usr_label);
                     usr_obj.hide();
+                    mapped_usr_item_ids.push(usr_id);
                 }
             });
         });
@@ -292,7 +299,7 @@ $(function () {
             var html = '<div id=\"' + usr_id + '\" class="label label-info usr-item ui-widget-content" data-usr-label=\"' + usr_label + '\">' + short_usr_label + '</div>';
             $('#right-col-area').append(html);
             $('#' + usr_id).draggable({
-                revert: true,
+                // revert: true,
                 helper: 'clone',
                 appendTo: 'body'
             });
@@ -334,10 +341,12 @@ $(function () {
         var usr_label = ui.draggable.attr('data-usr-label');
         if (mapping[oc_label] == null) { // can be mapped
             mapping[oc_label] = usr_label;
-            oc_usr_id_mapping[oc_id] = ui.draggable.attr('id');
+            var usr_id = ui.draggable.attr('id');
+            oc_usr_id_mapping[oc_id] = usr_id;
             var html = usr_label_mapping[usr_label];
             $(this).html(html);
             ui.draggable.hide();
+            mapped_usr_item_ids.push(usr_id);
         }
     }
 
@@ -412,15 +421,15 @@ $(function () {
             var delim = '\\';
             var head = 'event' + delim + 'crf' + delim + 'version' + delim;
 
-            oc_list.push(head+'long_long_long_long_long_long_long_long_long_oc_label');
+            oc_list.push(head+'long_long_long_long_long_long_long_long_long_OC_label');
             for(var i=0; i<100; i++) {
                 var oclabel = head+'oc_label_'+i;
                 oc_list.push(oclabel);
             }
 
-            usr_list.push('oc_label_3');
+            usr_list.push('OC_Label_3');
             usr_list.push('oc_label_5');
-            usr_list.push('a_very_loooooooooooooooooooooooooooong_label');
+            usr_list.push('a_Very_loooooooooooooooooooooooooooong_label');
 
             for(var i=0; i<50; i++) {
                 var usrlabel = 'usr_label_'+i;

@@ -3,6 +3,7 @@ package nl.thehyve.ocdu.controllers;
 import nl.thehyve.ocdu.models.OCEntities.Subject;
 import nl.thehyve.ocdu.models.OcUser;
 import nl.thehyve.ocdu.models.UploadSession;
+import nl.thehyve.ocdu.models.errors.ValidationErrorMessage;
 import nl.thehyve.ocdu.repositories.SubjectRepository;
 import nl.thehyve.ocdu.services.OcUserService;
 import nl.thehyve.ocdu.services.OpenClinicaService;
@@ -49,8 +50,8 @@ public class SubjectsController {
             String url = user.getOcEnvironment();
             Collection<Subject> subjects = subjectRepository.findBySubmission(uploadSession);
             if (! subjects.isEmpty()) {
-                String result = openClinicaService.registerPatients(username, pwdHash, url, subjects);
-                if (StringUtils.isEmpty(result)) {
+                Collection<ValidationErrorMessage> result = openClinicaService.registerPatients(username, pwdHash, url, subjects);
+                if (result.isEmpty()) {
                     return new ResponseEntity<>("", HttpStatus.OK);
                 }
                 return new ResponseEntity(result, HttpStatus.OK);

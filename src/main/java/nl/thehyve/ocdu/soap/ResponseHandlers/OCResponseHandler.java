@@ -45,7 +45,8 @@ public class OCResponseHandler {
 
     public static String parseGenericResponse(SOAPMessage response, String selector) throws Exception {
         Document document = toDocument(response);
-        if (isAuthFailure(document).equals("")) {
+        System.out.println("-->" + SoapUtils.soapMessageToString(response));
+        if (! isAuthFailure(document).equals("")) {
             throw new AuthenticationCredentialsNotFoundException("Authentication against OpenClinica unsuccessfull");
         }
         XPath xpath = XPathFactory.newInstance().newXPath();

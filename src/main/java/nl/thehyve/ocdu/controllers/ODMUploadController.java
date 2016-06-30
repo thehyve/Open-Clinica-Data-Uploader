@@ -1,7 +1,9 @@
 package nl.thehyve.ocdu.controllers;
 
 import nl.thehyve.ocdu.models.OCEntities.ClinicalData;
+import nl.thehyve.ocdu.models.OCEntities.Event;
 import nl.thehyve.ocdu.models.OCEntities.Study;
+import nl.thehyve.ocdu.models.OCEntities.Subject;
 import nl.thehyve.ocdu.models.OcDefinitions.MetaData;
 import nl.thehyve.ocdu.models.OcUser;
 import nl.thehyve.ocdu.models.UploadSession;
@@ -13,14 +15,17 @@ import nl.thehyve.ocdu.services.DataService;
 import nl.thehyve.ocdu.services.OcUserService;
 import nl.thehyve.ocdu.services.OpenClinicaService;
 import nl.thehyve.ocdu.services.UploadSessionService;
+import org.openclinica.ws.beans.StudySubjectWithEventsType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.servlet.http.HttpSession;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -55,8 +60,10 @@ public class ODMUploadController {
     @Autowired
     ClinicalDataRepository clinicalDataRepository;
 
-    @RequestMapping(value = "/upload", method = RequestMethod.GET)
-    public ResponseEntity<Collection<ValidationErrorMessage>> uploadFile(HttpSession session)  {
+    @RequestMapping(value = "/upload", method = RequestMethod.POST)
+    public ResponseEntity<Collection<ValidationErrorMessage>> uploadFile(HttpSession session,
+                                                                         @RequestParam("statusAfterUpload") String statusAfterUpload)  {
+        Collection<ValidationErrorMessage> result = new ArrayList<>();
         try {
             UploadSession uploadSession = uploadSessionService.getCurrentUploadSession(session);
             OcUser user = ocUserService.getCurrentOcUser(session);
@@ -71,14 +78,34 @@ public class ODMUploadController {
             List<ClinicalData> clinicalDataList =
                     clinicalDataRepository.findBySubmission(uploadSession);
 
-            // TODO remove the hard-coded value for status after upload 'initial data entry'
-            Collection<ValidationErrorMessage> result =
-                    openClinicaService.uploadClinicalData(userName, pwdHash, url, clinicalDataList, metaData, "initial data entry");
+            List<StudySubjectWithEventsType> studySubjectWithEventsTypeList =
+                    openClinicaService.getStudySubjectsType(userName, pwdHash, url, study.getIdentifier(), "");
+
+            Collection<Subject> subjects = subjectRepository.findBySubmission(uploadSession);
+            if (! subjects.isEmpty()) {
+                result = openClinicaService.registerPatients(userName, pwdHash, url, subjects);
+                if (! result.isEmpty()) {
+                    return new ResponseEntity<>(result, HttpStatus.BAD_REQUEST);
+                }
+            }
+            List<Event> eventList = eventRepository.findBySubmission(uploadSession);
+            if (! eventList.isEmpty()) {
+
+                result = openClinicaService.scheduleEvents(userName, pwdHash, url, metaData, eventList, studySubjectWithEventsTypeList);
+                if (! result.isEmpty()) {
+                    return new ResponseEntity<>(result, HttpStatus.BAD_REQUEST);
+                }
+            }
+
+            result =
+                    openClinicaService.uploadClinicalData(userName, pwdHash, url, clinicalDataList, metaData, statusAfterUpload);
             return new ResponseEntity<>(result, HttpStatus.OK);
         }
         catch (Exception e) {
             e.printStackTrace();
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            ValidationErrorMessage errorMessage = new ValidationErrorMessage(e.getMessage());
+            result.add(errorMessage);
+            return new ResponseEntity<>(result, HttpStatus.BAD_REQUEST);
         }
     }
 }

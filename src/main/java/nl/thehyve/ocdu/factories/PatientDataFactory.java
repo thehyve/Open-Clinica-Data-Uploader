@@ -35,7 +35,7 @@ public class PatientDataFactory extends UserSubmittedDataFactory {
     public List<Subject> createPatientData(Path patientFile) {
         Optional<String[]> headerRow = getHeaderRow(patientFile);
         if (headerRow.isPresent()) {
-            Map<String, Integer> columnsIndex = createSubjectColumnsIndexMap(headerRow.get());
+            Map<String, Integer> columnsIndex = createColumnsIndexMap(headerRow.get());
 
             try (Stream<String> lines = Files.lines(patientFile)) {
                 return lines.skip(1)
@@ -53,20 +53,9 @@ public class PatientDataFactory extends UserSubmittedDataFactory {
 
     }
 
-    protected static Map<String, Integer> createSubjectColumnsIndexMap(String[]headerRow) {
-        HashMap<String, Integer> result = new HashMap<>();
-        for (int i = 0; i < headerRow.length; i++) {
-            if (result.containsKey(headerRow[i])) {
-                throw new RuntimeException("Name" + headerRow[i] + " appears more then one in the header: " + headerRow);
-            }
-            result.put(headerRow[i], i);
-        }
-        return result;
-    }
-
     private Subject mapRow(String[] row, Map<String, Integer> columnsIndex) {
         List<String> arr = new ArrayList<>(Arrays.asList(row));
-        if(row.length < columnsIndex.keySet().size()) {
+        if (row.length < columnsIndex.keySet().size()) {
             arr.add("");
         }
 

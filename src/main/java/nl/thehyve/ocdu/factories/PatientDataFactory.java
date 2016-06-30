@@ -8,10 +8,7 @@ import nl.thehyve.ocdu.models.UploadSession;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -38,7 +35,7 @@ public class PatientDataFactory extends UserSubmittedDataFactory {
     public List<Subject> createPatientData(Path patientFile) {
         Optional<String[]> headerRow = getHeaderRow(patientFile);
         if (headerRow.isPresent()) {
-            Map<String, Integer> columnsIndex = createColumnsIndexMap(headerRow.get());
+            Map<String, Integer> columnsIndex = createSubjectColumnsIndexMap(headerRow.get());
 
             try (Stream<String> lines = Files.lines(patientFile)) {
                 return lines.skip(1)
@@ -49,24 +46,42 @@ public class PatientDataFactory extends UserSubmittedDataFactory {
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
+
         } else {
             throw new RuntimeException("Patient file is empty.");
         }
 
     }
 
+    protected static Map<String, Integer> createSubjectColumnsIndexMap(String[]headerRow) {
+        HashMap<String, Integer> result = new HashMap<>();
+        for (int i = 0; i < headerRow.length; i++) {
+            if (result.containsKey(headerRow[i])) {
+                throw new RuntimeException("Name" + headerRow[i] + " appears more then one in the header: " + headerRow);
+            }
+            result.put(headerRow[i], i);
+        }
+        return result;
+    }
+
     private Subject mapRow(String[] row, Map<String, Integer> columnsIndex) {
+        List<String> arr = new ArrayList<>(Arrays.asList(row));
+        if(row.length < columnsIndex.keySet().size()) {
+            arr.add("");
+        }
+
         Subject subject = new Subject();
         subject.setOwner(getUser());
         subject.setSubmission(getSubmission());
-        setValue(row, columnsIndex, STUDY_SUBJECT_ID, subject::setSsid);
-        setValue(row, columnsIndex, GENDER, subject::setGender);
-        setValue(row, columnsIndex, DATE_OF_BIRTH, subject::setDateOfBirth);
-        setValue(row, columnsIndex, PERSON_ID, subject::setPersonId);
-        setValue(row, columnsIndex, DATE_OF_ENROLLMENT, subject::setDateOfEnrollment);
-        setValue(row, columnsIndex, SECONDARY_ID, subject::setSecondaryId);
-        setValue(row, columnsIndex, STUDY, subject::setStudy);
-        setValue(row, columnsIndex, SITE, subject::setSite);
+        setValue(arr.toArray(new String[arr.size()]), columnsIndex, STUDY_SUBJECT_ID, subject::setSsid);
+        setValue(arr.toArray(new String[arr.size()]), columnsIndex, GENDER, subject::setGender);
+        setValue(arr.toArray(new String[arr.size()]), columnsIndex, DATE_OF_BIRTH, subject::setDateOfBirth);
+        setValue(arr.toArray(new String[arr.size()]), columnsIndex, PERSON_ID, subject::setPersonId);
+        setValue(arr.toArray(new String[arr.size()]), columnsIndex, DATE_OF_ENROLLMENT, subject::setDateOfEnrollment);
+        setValue(arr.toArray(new String[arr.size()]), columnsIndex, SECONDARY_ID, subject::setSecondaryId);
+        setValue(arr.toArray(new String[arr.size()]), columnsIndex, STUDY, subject::setStudy);
+        setValue(arr.toArray(new String[arr.size()]), columnsIndex, SITE, subject::setSite);
+
         return subject;
     }
 
@@ -75,7 +90,6 @@ public class PatientDataFactory extends UserSubmittedDataFactory {
         if (!columnsIndex.containsKey(columnName)) {
             return;
         }
-
         String cellValue = row[columnsIndex.get(columnName)];
         consumer.accept(cellValue);
     }

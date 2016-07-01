@@ -7,6 +7,7 @@ import nl.thehyve.ocdu.models.OcDefinitions.MetaData;
 import nl.thehyve.ocdu.models.OcDefinitions.RangeCheck;
 import nl.thehyve.ocdu.models.errors.RangeCheckViolation;
 import nl.thehyve.ocdu.models.errors.ValidationErrorMessage;
+import nl.thehyve.ocdu.validators.UtilChecks;
 import org.openclinica.ws.beans.StudySubjectWithEventsType;
 
 import java.math.BigDecimal;
@@ -27,7 +28,7 @@ public class RangeChecks implements ClinicalDataCrossCheck {
                 rangeCheckList.forEach(rangeCheck -> {
                     List<String> values = clinicalData.getValues();
                     for (String value : values) {
-                        if (isFloat(value) || isInteger(value)) {
+                        if (UtilChecks.isFloat(value) || UtilChecks.isInteger(value)) {
                             BigDecimal intValue = BigDecimal.valueOf(Double.parseDouble(value)); // Do not attempt floating point comparison
                             if (!rangeCheck.isInRange(intValue)) {
                                 String gRepMsg = clinicalData.getGroupRepeat() != null ? " group repeat: " + clinicalData.getGroupRepeat() : "";

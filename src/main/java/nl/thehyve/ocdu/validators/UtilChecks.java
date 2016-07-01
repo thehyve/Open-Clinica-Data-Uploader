@@ -58,11 +58,6 @@ public class UtilChecks {
         return format1correct || format2correct || format3correct;
     }
 
-    /**
-     *  Should not be used directly - when this interface is refactored into a class this should be a private method
-     * @param input
-     * @return
-     */
     private static boolean isDateString(String input) {
         String[] split = input.split("-");
         if (split.length > 3) return false; //TODO: look for a lib maybe in Apache Commons to do Date Validation
@@ -74,4 +69,32 @@ public class UtilChecks {
         }
         return true;
     }
+
+    public static boolean isInteger(String input) {
+        if (input.contains(".") || input.contains(",")) {
+            return false;
+        }
+        try {
+            Integer.parseInt(input);
+            return true;
+        } catch (NumberFormatException e) {
+            return false;
+        }
+    }
+
+    public static boolean isFloat(String input) {
+        if (!input.contains(".")) {
+            return false;
+        }
+        if (input.contains(",")) {
+            return false;
+        }
+        try {
+            Float.parseFloat(input);
+            return true;
+        } catch (NumberFormatException e) {
+            return false;
+        }
+    }
+
 }

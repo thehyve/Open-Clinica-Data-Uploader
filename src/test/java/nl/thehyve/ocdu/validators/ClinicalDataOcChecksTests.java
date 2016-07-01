@@ -31,7 +31,6 @@ import static org.hamcrest.core.Is.isA;
 import static org.hamcrest.core.IsCollectionContaining.hasItem;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
-import static org.mockito.asm.tree.InsnList.check;
 
 /**
  * Created by piotrzakrzewski on 04/05/16.

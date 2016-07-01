@@ -23,31 +23,4 @@ public interface ClinicalDataCrossCheck {
     // All the maps are present here for performance reasons - precomputing all the maps before running checks is much
     // more efficient.
 
-    default boolean isInteger(String input) {
-        if (input.contains(".") || input.contains(",")) {
-            return false;
-        }
-        try {
-            Integer.parseInt(input);
-            return true;
-        } catch (NumberFormatException e) {
-            return false;
-        }
-    }
-
-    default boolean isFloat(String input) {
-        if (!input.contains(".")) {
-            return false;
-        }
-        if (input.contains(",")) {
-            return false;
-        }
-        try {
-            Float.parseFloat(input);
-            return true;
-        } catch (NumberFormatException e) {
-            return false;
-        }
-    }
-
 }

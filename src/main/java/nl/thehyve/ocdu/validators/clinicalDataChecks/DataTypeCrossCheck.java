@@ -80,9 +80,9 @@ public class DataTypeCrossCheck implements ClinicalDataCrossCheck {
         if (expectedType == null || expectedType.equals(TEXT_DATA_TYPE)) {
             return true;
         } else if (expectedType.equals(INTEGER_DATA_TYPE)) {
-            return isInteger(value);
+            return UtilChecks.isInteger(value);
         } else if (expectedType.equals(FLOAT_DATA_TYPE)) {
-            return isFloat(value);
+            return UtilChecks.isFloat(value);
         } else if (expectedType.equals(DATE_DATA_TYPE)) {
             return UtilChecks.isDate(value);
         } else if (expectedType.equals(PARTIAL_DATE_DATA_TYPE)) {

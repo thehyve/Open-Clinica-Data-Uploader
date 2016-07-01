@@ -31,6 +31,7 @@ import static org.hamcrest.core.Is.isA;
 import static org.hamcrest.core.IsCollectionContaining.hasItem;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
+import static org.mockito.asm.tree.InsnList.check;
 
 /**
  * Created by piotrzakrzewski on 04/05/16.
@@ -297,34 +298,32 @@ public class ClinicalDataOcChecksTests {
     @Test
     public void partialDateValidation() throws Exception {
         String bogusPdate = "Oct-200G";
-        DataTypeCrossCheck check = new DataTypeCrossCheck();
-        boolean pDate = check.isPDate(bogusPdate);
+        boolean pDate = UtilChecks.isPDate(bogusPdate);
         assertThat(pDate, is(false));
         String legitmatedate = "Oct-2000";
-        assertThat(check.isPDate(legitmatedate), is(true));
+        assertThat(UtilChecks.isPDate(legitmatedate), is(true));
         String legitmatedate2 = "29-Oct-2000";
-        assertThat(check.isPDate(legitmatedate2), is(true));
+        assertThat(UtilChecks.isPDate(legitmatedate2), is(true));
         String invalidPdate2 = "32-Dec-2000";
-        assertThat(check.isPDate(invalidPdate2), is(false));
+        assertThat(UtilChecks.isPDate(invalidPdate2), is(false));
         String invalidPdate3 = "10-XXX-2000";
-        assertThat(check.isPDate(invalidPdate3), is(false));
+        assertThat(UtilChecks.isPDate(invalidPdate3 ), is(false));
     }
 
     @Test
     public void dateValidation() throws Exception {
-        DataTypeCrossCheck check = new DataTypeCrossCheck();
-        String legitmatedate = "2000-11-10";
-        assertThat(check.isDate(legitmatedate), is(true));
-        String invalid = "2000-12-32";
-        assertThat(check.isDate(invalid), is(false));
-        String invalid2 = "2000-Oct-10";
-        assertThat(check.isDate(invalid2), is(false));
-        String invalid3 = "2000-10";
-        assertThat(check.isDate(invalid3), is(false));
+        String legitmatedate = "22-06-2000";
+        assertThat(UtilChecks.isDate(legitmatedate), is(true));
+        String invalid = "32-12-2000";
+        assertThat(UtilChecks.isDate(invalid), is(false));
+        String invalid2 = "20-Oct-2000";
+        assertThat(UtilChecks.isDate(invalid2 ), is(false));
+        String invalid3 = "10-2000";
+        assertThat(UtilChecks.isDate(invalid3 ), is(false));
         String invalid4 = "2000";
-        assertThat(check.isDate(invalid4), is(false));
-        String invalid5 = "2000-13-10";
-        assertThat(check.isDate(invalid5), is(false));
+        assertThat(UtilChecks.isDate(invalid4 ), is(false));
+        String invalid5 = "10-13-2000";
+        assertThat(UtilChecks.isDate(invalid5 ), is(false));
     }
 
     @Test

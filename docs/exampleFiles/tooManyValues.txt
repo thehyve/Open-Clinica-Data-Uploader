@@ -1,3 +1,3 @@
 StudySubjectID	Study	Site	EventName	CRFName	CRFVersion	EventRepeat	MyInt	MyDate	MyReal	MyString	MySingleSelect1	MyPDate	MySingleSelect2
-ssid1	Test Study 1	site1	Non-repeating event	SuperSimpleCRF	0.1	1	123	1996-12-21	2.0	string	1	May-2000	1
-ssid2	Test Study 1	site1	Non-repeating event	SuperSimpleCRF	0.1	1	1231	2001-09-11	2.5	string	1	1999	1,2
+ssid1	Test Study 1	site1	Non-repeating event	SuperSimpleCRF	0.1	1	123	21-12-1996	2.0	string	1	May-2000	1
+ssid2	Test Study 1	site1	Non-repeating event	SuperSimpleCRF	0.1	1	1231	11-09-2001	2.5	string	1	1999	1,2

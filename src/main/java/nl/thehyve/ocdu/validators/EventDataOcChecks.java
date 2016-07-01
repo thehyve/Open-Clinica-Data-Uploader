@@ -22,7 +22,7 @@ public class EventDataOcChecks {
     public static final DateFormat SIMPLE_TIME_FORMAT;
 
     static {
-        SIMPLE_DATE_FORMAT = new SimpleDateFormat("dd-MMM-yyyy", Locale.ENGLISH);
+        SIMPLE_DATE_FORMAT = new SimpleDateFormat("dd-MM-yyyy", Locale.ENGLISH);
         SIMPLE_DATE_FORMAT.setLenient(false);
 
         SIMPLE_TIME_FORMAT = new SimpleDateFormat("H:mm", Locale.ENGLISH);

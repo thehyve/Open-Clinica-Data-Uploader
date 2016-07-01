@@ -182,7 +182,7 @@ public class EventDataOcChecksTests {
 
     @Test
     public void testInvalidStartDate() {
-        String invalidStartDate = "31-Feb-2013";
+        String invalidStartDate = "31-02-2013";
         event.setStartDate(invalidStartDate);
 
         EventDataOcChecks checks = new EventDataOcChecks(metadata, noEvents);
@@ -196,7 +196,7 @@ public class EventDataOcChecksTests {
 
     @Test
     public void testWrongEndDateFormat() {
-        String wrongStartDate = "2004-02-21";
+        String wrongStartDate = "2004-02x-21";
         event.setEndDate(wrongStartDate);
 
         EventDataOcChecks checks = new EventDataOcChecks(metadata, noEvents);
@@ -210,7 +210,7 @@ public class EventDataOcChecksTests {
 
     @Test
     public void testInvalidEndDate() {
-        String invalidStartDate = "31-Feb-2013";
+        String invalidStartDate = "31-02-2013";
         event.setEndDate(invalidStartDate);
 
         EventDataOcChecks checks = new EventDataOcChecks(metadata, noEvents);
@@ -280,8 +280,8 @@ public class EventDataOcChecksTests {
 
     @Test
     public void testInvalidDateRange() {
-        String startDate = "22-Feb-2014";
-        String endDate = "21-Feb-2014";
+        String startDate = "22-02-2014";
+        String endDate = "21-02-2014";
         event.setStartDate(startDate);
         event.setEndDate(endDate);
 
@@ -296,7 +296,7 @@ public class EventDataOcChecksTests {
 
     @Test
     public void testInvalidTimeRange() {
-        String date = "22-Feb-2014";
+        String date = "22-02-2014";
         String startTime = "10:00";
         String endTime = "7:00";
         event.setStartDate(date);
@@ -340,7 +340,7 @@ public class EventDataOcChecksTests {
         event1.setStudy(event.getStudy());
         event1.setEventName(anotherEventName);
         event1.setSsid(event.getSsid());
-        event1.setStartDate("10-Jun-2014");
+        event1.setStartDate("10-06-2014");
         event1.setRepeatNumber("1");
         events.add(event1);
 
@@ -386,9 +386,9 @@ public class EventDataOcChecksTests {
         event.setEventName(eventName);
         event.setSite(siteName);
         event.setSsid(sid);
-        event.setStartDate("22-Feb-2014");
+        event.setStartDate("22-02-2014");
         event.setStartTime("0:00");
-        event.setEndDate("23-Feb-2014");
+        event.setEndDate("23-02-2014");
         event.setEndTime("23:59");
         event.setRepeatNumber("2");
         event.setLocation("Test Location");

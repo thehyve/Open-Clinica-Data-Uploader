@@ -20,8 +20,8 @@ public class MandatoryInCrfCrossCheck implements ClinicalDataCrossCheck {
         HashMap<String, Set<String>> mandatoryMap = getMandatoryMap(data, eventMap);
         HashMap<String, Set<String>> presentMap = getPresentMap(data);
         MandatoryItemInCrfMissing error = new MandatoryItemInCrfMissing();
-        reportMissingColumns(mandatoryMap, presentMap, error);
-        reportMissingValues(mandatoryMap, data, error, shownMap);
+        HashMap<String, Set<String>> remainingMandatory = reportMissingColumns(mandatoryMap, presentMap, error);
+        reportMissingValues(remainingMandatory , data, error, shownMap);
         if (error.getOffendingValues().size() > 0)
             return error;
         else return null;
@@ -64,14 +64,19 @@ public class MandatoryInCrfCrossCheck implements ClinicalDataCrossCheck {
     }
 
 
-    private void reportMissingColumns(HashMap<String, Set<String>> mandatoryMap, HashMap<String, Set<String>> presentMap, ValidationErrorMessage error) {
+    private HashMap<String, Set<String>> reportMissingColumns(HashMap<String, Set<String>> mandatoryMap, HashMap<String, Set<String>> presentMap, ValidationErrorMessage error) {
+        HashMap<String, Set<String>> remainingMandatory = new HashMap<>();
         for (String crfId : mandatoryMap.keySet()) {
             Set<String> expected = mandatoryMap.get(crfId);
             Set<String> found = presentMap.get(crfId);
+            Set<String> remaining = new HashSet<>(expected);
             expected.stream().filter(expectedItem -> !found.contains(expectedItem)).forEach(missing -> {
                 error.addOffendingValue("CRF: " + crfId + " requires item: " + missing);
+                remaining.remove(missing);
             });
+            remainingMandatory.put(crfId, remaining);
         }
+        return remainingMandatory;
     }
 
     private HashMap<String, Set<String>> getPresentMap(List<ClinicalData> data) {

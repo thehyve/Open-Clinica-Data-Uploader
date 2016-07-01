@@ -154,7 +154,7 @@ public class EventDataOcChecks {
         if (StringUtils.isNotBlank(event.getStartDate())) {
             startDateOpt = parseDateOpt(event.getStartDate());
             if (!startDateOpt.isPresent()) {
-                ValidationErrorMessage dateInvalid = new ValidationErrorMessage("Start date is invalid. The date format should be dd-mm-yyyy.");
+                ValidationErrorMessage dateInvalid = new ValidationErrorMessage("Start date is invalid. The date format should be dd-mm-yyyy. For example, 12-10-2014.");
                 dateInvalid.addOffendingValue(event.getStartDate());
                 errors.add(dateInvalid);
             }
@@ -164,7 +164,7 @@ public class EventDataOcChecks {
         if (StringUtils.isNotBlank(event.getStartTime())) {
             startTimeOpt = parseTimeOpt(event.getStartTime());
             if (!startTimeOpt.isPresent()) {
-                ValidationErrorMessage timeInvalid = new ValidationErrorMessage("Start time is invalid. The time format should be H:mm.");
+                ValidationErrorMessage timeInvalid = new ValidationErrorMessage("Start time is invalid. The time format should be hh:mm. For example, 13:29.");
                 timeInvalid.addOffendingValue(event.getStartTime());
                 errors.add(timeInvalid);
             }
@@ -174,7 +174,7 @@ public class EventDataOcChecks {
         if (StringUtils.isNotBlank(event.getEndDate())) {
             endDateOpt = parseDateOpt(event.getEndDate());
             if (!endDateOpt.isPresent()) {
-                ValidationErrorMessage dateInvalid = new ValidationErrorMessage("End date is invalid. The date format should be dd-mm-yyyy.");
+                ValidationErrorMessage dateInvalid = new ValidationErrorMessage("End date is invalid. The date format should be dd-mm-yyyy. For example, 12-10-2014.");
                 dateInvalid.addOffendingValue(event.getEndDate());
                 errors.add(dateInvalid);
             }
@@ -184,7 +184,7 @@ public class EventDataOcChecks {
         if (StringUtils.isNotBlank(event.getEndTime())) {
             endTimeOpt = parseTimeOpt(event.getEndTime());
             if (!endTimeOpt.isPresent()) {
-                ValidationErrorMessage timeInvalid = new ValidationErrorMessage("End time is invalid. The time format should be H:mm.");
+                ValidationErrorMessage timeInvalid = new ValidationErrorMessage("End time is invalid. The time format should be hh:mm. For example, 13:29.");
                 timeInvalid.addOffendingValue(event.getEndTime());
                 errors.add(timeInvalid);
             }

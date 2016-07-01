@@ -5,7 +5,6 @@ package nl.thehyve.ocdu.models.errors;
  */
 public class RepeatInNonrepeatingItem extends ValidationErrorMessage {
     public RepeatInNonrepeatingItem() {
-        super("One or more of the items from your submission contains repeat ordinal while item belongs " +
-                "to a non-repeating group");
+        super("One or more items are indicated as repeated, but are non-repeating in OpenClinica");
     }
 }

@@ -5,6 +5,7 @@ package nl.thehyve.ocdu.models.errors;
  */
 public class MandatoryItemInCrfMissing extends ValidationErrorMessage {
     public MandatoryItemInCrfMissing() {
-        super("One or more items mandatory in CRFs you used are missing.");
+        super("One or more items do not match the expected data type. " +
+                "Items with type REAL need to have a decimal mark (e.g. not 1 but 1.0).");
     }
 }

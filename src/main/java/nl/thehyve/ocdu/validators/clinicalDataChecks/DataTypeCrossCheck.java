@@ -33,7 +33,7 @@ public class DataTypeCrossCheck implements ClinicalDataCrossCheck {
         humanReadble.put(INTEGER_DATA_TYPE, "Integer Number (e.g. 2)" );
         humanReadble.put(FLOAT_DATA_TYPE, "Real Number (e.g. 12.3)" );
         humanReadble.put(PARTIAL_DATE_DATA_TYPE, "Partial date (e.g: 1996)" );
-        humanReadble.put(DATE_DATA_TYPE, "Full date (e.g: 1988-05-16)" );
+        humanReadble.put(DATE_DATA_TYPE, "Full date (e.g: 16-05-1988)" );
         return humanReadble;
     }
 

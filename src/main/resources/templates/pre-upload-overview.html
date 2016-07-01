@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <title>Pre-upload overview</title>
+</head>
+<body role="document">
+<div th:replace="header"></div>
+<div class="container ocdu-container">
+
+    <div>
+        <h3>Pre-upload overview</h3>
+    </div>
+    <div>
+        <p>Overview of any remaining validation errors and problems. Please review this list and press OK if you want to proceed.</p>
+    </div>
+
+    <div id="feedback-tables">
+
+    </div>
+
+    <hr>
+    <button type="button" class="btn btn-primary" id="data-feedback-back-btn" onclick="backBtnHandler()">Back</button>
+    <button type="button" class="btn btn-primary" id="data-feedback-proceed-btn" onclick="feedbackNext()">Next</button>
+
+</div>
+
+<script th:src="@{/pre-upload-overview.js}"></script>
+<div th:replace="footer :: footer"></div>
+</body>
+</html>
+
+

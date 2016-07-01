@@ -166,7 +166,9 @@ public class Event implements OcEntity, UserSubmitted, EventReference {
     public String createEventKey(String eventOID) {
         StringBuffer ret = new StringBuffer();
         ret.append(study);
-        ret.append(site);
+        if (site != null) {
+            ret.append(site);
+        }
         ret.append(ssid);
         ret.append(eventOID);
         ret.append(repeatNumber);

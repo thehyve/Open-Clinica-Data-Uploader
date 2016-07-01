@@ -40,6 +40,8 @@ public class ODMGenerationTests {
 
     Path testODMGenerationCorrect;
 
+    UploadSession uploadSession;
+
     @Before
     public void setUp() throws Exception {
         MessageFactory messageFactory = MessageFactory.newInstance();
@@ -55,6 +57,8 @@ public class ODMGenerationTests {
 
         this.testSubjectWithEventsTypeList = TestUtils.createStudySubjectWithEventList();
 
+        this.uploadSession = new UploadSession("submission1", UploadSession.Step.MAPPING, new Date(), this.testUser);
+
         this.testODMGenerationCorrect = Paths.get("docs/exampleFiles/odmGeneration.txt");
     }
 
@@ -65,7 +69,7 @@ public class ODMGenerationTests {
         ODMService odmService = new ODMService();
         Map<String, String> subjectLabelToOIDMap = new HashMap<>();
         subjectLabelToOIDMap.put("jan", null);
-        odmService.generateODM(correctClinicalData, metaData, "Data Entry Complete", subjectLabelToOIDMap);
+        odmService.generateODM(correctClinicalData, metaData, uploadSession, subjectLabelToOIDMap);
     }
 
     @Test
@@ -76,7 +80,7 @@ public class ODMGenerationTests {
         Map<String, String> subjectLabelToOIDMap = new HashMap<>();
         subjectLabelToOIDMap.put("EV-00001", "SS_EV00001");
         subjectLabelToOIDMap.put("EV-00002", "SS_EV00002");
-        String result = odmService.generateODM(correctClinicalData, metaData, "Data Entry Complete", subjectLabelToOIDMap);
+        String result = odmService.generateODM(correctClinicalData, metaData, uploadSession, subjectLabelToOIDMap);
         assertEquals(true, result.contains("c&quot;a&apos;r&lt;o&amp;t&gt;is"));
     }
 
@@ -88,7 +92,7 @@ public class ODMGenerationTests {
         Map<String, String> subjectLabelToOIDMap = new HashMap<>();
         subjectLabelToOIDMap.put("EV-00001", "SS_EV00001");
         subjectLabelToOIDMap.put("EV-00002", "SS_EV00002");
-        String result = odmService.generateODM(correctClinicalData, metaData, "Data Entry Complete", subjectLabelToOIDMap);
+        String result = odmService.generateODM(correctClinicalData, metaData, uploadSession, subjectLabelToOIDMap);
         assertEquals(true, result.contains("<ItemGroupData ItemGroupOID=\"IG_MUSTF_OCCLUSION_CHARS\""));
     }
 }

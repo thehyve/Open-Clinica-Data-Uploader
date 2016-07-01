@@ -32,13 +32,19 @@ function provide_filled_template_upload() {
                 '<div>Please select the status after upload and the status of existing CRF\'s which can be overwritten.</div>' +
                 '<form id="upload-odm-template-form" class="form-horizontal">' +
                 '   <div class="radio-button">' +
-                '       <span>CRF status after upload</span></div></br>' +
+                '       <div>' +
+                '           CRF status after upload' +
+                '       </div>' +
+                '       </br>' +
                 '       <input id="statusAfterUpload_1" type="radio" name="statusAfterUpload" value="initial data entry" checked>Data Entry Started</br>' +
                 '       <input id="statusAfterUpload_2" type="radio" name="statusAfterUpload" value="complete">Data Entry Complete</br>' +
                 '   </div>' +
                 '   <div class="filler"/>' +
                 '   <div class="radio-button">' +
-                '       <span>Upload to CRF with status ( existing CRF\'s will be overwritten)</span></div></br>' +
+                '       <div>' +
+                '           Upload to CRF with status (existing CRF\'s will be overwritten)' +
+                '       </div>' +
+                '       </br>' +
                 '       <input id="overwriteStatus_1" type="checkbox" name="overwriteStatus" value="overwriteStatus_notStarted" checked>Not started</br>' +
                 '       <input id="overwriteStatus_2" type="checkbox" name="overwriteStatus" value="overwriteStatus_initialDataEntry">Data Entry Started</br>' +
                 '       <input id="overwriteStatus_3" type="checkbox" name="overwriteStatus" value="overwriteStatus_dataEntryComplete">Data Entry Complete</br>' +
@@ -53,15 +59,15 @@ function performODMUpload() {
     $(loading_html).insertAfter('#message-board');
     $('#message-board').empty();
     $.ajax({
-        url: baseApp + "/odm/upload",
+        url: baseApp + "/submission/upload-settings",
         type: "POST",
         data: new FormData($("#upload-odm-template-form")[0]),
         enctype: 'multipart/form-data',
         processData: false,
         contentType: false,
         success: function () {
-            console.log("Upload ODM called successfully");
-            window.location.href = baseApp + "/views/feedback-odm-upload";
+            console.log("Update of update called successfully");
+            update_submission();
         },
         error: function (jqXHR, textStatus, errorThrown) {
             $('#loading_div').remove();
@@ -69,6 +75,20 @@ function performODMUpload() {
             $('#message-board').append('<div class="alert-danger">ODM upload failed.</div>')
         }
 
+    });
+}
+
+function update_submission() {
+    $.ajax({
+        url: baseApp + "/submission/update",
+        type: "POST",
+        data: {step: "odm-upload"},
+        success: function () {
+            window.location.href = baseApp + "/views/odm-upload";
+        },
+        error: function (jqXHR, textStatus, errorThrown) {
+            console.log(jqXHR.status + " " + textStatus + " " + errorThrown);
+        }
     });
 }
 

@@ -9,6 +9,7 @@ import nl.thehyve.ocdu.models.OcDefinitions.EventDefinition;
 import nl.thehyve.ocdu.models.OcDefinitions.MetaData;
 import nl.thehyve.ocdu.models.OcDefinitions.RegisteredEventInformation;
 import nl.thehyve.ocdu.models.OcDefinitions.SiteDefinition;
+import nl.thehyve.ocdu.models.UploadSession;
 import nl.thehyve.ocdu.models.errors.ODMUploadErrorMessage;
 import nl.thehyve.ocdu.models.errors.ValidationErrorMessage;
 import nl.thehyve.ocdu.soap.ResponseHandlers.GetStudyMetadataResponseHandler;
@@ -33,9 +34,14 @@ import org.w3c.dom.Document;
 import javax.xml.datatype.XMLGregorianCalendar;
 import javax.xml.soap.SOAPConnection;
 import javax.xml.soap.SOAPConnectionFactory;
-import javax.xml.soap.SOAPException;
 import javax.xml.soap.SOAPMessage;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.GregorianCalendar;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 import java.util.stream.Collectors;
 
 import static nl.thehyve.ocdu.soap.ResponseHandlers.RegisterSubjectsResponseHandler.parseRegisterSubjectsResponse;
@@ -132,7 +138,7 @@ public class OpenClinicaService {
                                                                  String url,
                                                                  List<ClinicalData> clinicalDataList,
                                                                  MetaData metaData,
-                                                                 String statusAfterUpload) throws Exception {
+                                                                 UploadSession uploadSession) throws Exception {
         log.info("Upload initiated by: " + username + " on: " + url);
         List<ValidationErrorMessage> resultList = new ArrayList();
 
@@ -151,7 +157,7 @@ public class OpenClinicaService {
         TreeMap<String, List<ClinicalData>> sortedMap = new TreeMap<>(outputMap);
         for (String key : sortedMap.keySet()) {
             List<ClinicalData> outputClinicalData = sortedMap.get(key);
-            String odmString = odmService.generateODM(outputClinicalData, metaData, statusAfterUpload, subjectLabelToOIDMap);
+            String odmString = odmService.generateODM(outputClinicalData, metaData, uploadSession, subjectLabelToOIDMap);
             String uploadResult = uploadODMString(username, passwordHash, url, odmString);
             if (uploadResult != null) {
                 resultList.add(new ODMUploadErrorMessage("Failed upload for subject " + key + ". Cause: " + uploadResult));

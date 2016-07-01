@@ -2,11 +2,20 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org"
       xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
 <head>
-    <title>Finalize your upload</title>
+    <title>Final result</title>
 </head>
 <body>
-    <div th:replace="header">...</div>
-    <div class="container ocdu-container"> this is final view</div>
-    <div th:replace="footer :: footer"></div>
+    <div th:replace="header">Final result of your upload</div>
+    <div class="container ocdu-container">
+
+        <div id="feedback-tables">
+
+        </div>
+
+        <hr>
+        <button type="button" class="btn btn-primary" id="data-feedback-back-btn" onclick="backBtnHandler()">Back</button>
+    </div>
+    <script th:src="@{/final.js}"></script>
+    <div th:replace="footer :: footer"/>
 </body>
 </html>

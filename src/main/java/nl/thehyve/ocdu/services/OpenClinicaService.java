@@ -96,9 +96,11 @@ public class OpenClinicaService {
         Map<String, String> ret = new HashMap<>(clinicalDataList.size());
         for (ClinicalData clinicalData : clinicalDataList) {
             String subjectLabel = clinicalData.getSsid();
-            String studyLabel = clinicalData.getStudy();
-            String subjectOID = getSubjectOID(username, passwordHash, url, studyLabel, subjectLabel);
-            ret.put(subjectLabel, subjectOID);
+            if (!ret.containsKey(subjectLabel)) {
+                String studyLabel = clinicalData.getStudy();
+                String subjectOID = getSubjectOID(username, passwordHash, url, studyLabel, subjectLabel);
+                ret.put(subjectLabel, subjectOID);
+            }
         }
         return ret;
     }
@@ -126,11 +128,11 @@ public class OpenClinicaService {
     }
 
     public Collection<ValidationErrorMessage> uploadClinicalData(String username,
-                                                                   String passwordHash,
-                                                                   String url,
-                                                                   List<ClinicalData> clinicalDataList,
-                                                                   MetaData metaData,
-                                                                   String statusAfterUpload) throws Exception {
+                                                                 String passwordHash,
+                                                                 String url,
+                                                                 List<ClinicalData> clinicalDataList,
+                                                                 MetaData metaData,
+                                                                 String statusAfterUpload) throws Exception {
         log.info("Upload initiated by: " + username + " on: " + url);
         List<ValidationErrorMessage> resultList = new ArrayList();
 
@@ -160,7 +162,7 @@ public class OpenClinicaService {
 
     private void addSiteDefinitions(MetaData metaData, String username, String passwordHash, String url, Study study) throws Exception {
         List<SiteDefinition> siteDefs = new ArrayList<>();
-        for(Site site: study.getSiteList()) {
+        for (Site site : study.getSiteList()) {
             Study siteAsAStudy = new Study(site.getIdentifier(), site.getOid(), site.getName());
             MetaData siteMetadata = getMetadataSoapCall(username, passwordHash, url, siteAsAStudy);
             SiteDefinition siteDef = new SiteDefinition();
@@ -201,6 +203,7 @@ public class OpenClinicaService {
     /**
      * Schedule all the events found in {@param eventList} but which have not been scheduled yet in
      * OpenClinica according to the information present in the {@param studyEventDefinitionTypeList}.
+     *
      * @param username
      * @param passwordHash
      * @param url
@@ -208,9 +211,9 @@ public class OpenClinicaService {
      * @throws Exception
      */
     public Collection<ValidationErrorMessage> scheduleEvents(String username, String passwordHash, String url,
-                                 MetaData metaData,
-                               List<Event> eventList,
-                               List<StudySubjectWithEventsType> studySubjectWithEventsTypeList) throws Exception {
+                                                             MetaData metaData,
+                                                             List<Event> eventList,
+                                                             List<StudySubjectWithEventsType> studySubjectWithEventsTypeList) throws Exception {
         Collection<ValidationErrorMessage> ret = new ArrayList<>();
         log.info("Schedule events initiated by: " + username + " on: " + url);
         if (StringUtils.isEmpty(username) ||
@@ -228,7 +231,7 @@ public class OpenClinicaService {
         for (Event event : eventList) {
             String eventOID = eventNameOIDMap.get(event.getEventName());
             String eventKey = event.createEventKey(eventOID);
-            if ( ! eventsRegisteredInOpenClinica.containsKey(eventKey)) {
+            if (!eventsRegisteredInOpenClinica.containsKey(eventKey)) {
                 EventType eventType = event.createEventType(eventNameOIDMap);
                 StudySubjectRefType studySubjectRefType = new StudySubjectRefType();
                 studySubjectRefType.setLabel(event.getSsid());
@@ -259,7 +262,7 @@ public class OpenClinicaService {
             }
         }
 
-        if (! StringUtils.isEmpty(errorMessage.toString())) {
+        if (!StringUtils.isEmpty(errorMessage.toString())) {
             ret.add(new ValidationErrorMessage(errorMessage.toString()));
         }
         return ret;
@@ -327,7 +330,7 @@ public class OpenClinicaService {
             String searchOID = siteDefinition.getSiteOID();
             List<Site> searchSiteList =
                     study.getSiteList().stream().filter(site -> site.getOid().equals(searchOID)).collect(Collectors.toList());
-            if (! searchSiteList.isEmpty()) {
+            if (!searchSiteList.isEmpty()) {
                 Site searchSite = searchSiteList.get(0);
                 siteDefinition.setUniqueID(searchSite.getIdentifier());
             }

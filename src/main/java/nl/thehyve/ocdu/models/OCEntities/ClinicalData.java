@@ -70,7 +70,7 @@ public class ClinicalData implements OcEntity, UserSubmitted, EventReference {
         this.value = value;
     }
 
-    protected ClinicalData() {
+    public ClinicalData() {
     }
 
     public void setId(long id) {

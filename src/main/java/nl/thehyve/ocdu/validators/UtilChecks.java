@@ -1,28 +1,45 @@
 package nl.thehyve.ocdu.validators;
 
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.Locale;
+import java.time.LocalDate;
+import java.time.chrono.IsoChronology;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeFormatterBuilder;
+import java.time.format.ResolverStyle;
+import java.util.Arrays;
+import java.util.List;
+
+import static java.time.temporal.ChronoField.*;
 
 /**
  * Created by bo on 7/1/16.
  */
 public class UtilChecks {
 
+    private static final String DATE_SEP = "-";
+    private static DateTimeFormatter dateTimeFormatter = new DateTimeFormatterBuilder()
+            .parseCaseInsensitive().appendValue(DAY_OF_MONTH, 2).appendLiteral(DATE_SEP)
+            .appendValue(MONTH_OF_YEAR, 2).appendLiteral(DATE_SEP)
+            .appendValue(YEAR, 4)
+            .toFormatter()
+            .withResolverStyle(ResolverStyle.STRICT)
+            .withChronology(IsoChronology.INSTANCE);
+
+
+    private static DateTimeFormatter dayOfMonth = new DateTimeFormatterBuilder()
+            .appendValue(DAY_OF_MONTH, 2).appendLiteral(DATE_SEP).toFormatter().withResolverStyle(ResolverStyle.STRICT);
+
+    private static DateTimeFormatter month = new DateTimeFormatterBuilder().parseCaseSensitive()
+            .appendPattern("MMM").appendLiteral(DATE_SEP).toFormatter().withResolverStyle(ResolverStyle.STRICT);
+
+    private static DateTimeFormatter partialDateFormatter = new DateTimeFormatterBuilder()
+            .parseCaseSensitive().appendOptional(dayOfMonth)
+            .appendOptional(month).appendValue(YEAR, 4).toFormatter()
+            .withChronology(IsoChronology.INSTANCE);
+
+
     public static boolean isDate(String input) {
-        if(!isDateString(input)) return false;
-        DateFormat format = new SimpleDateFormat("dd-MM-yyyy", Locale.ENGLISH);
-        format.setLenient(false);
         try {
-            Date date = format.parse(input);
-            String[] split = input.split("-");
-            Integer day = Integer.parseInt(split[0]);
-            Integer month = Integer.parseInt(split[1]);
-            if (day > 31 || month > 12) {
-                return false;
-            }
+            LocalDate date = LocalDate.parse(input, dateTimeFormatter);
         } catch (Exception e) {
             return false;
         }
@@ -30,46 +47,36 @@ public class UtilChecks {
     }
 
     public static boolean isPDate(String input) {
-        if (!isDateString(input)) return false;
-        DateFormat format1 = new SimpleDateFormat("dd-MMM-yyyy", Locale.ENGLISH);
-        format1.setLenient(false);
-        DateFormat format2 = new SimpleDateFormat("MMM-yyyy", Locale.ENGLISH);
-        format2.setLenient(false);
-        DateFormat format3 = new SimpleDateFormat("yyyy", Locale.ENGLISH);
-        format3.setLenient(false);
-        boolean format1correct = true;
-        boolean format2correct = true;
-        boolean format3correct = true;
         try {
-            Date date = format1.parse(input); //TODO: turn checking format correctness into a function and DRY
-        } catch (ParseException e) {
-            format1correct = false;
-        }
-        try {
-            Date date = format2.parse(input);
-        } catch (ParseException e) {
-            format2correct = false;
-        }
-        try {
-            Date date = format3.parse(input);
-            if (input.length() != 4) format3correct = false;
-        } catch (ParseException e) {
-            format3correct = false;
-        }
-        return format1correct || format2correct || format3correct;
-    }
-
-    private static boolean isDateString(String input) {
-        String[] split = input.split("-");
-        if (split.length > 3) return false; //TODO: look for a lib maybe in Apache Commons to do Date Validation
-        if (!input.matches(".*[0-9]{4}$")) return false; // contains 4 digits at the end
-        if (input.matches("[0-9]{1,2}-.*")) { // if starts with days, then days cannot exceed 31
-            String s = split[0];
-            Integer day = Integer.parseInt(s);
-            if (day > 31) return false;
+            LocalDate date = LocalDate.parse(input, partialDateFormatter);
+        } catch (Exception e) {
+            if (isMonthAndYear(input) || isYearOnly(input)) {
+                return true;
+            } else
+                return false;
         }
         return true;
     }
+
+    private static boolean isYearOnly(String input) {
+        return input.matches("[0-9]{4}");
+    }
+
+    private static boolean isMonthAndYear(String input) {
+        return input.matches("[A-Z]{1}[a-z]{2}-[0-9]{4}") && monthMatch(input);
+    }
+
+    private static final List<String> MONTHS = Arrays.asList(new String[]{"Jan", "Feb", "Mar", "Apr", "May",
+            "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"});
+
+    private static boolean monthMatch(String input) {
+        String[] split = input.split(DATE_SEP);
+        if (split.length < 2) return false;
+        if (MONTHS.contains(split[0])) return true;
+        else
+            return false;
+    }
+
 
     public static boolean isInteger(String input) {
         if (input.contains(".") || input.contains(",")) {

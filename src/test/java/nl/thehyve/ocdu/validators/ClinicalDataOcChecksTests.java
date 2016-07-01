@@ -8,10 +8,7 @@ import nl.thehyve.ocdu.models.OcUser;
 import nl.thehyve.ocdu.models.UploadSession;
 import nl.thehyve.ocdu.models.errors.*;
 import nl.thehyve.ocdu.soap.ResponseHandlers.GetStudyMetadataResponseHandler;
-import nl.thehyve.ocdu.validators.clinicalDataChecks.ClinicalDataCrossCheck;
-import nl.thehyve.ocdu.validators.clinicalDataChecks.DataTypeCrossCheck;
-import nl.thehyve.ocdu.validators.clinicalDataChecks.MandatoryInCrfCrossCheck;
-import nl.thehyve.ocdu.validators.clinicalDataChecks.StudyStatusAvailable;
+import nl.thehyve.ocdu.validators.clinicalDataChecks.*;
 import nl.thehyve.ocdu.validators.fileValidators.DataPreMappingValidator;
 import org.junit.Before;
 import org.junit.Test;
@@ -310,7 +307,7 @@ public class ClinicalDataOcChecksTests {
         String invalidPdate2 = "32-Dec-2000";
         assertThat(check.isPDate(invalidPdate2), is(false));
         String invalidPdate3 = "10-XXX-2000";
-        assertThat(check.isPDate(invalidPdate3 ), is(false));
+        assertThat(check.isPDate(invalidPdate3), is(false));
     }
 
     @Test
@@ -321,13 +318,13 @@ public class ClinicalDataOcChecksTests {
         String invalid = "2000-12-32";
         assertThat(check.isDate(invalid), is(false));
         String invalid2 = "2000-Oct-10";
-        assertThat(check.isDate(invalid2 ), is(false));
+        assertThat(check.isDate(invalid2), is(false));
         String invalid3 = "2000-10";
-        assertThat(check.isDate(invalid3 ), is(false));
+        assertThat(check.isDate(invalid3), is(false));
         String invalid4 = "2000";
-        assertThat(check.isDate(invalid4 ), is(false));
+        assertThat(check.isDate(invalid4), is(false));
         String invalid5 = "2000-13-10";
-        assertThat(check.isDate(invalid5 ), is(false));
+        assertThat(check.isDate(invalid5), is(false));
     }
 
     @Test
@@ -362,4 +359,19 @@ public class ClinicalDataOcChecksTests {
         assertThat(errors, hasItem(isA(MandatoryItemInCrfMissing.class)));
     }
 
+    @Test
+    public void moreThanOneCrf() throws Exception {
+        List<ClinicalData> incorrectData = new ArrayList<>();
+        ClinicalData clinicalData1 = new ClinicalData();
+        ClinicalData clinicalData2 = new ClinicalData();
+        incorrectData.add(clinicalData1);
+        incorrectData.add(clinicalData2);
+        clinicalData1.setCrfName("crf1");
+        clinicalData1.setCrfVersion("v1");
+        clinicalData2.setCrfName("crf2");
+        clinicalData2.setCrfVersion("v1");
+        MultipleCrfCrossCheck check = new MultipleCrfCrossCheck();
+        ValidationErrorMessage correspondingError = check.getCorrespondingError(incorrectData, null, null, null, null, null);
+        assertThat(correspondingError, notNullValue());
+    }
 }

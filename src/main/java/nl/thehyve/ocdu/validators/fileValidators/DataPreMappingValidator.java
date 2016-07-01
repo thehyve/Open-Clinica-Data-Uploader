@@ -24,6 +24,8 @@ public class DataPreMappingValidator extends ClinicalDataChecksRunner {
         checks.add(new StudyStatusAvailable());
         checks.add(new CrfCouldNotBeVerifiedCrossCheck());
         checks.add(new EventExistsCrossCheck());
+        checks.add(new MultipleEventsCrossCheck());
+        checks.add(new MultipleCrfCrossCheck());
         this.setChecks(checks);
     }
 }

@@ -577,7 +577,7 @@ public class GetStudyMetadataResponseHandler extends OCResponseHandler {
                 repeating = true;
             }
             ItemGroupDefinition groupDef = new ItemGroupDefinition();
-            if (oid.endsWith("UNGROUPED")) {
+            if (oid.contains("_UNGROUPED")) { // OC way of defining ungrouped items. ODM requires all items to be in a group
                 groupDef.setUngrouped(true);
             }
             groupDef.setName(name);

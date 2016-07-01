@@ -30,7 +30,7 @@ public class DateOfEnrollmentPatientDataCheck implements PatientDataCheck {
             error = new ValidationErrorMessage(commonMessage + "Date of Enrollment is not provided. Today's date is used. ");
             subject.setDateOfEnrollment(currentDate.toString());
         } else {
-            DateFormat dateFormat = new SimpleDateFormat("dd-MMM-yyyy", Locale.ENGLISH);
+            DateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy", Locale.ENGLISH);
             dateFormat.setLenient(false);
 
             try {
@@ -39,7 +39,7 @@ public class DateOfEnrollmentPatientDataCheck implements PatientDataCheck {
                     error = new ValidationErrorMessage(commonMessage + "Date of Enrollment should be in the past.");
                 }
             } catch (ParseException e) {
-                error = new ValidationErrorMessage(commonMessage + "Enrollment date format is invalid.");
+                error = new ValidationErrorMessage(commonMessage + "Enrollment date format is invalid. The date format should be dd-mm-yyyy.");
             }
         }
 

@@ -71,12 +71,12 @@ public class DateOfBirthPatientDataCheck implements PatientDataCheck {
             }
             return null;
         } catch (NumberFormatException e) {
-            return "Birth year format is invalid.";
+            return "Birth year format is invalid. The year should be four digits.";
         }
     }
 
     private String checkFullDate(String dob) {
-        DateFormat dateFormat = new SimpleDateFormat("dd-MMM-yyyy", Locale.ENGLISH);
+        DateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy", Locale.ENGLISH);
         dateFormat.setLenient(false);
 
         try {
@@ -87,7 +87,7 @@ public class DateOfBirthPatientDataCheck implements PatientDataCheck {
             }
             return null;
         } catch (ParseException e) {
-            return "Birth date format is invalid.";
+            return "Birth date format is invalid. The date format should be dd-mm-yyyy.";
         }
     }
 }

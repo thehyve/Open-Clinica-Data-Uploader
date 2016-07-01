@@ -81,7 +81,7 @@ public class PatientDataOcChecksTests {
         subject.setSsid("1234");
         metadata.setBirthdateRequired(1);
         //future birthday
-        subject.setDateOfBirth("01-JUN-3012");
+        subject.setDateOfBirth("01-06-3012");
         DateOfBirthPatientDataCheck check = new DateOfBirthPatientDataCheck();
         ValidationErrorMessage error = check.getCorrespondingError(0, subject, metadata);
         assertThat(error.getMessage(), containsString("past"));
@@ -105,7 +105,7 @@ public class PatientDataOcChecksTests {
         subject.setSsid("1234");
 
         //date of enrollment should be in the past
-        subject.setDateOfEnrollment("01-JUN-3012");
+        subject.setDateOfEnrollment("01-06-3012");
         DateOfEnrollmentPatientDataCheck check = new DateOfEnrollmentPatientDataCheck();
         ValidationErrorMessage error = check.getCorrespondingError(0, subject, metadata);
         assertThat(error.getMessage(), containsString("past"));

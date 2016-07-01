@@ -5,6 +5,6 @@ package nl.thehyve.ocdu.models.errors;
  */
 public class EnumerationError extends  ValidationErrorMessage {
     public EnumerationError() {
-        super("One or more of the MultipleSelect or CodeLists you referenced in your data contains unexpected values.");
+        super("One or more values in your data is not present in the multiselect or codelist for that item.");
     }
 }

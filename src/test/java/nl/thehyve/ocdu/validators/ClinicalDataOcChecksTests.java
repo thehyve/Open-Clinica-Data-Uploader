@@ -323,6 +323,10 @@ public class ClinicalDataOcChecksTests {
         assertThat(UtilChecks.isDate(invalid4 ), is(false));
         String invalid5 = "10-13-2000";
         assertThat(UtilChecks.isDate(invalid5 ), is(false));
+        String invalid6 = "10-13-200Y";
+        assertThat(UtilChecks.isDate(invalid6 ), is(false));
+        String invalid7 = "10-10-200X";
+        assertThat(UtilChecks.isDate(invalid7 ), is(false));
     }
 
     @Test

@@ -12,6 +12,7 @@ import java.util.Locale;
 public class UtilChecks {
 
     public static boolean isDate(String input) {
+        if(!isDateString(input)) return false;
         DateFormat format = new SimpleDateFormat("dd-MM-yyyy", Locale.ENGLISH);
         format.setLenient(false);
         try {

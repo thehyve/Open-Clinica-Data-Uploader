@@ -23,13 +23,10 @@ public class ItemLengthCrossCheck implements ClinicalDataCrossCheck {
         FieldLengthExceeded error = new FieldLengthExceeded();
         data.stream().forEach(clinicalData -> {
             String value = clinicalData.getValue();
-            String itemName = clinicalData.getItem();
             if (lengthMap.get(clinicalData) != null && value.length() > lengthMap.get(clinicalData)) {
                 if (lengthMap.get(clinicalData) != 0) { // Length does not have to be defined, in this case it is 0
-                    String gRepMsg = clinicalData.getGroupRepeat() != null ? " group repeat: " + clinicalData.getGroupRepeat() : "";
-                    error.addOffendingValue("Item: " + itemName + gRepMsg + " value: " + value + " allowed length: "
-                            + lengthMap.get(clinicalData)
-                            + " for subject: " + clinicalData.getSsid());
+                    error.addOffendingValue(clinicalData.toOffenderString() + " exceeds allowed length: "
+                            + lengthMap.get(clinicalData));
                 }
             }
         });

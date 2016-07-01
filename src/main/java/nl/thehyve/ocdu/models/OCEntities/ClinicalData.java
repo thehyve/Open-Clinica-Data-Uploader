@@ -2,6 +2,7 @@ package nl.thehyve.ocdu.models.OCEntities;
 
 import nl.thehyve.ocdu.models.OcUser;
 import nl.thehyve.ocdu.models.UploadSession;
+import org.apache.commons.lang3.StringUtils;
 import org.openclinica.ws.beans.StudySubjectWithEventsType;
 
 import javax.persistence.Column;
@@ -194,7 +195,6 @@ public class ClinicalData implements OcEntity, UserSubmitted, EventReference {
     }
 
 
-
     @Override
     public String toString() {
         return "ClinicalData{" +
@@ -216,6 +216,7 @@ public class ClinicalData implements OcEntity, UserSubmitted, EventReference {
      * Tests if a OCItemMapping has a conflicting CRF version. This is required to avoid uploads with similar study,
      * subject, event, event-ordinal and CRF-name but with a different CRF-versions. In such a situation OpenClinica web-services
      * adds 2 CRF's to the event. (TODO add the reference to the OC-bug)
+     *
      * @param that
      * @return <code>true</code> if a conflicting CRF is present.
      */
@@ -228,7 +229,7 @@ public class ClinicalData implements OcEntity, UserSubmitted, EventReference {
                 (this.crfVersion == null)) {
             throw new IllegalStateException("Unable to determine conflict state; a field is null");
         }
-        if (! (this.study.equals(that.study) &&
+        if (!(this.study.equals(that.study) &&
                 (this.ssid.equals(that.ssid)) &&
                 (this.eventName.equals(that.eventName)) &&
                 (this.eventRepeat.equals(that.eventRepeat)) &&
@@ -242,6 +243,7 @@ public class ClinicalData implements OcEntity, UserSubmitted, EventReference {
      * Tests if a OCItemMapping has a conflicting CRF version. This is required to avoid uploads with similar study,
      * subject, event, event-ordinal and CRF-name but with a different CRF-versions. In such a situation OpenClinica web-services
      * adds 2 CRF's to the event. (TODO add the reference to the OC-bug)
+     *
      * @param that
      * @return <code>true</code> if a conflicting CRF is present.
      */
@@ -262,6 +264,7 @@ public class ClinicalData implements OcEntity, UserSubmitted, EventReference {
 
     /**
      * creates a key value for the ODM generation for each unique chunk of output.
+     *
      * @return
      */
     public String createODMKey() {
@@ -283,8 +286,9 @@ public class ClinicalData implements OcEntity, UserSubmitted, EventReference {
     /**
      * returns <code>true</code> if the event defined in {@param studySubjectWithEventsType} is
      * present present in this ClinicalData.
+     *
      * @param studySubjectWithEventsType
-     * @return  returns <code>true</code> if the event defined in {@param studySubjectWithEventsType} is
+     * @return returns <code>true</code> if the event defined in {@param studySubjectWithEventsType} is
      * present present in this ClinicalData.
      */
     public boolean isEventPresent(StudySubjectWithEventsType studySubjectWithEventsType) {
@@ -296,4 +300,19 @@ public class ClinicalData implements OcEntity, UserSubmitted, EventReference {
         List<String> values = Arrays.asList(split);
         return values;
     }
+
+    public String toOffenderString() {
+        String groupRepeatPart;
+        if (groupRepeat != null) {
+            groupRepeatPart = " item Group Repeat: " + groupRepeat;
+        } else {
+            groupRepeatPart = " not repeating group ";
+        }
+        String ofenderMsg = "Subject: " + ssid + " Item: " + item + groupRepeatPart
+                + " in CRF: " + crfName + " version: " + crfVersion + " in event: "
+                + eventName + " event repeat: " + eventRepeat + " value: "
+                + value;
+        return ofenderMsg;
+    }
+
 }

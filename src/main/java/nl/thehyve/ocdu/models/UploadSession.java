@@ -1,6 +1,10 @@
 package nl.thehyve.ocdu.models;
 
-import javax.persistence.*;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.ManyToOne;
 import java.util.Date;
 
 /**
@@ -19,12 +23,18 @@ public class UploadSession {
     private OcUser owner;
 
     public enum Step {
-        MAPPING, FEEDBACK_DATA, SUBJECTS, FEEDBACK_SUBJECTS, EVENTS, FEEDBACK_EVENTS, UPLOAD_ODM, FEEDBACK_UPLOAD_ODM,  OVERVIEW
+        MAPPING, FEEDBACK_DATA, SUBJECTS, FEEDBACK_SUBJECTS, EVENTS, FEEDBACK_EVENTS, UPLOAD_ODM, PRE_UPLOAD_OVERVIEW,  OVERVIEW, FINAL
     }
 
     private Step step;
+    private CRFStatusAfterUpload crfStatusAfterUpload = CRFStatusAfterUpload.DATA_ENTRY_COMPLETED;
     private Date savedDate;
     private String study;
+
+    private boolean uponNotStarted = true;
+    private boolean uponDataEntryStarted;
+    private boolean uponDataEntryCompleted;
+
 
     public String getStudy() {
         return study;
@@ -69,6 +79,14 @@ public class UploadSession {
         this.savedDate = savedDate;
     }
 
+    public CRFStatusAfterUpload getCrfStatusAfterUpload() {
+        return crfStatusAfterUpload;
+    }
+
+    public void setCrfStatusAfterUpload(CRFStatusAfterUpload crfStatusAfterUpload) {
+        this.crfStatusAfterUpload = crfStatusAfterUpload;
+    }
+
     public long getId() {
         return id;
     }
@@ -81,7 +99,34 @@ public class UploadSession {
         return owner;
     }
 
+    public boolean isUponNotStarted() {
+        return uponNotStarted;
+    }
+
+    public void setUponNotStarted(boolean uponNotStarted) {
+        this.uponNotStarted = uponNotStarted;
+    }
+
+    public boolean isUponDataEntryStarted() {
+        return uponDataEntryStarted;
+    }
+
+    public void setUponDataEntryStarted(boolean uponDataEntryStarted) {
+        this.uponDataEntryStarted = uponDataEntryStarted;
+    }
+
+    public boolean isUponDataEntryCompleted() {
+        return uponDataEntryCompleted;
+    }
+
+    public void setUponDataEntryCompleted(boolean uponDataEntryCompleted) {
+        this.uponDataEntryCompleted = uponDataEntryCompleted;
+    }
+
     public void setOwner(OcUser owner) {
         this.owner = owner;
     }
+
+
+
 }

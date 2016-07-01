@@ -5,6 +5,7 @@ import nl.thehyve.ocdu.models.OcDefinitions.EventDefinition;
 import nl.thehyve.ocdu.models.OcDefinitions.ItemDefinition;
 import nl.thehyve.ocdu.models.OcDefinitions.ItemGroupDefinition;
 import nl.thehyve.ocdu.models.OcDefinitions.MetaData;
+import nl.thehyve.ocdu.models.UploadSession;
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.text.StrBuilder;
@@ -73,15 +74,15 @@ public class ODMService {
 
     public String generateODM(List<ClinicalData> clinicalDataList,
                               MetaData metaData,
-                              String statusAfterUpload,
+                              UploadSession uploadSession,
                               Map<String, String> subjectLabelToOIDMap) throws Exception {
         StringBuffer odmDocument =
-                buildODM(clinicalDataList, statusAfterUpload, metaData, subjectLabelToOIDMap);
+                buildODM(clinicalDataList, uploadSession, metaData, subjectLabelToOIDMap);
         return odmDocument.toString();
     }
 
 
-    private void addODMDocumentHeader(String studyOID, StringBuffer odmData) throws Exception {
+    private void addODMDocumentHeader(String studyOID, StringBuffer odmData,  UploadSession uploadSession) throws Exception {
         odmData.append("<ODM ");
         odmData.append("ODMVersion=\"1.3\" ");
         odmData.append("FileOID=\"");
@@ -99,7 +100,9 @@ public class ODMService {
         odmData.append(studyOID);
         odmData.append("\" ");
         odmData.append("MetaDataVersionOID=\"v1.0.0\">");
-        odmData.append("<UpsertOn NotStarted=\"true\" DataEntryStarted=\"true\" DataEntryComplete=\"false\"/>");
+        odmData.append("<UpsertOn NotStarted=\"" + uploadSession.isUponNotStarted() +
+                        "\" DataEntryStarted=\"" + uploadSession.isUponDataEntryStarted() +
+                        "\" DataEntryComplete=\"" + uploadSession.isUponDataEntryCompleted() + "\"/>");
     }
 
     private void addClosingTags(StringBuffer odmData) {
@@ -166,7 +169,10 @@ public class ODMService {
         }
     }
 
-    private StringBuffer buildODM(List<ClinicalData> clinicalDataList, String statusAfterUpload, MetaData metaData, Map<String, String> subjectLabelToOIDMap) throws Exception {
+    private StringBuffer buildODM(List<ClinicalData> clinicalDataList,
+                                  UploadSession uploadSession,
+                                  MetaData metaData,
+                                  Map<String, String> subjectLabelToOIDMap) throws Exception {
         long startTime = System.currentTimeMillis();
 
         StringBuffer odmData = new StringBuffer("");
@@ -178,7 +184,7 @@ public class ODMService {
 
         String studyOID = metaData.getStudyOID();
 
-        addODMDocumentHeader(studyOID, odmData);
+        addODMDocumentHeader(studyOID, odmData, uploadSession);
 
         Map<String, String> eventNameOIDMap =
                 metaData.getEventDefinitions().stream().collect(Collectors.toMap(EventDefinition::getName, EventDefinition::getStudyEventOID));
@@ -195,7 +201,7 @@ public class ODMService {
         TreeMap<String, List<ClinicalData>> sortedMap = new TreeMap<>(outputMap);
         for (String key : sortedMap.keySet()) {
             List<ClinicalData> outputClinicalData = sortedMap.get(key);
-            appendSubjectODMSection(odmData, metaData, outputClinicalData, statusAfterUpload, eventNameOIDMap, itemNameOIDMap, subjectLabelToOIDMap);
+            appendSubjectODMSection(odmData, metaData, outputClinicalData, uploadSession.getCrfStatusAfterUpload().getName(), eventNameOIDMap, itemNameOIDMap, subjectLabelToOIDMap);
         }
 
         addClosingTags(odmData);

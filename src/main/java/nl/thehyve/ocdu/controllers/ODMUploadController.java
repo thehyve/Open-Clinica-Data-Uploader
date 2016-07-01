@@ -22,13 +22,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.servlet.http.HttpSession;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Controller for the upload of ODM-data to OpenClinica.
@@ -61,15 +59,17 @@ public class ODMUploadController {
     ClinicalDataRepository clinicalDataRepository;
 
     @RequestMapping(value = "/upload", method = RequestMethod.POST)
-    public ResponseEntity<Collection<ValidationErrorMessage>> uploadFile(HttpSession session,
-                                                                         @RequestParam("statusAfterUpload") String statusAfterUpload)  {
+    public ResponseEntity<Collection<ValidationErrorMessage>> uploadODM(HttpSession session)  {
         Collection<ValidationErrorMessage> result = new ArrayList<>();
         try {
             UploadSession uploadSession = uploadSessionService.getCurrentUploadSession(session);
+
             OcUser user = ocUserService.getCurrentOcUser(session);
             String userName = user.getUsername();
             String pwdHash = ocUserService.getOcwsHash(session);
             String url = user.getOcEnvironment();
+
+            // TODO apply SQL-injection escaping on statusAfterUpload.
 
             Study study = dataService.findStudy(uploadSession.getStudy(), user, pwdHash);
             MetaData metaData =
@@ -88,9 +88,9 @@ public class ODMUploadController {
                     return new ResponseEntity<>(result, HttpStatus.BAD_REQUEST);
                 }
             }
+
             List<Event> eventList = eventRepository.findBySubmission(uploadSession);
             if (! eventList.isEmpty()) {
-
                 result = openClinicaService.scheduleEvents(userName, pwdHash, url, metaData, eventList, studySubjectWithEventsTypeList);
                 if (! result.isEmpty()) {
                     return new ResponseEntity<>(result, HttpStatus.BAD_REQUEST);
@@ -98,7 +98,7 @@ public class ODMUploadController {
             }
 
             result =
-                    openClinicaService.uploadClinicalData(userName, pwdHash, url, clinicalDataList, metaData, statusAfterUpload);
+                    openClinicaService.uploadClinicalData(userName, pwdHash, url, clinicalDataList, metaData, uploadSession);
             return new ResponseEntity<>(result, HttpStatus.OK);
         }
         catch (Exception e) {

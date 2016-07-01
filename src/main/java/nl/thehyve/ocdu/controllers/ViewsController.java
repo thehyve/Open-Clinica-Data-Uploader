@@ -66,4 +66,9 @@ public class ViewsController {
         return "odm-upload";
     }
 
+    @RequestMapping(value = "/pre-upload-overview", method = RequestMethod.GET)
+    public String preUploadOverview() {
+        return "pre-upload-overview";
+    }
+
 }

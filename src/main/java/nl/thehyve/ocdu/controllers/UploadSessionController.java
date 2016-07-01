@@ -1,6 +1,7 @@
 package nl.thehyve.ocdu.controllers;
 
 import nl.thehyve.ocdu.OCEnvironmentsConfig;
+import nl.thehyve.ocdu.models.CRFStatusAfterUpload;
 import nl.thehyve.ocdu.models.OCEntities.ClinicalData;
 import nl.thehyve.ocdu.models.OcUser;
 import nl.thehyve.ocdu.models.UploadSession;
@@ -60,6 +61,25 @@ public class UploadSessionController {
                 return new ResponseEntity<>(info, OK);
             }
         } catch (UploadSessionNotFoundException e) {
+            e.printStackTrace();
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @RequestMapping(value = "/upload-settings", method = RequestMethod.POST)
+    public ResponseEntity<UploadSession> updateUploadSettings(@RequestParam("statusAfterUpload") String statusAfterUpload, HttpSession session) {
+        try {
+            UploadSession uploadSession = uploadSessionService.getCurrentUploadSession(session);
+
+            CRFStatusAfterUpload crfStatusAfterUpload = CRFStatusAfterUpload.get(statusAfterUpload);
+            if (crfStatusAfterUpload == null) {
+                return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            }
+            uploadSession.setCrfStatusAfterUpload(crfStatusAfterUpload);
+            uploadSessionRepository.save(uploadSession);
+            return new ResponseEntity<>(OK);
+        }
+        catch (Exception e) {
             e.printStackTrace();
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }

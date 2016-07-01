@@ -175,7 +175,7 @@ public class EventDataOcChecksTests {
         List<ValidationErrorMessage> errors = checks.validate(event);
 
         assertThat(errors, contains(allOf(
-                hasProperty("message", is("Start date is invalid.")),
+                hasProperty("message", is("Start date is invalid. The date format should be dd-mm-yyyy.")),
                 hasProperty("offendingValues", contains(wrongStartDate))
         )));
     }
@@ -189,7 +189,7 @@ public class EventDataOcChecksTests {
         List<ValidationErrorMessage> errors = checks.validate(event);
 
         assertThat(errors, contains(allOf(
-                hasProperty("message", is("Start date is invalid.")),
+                hasProperty("message", is("Start date is invalid. The date format should be dd-mm-yyyy.")),
                 hasProperty("offendingValues", contains(invalidStartDate))
         )));
     }
@@ -203,7 +203,7 @@ public class EventDataOcChecksTests {
         List<ValidationErrorMessage> errors = checks.validate(event);
 
         assertThat(errors, contains(allOf(
-                hasProperty("message", is("End date is invalid.")),
+                hasProperty("message", is("End date is invalid. The date format should be dd-mm-yyyy.")),
                 hasProperty("offendingValues", contains(wrongStartDate))
         )));
     }
@@ -217,7 +217,7 @@ public class EventDataOcChecksTests {
         List<ValidationErrorMessage> errors = checks.validate(event);
 
         assertThat(errors, contains(allOf(
-                hasProperty("message", is("End date is invalid.")),
+                hasProperty("message", is("End date is invalid. The date format should be dd-mm-yyyy.")),
                 hasProperty("offendingValues", contains(invalidStartDate))
         )));
     }
@@ -231,7 +231,7 @@ public class EventDataOcChecksTests {
         List<ValidationErrorMessage> errors = checks.validate(event);
 
         assertThat(errors, contains(allOf(
-                hasProperty("message", is("Start time is invalid.")),
+                hasProperty("message", is("Start time is invalid. The time format should be H:mm.")),
                 hasProperty("offendingValues", contains(wrongStartTime))
         )));
     }
@@ -245,7 +245,7 @@ public class EventDataOcChecksTests {
         List<ValidationErrorMessage> errors = checks.validate(event);
 
         assertThat(errors, contains(allOf(
-                hasProperty("message", is("Start time is invalid.")),
+                hasProperty("message", is("Start time is invalid. The time format should be H:mm.")),
                 hasProperty("offendingValues", contains(invalidStartDate))
         )));
     }
@@ -259,7 +259,7 @@ public class EventDataOcChecksTests {
         List<ValidationErrorMessage> errors = checks.validate(event);
 
         assertThat(errors, contains(allOf(
-                hasProperty("message", is("End time is invalid.")),
+                hasProperty("message", is("End time is invalid. The time format should be H:mm.")),
                 hasProperty("offendingValues", contains(wrongEndTime))
         )));
     }
@@ -273,7 +273,7 @@ public class EventDataOcChecksTests {
         List<ValidationErrorMessage> errors = checks.validate(event);
 
         assertThat(errors, contains(allOf(
-                hasProperty("message", is("End time is invalid.")),
+                hasProperty("message", is("End time is invalid. The time format should be H:mm.")),
                 hasProperty("offendingValues", contains(invalidEndDate))
         )));
     }

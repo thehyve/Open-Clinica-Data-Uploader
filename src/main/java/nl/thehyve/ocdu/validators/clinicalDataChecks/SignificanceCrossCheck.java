@@ -18,7 +18,7 @@ import java.util.Set;
  */
 public class SignificanceCrossCheck implements ClinicalDataCrossCheck {
     @Override
-    public ValidationErrorMessage getCorrespondingError(List<ClinicalData> data, MetaData metaData, Map<ClinicalData, ItemDefinition> itemDefMap, List<StudySubjectWithEventsType> studySubjectWithEventsTypeList, Map<ClinicalData, Boolean> shownMap, Map<String, Set<CRFDefinition>> eventMap){
+    public ValidationErrorMessage getCorrespondingError(List<ClinicalData> data, MetaData metaData, Map<ClinicalData, ItemDefinition> itemDefMap, List<StudySubjectWithEventsType> studySubjectWithEventsTypeList, Map<ClinicalData, Boolean> shownMap, Map<String, Set<CRFDefinition>> eventMap) {
         TooManySignificantDigits error = new TooManySignificantDigits();
         data.forEach(clinicalData -> {
             ItemDefinition definition = itemDefMap.get(clinicalData);
@@ -36,10 +36,8 @@ public class SignificanceCrossCheck implements ClinicalDataCrossCheck {
         for (String value : clinicalData.getValues()) {
             int digitsAfterDM = getDigitsAfterDM(value);
             if (digitsAfterDM > definition.getSignificantDigits()) {
-                String gRepMsg = clinicalData.getGroupRepeat() != null ? "group repeat: " + clinicalData.getGroupRepeat() : "";
-                error.addOffendingValue("Item: " + clinicalData.getItem() + gRepMsg +
-                        " value: " + value + " expected number of significant digits: "
-                        + definition.getSignificantDigits()+ " for subject: "+ clinicalData.getSsid() ) ;
+                error.addOffendingValue(clinicalData.toOffenderString() + " expected number of significant digits: "
+                        + definition.getSignificantDigits());
             }
         }
     }

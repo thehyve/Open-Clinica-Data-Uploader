@@ -42,15 +42,14 @@ public class DataTypeCrossCheck implements ClinicalDataCrossCheck {
         Map<ClinicalData, String> itemDataTypes = buildDataTypeMap(data, itemDefMap);
         Set<ImmutablePair<String, String>> offenders = data.stream()
                 .filter(clinicalData -> !allValuesMatch(clinicalData.getValues(), itemDataTypes.get(clinicalData)) && shownMap.get(clinicalData))
-                .map(clinicalData -> new ImmutablePair<>(clinicalData.getItem() + " values: " + clinicalData.getValues()
-                        + " for subject:" + clinicalData.getSsid(), itemDataTypes.get(clinicalData)))
+                .map(clinicalData -> new ImmutablePair<>(clinicalData.toOffenderString(), itemDataTypes.get(clinicalData)))
                 .collect(Collectors.toSet());
         if (offenders.size() > 0) {
             DataTypeMismatch error = new DataTypeMismatch();
             offenders.stream().
                     forEach(offender -> {
                         String typeMsg = humanReadbleTypes.get(offender.right);
-                        error.addOffendingValue("Item: " + offender.left + " expected: " + typeMsg);
+                        error.addOffendingValue(offender.left + " expected: " + typeMsg);
                     });
             return error;
         } else return null;

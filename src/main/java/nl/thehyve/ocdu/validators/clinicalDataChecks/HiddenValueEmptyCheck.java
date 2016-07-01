@@ -25,7 +25,7 @@ public class HiddenValueEmptyCheck implements ClinicalDataCrossCheck {
             boolean nonEmpty = !clinicalData.getValue().equals("");
             boolean isHidden = !shownMap.get(clinicalData);
             if (nonEmpty && isHidden) {
-                error.addOffendingValue("Item: " + clinicalData.getItem() + " for patient: " + clinicalData.getSsid() +
+                error.addOffendingValue(clinicalData.toOffenderString() +
                         " is hidden, it is not allowed to provide any value for it. Value provided: " +
                         clinicalData.getValue());
             }

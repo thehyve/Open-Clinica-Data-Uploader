@@ -27,7 +27,7 @@ public class ItemLengthCrossCheck implements ClinicalDataCrossCheck {
             if (lengthMap.get(clinicalData) != null && value.length() > lengthMap.get(clinicalData)) {
                 if (lengthMap.get(clinicalData) != 0) { // Length does not have to be defined, in this case it is 0
                     String gRepMsg = clinicalData.getGroupRepeat() != null ? " group repeat: " + clinicalData.getGroupRepeat() : "";
-                    error.addOffendingValue("Item: " + itemName + gRepMsg + " value: " + value + " allowed length: "
+                    error.addOffendingValue(clinicalData.toOffenderString() + " allowed length: "
                             + lengthMap.get(clinicalData)
                             + " for subject: " + clinicalData.getSsid());
                 }

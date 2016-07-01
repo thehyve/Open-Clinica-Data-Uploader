@@ -4,6 +4,7 @@
 
 var template_str;
 var loading_html;
+var is_template_empty = false;;
 
 $(document).ready(function () {
     loading_html = '<div id="loading_div"><div class="loader"></div><hr></div>';
@@ -27,8 +28,9 @@ function check_new_patients(toRegisterSite) {
                 provide_filled_template_upload();
             }
             else {
-                var html = "<div id='template_error' class='alert alert-warning'>Template is empty.</div>"
+                var html = "<div id='template_error' class='alert alert-warning'>All subjects in the data file have been registered in OpenClinica.</div>";
                 $('#subject-registration-div').append(html);
+                is_template_empty = true;
             }
         },
         error: function (jqXHR, textStatus, errorThrown) {
@@ -64,7 +66,12 @@ function next_btn() {
     });
 
     $('#subject-next-btn').click(function () {
-        upload_subjects();
+        if(!is_template_empty) {
+            upload_subjects();
+        }
+        else{
+            window.location.href = baseApp + "/views/feedback-subjects";
+        }
     });
 
 }

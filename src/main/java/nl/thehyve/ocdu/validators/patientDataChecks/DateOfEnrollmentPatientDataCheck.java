@@ -30,7 +30,7 @@ public class DateOfEnrollmentPatientDataCheck implements PatientDataCheck {
             error = new ValidationErrorMessage(commonMessage + "Date of Enrollment is not provided. Today's date is used. ");
             subject.setDateOfEnrollment(currentDate.toString());
         } else {
-            DateFormat dateFormat = new SimpleDateFormat("dd-MMM-yyyy", Locale.ENGLISH);
+            DateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy", Locale.ENGLISH);
             dateFormat.setLenient(false);
 
             try {

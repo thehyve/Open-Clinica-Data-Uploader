@@ -6,6 +6,7 @@ import nl.thehyve.ocdu.models.OcDefinitions.ItemDefinition;
 import nl.thehyve.ocdu.models.OcDefinitions.MetaData;
 import nl.thehyve.ocdu.models.errors.DataTypeMismatch;
 import nl.thehyve.ocdu.models.errors.ValidationErrorMessage;
+import nl.thehyve.ocdu.validators.UtilChecks;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.openclinica.ws.beans.StudySubjectWithEventsType;
 
@@ -79,13 +80,13 @@ public class DataTypeCrossCheck implements ClinicalDataCrossCheck {
         if (expectedType == null || expectedType.equals(TEXT_DATA_TYPE)) {
             return true;
         } else if (expectedType.equals(INTEGER_DATA_TYPE)) {
-            return isInteger(value);
+            return UtilChecks.isInteger(value);
         } else if (expectedType.equals(FLOAT_DATA_TYPE)) {
-            return isFloat(value);
+            return UtilChecks.isFloat(value);
         } else if (expectedType.equals(DATE_DATA_TYPE)) {
-            return isDate(value);
+            return UtilChecks.isDate(value);
         } else if (expectedType.equals(PARTIAL_DATE_DATA_TYPE)) {
-            return isPDate(value);
+            return UtilChecks.isPDate(value);
         } else {
             return true; // no expectations, no disappointment
         }

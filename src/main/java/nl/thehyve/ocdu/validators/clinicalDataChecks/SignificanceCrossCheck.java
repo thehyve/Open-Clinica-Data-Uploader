@@ -6,6 +6,7 @@ import nl.thehyve.ocdu.models.OcDefinitions.ItemDefinition;
 import nl.thehyve.ocdu.models.OcDefinitions.MetaData;
 import nl.thehyve.ocdu.models.errors.TooManySignificantDigits;
 import nl.thehyve.ocdu.models.errors.ValidationErrorMessage;
+import nl.thehyve.ocdu.validators.UtilChecks;
 import org.openclinica.ws.beans.StudySubjectWithEventsType;
 
 import java.util.List;
@@ -44,7 +45,7 @@ public class SignificanceCrossCheck implements ClinicalDataCrossCheck {
     }
 
     private int getDigitsAfterDM(String value) {
-        if (!isFloat(value)) {
+        if (!UtilChecks.isFloat(value)) {
             return 0;
         } else {
             String[] split = value.split("\\.");

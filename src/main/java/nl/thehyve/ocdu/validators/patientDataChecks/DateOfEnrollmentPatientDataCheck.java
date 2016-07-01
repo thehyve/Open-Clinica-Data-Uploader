@@ -39,7 +39,7 @@ public class DateOfEnrollmentPatientDataCheck implements PatientDataCheck {
                     error = new ValidationErrorMessage(commonMessage + "Date of Enrollment should be in the past.");
                 }
             } catch (ParseException e) {
-                error = new ValidationErrorMessage(commonMessage + "Enrollment date format is invalid.");
+                error = new ValidationErrorMessage(commonMessage + "Enrollment date format is invalid. The date format should be dd-mm-yyyy.");
             }
         }
 

@@ -71,7 +71,7 @@ public class DateOfBirthPatientDataCheck implements PatientDataCheck {
             }
             return null;
         } catch (NumberFormatException e) {
-            return "Birth year format is invalid. The year should be four digits.";
+            return "Birth year format is invalid. The year should be four digits, for example, 1998.";
         }
     }
 
@@ -87,7 +87,7 @@ public class DateOfBirthPatientDataCheck implements PatientDataCheck {
             }
             return null;
         } catch (ParseException e) {
-            return "Birth date format is invalid. The date format should be dd-mm-yyyy.";
+            return "Birth date format is invalid. The date format should be dd-mm-yyyy. For example, 23-10-2012.";
         }
     }
 }

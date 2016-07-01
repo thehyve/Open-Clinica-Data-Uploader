@@ -50,7 +50,6 @@ public class PatientDataOcChecks {
             index++;
         }
         return errors;
-
     }
 
 }

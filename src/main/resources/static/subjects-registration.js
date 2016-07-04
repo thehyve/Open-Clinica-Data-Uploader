@@ -134,4 +134,5 @@ function log_errors(errors) {
     });
     info += '</div></ul>';
     $("#message-board").append(info);
+    $('#loading_div').remove();
 }

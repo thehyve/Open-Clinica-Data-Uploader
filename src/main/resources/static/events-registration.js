@@ -2,7 +2,7 @@
  * Created by bo on 5/12/16.
  */
 var contains_events_unscheduled;
-var template_arr;
+var template_arr = [];
 var loading_html;
 
 
@@ -30,14 +30,14 @@ function check_new_events() {
                 provide_event_template_upload();
             }
             else {
-                var html = "<div id='template_error' class='alert alert-warning'>Template is empty.</div>"
-                $('#subject-registration-div').append(html);
+                var html = "<div id='template_error' class='alert alert-success'>All events in the data file have been scheduled in OpenClinica. Click Next to proceed.</div>";
+                $(html).insertBefore('#event-back-btn');
             }
         },
         error: function (jqXHR, textStatus, errorThrown) {
             console.log(jqXHR.status + " " + textStatus + " " + errorThrown);
-            var html = "<div id='template_error' class='alert alert-warning'>The retrieval of template has failed.</div>"
-            $('#subject-registration-div').append(html);
+            var html = "<div id='template_error' class='alert alert-error'>The retrieval of template has failed.</div>";
+            $(html).insertBefore('#event-back-btn');
         }
     });
 }
@@ -67,7 +67,12 @@ function next_btn() {
     });
 
     $('#event-next-btn').click(function () {
-        upload_event_data();
+        if(template_arr.length > 1) {
+            upload_event_data();
+        }
+        else{
+            window.location.href = baseApp + "/views/feedback-events";
+        }
     });
 }
 

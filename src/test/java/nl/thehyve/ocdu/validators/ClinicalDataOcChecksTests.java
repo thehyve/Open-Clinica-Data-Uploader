@@ -8,7 +8,9 @@ import nl.thehyve.ocdu.models.OcUser;
 import nl.thehyve.ocdu.models.UploadSession;
 import nl.thehyve.ocdu.models.errors.*;
 import nl.thehyve.ocdu.soap.ResponseHandlers.GetStudyMetadataResponseHandler;
-import nl.thehyve.ocdu.validators.clinicalDataChecks.*;
+import nl.thehyve.ocdu.validators.clinicalDataChecks.ClinicalDataCrossCheck;
+import nl.thehyve.ocdu.validators.clinicalDataChecks.MultipleCrfCrossCheck;
+import nl.thehyve.ocdu.validators.clinicalDataChecks.StudyStatusAvailable;
 import nl.thehyve.ocdu.validators.fileValidators.DataPreMappingValidator;
 import org.junit.Before;
 import org.junit.Test;
@@ -296,17 +298,20 @@ public class ClinicalDataOcChecksTests {
 
     @Test
     public void partialDateValidation() throws Exception {
-        String bogusPdate = "Oct-200G";
-        boolean pDate = UtilChecks.isPDate(bogusPdate);
-        assertThat(pDate, is(false));
-        String legitmatedate = "Oct-2000";
-        assertThat(UtilChecks.isPDate(legitmatedate), is(true));
-        String legitmatedate2 = "29-Oct-2000";
-        assertThat(UtilChecks.isPDate(legitmatedate2), is(true));
-        String invalidPdate2 = "32-Dec-2000";
-        assertThat(UtilChecks.isPDate(invalidPdate2), is(false));
-        String invalidPdate3 = "10-XXX-2000";
-        assertThat(UtilChecks.isPDate(invalidPdate3 ), is(false));
+        String legit1 = "30-Oct-2000";
+        assertThat(UtilChecks.isPDate(legit1), is(true));
+        String legit2 = "Oct-2000";
+        assertThat(UtilChecks.isPDate(legit2), is(true));
+        String legit3 = "2000";
+        assertThat(UtilChecks.isPDate(legit3), is(true));
+        String invalid1 = "32-Dec-2000";
+        assertThat(UtilChecks.isPDate(invalid1 ), is(false));
+        String invalid2 = "10-XXX-2000";
+        assertThat(UtilChecks.isPDate(invalid2 ), is(false));
+        String invalid3 = "10-oct-2000";
+        assertThat(UtilChecks.isPDate(invalid3 ), is(false));
+        String invalid4 = "29-02-2001"; // not a leap year
+        assertThat(UtilChecks.isPDate(invalid4 ), is(false));
     }
 
     @Test
@@ -327,6 +332,8 @@ public class ClinicalDataOcChecksTests {
         assertThat(UtilChecks.isDate(invalid6 ), is(false));
         String invalid7 = "10-10-200X";
         assertThat(UtilChecks.isDate(invalid7 ), is(false));
+        String invalid8 = "29-02-2001";
+        assertThat(UtilChecks.isDate(invalid8 ), is(false));
     }
 
     @Test

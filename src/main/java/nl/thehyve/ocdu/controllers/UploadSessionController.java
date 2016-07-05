@@ -1,13 +1,10 @@
 package nl.thehyve.ocdu.controllers;
 
-import nl.thehyve.ocdu.OCEnvironmentsConfig;
-import nl.thehyve.ocdu.models.CRFStatusAfterUpload;
 import nl.thehyve.ocdu.models.OCEntities.ClinicalData;
 import nl.thehyve.ocdu.models.OcUser;
 import nl.thehyve.ocdu.models.UploadSession;
 import nl.thehyve.ocdu.repositories.ClinicalDataRepository;
 import nl.thehyve.ocdu.repositories.UploadSessionRepository;
-import nl.thehyve.ocdu.repositories.OCUserRepository;
 import nl.thehyve.ocdu.services.DataService;
 import nl.thehyve.ocdu.services.OcUserService;
 import nl.thehyve.ocdu.services.UploadSessionNotFoundException;
@@ -17,14 +14,16 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpSession;
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.Date;
+import java.util.List;
 
 import static org.springframework.http.HttpStatus.OK;
 
@@ -66,25 +65,6 @@ public class UploadSessionController {
         }
     }
 
-    @RequestMapping(value = "/upload-settings", method = RequestMethod.POST)
-    public ResponseEntity<UploadSession> updateUploadSettings(@RequestParam("statusAfterUpload") String statusAfterUpload, HttpSession session) {
-        try {
-            UploadSession uploadSession = uploadSessionService.getCurrentUploadSession(session);
-
-            CRFStatusAfterUpload crfStatusAfterUpload = CRFStatusAfterUpload.get(statusAfterUpload);
-            if (crfStatusAfterUpload == null) {
-                return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-            }
-            uploadSession.setCrfStatusAfterUpload(crfStatusAfterUpload);
-            uploadSessionRepository.save(uploadSession);
-            return new ResponseEntity<>(OK);
-        }
-        catch (Exception e) {
-            e.printStackTrace();
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        }
-    }
-
     @RequestMapping(value = "/update", method = RequestMethod.POST)
     public ResponseEntity<UploadSession> updateSubmission(@RequestParam(value = "step") String step, HttpSession session) {
         try {
@@ -97,9 +77,9 @@ public class UploadSessionController {
                 case "feedback-subjects": _step = UploadSession.Step.FEEDBACK_SUBJECTS; break;
                 case "events": _step = UploadSession.Step.EVENTS; break;
                 case "feedback-events": _step = UploadSession.Step.FEEDBACK_EVENTS; break;
-                case "odm-upload": _step = UploadSession.Step.UPLOAD_ODM; break;
-                case "upload-settings": _step = UploadSession.Step.UPLOAD_SETTINGS; break;
-                case "overview": _step = UploadSession.Step.OVERVIEW; break;
+                case "pre-upload-odm": _step = UploadSession.Step.PRE_UPLOAD_ODM; break;
+                case "upload-odm": _step = UploadSession.Step.UPLOAD_ODM; break;
+                case "final": _step = UploadSession.Step.FINAL; break;
                 default: _step = UploadSession.Step.MAPPING; break;
             }
             currentUploadSession.setStep(_step);

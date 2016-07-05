@@ -133,12 +133,13 @@ public class OpenClinicaService {
         return metaData;
     }
 
-    public Collection<ValidationErrorMessage> uploadClinicalData(String username,
+    public Collection<ValidationErrorMessage> uploadODM(String username,
                                                                  String passwordHash,
                                                                  String url,
                                                                  List<ClinicalData> clinicalDataList,
                                                                  MetaData metaData,
-                                                                 UploadSession uploadSession) throws Exception {
+                                                                 UploadSession uploadSession,
+                                                                 String crfStatus) throws Exception {
         log.info("Upload initiated by: " + username + " on: " + url);
         List<ValidationErrorMessage> resultList = new ArrayList();
 
@@ -157,7 +158,7 @@ public class OpenClinicaService {
         TreeMap<String, List<ClinicalData>> sortedMap = new TreeMap<>(outputMap);
         for (String key : sortedMap.keySet()) {
             List<ClinicalData> outputClinicalData = sortedMap.get(key);
-            String odmString = odmService.generateODM(outputClinicalData, metaData, uploadSession, subjectLabelToOIDMap);
+            String odmString = odmService.generateODM(outputClinicalData, metaData, uploadSession, crfStatus, subjectLabelToOIDMap);
             String uploadResult = uploadODMString(username, passwordHash, url, odmString);
             if (uploadResult != null) {
                 resultList.add(new ODMUploadErrorMessage("Failed upload for subject " + key + ". Cause: " + uploadResult));

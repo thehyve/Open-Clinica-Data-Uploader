@@ -66,7 +66,7 @@ public class StudySubjectFactory {
                 dateFormat = "yyyy";
                 fullDate = false;
             } else {
-                dateFormat = "dd-MMM-yyyy";
+                dateFormat = "dd-MM-yyyy";
                 fullDate = true;
             }
             DateFormat df = new SimpleDateFormat(dateFormat);

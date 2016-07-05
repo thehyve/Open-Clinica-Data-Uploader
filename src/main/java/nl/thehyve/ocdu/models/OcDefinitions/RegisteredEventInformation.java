@@ -1,17 +1,14 @@
 package nl.thehyve.ocdu.models.OcDefinitions;
 
 import nl.thehyve.ocdu.models.OCEntities.Event;
+import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.openclinica.ws.beans.EventResponseType;
 import org.openclinica.ws.beans.EventsType;
 import org.openclinica.ws.beans.SiteRefType;
 import org.openclinica.ws.beans.StudyRefType;
 import org.openclinica.ws.beans.StudySubjectWithEventsType;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -28,6 +25,7 @@ public class RegisteredEventInformation {
      * Creates a map of with as String as key which can be used to check if an event is present in OpenClinica. The value
      * set contains the event. The key consists of the study identifier, the site identifier (optional), the eventOID and the event
      * repeat number.
+     *
      * @param studySubjectWithEventsTypeList
      * @return
      */
@@ -55,16 +53,31 @@ public class RegisteredEventInformation {
     }
 
     public static Map<String, List<EventDefinition>> getMissingEventsPerSubject(MetaData metaData,
-                                                                      List<StudySubjectWithEventsType> studySubjectWithEventsTypeList) {
+                                                                                List<StudySubjectWithEventsType> studySubjectWithEventsTypeList,
+                                                                                Set<ImmutablePair> patientsInEvent) {
         Map<String, List<EventDefinition>> ret = new HashMap<>();
-        for (StudySubjectWithEventsType subjectWithEventsType : studySubjectWithEventsTypeList) {
-            Set<String> existingEventOIDSet = new HashSet<>();
-                subjectWithEventsType.getEvents().getEvent().forEach(eventResponseType -> existingEventOIDSet.add(eventResponseType.getEventDefinitionOID()));
-            List<EventDefinition> missingEventsPerSubject =
-                 metaData.getEventDefinitions().stream().
-                         filter(eventDefinition -> (! existingEventOIDSet.contains(eventDefinition.getStudyEventOID()))).collect(Collectors.toList());
-            ret.put(subjectWithEventsType.getLabel(), missingEventsPerSubject);
-        }
+        Map<String, EventDefinition> evDefsByname = new HashMap<>();
+        Map<String, EventDefinition> evDefsByOID = new HashMap<>();
+        metaData.getEventDefinitions().forEach(eventDefinition -> {
+            evDefsByname.put(eventDefinition.getName(), eventDefinition);
+            evDefsByOID.put(eventDefinition.getStudyEventOID(), eventDefinition);
+        });
+        Map<String, List<EventDefinition>> alreadyRegistered = new HashMap<>(); //SSiD->Events
+        studySubjectWithEventsTypeList.forEach(studySubjectWithEventsType -> {
+            List<EventDefinition> regEvents = studySubjectWithEventsType.getEvents().getEvent()
+                    .stream().map(eventResponseType -> evDefsByOID.get(eventResponseType.getEventDefinitionOID()))
+                    .collect(Collectors.toList());
+            alreadyRegistered.put(studySubjectWithEventsType.getLabel(), regEvents);
+        });
+        patientsInEvent.stream().forEach(patientInEvent -> {
+            String ssid = (String) patientInEvent.left;
+            EventDefinition evnt = evDefsByname.get(patientInEvent.right);
+            List<EventDefinition> registeredEvents = alreadyRegistered.get(ssid);
+            if (!registeredEvents.contains(evnt)) {
+                if (!ret.containsKey(ssid)) ret.put(ssid, new ArrayList<>());
+                ret.get(ssid).add(evnt);
+            }
+        });
         return ret;
     }
 }

@@ -1,0 +1,2 @@
+StudySubjectID	Study	Site	EventName	CRFName	CRFVersion	EventRepeat	age	patient_ID	total_length_occluded_segment_in_cm	male0_female1	occluded_artery	site_occlusion_limb_Left1_right2_both3	test_parameterized_link_v2
+EV-00027	Eventful		Non-repeating Event	MUST-FOR_NON_TTP_STUDY	0.11	1	98	Iquenullus	WAW	3	carotis	4	http://www.example.com

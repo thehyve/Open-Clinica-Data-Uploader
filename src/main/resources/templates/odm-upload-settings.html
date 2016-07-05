@@ -7,10 +7,13 @@
 <body>
     <div th:replace="header">Upload data to OpenClinica</div>
     <div id="odm-upload-container" class="container ocdu-container">
+        <div>
+            <b>Warning: you have reached the point of no return. Once you press 'Next' data will uploaded to OpenClinica</b>
+        </div>
         <div id="odm-upload-div" class="jumbotron container-fluid">
         </div>
     </div>
-    <script th:src="@{/odm-upload.js}"></script>
+    <script th:src="@{/odm-upload-settings.js}"></script>
     <div th:replace="footer :: footer"></div>
 </body>
 </html>

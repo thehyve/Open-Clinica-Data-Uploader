@@ -296,7 +296,7 @@ public class ClinicalData implements OcEntity, UserSubmitted, EventReference {
     }
 
     public List<String> getValues() {
-        String[] split = value.split(",");
+        String[] split = value.split(",", -1); // -1 means we will not discard empty values, e.g ,,
         List<String> values = Arrays.asList(split);
         return values;
     }

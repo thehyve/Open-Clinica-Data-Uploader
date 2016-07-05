@@ -5,54 +5,52 @@
 
 var loading_html;
 
+var displayMessages = function displayMessages(data) {
+    $('#loading_div').remove();
+    if(data.length == 0) {
+        var html = '<div class="alert alert-success"> <strong>Data validation is successful!</strong></div>';
+        $('#feedback-tables').append(html);
+
+    }//if
+    else {
+        $('#feedback-tables').empty();
+        var error_word = 'errors'; if(data.length == 1) error_word = 'error';
+        var html_title = '<h3><span> <strong>'+data.length +' '+error_word+' found... </strong> </span></h3>';
+        $('#feedback-tables').append(html_title);
+
+        for (var i = 0; i < data.length; i++) {
+            var fb = data[i];
+            var msg = fb['message'];
+            var vals = fb['offendingValues'];
+            var errorid = "error"+i;
+            var middlepart = '<div class="panel-heading"><h4 class="panel-title"><a data-toggle="collapse" href="#'+errorid+'"> '+msg+'</a></h4></div>';
+            var listpart = '<ul class="list-group">';
+
+            for (var j = 0; j < vals.length; j++) {
+                listpart += '<li class="list-group-item">'+vals[j]+'</li>'
+            }
+            listpart += '</ul>';
+            middlepart += '<div id="'+errorid+'" class="panel-collapse collapse in">'+listpart+'</div>';
+            var html = '<div class="panel-group"><div class="panel panel-default">'+middlepart+'</div></div>'
+            $('#feedback-tables').append(html);
+        }//for
+
+    }//else
+};
+
 $(document).ready(function () {
     loading_html = '<div id="loading_div"><div class="loader"></div><hr></div>';
     $('#odm-upload-div').append(loading_html);
-    next_btn();
-    provide_filled_template_upload();
+    provide_odm_upload_template();
+    performODMUpload();
     $('#loading_div').remove();
 });
 
-function next_btn() {
-    var html = '<button type="button" class="btn btn-primary" id="odm-upload-back-btn">Back</button>&nbsp;' +
-        '<button type="button" class="btn btn-primary" id="odm-upload-next-btn">Next</button>';
-    $('#odm-upload-div').append(html);
-    $('#odm-upload-back-btn').click(function () {
-        window.location.href = baseApp + "/views/feedback-events";
-    });
-
-    $('#odm-upload-next-btn').click(function () {
-        performODMUpload();
-    });
-
+function provide_odm_upload_template() {
+    $(html).insertBefore('#odm-upload-div');
 }
+var html = '<h4>&#9755; Patience please...</h4> <form id="upload-odm-template-form" class="form-horizontal"></form> <span id="message-board"></span> <hr>';
 
-function provide_filled_template_upload() {
-    var html = '<h4>&#9755; Upload options</h4>' +
-                '<div>Please select the status after upload and the status of existing CRF\'s which can be overwritten.</div>' +
-                '<form id="upload-odm-template-form" class="form-horizontal">' +
-                '   <div class="radio-button">' +
-                '       <div>' +
-                '           CRF status after upload' +
-                '       </div>' +
-                '       </br>' +
-                '       <input id="statusAfterUpload_1" type="radio" name="statusAfterUpload" value="initial data entry" checked>Data Entry Started</br>' +
-                '       <input id="statusAfterUpload_2" type="radio" name="statusAfterUpload" value="complete">Data Entry Complete</br>' +
-                '   </div>' +
-                '   <div class="filler"/>' +
-                '   <div class="radio-button">' +
-                '       <div>' +
-                '           Upload to CRF with status (existing CRF\'s will be overwritten)' +
-                '       </div>' +
-                '       </br>' +
-                '       <input id="overwriteStatus_1" type="checkbox" name="overwriteStatus" value="overwriteStatus_notStarted" checked>Not started</br>' +
-                '       <input id="overwriteStatus_2" type="checkbox" name="overwriteStatus" value="overwriteStatus_initialDataEntry">Data Entry Started</br>' +
-                '       <input id="overwriteStatus_3" type="checkbox" name="overwriteStatus" value="overwriteStatus_dataEntryComplete">Data Entry Complete</br>' +
-                '   </div>' +
-                '</form>' +
-                '<span id="message-board"></span> <hr>';
-    $(html).insertBefore('#odm-upload-back-btn');
-}
 
 function performODMUpload() {
     $('#loading_div').remove();
@@ -66,7 +64,7 @@ function performODMUpload() {
         processData: false,
         contentType: false,
         success: function () {
-            console.log("Update of update called successfully");
+            console.log("Upload ODM successfully");
             update_submission();
         },
         error: function (jqXHR, textStatus, errorThrown) {
@@ -82,12 +80,13 @@ function update_submission() {
     $.ajax({
         url: baseApp + "/submission/update",
         type: "POST",
-        data: {step: "odm-upload"},
+        data: {step: "final"},
         success: function () {
-            window.location.href = baseApp + "/views/odm-upload";
+            window.location.href = baseApp + "/views/final";
         },
         error: function (jqXHR, textStatus, errorThrown) {
             console.log(jqXHR.status + " " + textStatus + " " + errorThrown);
+            displayMessages
         }
     });
 }

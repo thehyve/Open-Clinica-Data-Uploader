@@ -96,9 +96,8 @@ public class ODMUploadController {
                     return new ResponseEntity<>(result, HttpStatus.BAD_REQUEST);
                 }
             }
-
-            result =
-                    openClinicaService.uploadClinicalData(userName, pwdHash, url, clinicalDataList, metaData, uploadSession);
+//        result =
+//                openClinicaService.uploadClinicalData(userName, pwdHash, url, clinicalDataList, metaData, uploadSession);
             return new ResponseEntity<>(result, HttpStatus.OK);
         }
         catch (Exception e) {

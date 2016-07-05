@@ -98,6 +98,7 @@ public class UploadSessionController {
                 case "events": _step = UploadSession.Step.EVENTS; break;
                 case "feedback-events": _step = UploadSession.Step.FEEDBACK_EVENTS; break;
                 case "odm-upload": _step = UploadSession.Step.UPLOAD_ODM; break;
+                case "upload-settings": _step = UploadSession.Step.UPLOAD_SETTINGS; break;
                 case "overview": _step = UploadSession.Step.OVERVIEW; break;
                 default: _step = UploadSession.Step.MAPPING; break;
             }

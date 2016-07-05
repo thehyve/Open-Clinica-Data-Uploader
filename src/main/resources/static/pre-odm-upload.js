@@ -43,7 +43,7 @@ function feedbackNext() {
         },
         error: function (jqXHR, textStatus, errorThrown) {
             console.log(jqXHR.status + " " + textStatus + " " + errorThrown);
-            window.location.href = baseApp + "/views/pre-upload-overview";
+            
         }
     });
 }
@@ -58,7 +58,7 @@ $('#feedback-tables').append(loadinghtml);
 
 
 $.ajax({
-    url: baseApp + "/odm/pre-upload-overview",
+    url: baseApp + "/odm/pre-odm-upload-overview",
     type: "GET",
     success: displayMessages,
     error: function (jqXHR, textStatus, errorThrown) {

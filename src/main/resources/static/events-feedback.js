@@ -38,13 +38,14 @@ function feedbackNext() {
     $.ajax({
         url: baseApp + "/submission/update",
         type: "POST",
-        data: {step: "pre-upload-odm"},
+        data: {step: "pre-odm-upload"},
         success: function () {
-            window.location.href = baseApp + "/views/pre-upload-odm";
+            window.location.href = baseApp + "/views/pre-odm-upload";
         },
         error: function (jqXHR, textStatus, errorThrown) {
             console.log(jqXHR.status+" "+textStatus+" "+errorThrown);
-            window.location.href = baseApp + "/views/feedback-events";
+            var html = "<div class='label label-danger'>Submission update has failed, please refresh the page.</div>";
+            $(html).insertBefore('#data-feedback-back-btn');
         }
     });
 }

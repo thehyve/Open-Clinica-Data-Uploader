@@ -6,15 +6,13 @@ import nl.thehyve.ocdu.models.OcDefinitions.MetaData;
 import nl.thehyve.ocdu.models.OcDefinitions.RegisteredEventInformation;
 import nl.thehyve.ocdu.models.OcUser;
 import nl.thehyve.ocdu.models.UploadSession;
+import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.openclinica.ws.beans.StudySubjectWithEventsType;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -101,8 +99,8 @@ public class EventDataFactory extends UserSubmittedDataFactory {
         consumer.accept(cellValue);
     }
 
-    public List<String> generateEventSchedulingTemplate(MetaData metaData, List<StudySubjectWithEventsType> studySubjectWithEventsTypeList) {
-        Map<String, List<EventDefinition>> eventsPerSubject = RegisteredEventInformation.getMissingEventsPerSubject(metaData, studySubjectWithEventsTypeList);
+    public List<String> generateEventSchedulingTemplate(MetaData metaData, List<StudySubjectWithEventsType> studySubjectWithEventsTypeList, Set<ImmutablePair> patientsInEvent) {
+        Map<String, List<EventDefinition>> eventsPerSubject = RegisteredEventInformation.getMissingEventsPerSubject(metaData, studySubjectWithEventsTypeList, patientsInEvent);
 
         List<String> result = new ArrayList<>();
         String delim = "\t";

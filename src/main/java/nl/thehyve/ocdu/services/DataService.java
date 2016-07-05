@@ -10,6 +10,7 @@ import nl.thehyve.ocdu.models.OcTreePath;
 import nl.thehyve.ocdu.models.OcUser;
 import nl.thehyve.ocdu.models.UploadSession;
 import nl.thehyve.ocdu.repositories.ClinicalDataRepository;
+import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -42,6 +43,20 @@ public class DataService {
                 .collect(Collectors.toSet())
                 .stream()
                 .collect(Collectors.toList());
+    }
+
+    /**
+     * Returns a set of tuples subjectid-event name
+     * For purpose of event registration
+     * @param submission
+     * @return
+     */
+    public Set<ImmutablePair> getPatientsInEvent(UploadSession submission) {
+        List<ClinicalData> bySubmission = clinicalDataRepository.findBySubmission(submission);
+        Set<ImmutablePair> ret = bySubmission.stream()
+                .map(clinicalData -> new ImmutablePair(clinicalData.getSsid(), clinicalData.getEventName()))
+                .collect(Collectors.toSet());
+        return ret;
     }
 
 

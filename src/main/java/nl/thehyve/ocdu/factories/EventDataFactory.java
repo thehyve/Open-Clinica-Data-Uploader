@@ -63,19 +63,32 @@ public class EventDataFactory extends UserSubmittedDataFactory {
     }
 
     protected Event mapRow(String[] row, Map<String, Integer> columnsIndex) {
+        String[] _row = new String[columnsIndex.size()];
+        if(row.length == columnsIndex.size()) _row = row;
+        else {
+            for(int i=0; i<_row.length; i++) {
+                if(i<row.length) {
+                    _row[i] = row[i];
+                }
+                else{
+                    _row[i] = "";
+                }
+            }
+        }
+
         Event event = new Event();
         event.setOwner(getUser());
         event.setSubmission(getSubmission());
-        setValue(row, columnsIndex, STUDY_SUBJECT_ID, event::setSsid);
-        setValue(row, columnsIndex, EVENT_NAME, event::setEventName);
-        setValue(row, columnsIndex, STUDY, event::setStudy);
-        setValue(row, columnsIndex, SITE, event::setSite);
-        setValue(row, columnsIndex, LOCATION, event::setLocation);
-        setValue(row, columnsIndex, START_DATE, event::setStartDate);
-        setValue(row, columnsIndex, START_TIME, event::setStartTime);
-        setValue(row, columnsIndex, END_DATE, event::setEndDate);
-        setValue(row, columnsIndex, END_TIME, event::setEndTime);
-        setValue(row, columnsIndex, REPEAT_NUMBER, event::setRepeatNumber);
+        setValue(_row, columnsIndex, STUDY_SUBJECT_ID, event::setSsid);
+        setValue(_row, columnsIndex, EVENT_NAME, event::setEventName);
+        setValue(_row, columnsIndex, STUDY, event::setStudy);
+        setValue(_row, columnsIndex, SITE, event::setSite);
+        setValue(_row, columnsIndex, LOCATION, event::setLocation);
+        setValue(_row, columnsIndex, START_DATE, event::setStartDate);
+        setValue(_row, columnsIndex, START_TIME, event::setStartTime);
+        setValue(_row, columnsIndex, END_DATE, event::setEndDate);
+        setValue(_row, columnsIndex, END_TIME, event::setEndTime);
+        setValue(_row, columnsIndex, REPEAT_NUMBER, event::setRepeatNumber);
         return event;
     }
 

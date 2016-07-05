@@ -29,14 +29,14 @@ function check_new_patients(toRegisterSite) {
             }
             else {
                 var html = "<div id='template_error' class='alert alert-success'>All subjects in the data file have been registered in OpenClinica. Click Next to proceed.</div>";
-                $('#subject-registration-div').append(html);
+                $(html).insertBefore('#subject-back-btn');
                 is_template_empty = true;
             }
         },
         error: function (jqXHR, textStatus, errorThrown) {
             console.log(jqXHR.status + " " + textStatus + " " + errorThrown);
             var html = "<div id='template_error' class='alert alert-error'>The retrieval of template has failed.</div>"
-            $('#subject-registration-div').append(html);
+            $(html).insertBefore('#subject-back-btn');
         }
     });
 }

@@ -121,8 +121,9 @@ function upload_event_data() {
         error: function (jqXHR, textStatus, errorThrown) {
             $('#loading_div').remove();
             console.log(jqXHR.status + " " + textStatus + " " + errorThrown);
-            var html = "<div id='template_error' class='alert alert-danger'>The upload for event registration has failed.</div>"
-            $('#subject-registration-div').append(html);
+            var html = "<div id='template_error' class='alert alert-danger'>The upload for event registration has failed.</div>";
+            $(html).insertBefore('#event-back-btn');
+            // $('#subject-registration-div').append(html);
         }
 
     });

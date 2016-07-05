@@ -6,6 +6,7 @@ import nl.thehyve.ocdu.models.OcDefinitions.MetaData;
 import nl.thehyve.ocdu.models.OcUser;
 import nl.thehyve.ocdu.models.UploadSession;
 import nl.thehyve.ocdu.soap.ResponseHandlers.GetStudyMetadataResponseHandler;
+import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.junit.Before;
 import org.junit.Test;
 import org.openclinica.ws.beans.StudySubjectWithEventsType;
@@ -16,9 +17,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.Matchers.contains;
@@ -133,7 +132,10 @@ public class EventDataFactoryTests {
     public void testGenerateEventSchedulingTemplate() throws Exception{
         List<StudySubjectWithEventsType> studySubjectWithEventsTypeList = TestUtils.createStudySubjectWithEventList();
 
-        List<String> result = this.factory.generateEventSchedulingTemplate(this.metadata, studySubjectWithEventsTypeList);
+        Set<ImmutablePair> patInEv = new HashSet<>();
+        patInEv.add(new ImmutablePair("EV-00007", "RepeatingEvent"));
+        patInEv.add(new ImmutablePair("EV-00007", "Non-repeating Event"));
+        List<String> result = this.factory.generateEventSchedulingTemplate(this.metadata, studySubjectWithEventsTypeList, patInEv);
         assertTrue(result.contains("EV-00007\tRepeatingEvent\t\t\t\t\t\t\t\n"));
         assertTrue(result.contains("EV-00007\tNon-repeating Event\t\t\t\t\t\t\t\n"));
 

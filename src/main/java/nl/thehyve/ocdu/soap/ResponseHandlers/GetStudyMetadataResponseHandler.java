@@ -480,10 +480,14 @@ public class GetStudyMetadataResponseHandler extends OCResponseHandler {
         Node ctrlItem = (Node) xpath.evaluate(".//*[local-name()='ControlItemName'][1]", itemPresentInFormNode, XPathConstants.NODE);
         if (ctrlItem != null) {
             rule.setControlItemName(ctrlItem.getTextContent());
+        } else {
+            return null;
         }
         Node optionsValue = (Node) xpath.evaluate(".//*[local-name()='OptionValue'][1]", itemPresentInFormNode, XPathConstants.NODE);
         if (optionsValue  != null) {
             rule.setOptionValue(optionsValue.getTextContent());
+        } else {
+            return null;
         }
         rule.setAppliesInCrf(crfOID);
         rule.setShow(show);

@@ -73,6 +73,7 @@ public class RegisteredEventInformation {
             String ssid = (String) patientInEvent.left;
             EventDefinition evnt = evDefsByname.get(patientInEvent.right);
             List<EventDefinition> registeredEvents = alreadyRegistered.get(ssid);
+            if (registeredEvents == null) registeredEvents = new ArrayList<>();
             if (!registeredEvents.contains(evnt)) {
                 if (!ret.containsKey(ssid)) ret.put(ssid, new ArrayList<>());
                 ret.get(ssid).add(evnt);

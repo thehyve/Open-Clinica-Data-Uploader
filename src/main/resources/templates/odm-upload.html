@@ -8,6 +8,12 @@
     <div th:replace="header">Upload data to OpenClinica</div>
     <div id="odm-upload-container" class="container ocdu-container">
         <div id="odm-upload-div" class="jumbotron container-fluid">
+
+            <hr>
+            <button type="button" class="btn btn-primary" id="odm-upload-back-btn" onclick="odmUploadBackBtnHandler()">Back</button>
+            <button type="button" class="btn btn-primary" id="odm-upload-proceed-btn" onclick="odmUploadNextBtnHandler()">Upload</button>
+            <br><br><br>
+
         </div>
     </div>
     <script th:src="@{/odm-upload.js}"></script>

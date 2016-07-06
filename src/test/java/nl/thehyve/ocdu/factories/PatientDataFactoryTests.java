@@ -99,7 +99,7 @@ public class PatientDataFactoryTests {
     public void testGeneratePatientRegistrationTemplate() {
         List<String> template = factory.generatePatientRegistrationTemplate(this.metadata, this.subjectMap, false);
         assertEquals("Study Subject ID\tGender\tDate of Birth\tDate of Enrollment\tSecondary ID\tStudy\n", template.get(0));
-        assertEquals("test_ssid_1\t\t\t\t\t\n", template.get(1));
+        assertEquals("test_ssid_1\t\t\t\t\tSjogren\n", template.get(1));
     }
 
 

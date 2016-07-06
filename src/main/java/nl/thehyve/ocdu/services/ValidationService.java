@@ -92,9 +92,12 @@ public class ValidationService {
         OcUser submitter = submission.getOwner();
         Study study = dataService.findStudy(submission.getStudy(), submitter, wsPwdHash);
         MetaData metadata = openClinicaService.getMetadata(submitter.getUsername(), wsPwdHash, submitter.getOcEnvironment(), study);
+        List<StudySubjectWithEventsType> subjectWithEventsTypes = openClinicaService
+                .getStudySubjectsType(submitter.getUsername(), wsPwdHash, submitter.getOcEnvironment(), study.getIdentifier(), "");
+
         List<ValidationErrorMessage> errors = new ArrayList<>();
 
-        PatientDataOcChecks checksRunner = new PatientDataOcChecks(metadata, bySubmission);
+        PatientDataOcChecks checksRunner = new PatientDataOcChecks(metadata, bySubmission, subjectWithEventsTypes);
         errors.addAll(checksRunner.getErrors());
         return errors;
     }

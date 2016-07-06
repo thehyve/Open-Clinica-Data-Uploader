@@ -4,11 +4,13 @@ import nl.thehyve.ocdu.models.OCEntities.Subject;
 import nl.thehyve.ocdu.models.OcDefinitions.MetaData;
 import nl.thehyve.ocdu.models.errors.ValidationErrorMessage;
 import org.apache.commons.lang3.StringUtils;
+import org.openclinica.ws.beans.StudySubjectWithEventsType;
 
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
 
 /**
@@ -17,7 +19,8 @@ import java.util.Locale;
 public class DateOfEnrollmentPatientDataCheck implements PatientDataCheck {
 
     @Override
-    public ValidationErrorMessage getCorrespondingError(int index, Subject subject, MetaData metaData) {
+    public ValidationErrorMessage getCorrespondingError(int index, Subject subject, MetaData metaData,
+                                                        List<StudySubjectWithEventsType> subjectWithEventsTypes) {
 
         String ssid = subject.getSsid();
         String commonMessage = getCommonErrorMessage(index, ssid);

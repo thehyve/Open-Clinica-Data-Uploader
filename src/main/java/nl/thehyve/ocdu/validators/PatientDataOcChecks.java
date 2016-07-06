@@ -5,6 +5,7 @@ import nl.thehyve.ocdu.models.OCEntities.Subject;
 import nl.thehyve.ocdu.models.OcDefinitions.MetaData;
 import nl.thehyve.ocdu.models.errors.ValidationErrorMessage;
 import nl.thehyve.ocdu.validators.patientDataChecks.*;
+import org.openclinica.ws.beans.StudySubjectWithEventsType;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,12 +17,14 @@ public class PatientDataOcChecks {
 
     private final List<Subject> subjects;
     private final MetaData metadata;
+    private final List<StudySubjectWithEventsType> subjEventData;
 
     private List<PatientDataCheck> checks = new ArrayList<>();
 
-    public PatientDataOcChecks(MetaData metadata, List<Subject> subjects) {
+    public PatientDataOcChecks(MetaData metadata, List<Subject> subjects, List<StudySubjectWithEventsType> subjectWithEventsTypes) {
         this.metadata = metadata;
         this.subjects = subjects;
+        this.subjEventData = subjectWithEventsTypes;
         checks.add(new GenderPatientDataCheck());
         checks.add(new DateOfBirthPatientDataCheck());
         checks.add(new PersonIdPatientDataCheck());
@@ -29,6 +32,7 @@ public class PatientDataOcChecks {
         checks.add(new SecondaryIdPatientDataCheck());
         checks.add(new StudyPatientDataCheck());
         checks.add(new SitePatientDataCheck());
+        checks.add(new SubjectNotRegistered());
     }
 
     public List<ValidationErrorMessage> getErrors() {
@@ -43,7 +47,7 @@ public class PatientDataOcChecks {
                 errors.add(error);
             }
             for (PatientDataCheck check : checks) {
-                ValidationErrorMessage error = check.getCorrespondingError(index, subject, metadata);
+                ValidationErrorMessage error = check.getCorrespondingError(index, subject, metadata, subjEventData);
                 if (error != null) {
                     errors.add(error);
                 }

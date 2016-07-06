@@ -1,5 +1,6 @@
 package nl.thehyve.ocdu.validators;
 
+import nl.thehyve.ocdu.TestUtils;
 import nl.thehyve.ocdu.models.OCEntities.Subject;
 import nl.thehyve.ocdu.models.OcDefinitions.MetaData;
 import nl.thehyve.ocdu.models.OcDefinitions.SiteDefinition;
@@ -8,6 +9,7 @@ import nl.thehyve.ocdu.soap.ResponseHandlers.GetStudyMetadataResponseHandler;
 import nl.thehyve.ocdu.validators.patientDataChecks.*;
 import org.junit.Before;
 import org.junit.Test;
+import org.openclinica.ws.beans.StudySubjectWithEventsType;
 
 import javax.xml.soap.MessageFactory;
 import javax.xml.soap.SOAPMessage;
@@ -27,10 +29,12 @@ import static org.junit.Assert.assertThat;
 public class PatientDataOcChecksTests {
 
     MetaData metadata;
+    private List<StudySubjectWithEventsType> testSubjectWithEventsTypeList;
 
     @Before
     public void setup() {
         try {
+            this.testSubjectWithEventsTypeList = TestUtils.createStudySubjectWithEventList();
             MessageFactory messageFactory = MessageFactory.newInstance();
             File testFile = new File("docs/responseExamples/Sjogren_STUDY1.xml");
             FileInputStream in = new FileInputStream(testFile);
@@ -46,7 +50,7 @@ public class PatientDataOcChecksTests {
     @Test
     public void testSuccess() {
         List<Subject> subjects = new ArrayList<>();
-        PatientDataOcChecks ocChecks = new PatientDataOcChecks(metadata, subjects);
+        PatientDataOcChecks ocChecks = new PatientDataOcChecks(metadata, subjects, testSubjectWithEventsTypeList);
         List<ValidationErrorMessage> errors = ocChecks.getErrors();
         assertThat(errors, empty());
     }
@@ -58,7 +62,7 @@ public class PatientDataOcChecksTests {
         subject.setGender("wrongGenderFormat");
 
         GenderPatientDataCheck check = new GenderPatientDataCheck();
-        ValidationErrorMessage error = check.getCorrespondingError(0, subject, metadata);
+        ValidationErrorMessage error = check.getCorrespondingError(0, subject, metadata, testSubjectWithEventsTypeList);
 
         assertThat(error.getMessage(), containsString("Gender"));
     }
@@ -71,7 +75,7 @@ public class PatientDataOcChecksTests {
         //invalid format
         subject.setDateOfBirth("198x");
         DateOfBirthPatientDataCheck check = new DateOfBirthPatientDataCheck();
-        ValidationErrorMessage error = check.getCorrespondingError(0, subject, metadata);
+        ValidationErrorMessage error = check.getCorrespondingError(0, subject, metadata, testSubjectWithEventsTypeList);
         assertThat(error.getMessage(), containsString("invalid"));
     }
 
@@ -83,7 +87,7 @@ public class PatientDataOcChecksTests {
         //future birthday
         subject.setDateOfBirth("01-06-3012");
         DateOfBirthPatientDataCheck check = new DateOfBirthPatientDataCheck();
-        ValidationErrorMessage error = check.getCorrespondingError(0, subject, metadata);
+        ValidationErrorMessage error = check.getCorrespondingError(0, subject, metadata, testSubjectWithEventsTypeList);
         assertThat(error.getMessage(), containsString("past"));
     }
 
@@ -95,7 +99,7 @@ public class PatientDataOcChecksTests {
         //empty date of enrollment, today's date is used
         subject.setDateOfEnrollment("");
         DateOfEnrollmentPatientDataCheck check = new DateOfEnrollmentPatientDataCheck();
-        ValidationErrorMessage error = check.getCorrespondingError(0, subject, metadata);
+        ValidationErrorMessage error = check.getCorrespondingError(0, subject, metadata, testSubjectWithEventsTypeList);
         assertThat(error.getMessage(), containsString("Today"));
     }
 
@@ -107,7 +111,7 @@ public class PatientDataOcChecksTests {
         //date of enrollment should be in the past
         subject.setDateOfEnrollment("01-06-3012");
         DateOfEnrollmentPatientDataCheck check = new DateOfEnrollmentPatientDataCheck();
-        ValidationErrorMessage error = check.getCorrespondingError(0, subject, metadata);
+        ValidationErrorMessage error = check.getCorrespondingError(0, subject, metadata, testSubjectWithEventsTypeList);
         assertThat(error.getMessage(), containsString("past"));
     }
 
@@ -119,7 +123,7 @@ public class PatientDataOcChecksTests {
         //invalid date format
         subject.setDateOfEnrollment("01-JU");
         DateOfEnrollmentPatientDataCheck check = new DateOfEnrollmentPatientDataCheck();
-        ValidationErrorMessage error = check.getCorrespondingError(0, subject, metadata);
+        ValidationErrorMessage error = check.getCorrespondingError(0, subject, metadata, testSubjectWithEventsTypeList);
         assertThat(error.getMessage(), containsString("invalid"));
     }
 
@@ -131,7 +135,7 @@ public class PatientDataOcChecksTests {
         //person id is provided
         subject.setPersonId("1357");
         PersonIdPatientDataCheck check = new PersonIdPatientDataCheck();
-        ValidationErrorMessage error = check.getCorrespondingError(0, subject, metadata);
+        ValidationErrorMessage error = check.getCorrespondingError(0, subject, metadata, testSubjectWithEventsTypeList);
         assertThat(error.getMessage(), containsString("Person"));
     }
 
@@ -144,7 +148,7 @@ public class PatientDataOcChecksTests {
         //secondary id is provided, but too long
         subject.setSecondaryId("1111112222222222333333333444444444445555555555666666666667777777777888888");
         SecondaryIdPatientDataCheck check = new SecondaryIdPatientDataCheck();
-        ValidationErrorMessage error = check.getCorrespondingError(0, subject, metadata);
+        ValidationErrorMessage error = check.getCorrespondingError(0, subject, metadata, testSubjectWithEventsTypeList);
         assertThat(error.getMessage(), containsString("length"));
     }
 
@@ -156,7 +160,7 @@ public class PatientDataOcChecksTests {
         //study is not provided
         subject.setStudy("");
         StudyPatientDataCheck check = new StudyPatientDataCheck();
-        ValidationErrorMessage error = check.getCorrespondingError(0, subject, metadata);
+        ValidationErrorMessage error = check.getCorrespondingError(0, subject, metadata, testSubjectWithEventsTypeList);
         assertThat(error.getMessage(), containsString("Study should"));
     }
 
@@ -169,7 +173,7 @@ public class PatientDataOcChecksTests {
         subject.setStudy("S_STUDY1");
         subject.setSite("myownsitethatdoesnotexist");
         SitePatientDataCheck check = new SitePatientDataCheck();
-        ValidationErrorMessage error = check.getCorrespondingError(0, subject, metadata);
+        ValidationErrorMessage error = check.getCorrespondingError(0, subject, metadata, testSubjectWithEventsTypeList);
         assertThat(error.getMessage(), containsString("exist"));
     }
 
@@ -187,7 +191,7 @@ public class PatientDataOcChecksTests {
         sjogrenSite.setSiteOID("SjogrenSjogren");
         siteDefs.add(sjogrenSite);
         metadata.setSiteDefinitions(siteDefs);
-        ValidationErrorMessage error = check.getCorrespondingError(0, subject, metadata);
+        ValidationErrorMessage error = check.getCorrespondingError(0, subject, metadata, testSubjectWithEventsTypeList);
         assertNull(error);
 
     }
@@ -201,7 +205,8 @@ public class PatientDataOcChecksTests {
         subjectWithGender.setGender("m");
         GenderPatientDataCheck check = new GenderPatientDataCheck();
         int bogusLineNumber = 1;
-        ValidationErrorMessage error = check.getCorrespondingError(bogusLineNumber, subjectWithGender, metaData);
+        ValidationErrorMessage error = check.getCorrespondingError(bogusLineNumber, subjectWithGender, metaData,
+                testSubjectWithEventsTypeList);
         assertThat(error, is(notNullValue()));
         assertThat(error.getMessage(), containsString("It is not allowed to upload gender by the study protocol"));
     }
@@ -217,12 +222,22 @@ public class PatientDataOcChecksTests {
         subjectWithDOB.setDateOfBirth("1997");
         DateOfBirthPatientDataCheck check = new DateOfBirthPatientDataCheck();
         int bogusLineNumber = 1;
-        ValidationErrorMessage error = check.getCorrespondingError(bogusLineNumber, subjectWithDOB, metaData);
-        ValidationErrorMessage errorFullYear = check.getCorrespondingError(bogusLineNumber, subjectWithDOBFull, metaData);
+        ValidationErrorMessage error = check.getCorrespondingError(bogusLineNumber, subjectWithDOB, metaData, testSubjectWithEventsTypeList);
+        ValidationErrorMessage errorFullYear = check.getCorrespondingError(bogusLineNumber, subjectWithDOBFull, metaData, testSubjectWithEventsTypeList);
         assertThat(error, is(notNullValue()));
         assertThat(error.getMessage(), containsString("Date of birth submission is not allowed by the study protocol"));
         assertThat(errorFullYear.getMessage(), is(notNullValue()));
         assertThat(errorFullYear.getMessage(), containsString("Date of birth submission is not allowed by the study protocol"));
     }
 
+    @Test
+    public void subjectAlreadyRegisteredTest() throws Exception {
+        Subject subject = new Subject();
+        subject.setSsid("EV-00002");
+
+        SubjectNotRegistered check = new SubjectNotRegistered();
+        ValidationErrorMessage error = check.getCorrespondingError(0, subject, metadata, testSubjectWithEventsTypeList);
+
+        assertThat(error.getMessage(), containsString("already registered"));
+    }
 }

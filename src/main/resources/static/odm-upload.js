@@ -63,14 +63,25 @@ function performODMUpload() {
         enctype: 'multipart/form-data',
         processData: false,
         contentType: false,
-        success: function () {
-            console.log("Upload ODM successfully");
-            update_submission();
+        success: function (msg) {
+            if (msg.length > 0) {
+                $('#loading_div').remove();
+                var info = '<div class="alert alert-danger"><ul>';
+                msg.forEach(function (error) {
+                    var errDiv = '<li><span>' + error.message +': '+ error.offendingValues+'</span></li>';
+                    info += errDiv;
+                });
+                info += '</div></ul>';
+                $(info).insertBefore('#odm-upload-back-btn');
+            }else {
+                console.log("Upload ODM successfully");
+                update_submission();
+            }
         },
         error: function (jqXHR, textStatus, errorThrown) {
             $('#loading_div').remove();
             console.log(jqXHR.status + " " + textStatus + " " + errorThrown);
-            var html = '<div class="alert alert-danger">ODM Upload failed, please try Upload again.</div>';
+            var html = '<div class="alert alert-danger">ODM Upload failed:' + textStatus + ' </div>';
             $(html).insertBefore('#odm-upload-back-btn');
         }
 

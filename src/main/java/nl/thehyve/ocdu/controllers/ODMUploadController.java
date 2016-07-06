@@ -85,7 +85,7 @@ public class ODMUploadController {
             if (! subjects.isEmpty()) {
                 result = openClinicaService.registerPatients(userName, pwdHash, url, subjects);
                 if (! result.isEmpty()) {
-                    return new ResponseEntity<>(result, HttpStatus.BAD_REQUEST);
+                    return new ResponseEntity<>(result, HttpStatus.OK);
                 }
             }
 
@@ -93,7 +93,7 @@ public class ODMUploadController {
             if (! eventList.isEmpty()) {
                 result = openClinicaService.scheduleEvents(userName, pwdHash, url, metaData, eventList, studySubjectWithEventsTypeList);
                 if (! result.isEmpty()) {
-                    return new ResponseEntity<>(result, HttpStatus.BAD_REQUEST);
+                    return new ResponseEntity<>(result, HttpStatus.OK);
                 }
             }
 //        result =

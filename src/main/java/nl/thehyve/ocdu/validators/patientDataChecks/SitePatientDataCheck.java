@@ -22,8 +22,9 @@ public class SitePatientDataCheck implements PatientDataCheck {
 
         ValidationErrorMessage error = null;
         String study = subject.getStudy();
+        String site = subject.getSite();
 
-        if (!StringUtils.isBlank(study)) {
+        if (!StringUtils.isBlank(site) && !StringUtils.isBlank(study)) {
             List<SiteDefinition> sites = metaData.getSiteDefinitions();
             if (sites == null) {
                 error = new ValidationErrorMessage(commonMessage + "Study site \"" + subject.getSite() + "\" does not exist.");

@@ -75,9 +75,10 @@ public class ODMService {
     public String generateODM(List<ClinicalData> clinicalDataList,
                               MetaData metaData,
                               UploadSession uploadSession,
+                              String crfStatus,
                               Map<String, String> subjectLabelToOIDMap) throws Exception {
         StringBuffer odmDocument =
-                buildODM(clinicalDataList, uploadSession, metaData, subjectLabelToOIDMap);
+                buildODM(clinicalDataList, uploadSession, crfStatus, metaData, subjectLabelToOIDMap);
         return odmDocument.toString();
     }
 
@@ -171,6 +172,7 @@ public class ODMService {
 
     private StringBuffer buildODM(List<ClinicalData> clinicalDataList,
                                   UploadSession uploadSession,
+                                  String crfStatus,
                                   MetaData metaData,
                                   Map<String, String> subjectLabelToOIDMap) throws Exception {
         long startTime = System.currentTimeMillis();
@@ -201,7 +203,7 @@ public class ODMService {
         TreeMap<String, List<ClinicalData>> sortedMap = new TreeMap<>(outputMap);
         for (String key : sortedMap.keySet()) {
             List<ClinicalData> outputClinicalData = sortedMap.get(key);
-            appendSubjectODMSection(odmData, metaData, outputClinicalData, uploadSession.getCrfStatusAfterUpload().getName(), eventNameOIDMap, itemNameOIDMap, subjectLabelToOIDMap);
+            appendSubjectODMSection(odmData, metaData, outputClinicalData, crfStatus, eventNameOIDMap, itemNameOIDMap, subjectLabelToOIDMap);
         }
 
         addClosingTags(odmData);

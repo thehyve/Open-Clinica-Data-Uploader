@@ -21,11 +21,6 @@ public class ViewsController {
         return "login";
     }
 
-    @RequestMapping(value = "/final", method = RequestMethod.GET)
-    public String finalView() {
-        return "final";
-    }
-
     @RequestMapping(value = "/subjects", method = RequestMethod.GET)
     public String patients() {
         return "subjects";
@@ -61,19 +56,19 @@ public class ViewsController {
         return "feedback-events";
     }
 
+    @RequestMapping(value = "/pre-odm-upload", method = RequestMethod.GET)
+    public String preODMUpload() {
+        return "pre-odm-upload";
+    }
+
     @RequestMapping(value = "/odm-upload", method = RequestMethod.GET)
-    public String uploadODM() {
+    public String ODMUpload() {
         return "odm-upload";
     }
 
-    @RequestMapping(value = "/odm-upload-settings", method = RequestMethod.GET)
-    public String uploadSettingsODM() {
-        return "odm-upload-settings";
-    }
-
-    @RequestMapping(value = "/pre-upload-overview", method = RequestMethod.GET)
-    public String preUploadOverview() {
-        return "pre-upload-overview";
+    @RequestMapping(value = "/final", method = RequestMethod.GET)
+    public String finalView() {
+        return "final";
     }
 
 }

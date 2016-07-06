@@ -86,7 +86,6 @@ function update_submission() {
         },
         error: function (jqXHR, textStatus, errorThrown) {
             console.log(jqXHR.status + " " + textStatus + " " + errorThrown);
-            displayMessages
         }
     });
 }

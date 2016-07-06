@@ -11,7 +11,7 @@
         <h3>Pre-upload overview</h3>
     </div>
     <div>
-        <p>Overview of any remaining validation errors and problems. Please review this list and press OK if you want to proceed.</p>
+        <h4>Overview of any remaining validation errors and problems. Please review this list and press Next if you want to proceed.</h4>
     </div>
 
     <div id="feedback-tables">
@@ -21,10 +21,11 @@
     <hr>
     <button type="button" class="btn btn-primary" id="data-feedback-back-btn" onclick="backBtnHandler()">Back</button>
     <button type="button" class="btn btn-primary" id="data-feedback-proceed-btn" onclick="feedbackNext()">Next</button>
+    <br><br><br>
 
 </div>
 
-<script th:src="@{/pre-upload-overview.js}"></script>
+<script th:src="@{/pre-odm-upload.js}"></script>
 <div th:replace="footer :: footer"></div>
 </body>
 </html>

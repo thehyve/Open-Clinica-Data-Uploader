@@ -23,11 +23,10 @@ public class UploadSession {
     private OcUser owner;
 
     public enum Step {
-        MAPPING, FEEDBACK_DATA, SUBJECTS, FEEDBACK_SUBJECTS, EVENTS, FEEDBACK_EVENTS, UPLOAD_ODM, PRE_UPLOAD_OVERVIEW, UPLOAD_SETTINGS,  OVERVIEW, FINAL
+        MAPPING, FEEDBACK_DATA, SUBJECTS, FEEDBACK_SUBJECTS, EVENTS, FEEDBACK_EVENTS, PRE_ODM_UPLOAD, ODM_UPLOAD, FINAL
     }
 
     private Step step;
-    private CRFStatusAfterUpload crfStatusAfterUpload = CRFStatusAfterUpload.DATA_ENTRY_COMPLETED;
     private Date savedDate;
     private String study;
 
@@ -77,14 +76,6 @@ public class UploadSession {
 
     public void setSavedDate(Date savedDate) {
         this.savedDate = savedDate;
-    }
-
-    public CRFStatusAfterUpload getCrfStatusAfterUpload() {
-        return crfStatusAfterUpload;
-    }
-
-    public void setCrfStatusAfterUpload(CRFStatusAfterUpload crfStatusAfterUpload) {
-        this.crfStatusAfterUpload = crfStatusAfterUpload;
     }
 
     public long getId() {

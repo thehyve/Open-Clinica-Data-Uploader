@@ -12,7 +12,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.servlet.http.HttpSession;
 import java.util.ArrayList;
@@ -39,7 +38,7 @@ public class PreUploadOverviewController {
     OcUserService ocUserService;
 
 
-    @RequestMapping(value = "/pre-upload-overview", method = RequestMethod.GET)
+    @RequestMapping(value = "/pre-odm-upload-overview", method = RequestMethod.GET)
     public ResponseEntity<Collection<ValidationErrorMessage>> retrieveOverviewValidation(HttpSession session) {
         try {
             UploadSession currentUploadSession = uploadSessionService.getCurrentUploadSession(session);

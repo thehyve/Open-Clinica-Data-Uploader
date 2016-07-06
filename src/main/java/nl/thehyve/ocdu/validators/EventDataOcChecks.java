@@ -113,7 +113,9 @@ public class EventDataOcChecks {
         }
 
         if (StringUtils.isNotBlank(event.getStudy()) && !event.getStudy().equals(metadata.getStudyName())) {
-            ValidationErrorMessage noSuchStudy = new ValidationErrorMessage("Study does not exist.");
+            ValidationErrorMessage noSuchStudy =
+                    new ValidationErrorMessage(event.getSsid() + " Study name in your event registration file does not match study name " +
+                            "in your data file. Expected:" + metadata.getStudyName());
             noSuchStudy.addOffendingValue(event.getStudy());
             errors.add(noSuchStudy);
         }
@@ -138,10 +140,10 @@ public class EventDataOcChecks {
         }
 
         if (StringUtils.isNotBlank(event.getLocation()) &&
-                metadata.getLocationRequirementSetting().equals(ProtocolFieldRequirementSetting.BANNED) ) {
-                ValidationErrorMessage locationBannedButPresent = new ValidationErrorMessage("Location is not " +
-                        "allowed in this study, remove the column or leave fields empty");
-                errors.add(locationBannedButPresent);
+                metadata.getLocationRequirementSetting().equals(ProtocolFieldRequirementSetting.BANNED)) {
+            ValidationErrorMessage locationBannedButPresent = new ValidationErrorMessage("Location is not " +
+                    "allowed in this study, remove the column or leave fields empty");
+            errors.add(locationBannedButPresent);
         }
         if (StringUtils.isBlank(event.getLocation()) &&
                 metadata.getLocationRequirementSetting().equals(ProtocolFieldRequirementSetting.MANDATORY)) {

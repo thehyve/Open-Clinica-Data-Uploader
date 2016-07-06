@@ -136,8 +136,8 @@ public class EventDataFactoryTests {
         patInEv.add(new ImmutablePair("EV-00007", "RepeatingEvent"));
         patInEv.add(new ImmutablePair("EV-00007", "Non-repeating Event"));
         List<String> result = this.factory.generateEventSchedulingTemplate(this.metadata, studySubjectWithEventsTypeList, patInEv);
-        assertTrue(result.contains("EV-00007\tRepeatingEvent\t\t\t\t\t\t\t\n"));
-        assertTrue(result.contains("EV-00007\tNon-repeating Event\t\t\t\t\t\t\t\n"));
+        assertTrue(result.contains("EV-00007\tRepeatingEvent\tEventful\t\t\t\t\t\n"));
+        assertTrue(result.contains("EV-00007\tNon-repeating Event\tEventful\t\t\t\t\t\n"));
 
     }
 

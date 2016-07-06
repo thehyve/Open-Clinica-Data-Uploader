@@ -3,6 +3,7 @@ package nl.thehyve.ocdu.factories;
 import nl.thehyve.ocdu.models.OCEntities.Event;
 import nl.thehyve.ocdu.models.OcDefinitions.EventDefinition;
 import nl.thehyve.ocdu.models.OcDefinitions.MetaData;
+import nl.thehyve.ocdu.models.OcDefinitions.ProtocolFieldRequirementSetting;
 import nl.thehyve.ocdu.models.OcDefinitions.RegisteredEventInformation;
 import nl.thehyve.ocdu.models.OcUser;
 import nl.thehyve.ocdu.models.UploadSession;
@@ -38,7 +39,7 @@ public class EventDataFactory extends UserSubmittedDataFactory {
 
     public final static String[] MANDATORY_HEADERS =
             {STUDY_SUBJECT_ID, EVENT_NAME, STUDY, START_DATE, REPEAT_NUMBER};
-    public final static String[] POSITIVE_INTEGERS = { REPEAT_NUMBER };
+    public final static String[] POSITIVE_INTEGERS = {REPEAT_NUMBER};
 
     public List<Event> createEventsData(Path tabularFilePath) {
         Optional<String[]> headerRow = getHeaderRow(tabularFilePath);
@@ -62,13 +63,12 @@ public class EventDataFactory extends UserSubmittedDataFactory {
 
     protected Event mapRow(String[] row, Map<String, Integer> columnsIndex) {
         String[] _row = new String[columnsIndex.size()];
-        if(row.length == columnsIndex.size()) _row = row;
+        if (row.length == columnsIndex.size()) _row = row;
         else {
-            for(int i=0; i<_row.length; i++) {
-                if(i<row.length) {
+            for (int i = 0; i < _row.length; i++) {
+                if (i < row.length) {
                     _row[i] = row[i];
-                }
-                else{
+                } else {
                     _row[i] = "";
                 }
             }
@@ -108,7 +108,9 @@ public class EventDataFactory extends UserSubmittedDataFactory {
         header.add("Study Subject ID");
         header.add("Event Name");
         header.add("Study");
-        header.add("Location");
+        if (isLocationInTemplate(metaData)) {
+            header.add("Location");
+        }
         header.add("Start Date");
         header.add("Start Time");
         header.add("End Date");
@@ -116,15 +118,17 @@ public class EventDataFactory extends UserSubmittedDataFactory {
         header.add("Repeat Number");
         result.add(String.join(delim, header) + "\n");
 
-        for(String ssid: eventsPerSubject.keySet()) {
+        for (String ssid : eventsPerSubject.keySet()) {
             List<EventDefinition> events = eventsPerSubject.get(ssid);
-            for(EventDefinition ed: events) {
+            for (EventDefinition ed : events) {
                 String eventname = ed.getName();
                 List<String> row = new ArrayList<>();
                 row.add(ssid);//study subject id
                 row.add(eventname);//event name
-                row.add("");//study
-                row.add("");//location
+                row.add(metaData.getStudyName());//study
+                if (isLocationInTemplate(metaData)) {
+                    row.add("");//location
+                }
                 row.add("");//Start Date
                 row.add("");//Start Time
                 row.add("");//End Date
@@ -135,5 +139,13 @@ public class EventDataFactory extends UserSubmittedDataFactory {
         }//for
 
         return result;
+    }
+
+    private boolean isLocationInTemplate(MetaData metaData) {
+        ProtocolFieldRequirementSetting locationRequirementSetting = metaData.getLocationRequirementSetting();
+        if (locationRequirementSetting.equals(ProtocolFieldRequirementSetting.BANNED)) {
+            return false;
+        }
+        return true;
     }
 }

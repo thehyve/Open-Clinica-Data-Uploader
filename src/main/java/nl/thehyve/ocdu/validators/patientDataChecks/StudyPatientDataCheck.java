@@ -18,13 +18,15 @@ public class StudyPatientDataCheck implements PatientDataCheck {
 
         ValidationErrorMessage error = null;
         String study = subject.getStudy();
+        String mStudy = metaData.getStudyName();
 
         if (StringUtils.isBlank(study)) {
             error = new ValidationErrorMessage(commonMessage + "Study should be provided.");
-        }
-
-        if(error != null) {
             error.addOffendingValue("Study: " + subject.getStudy());
+        }
+        else if(!study.equals(mStudy)) {
+            error = new ValidationErrorMessage(commonMessage + "Study provided in the template is inconsistent with the study defined in the data file.");
+            error.addOffendingValue("Study in template: " + study + ", study in data file: " + mStudy);
         }
 
         return error;

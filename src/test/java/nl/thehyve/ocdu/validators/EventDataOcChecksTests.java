@@ -129,7 +129,8 @@ public class EventDataOcChecksTests {
         List<ValidationErrorMessage> errors = checks.validate(event);
 
         assertThat(errors, contains(allOf(
-                hasProperty("message", is("Study does not exist.")),
+                hasProperty("message", is("Study name in your event registration file does not match study name "
+                        + "in your data file. Expected:" + metadata.getStudyName())),
                 hasProperty("offendingValues", contains(studyName))
         )));
     }
@@ -403,7 +404,7 @@ public class EventDataOcChecksTests {
         List<ValidationErrorMessage> errors = checks.getErrors();
         assertThat(errors, notNullValue());
         assertThat(errors, hasSize(1));
-        assertThat(errors.get(0).getMessage(), containsString("Location is not allowed in this study") );
+        assertThat(errors.get(0).getMessage(), containsString("Location is not allowed in this study"));
     }
 
     @Test
@@ -416,7 +417,7 @@ public class EventDataOcChecksTests {
         List<ValidationErrorMessage> errors = checks.getErrors();
         assertThat(errors, notNullValue());
         assertThat(errors, hasSize(1));
-        assertThat(errors.get(0).getMessage(), containsString("Location is required") );
+        assertThat(errors.get(0).getMessage(), containsString("Location is required"));
     }
 
     @Test

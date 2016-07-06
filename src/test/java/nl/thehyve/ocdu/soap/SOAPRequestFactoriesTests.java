@@ -14,6 +14,7 @@ import org.openclinica.ws.studysubject.v1.CreateRequest;
 import javax.xml.bind.JAXBElement;
 import javax.xml.datatype.XMLGregorianCalendar;
 
+import java.math.BigDecimal;
 import java.text.ParseException;
 import java.util.ArrayDeque;
 import java.util.Collection;
@@ -107,7 +108,7 @@ public class SOAPRequestFactoriesTests {
         SubjectType subjectType = createSubjectType(subject);
         assertThat(subjectType, notNullValue());
         assertThat(subjectType, hasProperty("gender", nullValue()));
-        assertThat(subjectType, hasProperty("dateOfBirth", notNullValue(XMLGregorianCalendar.class)));
+        assertThat(subjectType, hasProperty("yearOfBirth", notNullValue(BigDecimal.class)));
     }
 
     @Test
@@ -118,6 +119,6 @@ public class SOAPRequestFactoriesTests {
         SubjectType subjectType = createSubjectType(subject);
         assertThat(subjectType, notNullValue());
         assertThat(subjectType, hasProperty("gender", is(GenderType.F)));
-        assertThat(subjectType, hasProperty("dateOfBirth", notNullValue(XMLGregorianCalendar.class)));
+        assertThat(subjectType, hasProperty("yearOfBirth", notNullValue(BigDecimal.class)));
     }
 }

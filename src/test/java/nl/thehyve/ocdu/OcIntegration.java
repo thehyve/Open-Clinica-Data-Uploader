@@ -83,7 +83,7 @@ public class OcIntegration {
 
         s1.setSsid("createdByWebServ");
         s1.setStudy("Sjogren");
-        s1.setYearOfBirth("1988");
+        s1.setDateOfBirth("1988");
         s1.setGender("m");
         Collection<Subject> subjects = new ArrayList<>();
         subjects.add(s1);

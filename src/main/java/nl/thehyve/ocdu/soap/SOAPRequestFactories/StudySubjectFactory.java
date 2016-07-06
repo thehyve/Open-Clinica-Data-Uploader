@@ -3,6 +3,9 @@ package nl.thehyve.ocdu.soap.SOAPRequestFactories;
 import nl.thehyve.ocdu.models.OCEntities.Study;
 import nl.thehyve.ocdu.models.OCEntities.Subject;
 import nl.thehyve.ocdu.models.OcDefinitions.SiteDefinition;
+import nl.thehyve.ocdu.soap.ResponseHandlers.SoapUtils;
+import nl.thehyve.ocdu.validators.UtilChecks;
+import org.apache.commons.lang3.StringUtils;
 import org.openclinica.ws.beans.*;
 
 import javax.xml.datatype.DatatypeConfigurationException;
@@ -42,13 +45,13 @@ public class StudySubjectFactory {
 
     public static SubjectType createSubjectType(Subject subject) {
         SubjectType subjectType = new SubjectType();
-        //subjectType.setUniqueIdentifier("should this ever be set?"); //TODO: find out if this should be set
-        if (subject.getDateOfBirth() != null && !subject.getDateOfBirth().equals("")) {
-            XMLGregorianCalendar dateOfBirth = createXMLGregorianDate(subject.getDateOfBirth());
-            subjectType.setDateOfBirth(dateOfBirth);
-        }
-        if (subject.getYearOfBirth() != null && !subject.getYearOfBirth().equals("")) {
-            subjectType.setYearOfBirth(BigInteger.valueOf(Integer.parseInt(subject.getYearOfBirth())));
+        if (StringUtils.isNotEmpty(subject.getDateOfBirth())) {
+            if (isYearOnly(subject.getDateOfBirth())) {
+                subjectType.setYearOfBirth(BigInteger.valueOf(Integer.parseInt(subject.getDateOfBirth())));
+            } else {
+                XMLGregorianCalendar dateOfBirth = createXMLGregorianDate(subject.getDateOfBirth());
+                subjectType.setDateOfBirth(dateOfBirth);
+            }
         }
         if (subject.getGender() != null && !subject.getGender().equals("")) {
             GenderType genderType = GenderType.fromValue(subject.getGender());
@@ -68,6 +71,9 @@ public class StudySubjectFactory {
             } else {
                 dateFormat = "dd-MM-yyyy";
                 fullDate = true;
+            }
+            if (fullDate && !UtilChecks.isDate(dateOfBirthString)) {
+                return null;
             }
             DateFormat df = new SimpleDateFormat(dateFormat);
             Date date = df.parse(dateOfBirthString);

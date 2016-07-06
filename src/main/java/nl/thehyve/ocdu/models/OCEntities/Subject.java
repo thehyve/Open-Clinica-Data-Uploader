@@ -17,7 +17,6 @@ public class Subject implements OcEntity, UserSubmitted, ODMElement {
     private String ssid;
     private String gender;
     private String dateOfBirth;
-    private String yearOfBirth;
     @Column(columnDefinition = "TEXT")
     private String personId;
     private String dateOfEnrollment;
@@ -88,13 +87,7 @@ public class Subject implements OcEntity, UserSubmitted, ODMElement {
         this.dateOfBirth = dateOfBirth;
     }
 
-    public String getYearOfBirth() {
-        return yearOfBirth;
-    }
 
-    public void setYearOfBirth(String yearOfBirth) {
-        this.yearOfBirth = yearOfBirth;
-    }
 
     public String getPersonId() {
         return personId;

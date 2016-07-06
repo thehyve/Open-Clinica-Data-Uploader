@@ -28,6 +28,7 @@ public class PatientDataOcChecks {
         checks.add(new DateOfEnrollmentPatientDataCheck());
         checks.add(new SecondaryIdPatientDataCheck());
         checks.add(new StudyPatientDataCheck());
+        checks.add(new SitePatientDataCheck());
     }
 
     public List<ValidationErrorMessage> getErrors() {

@@ -129,7 +129,7 @@ public class EventDataOcChecksTests {
         List<ValidationErrorMessage> errors = checks.validate(event);
 
         assertThat(errors, contains(allOf(
-                hasProperty("message", is("Study name in your event registration file does not match study name "
+                hasProperty("message", is(event.getSsid() + " Study name in your event registration file does not match study name "
                         + "in your data file. Expected:" + metadata.getStudyName())),
                 hasProperty("offendingValues", contains(studyName))
         )));

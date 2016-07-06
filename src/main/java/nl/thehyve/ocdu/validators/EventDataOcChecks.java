@@ -114,7 +114,7 @@ public class EventDataOcChecks {
 
         if (StringUtils.isNotBlank(event.getStudy()) && !event.getStudy().equals(metadata.getStudyName())) {
             ValidationErrorMessage noSuchStudy =
-                    new ValidationErrorMessage("Study name in your event registration file does not match study name " +
+                    new ValidationErrorMessage(event.getSsid() + " Study name in your event registration file does not match study name " +
                             "in your data file. Expected:" + metadata.getStudyName());
             noSuchStudy.addOffendingValue(event.getStudy());
             errors.add(noSuchStudy);

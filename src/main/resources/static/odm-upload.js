@@ -10,29 +10,28 @@ $(document).ready(function () {
 });
 
 function generateUploadSettingsHTML() {
-    var html = '<h4>&#9755; Upload options</h4>' +
-        '<div>Please select the status after upload and the status of existing CRF\'s which can be overwritten.</div>' +
-        '<form id="upload-odm-template-form" class="form-horizontal">' +
-        '   <div class="radio-button">' +
-        '       <div>' +
-        '           CRF status after upload' +
-        '       </div>' +
-        '       </br>' +
-        '       <input id="statusAfterUpload_1" type="radio" name="statusAfterUpload" value="initial data entry" checked>Data Entry Started</br>' +
-        '       <input id="statusAfterUpload_2" type="radio" name="statusAfterUpload" value="complete">Data Entry Complete</br>' +
-        '   </div>' +
-        '   <div class="filler"/>' +
-        '   <div class="radio-button">' +
-        '       <div>' +
-        '           Upload to CRF with status (existing CRF\'s will be overwritten)' +
-        '       </div>' +
-        '       </br>' +
-        '       <input id="overwriteStatus_1" type="checkbox" name="overwriteStatus" value="overwriteStatus_notStarted" checked>Not started</br>' +
-        '       <input id="overwriteStatus_2" type="checkbox" name="overwriteStatus" value="overwriteStatus_initialDataEntry">Data Entry Started</br>' +
-        '       <input id="overwriteStatus_3" type="checkbox" name="overwriteStatus" value="overwriteStatus_dataEntryComplete">Data Entry Complete</br>' +
-        '   </div>' +
-        '</form>' +
-        '<span id="message-board"></span> <hr>';
+    var html = '<h3>Upload options</h3>' +
+        '<h4><div>Please select the status after upload and the status of existing CRF\'s which can be overwritten.</div></h4>' +
+        '<hr>' +
+        '<div><strong>CRF Status After Upload</strong></div>' +
+        '<div class="radio">' +
+        '<label><input id="statusAfterUpload_1" type="radio" name="statusAfterUpload" value="initial data entry" checked>Data Entry Started</label>' +
+        '</div> ' +
+        '<div class="radio"> ' +
+        '<label><input id="statusAfterUpload_2" type="radio" name="statusAfterUpload" value="complete">Data Entry Complete</label>' +
+        '</div>' +
+        '<hr>' +
+        '<div><strong>Upload to CRF with status (existing CRF\'s will be overwritten)</strong></div>' +
+        '<div class="checkbox">' +
+        '<label><input id="overwriteStatus_1" type="checkbox" name="overwriteStatus" value="overwriteStatus_notStarted" checked>Not started</label>' +
+        '</div> ' +
+        '<div class="checkbox"> ' +
+        '<label><input id="overwriteStatus_2" type="checkbox" name="overwriteStatus" value="overwriteStatus_initialDataEntry">Data Entry Started</label>' +
+        '</div>' +
+        '<div class="checkbox"> ' +
+        '<label><input id="overwriteStatus_3" type="checkbox" name="overwriteStatus" value="overwriteStatus_dataEntryComplete">Data Entry Complete</label>' +
+        '</div><hr>';
+    
     $(html).insertBefore('#odm-upload-back-btn');
 }
 

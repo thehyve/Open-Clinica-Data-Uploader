@@ -91,3 +91,7 @@ function log_errors(errors) {
 function odmUploadNextBtnHandler() {
     performODMUpload();
 }
+
+function odmUploadBackBtnHandler() {
+    window.location.href = baseApp + "/views/pre-odm-upload";
+}

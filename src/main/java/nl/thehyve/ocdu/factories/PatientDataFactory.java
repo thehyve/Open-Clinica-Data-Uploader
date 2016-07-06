@@ -107,7 +107,7 @@ public class PatientDataFactory extends UserSubmittedDataFactory {
                 if (metadata.getBirthdateRequired() != 3) line.add("");//date of birth
                 line.add("");//date of enrollment
                 line.add("");//secondary id
-                line.add("");//study
+                line.add(metadata.getStudyName());//study
                 if (registerSite) line.add("");//site
                 result.add(String.join(delim, line) + "\n");
             }

@@ -94,8 +94,8 @@ function uploadFile() {
             success: function (fileFormatErrors) {
                 if (fileFormatErrors.length === 0) {
                     // Handle upload success
-                    mappingFileUpload();
-
+                    // mappingFileUpload();
+                    window.location.href = baseApp + "/views/mapping";
                 } else {
                     var info = '<div class="alert alert-danger"><ul>';
                     fileFormatErrors.forEach(function (error) {
@@ -213,7 +213,13 @@ function handle_session_retrieval() {
                 case "FEEDBACK_EVENTS":
                     page = "feedback-events";
                     break;
-                case "OVERVIEW":
+                case "PRE_ODM_UPLOAD":
+                    page = "pre-odm-upload";
+                    break;
+                case "ODM_UPLOAD":
+                    page = "odm-upload";
+                    break;
+                case "FINAL":
                     page = "final";
                     break;
                 default:

@@ -43,7 +43,6 @@ function feedbackNext() {
         },
         error: function (jqXHR, textStatus, errorThrown) {
             console.log(jqXHR.status + " " + textStatus + " " + errorThrown);
-            
         }
     });
 }

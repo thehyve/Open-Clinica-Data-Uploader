@@ -64,21 +64,22 @@ public class OpenClinicaService {
             throws Exception {
         log.info("Register patients initialized by: " + username + " on: " + url);
         Collection<ValidationErrorMessage> ret = new ArrayList<>();
-        SOAPMessage soapMessage = requestFactory.createCreateSubject(username, passwordHash, subjects);
-        SOAPConnectionFactory soapConnectionFactory = SOAPConnectionFactory.newInstance();
-        SOAPConnection soapConnection = soapConnectionFactory.createConnection();
-        SOAPMessage soapResponse = soapConnection.call(soapMessage, url + "/ws/studySubject/v1");
-        String error = parseRegisterSubjectsResponse(soapResponse);
-        if (error != null) {
-            String detailedErrorMessage = "Registering subjects against instance " + url + " failed, OC error: " + error;
-            log.error(detailedErrorMessage);
-            ret.add(new ValidationErrorMessage(detailedErrorMessage));
-            return ret;
-        } else {
-            log.info("Registering subjects against instance " + url + " successful, number of subjects:" +
-                    subjects.size());
-            return ret;
+        for (Subject subject : subjects) {
+            SOAPMessage soapMessage = requestFactory.createCreateSubject(username, passwordHash, subject);
+            SOAPConnectionFactory soapConnectionFactory = SOAPConnectionFactory.newInstance();
+            SOAPConnection soapConnection = soapConnectionFactory.createConnection();
+            SOAPMessage soapResponse = soapConnection.call(soapMessage, url + "/ws/studySubject/v1");
+            String error = parseRegisterSubjectsResponse(soapResponse);
+            if (error != null) {
+                String detailedErrorMessage = "Registering subject " + subject.getSsid() + " against instance " + url + " failed, OC error: " + error;
+                log.error(detailedErrorMessage);
+                ret.add(new ValidationErrorMessage(detailedErrorMessage));
+            }
         }
+        log.info("Registered subjects against instance " + url + " completed, number of subjects:" +
+                    subjects.size());
+        return ret;
+
     }
 
     public List<Study> listStudies(String username, String passwordHash, String url) throws Exception { //TODO: handle exceptions

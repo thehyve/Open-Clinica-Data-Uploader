@@ -69,35 +69,30 @@ public class ODMUploadController {
             String pwdHash = ocUserService.getOcwsHash(session);
             String url = user.getOcEnvironment();
 
-            // TODO apply SQL-injection escaping on statusAfterUpload.
-
             Study study = dataService.findStudy(uploadSession.getStudy(), user, pwdHash);
             MetaData metaData =
                     openClinicaService.getMetadata(userName, pwdHash, user.getOcEnvironment(), study);
-
-            List<ClinicalData> clinicalDataList =
-                    clinicalDataRepository.findBySubmission(uploadSession);
 
             List<StudySubjectWithEventsType> studySubjectWithEventsTypeList =
                     openClinicaService.getStudySubjectsType(userName, pwdHash, url, study.getIdentifier(), "");
 
             Collection<Subject> subjects = subjectRepository.findBySubmission(uploadSession);
+            Collection<ValidationErrorMessage> resultSubjectRegistration = new ArrayList<>();
             if (! subjects.isEmpty()) {
-                result = openClinicaService.registerPatients(userName, pwdHash, url, subjects);
-                if (! result.isEmpty()) {
-                    return new ResponseEntity<>(result, HttpStatus.OK);
-                }
+                resultSubjectRegistration = openClinicaService.registerPatients(userName, pwdHash, url, subjects);
             }
 
             List<Event> eventList = eventRepository.findBySubmission(uploadSession);
+            Collection<ValidationErrorMessage> resultEventRegistration = new ArrayList<>();
             if (! eventList.isEmpty()) {
-                result = openClinicaService.scheduleEvents(userName, pwdHash, url, metaData, eventList, studySubjectWithEventsTypeList);
-                if (! result.isEmpty()) {
-                    return new ResponseEntity<>(result, HttpStatus.OK);
-                }
+                resultEventRegistration = openClinicaService.scheduleEvents(userName, pwdHash, url, metaData, eventList, studySubjectWithEventsTypeList);
             }
+//            List<ClinicalData> clinicalDataList =
+//                    clinicalDataRepository.findBySubmission(uploadSession);
 //        result =
 //                openClinicaService.uploadClinicalData(userName, pwdHash, url, clinicalDataList, metaData, uploadSession);
+            result.addAll(resultSubjectRegistration);
+            result.addAll(resultEventRegistration);
             return new ResponseEntity<>(result, HttpStatus.OK);
         }
         catch (Exception e) {

@@ -35,13 +35,8 @@ public class SOAPRequestFactoriesTests {
     public void createSubjectRequestTest() throws Exception {
         Subject s1 = new Subject();
         s1.setSsid("s1");
-        Subject s2 = new Subject();
-        s2.setSsid("s2");
-        Collection<Subject> subjects = new ArrayDeque<>();
-        subjects.add(s1);
-        subjects.add(s2);
-        Collection<JAXBElement<CreateRequest>> createRequests = getCreateRequests(subjects);
-        assertThat(createRequests, iterableWithSize(2));
+        JAXBElement<CreateRequest> createRequest = getCreateRequests(s1);
+        assertThat(createRequest.getValue().getStudySubject().getLabel(), equalTo("s1"));
     }
 
     @Test

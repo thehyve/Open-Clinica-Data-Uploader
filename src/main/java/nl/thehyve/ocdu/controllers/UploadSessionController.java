@@ -48,7 +48,6 @@ public class UploadSessionController {
         return username;
     }
 
-
     @RequestMapping(value = "/info", method = RequestMethod.GET)
     public ResponseEntity<DataService.FieldsDetermined> getFieldsInfo(HttpSession session) {
         try {

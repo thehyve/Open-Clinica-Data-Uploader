@@ -169,7 +169,7 @@ public class UploadSessionController {
             UploadSession uploadSession = new UploadSession(name, UploadSession.Step.MAPPING, new Date(), usr);//TODO: Add remaining steps
             uploadSessionRepository.save(uploadSession);
             uploadSessionService.setCurrentUploadSession(session, uploadSession);
-            return new ResponseEntity<>(OK);
+            return new ResponseEntity<>(uploadSession, OK);
         } catch (UploadSessionNotFoundException ex) {
             System.out.println(ex);
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);

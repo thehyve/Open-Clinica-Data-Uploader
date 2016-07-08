@@ -7,6 +7,9 @@ var loading_html;
 var is_template_empty = false;;
 
 $(document).ready(function () {
+    _SESSION_CONFIG = JSON.parse(localStorage.getItem("session_config"));
+    _CURRENT_SESSION_NAME = localStorage.getItem("current_session_name");
+
     loading_html = '<div id="loading_div"><div class="loader"></div><hr></div>';
     $('#subject-registration-div').append(loading_html);
     next_btn();
@@ -31,7 +34,8 @@ function check_new_patients(toRegisterSite) {
                 var html = "<div id='template_error' class='alert alert-success'><strong>All subjects in the data file have been registered in OpenClinica. Click Next to proceed.</strong></div>";
                 $(html).insertBefore('#subject-back-btn');
                 is_template_empty = true;
-                NEED_TO_VALIDATE_SUBJECTS = false;
+                _SESSION_CONFIG[_CURRENT_SESSION_NAME]['NEED_TO_VALIDATE_SUBJECTS'] = false;
+                update_session_config(_SESSION_CONFIG);
             }
         },
         error: function (jqXHR, textStatus, errorThrown) {

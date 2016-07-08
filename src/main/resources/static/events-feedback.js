@@ -54,22 +54,29 @@ function backBtnHandler() {
     window.location.href = baseApp + "/views/events";
 }
 
-//waiting for the ajax call
-var loadinghtml = '<div id="loading_div" class="loader"></div>';
-$('#feedback-tables').append(loadinghtml);
 
-if(NEED_TO_VALIDATE_EVENTS) {
-    $.ajax({
-        url: baseApp+"/validate/events",
-        type: "GET",
-        success: displayMessages,
-        cache: false,
-        error: function (jqXHR, textStatus, errorThrown) {
-            //window.location.href = baseApp + "/views/data";
-        }
-    });
-}
-else {
-    var html = "<div class='label label-success'><strong>No event needs to be scheduled, click Next to proceed.</strong></div>";
-    $(html).insertBefore('#data-feedback-back-btn');
-}
+$(document).ready(function () {
+    contains_events_unscheduled = true;
+    _SESSION_CONFIG = JSON.parse(localStorage.getItem("session_config"));
+    _CURRENT_SESSION_NAME = localStorage.getItem("current_session_name");
+
+    if(_SESSION_CONFIG[_CURRENT_SESSION_NAME]['NEED_TO_VALIDATE_EVENTS']) {
+        //waiting for the ajax call
+        var loadinghtml = '<div id="loading_div" class="loader"></div>';
+        $('#feedback-tables').append(loadinghtml);
+
+        $.ajax({
+            url: baseApp+"/validate/events",
+            type: "GET",
+            success: displayMessages,
+            cache: false,
+            error: function (jqXHR, textStatus, errorThrown) {
+                //window.location.href = baseApp + "/views/data";
+            }
+        });
+    }
+    else {
+        var html = '<div class="alert alert-success"> <strong>No event needs to be scheduled, click Next to proceed.</strong></div>';
+        $('#feedback-tables').append(html);
+    }
+});

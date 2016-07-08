@@ -8,6 +8,8 @@ var loading_html;
 
 $(document).ready(function () {
     contains_events_unscheduled = true;
+    _SESSION_CONFIG = JSON.parse(localStorage.getItem("session_config"));
+    _CURRENT_SESSION_NAME = localStorage.getItem("current_session_name");
 
     loading_html = '<div id="loading_div"><div class="loader"></div><hr></div>';
     $('#event-registration-div').append(loading_html);
@@ -30,9 +32,10 @@ function check_new_events() {
                 provide_event_template_upload();
             }
             else {
-                var html = "<div id='template_error' class='alert alert-success'>All events in the data file have been scheduled in OpenClinica. Click Next to proceed.</div>";
+                var html = "<div id='template_error' class='alert alert-success'><strong>All events in the data file have been scheduled in OpenClinica. Click Next to proceed.</strong></div>";
                 $(html).insertBefore('#event-back-btn');
-                NEED_TO_VALIDATE_EVENTS = false;
+                _SESSION_CONFIG[_CURRENT_SESSION_NAME]['NEED_TO_VALIDATE_EVENTS'] = false;
+                update_session_config(_SESSION_CONFIG);
             }
         },
         error: function (jqXHR, textStatus, errorThrown) {

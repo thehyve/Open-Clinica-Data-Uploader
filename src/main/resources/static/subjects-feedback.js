@@ -56,24 +56,32 @@ function backBtnHandler() {
     window.location.href = baseApp + "/views/subjects";
 }
 
-//waiting for the ajax call
-var loadinghtml = '<div id="loading_div" class="loader"></div>';
-$('#feedback-tables').append(loadinghtml);
+
+$(document).ready(function () {
+    _SESSION_CONFIG = JSON.parse(localStorage.getItem("session_config"));
+    _CURRENT_SESSION_NAME = localStorage.getItem("current_session_name");
+
+    if (_SESSION_CONFIG[_CURRENT_SESSION_NAME]['NEED_TO_VALIDATE_SUBJECTS']) {
+        //waiting for the ajax call
+        var loadinghtml = '<div id="loading_div" class="loader"></div>';
+        $('#feedback-tables').append(loadinghtml);
+        
+        $.ajax({
+            url: baseApp + "/validate/patients",
+            type: "GET",
+            success: displayMessages,
+            error: function (jqXHR, textStatus, errorThrown) {
+                console.log(jqXHR.status + " " + textStatus + " " + errorThrown);
+            }
+        });
+    }
+    else {
+        var html = '<div class="alert alert-success"> <strong>No subject needs to be validated, click Next to proceed.</strong></div>';
+        $('#feedback-tables').append(html);
+    }
+
+});
 
 
-if(NEED_TO_VALIDATE_SUBJECTS) {
-    $.ajax({
-        url: baseApp + "/validate/patients",
-        type: "GET",
-        success: displayMessages,
-        error: function (jqXHR, textStatus, errorThrown) {
-            console.log(jqXHR.status + " " + textStatus + " " + errorThrown);
-        }
-    });
-}
-else {
-    var html = '<div class="alert alert-success"> <strong>No subject needs to be validated, click Next to proceed.</strong></div>';
-    $('#feedback-tables').append(html);
-}
 
 

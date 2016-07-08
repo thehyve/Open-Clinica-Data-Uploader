@@ -4,7 +4,6 @@
 /**
  * Upload the file sending it via Ajax at the Spring Boot server.
  */
-var sessions = [];
 
 var _deleteCurrentSubmission = function() {
     $.ajax({
@@ -26,13 +25,15 @@ function uploadFile() {
     var isDataSelected = ($('#upload-file-input').val() !== "");
     var isMappingSelected = ($('#upload-mapping-input').val() !== "");
 
-    SESSIONNAME = $('#upload-session-input').val();
-    var sessionnames = [];
-    for (var i = 0; i < sessions.length; i++) {
-        sessionnames.push(sessions[i].name);
-    }
+    _CURRENT_SESSION_NAME = $('#upload-session-input').val();
 
-    if (sessionnames.indexOf(SESSIONNAME) !== -1) isSessionNameDefined = false;
+    localStorage.setItem("current_session_name", _CURRENT_SESSION_NAME);
+
+    var sessionnames = [];
+    for (var i = 0; i < _SESSIONS.length; i++) {
+        sessionnames.push(_SESSIONS[i].name);
+    }
+    if (sessionnames.indexOf(_CURRENT_SESSION_NAME) !== -1) isSessionNameDefined = false;
 
     $("#message-board").empty();
 
@@ -83,7 +84,7 @@ function uploadFile() {
         }
     }
 
-    var dataFileUpload = function () {
+    var dataFileUpload = function (current_session) {
         $.ajax({
             url: baseApp + "/upload/data",
             type: "POST",
@@ -95,6 +96,7 @@ function uploadFile() {
                 if (fileFormatErrors.length === 0) {
                     // Handle upload success
                     // mappingFileUpload();
+                    init_session_config(_CURRENT_SESSION_NAME);
                     window.location.href = baseApp + "/views/mapping";
                 } else {
                     var info = '<div class="alert alert-danger"><ul>';
@@ -120,12 +122,11 @@ function uploadFile() {
         });
     };
 
-
     if (isSessionNameDefined && isDataSelected) {
         $.ajax({
             url: baseApp + "/submission/create",
             type: "post",
-            data: {name: SESSIONNAME},
+            data: {name: _CURRENT_SESSION_NAME},
             success: dataFileUpload,
             error: function (jqXHR, textStatus, errorThrown) {
                 console.log(jqXHR.status + " " + textStatus + " " + errorThrown);
@@ -159,16 +160,15 @@ function retrieveSessions() {
             // }
         }
     });
-
 }
 
-function handle_session_retrieval_all(_sessions) {
-    sessions = _sessions;
+function handle_session_retrieval_all(retrieved_sessions) {
+    _SESSIONS = retrieved_sessions;
     $("#data-proceed-btn").attr("disabled", false);
     var monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
     $('#old_upload_section').append('<div id="session_container" class="row-fluid"><p id="anchor_old_sessions"></p> </div>');
-    for (var i = 0; i < _sessions.length; i++) {
-        var s = _sessions[i];
+    for (var i = 0; i < _SESSIONS.length; i++) {
+        var s = _SESSIONS[i];
         var btnid = "s" + (i + 1);
         var d = new Date(s.savedDate);
         var sessionHTML = '<div class="well" id="session_well_' + i + '">' +
@@ -180,12 +180,18 @@ function handle_session_retrieval_all(_sessions) {
         $('#' + btnid).click(handle_session_retrieval);
         $('#removal_' + btnid).click(handle_session_removal);
     }//for
+
+    //init session_config
+    _SESSIONS.forEach(function (session, index) {
+        init_session_config(session.name);
+    });
 }//function handle_session_retrieval_all
 
 function handle_session_retrieval() {
     var ind = $(this).attr('session_index');
-    var session = sessions[ind];
+    var session = _SESSIONS[ind];
     var sid = session.id;
+    _CURRENT_SESSION_NAME = session.name;
     //set the current session
     $.ajax({
         url: baseApp + "/submission/select",
@@ -235,7 +241,7 @@ function handle_session_retrieval() {
 
 function handle_session_removal() {
     var ind = $(this).attr('session_index');
-    var session = sessions[ind];
+    var session = _SESSIONS[ind];
     var sid = session.id;
     $.ajax({
         url: baseApp + "/submission/deleteSession",

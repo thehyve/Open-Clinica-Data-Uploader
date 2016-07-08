@@ -446,10 +446,12 @@ $(function () {
     }
 
     function init() {
+        _SESSION_CONFIG = JSON.parse(localStorage.getItem("session_config"));
+        _CURRENT_SESSION_NAME = localStorage.getItem("current_session_name");
         test();
         build_oc_list();
         //disable "Apply the mapping file" button if MAPPING_FILE_ENABLED (config.js) is false
-        if(!MAPPING_FILE_ENABLED) {
+        if(!_SESSION_CONFIG[_CURRENT_SESSION_NAME]['MAPPING_FILE_ENABLED']) {
             $('#apply-map-btn').hide();
         }
     }

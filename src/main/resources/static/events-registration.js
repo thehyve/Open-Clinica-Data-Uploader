@@ -32,6 +32,7 @@ function check_new_events() {
             else {
                 var html = "<div id='template_error' class='alert alert-success'>All events in the data file have been scheduled in OpenClinica. Click Next to proceed.</div>";
                 $(html).insertBefore('#event-back-btn');
+                NEED_TO_VALIDATE_EVENTS = false;
             }
         },
         error: function (jqXHR, textStatus, errorThrown) {

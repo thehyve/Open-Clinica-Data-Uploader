@@ -31,6 +31,7 @@ function check_new_patients(toRegisterSite) {
                 var html = "<div id='template_error' class='alert alert-success'><strong>All subjects in the data file have been registered in OpenClinica. Click Next to proceed.</strong></div>";
                 $(html).insertBefore('#subject-back-btn');
                 is_template_empty = true;
+                NEED_TO_VALIDATE_SUBJECTS = false;
             }
         },
         error: function (jqXHR, textStatus, errorThrown) {

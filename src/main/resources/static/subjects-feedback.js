@@ -61,11 +61,19 @@ var loadinghtml = '<div id="loading_div" class="loader"></div>';
 $('#feedback-tables').append(loadinghtml);
 
 
-$.ajax({
-    url: baseApp + "/validate/patients",
-    type: "GET",
-    success: displayMessages,
-    error: function (jqXHR, textStatus, errorThrown) {
-        console.log(jqXHR.status + " " + textStatus + " " + errorThrown);
-    }
-});
+if(NEED_TO_VALIDATE_SUBJECTS) {
+    $.ajax({
+        url: baseApp + "/validate/patients",
+        type: "GET",
+        success: displayMessages,
+        error: function (jqXHR, textStatus, errorThrown) {
+            console.log(jqXHR.status + " " + textStatus + " " + errorThrown);
+        }
+    });
+}
+else {
+    var html = '<div class="alert alert-success"> <strong>No subject needs to be validated, click Next to proceed.</strong></div>';
+    $('#feedback-tables').append(html);
+}
+
+

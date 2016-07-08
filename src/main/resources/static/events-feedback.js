@@ -58,13 +58,18 @@ function backBtnHandler() {
 var loadinghtml = '<div id="loading_div" class="loader"></div>';
 $('#feedback-tables').append(loadinghtml);
 
-//TODO: connect backend
-$.ajax({
-    url: baseApp+"/validate/events",
-    type: "GET",
-     success: displayMessages,
-     cache: false,
-     error: function (jqXHR, textStatus, errorThrown) {
-     //window.location.href = baseApp + "/views/data";
-    }
-});
+if(NEED_TO_VALIDATE_EVENTS) {
+    $.ajax({
+        url: baseApp+"/validate/events",
+        type: "GET",
+        success: displayMessages,
+        cache: false,
+        error: function (jqXHR, textStatus, errorThrown) {
+            //window.location.href = baseApp + "/views/data";
+        }
+    });
+}
+else {
+    var html = "<div class='label label-success'><strong>No event needs to be scheduled, click Next to proceed.</strong></div>";
+    $(html).insertBefore('#data-feedback-back-btn');
+}

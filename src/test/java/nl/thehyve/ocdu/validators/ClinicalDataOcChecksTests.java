@@ -13,6 +13,7 @@ import nl.thehyve.ocdu.validators.clinicalDataChecks.MultipleCrfCrossCheck;
 import nl.thehyve.ocdu.validators.clinicalDataChecks.StudyStatusAvailable;
 import nl.thehyve.ocdu.validators.fileValidators.DataPreMappingValidator;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.openclinica.ws.beans.StudySubjectWithEventsType;
 
@@ -186,10 +187,10 @@ public class ClinicalDataOcChecksTests {
         List<ClinicalData> incorrectClinicalData = factory.createClinicalData(testFileRangeCheckViolation);
         clinicalDataOcChecks = new ClinicalDataOcChecks(metaData, incorrectClinicalData, testSubjectWithEventsTypeList);
         List<ValidationErrorMessage> errors = clinicalDataOcChecks.getErrors();
-        assertEquals(2, errors.size());
+        assertEquals(1, errors.size());
         assertThat(errors, hasItem(isA(RangeCheckViolation.class)));
-        assertThat(errors, hasItem(isA(MandatoryItemInCrfMissing.class)));
-        ValidationErrorMessage errorMessage = errors.get(1);
+//        assertThat(errors, hasItem(isA(MandatoryItemInCrfMissing.class)));
+        ValidationErrorMessage errorMessage = errors.get(0);
         assertThat(errorMessage.getOffendingValues(), hasSize(3));
     }
 
@@ -208,9 +209,9 @@ public class ClinicalDataOcChecksTests {
         List<ClinicalData> incorrectClinicalData = factory.createClinicalData(testFileTooManySignificantDigits);
         clinicalDataOcChecks = new ClinicalDataOcChecks(metaData, incorrectClinicalData, testSubjectWithEventsTypeList);
         List<ValidationErrorMessage> errors = clinicalDataOcChecks.getErrors();
-        assertEquals(3, errors.size());
+        assertEquals(2, errors.size());
         assertThat(errors, hasItem(isA(TooManySignificantDigits.class)));
-        assertThat(errors, hasItem(isA(MandatoryItemInCrfMissing.class)));
+//        assertThat(errors, hasItem(isA(MandatoryItemInCrfMissing.class)));
         assertThat(errors, hasItem(isA(FieldLengthExceeded.class)));
     }
 
@@ -291,9 +292,9 @@ public class ClinicalDataOcChecksTests {
         clinicalDataOcChecks = new ClinicalDataOcChecks(crfVersionMetaData, incorrectData, incorrectEventStatus);
         in.close();
         List<ValidationErrorMessage> errors = clinicalDataOcChecks.getErrors();
-        assertThat(errors, hasSize(2));
+        assertThat(errors, hasSize(1));
         assertThat(errors, hasItem(isA(EventStatusNotAllowed.class)));
-        assertThat(errors, hasItem(isA(MandatoryItemInCrfMissing.class)));
+//        assertThat(errors, hasItem(isA(MandatoryItemInCrfMissing.class)));
     }
 
     @Test
@@ -337,6 +338,7 @@ public class ClinicalDataOcChecksTests {
     }
 
     @Test
+    @Ignore("Removed for acceptance testing")
     public void ignoredMandatoryItem() throws Exception {
         List<ClinicalData> incorrectClinicalData = factory.createClinicalData(emptyMandatory);
         clinicalDataOcChecks = new ClinicalDataOcChecks(metaData, incorrectClinicalData, testSubjectWithEventsTypeList);
@@ -352,9 +354,9 @@ public class ClinicalDataOcChecksTests {
         clinicalDataOcChecks = new ClinicalDataOcChecks(metaData, incorrectClinicalData, testSubjectWithEventsTypeList);
         List<ValidationErrorMessage> errors = clinicalDataOcChecks.getErrors();
         assertThat(errors, notNullValue());
-        assertThat(errors, hasSize(2));
+        assertThat(errors, hasSize(1));
         assertThat(errors, hasItem(isA(ToggleVarForDisplayRuleAbsent.class)));
-        assertThat(errors, hasItem(isA(MandatoryItemInCrfMissing.class)));
+  //      assertThat(errors, hasItem(isA(MandatoryItemInCrfMissing.class)));
     }
 
     @Test
@@ -363,9 +365,9 @@ public class ClinicalDataOcChecksTests {
         clinicalDataOcChecks = new ClinicalDataOcChecks(metaData, incorrectClinicalData, testSubjectWithEventsTypeList);
         List<ValidationErrorMessage> errors = clinicalDataOcChecks.getErrors();
         assertThat(errors, notNullValue());
-        assertThat(errors, hasSize(2));
+        assertThat(errors, hasSize(1));
         assertThat(errors, hasItem(isA(HiddenValueError.class)));
-        assertThat(errors, hasItem(isA(MandatoryItemInCrfMissing.class)));
+//        assertThat(errors, hasItem(isA(MandatoryItemInCrfMissing.class)));
     }
 
     @Test

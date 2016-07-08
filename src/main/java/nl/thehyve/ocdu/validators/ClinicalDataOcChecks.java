@@ -26,7 +26,9 @@ public class ClinicalDataOcChecks extends ClinicalDataChecksRunner{
         crossChecks.add(new MultipleStudiesCrossCheck());
         crossChecks.add(new ItemLengthCrossCheck());
         crossChecks.add(new ItemExistenceCrossCheck());
-        crossChecks.add(new MandatoryInCrfCrossCheck());
+        // TODO reactive the MandatoryInCrfCrossCheck once the OC-webservice returns the mandatory
+        // TODO status of all the CRF-version.
+//        crossChecks.add(new MandatoryInCrfCrossCheck());
         crossChecks.add(new DataTypeCrossCheck());
         crossChecks.add(new ValuesNumberCrossCheck());
         crossChecks.add(new RangeChecks());

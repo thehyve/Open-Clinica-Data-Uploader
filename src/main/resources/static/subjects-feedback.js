@@ -45,7 +45,8 @@ function feedbackNext() {
         },
         error: function (jqXHR, textStatus, errorThrown) {
             console.log(jqXHR.status + " " + textStatus + " " + errorThrown);
-            window.location.href = baseApp + "/views/subjects-feedback";
+            var html = '<div class="alert alert-danger">Submission update has failed, please refresh the page.</div>';
+            $(html).insertBefore('#data-feedback-back-btn');
         }
     });
 

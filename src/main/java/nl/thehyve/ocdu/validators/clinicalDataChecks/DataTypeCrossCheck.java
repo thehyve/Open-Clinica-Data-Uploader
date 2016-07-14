@@ -28,28 +28,27 @@ public class DataTypeCrossCheck implements ClinicalDataCrossCheck {
     private static Map<String, String> humanReadbleTypes = initHumanReadbleTypes();
 
     private static Map<String, String> initHumanReadbleTypes() {
-        Map<String, String>  humanReadble = new HashMap<>();
-        humanReadble.put(TEXT_DATA_TYPE, "Text" );
-        humanReadble.put(INTEGER_DATA_TYPE, "Integer Number (e.g. 2)" );
-        humanReadble.put(FLOAT_DATA_TYPE, "Real Number (e.g. 12.3)" );
-        humanReadble.put(PARTIAL_DATE_DATA_TYPE, "Partial date (e.g: 1996)" );
-        humanReadble.put(DATE_DATA_TYPE, "Full date (e.g: 16-05-1988)" );
+        Map<String, String> humanReadble = new HashMap<>();
+        humanReadble.put(TEXT_DATA_TYPE, "Text");
+        humanReadble.put(INTEGER_DATA_TYPE, "Integer Number (e.g. 2)");
+        humanReadble.put(FLOAT_DATA_TYPE, "Real Number (e.g. 12.3)");
+        humanReadble.put(PARTIAL_DATE_DATA_TYPE, "Partial date (e.g: 1996)");
+        humanReadble.put(DATE_DATA_TYPE, "Full date (e.g: 16-05-1988)");
         return humanReadble;
     }
 
     @Override
     public ValidationErrorMessage getCorrespondingError(List<ClinicalData> data, MetaData metaData, Map<ClinicalData, ItemDefinition> itemDefMap, List<StudySubjectWithEventsType> studySubjectWithEventsTypeList, Map<ClinicalData, Boolean> shownMap, Map<String, Set<CRFDefinition>> eventMap) {
         Map<ClinicalData, String> itemDataTypes = buildDataTypeMap(data, itemDefMap);
-        Set<ImmutablePair<String, String>> offenders = data.stream()
+        Set<String> offenders = data.stream()
                 .filter(clinicalData -> !allValuesMatch(clinicalData.getValues(), itemDataTypes.get(clinicalData)) && shownMap.get(clinicalData))
-                .map(clinicalData -> new ImmutablePair<>(clinicalData.toOffenderString(), itemDataTypes.get(clinicalData)))
+                .map(clinicalData -> clinicalData.toOffenderString() + " expected: " + humanReadbleTypes.get(itemDataTypes.get(clinicalData)))
                 .collect(Collectors.toSet());
         if (offenders.size() > 0) {
             DataTypeMismatch error = new DataTypeMismatch();
             offenders.stream().
                     forEach(offender -> {
-                        String typeMsg = humanReadbleTypes.get(offender.right);
-                        error.addOffendingValue(offender.left + " expected: " + typeMsg);
+                        error.addOffendingValue(offender);
                     });
             return error;
         } else return null;

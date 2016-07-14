@@ -102,12 +102,11 @@ public class UploadController {
         String filepath = Paths.get(directory, filename).toString();
 
         // Save the file locally
-        BufferedOutputStream stream =
-                new BufferedOutputStream(new FileOutputStream(new File(filepath)));
-        BOMInputStream bis = new BOMInputStream(file.getInputStream(), false);
-        IOUtils.copy(bis, stream);
-        stream.close();
-        bis.close();
+        try (BufferedOutputStream stream =
+                     new BufferedOutputStream(new FileOutputStream(new File(filepath)));
+             BOMInputStream bis = new BOMInputStream(file.getInputStream(), false)) {
+            IOUtils.copy(bis, stream);
+        }
         return Paths.get(filepath);
     }
 

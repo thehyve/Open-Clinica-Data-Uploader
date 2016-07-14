@@ -27,6 +27,8 @@ public class PatientDataFactory extends UserSubmittedDataFactory {
     public final static String STUDY = "Study";
     public final static String SITE = "Site (optional)";
     public final static String[] MANDATORY_HEADERS = {STUDY_SUBJECT_ID, STUDY, SITE};
+    public static final String[] ALL_PERMITTED_COLUMNS = {STUDY_SUBJECT_ID, STUDY, SITE, GENDER,
+            DATE_OF_BIRTH, DATE_OF_ENROLLMENT, PERSON_ID, SECONDARY_ID};
 
     public PatientDataFactory(OcUser user, UploadSession submission) {
         super(user, submission);

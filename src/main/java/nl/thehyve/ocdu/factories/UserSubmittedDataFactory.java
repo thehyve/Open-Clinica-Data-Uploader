@@ -46,7 +46,7 @@ public class UserSubmittedDataFactory {
         HashMap<String, Integer> result = new HashMap<>(headerRow.length);
         for (int i = 0; i < headerRow.length; i++) {
             if (result.containsKey(headerRow[i])) {
-                throw new RuntimeException("Name" + headerRow[i] + " appears more then one in the header: " + headerRow);
+                throw new RuntimeException("Name" + headerRow[i] + " appears more than once in the header: " + headerRow.toString());
             }
             result.put(headerRow[i], i);
         }

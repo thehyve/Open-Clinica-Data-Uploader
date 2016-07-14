@@ -7,10 +7,8 @@ import nl.thehyve.ocdu.models.errors.ValidationErrorMessage;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /**
@@ -71,6 +69,7 @@ public class GenericFileValidator implements FileFormatValidator {
                 columnPositiveInteger(body, index);
             }
             fieldsWithinLengthLimit(body);
+            everyHeaderUnique(header);
 
         } catch (IOException e) {
             this.valid = false;
@@ -82,6 +81,19 @@ public class GenericFileValidator implements FileFormatValidator {
     protected int getColumnIndex(String header, String column) {
         List<String> split = splitLine(header);
         return split.indexOf(column);
+    }
+
+    private void everyHeaderUnique(String header) {
+        List<String> split = splitLine(header);
+        Set<String> headersSet = new HashSet<>();
+        split.forEach(columnName -> {
+            if (headersSet.contains(columnName)) {
+                errors.add(new FileFormatError("Column name appears more than once: " + columnName +
+                        " if you intend to upload group repeats add _X where X is a repeat number"));
+                this.valid = false;
+            }
+            headersSet.add(columnName);
+        });
     }
 
     private void columnPositiveInteger(String[] body, int index) {
@@ -140,7 +152,7 @@ public class GenericFileValidator implements FileFormatValidator {
     private void fieldsWithinLengthLimit(String[] body) {
         for (String line : body) {
             List<String> split = splitLine(line);
-            for (String field: split) {
+            for (String field : split) {
                 if (field.length() > MAX_ALLOWED_FIELD_LENGTH) {
                     errors.add(new FileFormatError("Following line has different number of fields than the header:" + line));
                     valid = false;

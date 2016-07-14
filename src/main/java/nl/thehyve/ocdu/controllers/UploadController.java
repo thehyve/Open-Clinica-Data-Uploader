@@ -5,6 +5,8 @@ import nl.thehyve.ocdu.models.OcUser;
 import nl.thehyve.ocdu.models.UploadSession;
 import nl.thehyve.ocdu.models.errors.ValidationErrorMessage;
 import nl.thehyve.ocdu.services.*;
+import org.apache.commons.io.IOUtils;
+import org.apache.commons.io.input.BOMInputStream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,10 +17,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpSession;
-import java.io.BufferedOutputStream;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
+import java.io.*;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -105,8 +104,10 @@ public class UploadController {
         // Save the file locally
         BufferedOutputStream stream =
                 new BufferedOutputStream(new FileOutputStream(new File(filepath)));
-        stream.write(file.getBytes());
+        BOMInputStream bis = new BOMInputStream(file.getInputStream(), false);
+        IOUtils.copy(bis, stream);
         stream.close();
+        bis.close();
         return Paths.get(filepath);
     }
 

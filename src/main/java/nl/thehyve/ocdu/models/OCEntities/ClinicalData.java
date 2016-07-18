@@ -2,15 +2,9 @@ package nl.thehyve.ocdu.models.OCEntities;
 
 import nl.thehyve.ocdu.models.OcUser;
 import nl.thehyve.ocdu.models.UploadSession;
-import org.apache.commons.lang3.StringUtils;
 import org.openclinica.ws.beans.StudySubjectWithEventsType;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.ManyToOne;
+import javax.persistence.*;
 import java.util.Arrays;
 import java.util.List;
 
@@ -38,6 +32,9 @@ public class ClinicalData implements OcEntity, UserSubmitted, EventReference {
     private String site;
     @Column(columnDefinition = "TEXT")
     private String item;
+
+    private String originalItem;
+
     private String ssid;
     @Column(columnDefinition = "TEXT")
     private String eventName;
@@ -69,6 +66,7 @@ public class ClinicalData implements OcEntity, UserSubmitted, EventReference {
         this.groupRepeat = groupRepeat;
         this.owner = owner;
         this.value = value;
+        this.originalItem = item; // TODO: Refactor away this constructor
     }
 
     public ClinicalData() {
@@ -313,6 +311,14 @@ public class ClinicalData implements OcEntity, UserSubmitted, EventReference {
                 + eventName + " event repeat: " + eventRepeat + " value: "
                 + value;
         return ofenderMsg;
+    }
+
+    public String getOriginalItem() {
+        return originalItem;
+    }
+
+    public void setOriginalItem(String originalItem) {
+        this.originalItem = originalItem;
     }
 
 }

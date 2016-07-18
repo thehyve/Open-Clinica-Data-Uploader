@@ -39,7 +39,7 @@ public class DataService {
     public List<String> getUserItems(UploadSession submission) {
         List<ClinicalData> bySubmission = clinicalDataRepository.findBySubmission(submission);
         return bySubmission.stream()
-                .map(clinicalData -> clinicalData.getItem())
+                .map(clinicalData -> clinicalData.getOriginalItem())
                 .collect(Collectors.toSet())
                 .stream()
                 .collect(Collectors.toList());
@@ -48,6 +48,7 @@ public class DataService {
     /**
      * Returns a set of tuples subjectid-event name
      * For purpose of event registration
+     *
      * @param submission
      * @return
      */

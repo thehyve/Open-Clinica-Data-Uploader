@@ -9,7 +9,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
@@ -27,7 +29,7 @@ public class MappingService {
         List<ClinicalData> bySubmission = clinicalDataRepository.findBySubmission(submission);
         List<OcItemMapping> nonTrivial = mappings.stream().filter(ocItemMapping ->
                 !ocItemMapping.getUsrItemName().equals(ocItemMapping.getOcItemName())).collect(Collectors.toList());
-        log.debug("Provided: "+nonTrivial.size()+" non trival mappings.");
+        log.debug("Provided: " + nonTrivial.size() + " non trival mappings.");
         nonTrivial.stream().forEach(ocItemMapping -> matchAndMap(ocItemMapping, bySubmission));
     }
 
@@ -41,11 +43,17 @@ public class MappingService {
         if (data.getEventName().equals(mapping.getEventName()) &&
                 data.getCrfName().equals(mapping.getCrfName()) &&
                 data.getCrfVersion().equals(mapping.getCrfVersion()) &&
-                data.getItem().equals(mapping.getUsrItemName())
+                data.getOriginalItem().equals(mapping.getUsrItemName())
                 ) {
-            log.debug("Matched: "+data+" with: "+mapping);
+            log.debug("Matched: " + data + " with: " + mapping);
             return true;
-        }
-        else return false;
+        } else return false;
+    }
+
+    public Map<String, String> getCurrentMapping(UploadSession submission) {
+        Map<String, String> mapping = new HashMap<>();
+        List<ClinicalData> bySubmission = clinicalDataRepository.findBySubmission(submission);
+        bySubmission.forEach(clinicalData -> mapping.put(clinicalData.getItem(), clinicalData.getOriginalItem()));
+        return mapping;
     }
 }

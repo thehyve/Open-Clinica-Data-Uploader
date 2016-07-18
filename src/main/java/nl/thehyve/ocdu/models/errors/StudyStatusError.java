@@ -7,6 +7,6 @@ package nl.thehyve.ocdu.models.errors;
 public class StudyStatusError extends ValidationErrorMessage {
     public StudyStatusError() {
         super("Study status does not allow data upload - " +
-                "select different study or change status in OpenClinica before proceeeding.");
+                "select different study or change status in OpenClinica before proceeding.");
     }
 }

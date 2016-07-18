@@ -84,6 +84,10 @@ public class GetStudyMetadataResponseHandler extends OCResponseHandler {
         if (studyNameOpt.isPresent()) {
             metaData.setStudyName(studyNameOpt.get());
         }
+        Optional<String> protocolName = parseProtocolName(studyNode);
+        if (protocolName.isPresent()) {
+            metaData.setProtocolName(protocolName.get()) ;
+        }
         metaData.setEventDefinitions(events);
         metaData.setCodeListDefinitions(parseCodeListDefinitions(odm));
         metaData.setItemGroupDefinitions(itemGroups);
@@ -140,7 +144,25 @@ public class GetStudyMetadataResponseHandler extends OCResponseHandler {
         return Optional.empty();
     }
 
-    private static Optional<String> parseStudyName(Node studyNode) {
+    private static Optional<String> parseProtocolName(Node studyNode) {
+        Node globalVariablesNode = parseGlobalVariables(studyNode);
+        return getGlobalVar(globalVariablesNode, "ProtocolName");
+    }
+
+    private static Optional<String> getGlobalVar(Node globalVariablesNode, String globVarName) {
+        if (globalVariablesNode != null) {
+            NodeList globalVariablesNodeChildNodes = globalVariablesNode.getChildNodes();
+            for (int j = 0; j < globalVariablesNodeChildNodes.getLength(); j++) {
+                Node childNode = globalVariablesNodeChildNodes.item(j);
+                if (childNode.getNodeName().equals(globVarName)) {
+                    return Optional.of(childNode.getTextContent());
+                }
+            }
+        }
+        return Optional.empty();
+    }
+
+    private static Node parseGlobalVariables(Node studyNode) {
         Node globalVariablesNode = null;
         NodeList studyNodeChildNodes = studyNode.getChildNodes();
         for (int j = 0; j < studyNodeChildNodes.getLength(); j++) {
@@ -150,17 +172,12 @@ public class GetStudyMetadataResponseHandler extends OCResponseHandler {
                 break;
             }
         }
+        return globalVariablesNode;
+    }
 
-        if (globalVariablesNode != null) {
-            NodeList globalVariablesNodeChildNodes = globalVariablesNode.getChildNodes();
-            for (int j = 0; j < globalVariablesNodeChildNodes.getLength(); j++) {
-                Node childNode = globalVariablesNodeChildNodes.item(j);
-                if (childNode.getNodeName().equals("StudyName")) {
-                    return Optional.of(childNode.getTextContent());
-                }
-            }
-        }
-        return Optional.empty();
+    private static Optional<String> parseStudyName(Node studyNode) {
+        Node globalVariablesNode = parseGlobalVariables(studyNode);
+        return getGlobalVar(globalVariablesNode, "StudyName");
     }
 
     private static boolean parseGenderRequired(Document odm, String mypath) throws XPathExpressionException {

@@ -27,6 +27,16 @@ public class Subject implements OcEntity, UserSubmitted, ODMElement {
     @Column(columnDefinition = "TEXT")
     private String site;
 
+    public String getStudyId() {
+        return studyId;
+    }
+
+    public void setStudyId(String studyId) {
+        this.studyId = studyId;
+    }
+
+    private String studyId; // AKA ProtocolName. To be used for registration, not taken from the user file
+
     @ManyToOne()
     private OcUser owner;
     @ManyToOne()

@@ -32,6 +32,7 @@ public class MetaData {
     @OneToMany(targetEntity = SiteDefinition.class, cascade = CascadeType.ALL)
     private List<SiteDefinition> siteDefinitions = new ArrayList<>();
     private String status;
+    private String protocolName;
 
     public void addEventDefinition(EventDefinition eventDef) {
         eventDefinitions.add(eventDef);
@@ -181,4 +182,12 @@ public class MetaData {
     }
 
     private ProtocolFieldRequirementSetting locationRequirementSetting = ProtocolFieldRequirementSetting.OPTIONAL;
+
+    public void setProtocolName(String protocolName) {
+        this.protocolName = protocolName;
+    }
+
+    public String getProtocolName() {
+        return protocolName;
+    }
 }

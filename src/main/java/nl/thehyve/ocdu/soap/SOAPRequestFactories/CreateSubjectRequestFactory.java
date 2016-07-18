@@ -26,7 +26,7 @@ public class CreateSubjectRequestFactory {
 
     public static JAXBElement<CreateRequest> getCreateRequests(Subject subject) {
         try {
-            Study study = new Study(subject.getStudy(), subject.getStudy(), subject.getStudy());  //TODO: check if it needs to be an identifier or a name
+            Study study = new Study(subject.getStudyId(), subject.getStudy(), subject.getStudy());  //TODO: check if it needs to be an identifier or a name
             SiteDefinition site = new SiteDefinition();
             String siteText = subject.getSite();
             if (siteText != null && !siteText.equals("")) {

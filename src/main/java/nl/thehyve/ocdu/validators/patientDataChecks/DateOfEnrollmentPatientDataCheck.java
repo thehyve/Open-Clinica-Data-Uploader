@@ -14,6 +14,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+import java.util.Set;
 
 /**
  * Created by bo on 6/15/16.
@@ -22,7 +23,8 @@ public class DateOfEnrollmentPatientDataCheck implements PatientDataCheck {
 
     @Override
     public ValidationErrorMessage getCorrespondingError(int index, Subject subject, MetaData metaData,
-                                                        List<StudySubjectWithEventsType> subjectWithEventsTypes) {
+                                                        List<StudySubjectWithEventsType> subjectWithEventsTypes,
+                                                        Set<String> ssidsInData) {
 
         String ssid = subject.getSsid();
         String commonMessage = getCommonErrorMessage(index, ssid);

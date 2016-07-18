@@ -59,7 +59,7 @@ public class ODMUploadController {
     ClinicalDataRepository clinicalDataRepository;
 
     @RequestMapping(value = "/upload", method = RequestMethod.POST)
-    public ResponseEntity<Collection<ValidationErrorMessage>> uploadODM(HttpSession session)  {
+    public ResponseEntity<Collection<ValidationErrorMessage>> uploadODM(HttpSession session) {
         Collection<ValidationErrorMessage> result = new ArrayList<>();
         try {
             UploadSession uploadSession = uploadSessionService.getCurrentUploadSession(session);
@@ -78,13 +78,15 @@ public class ODMUploadController {
 
             Collection<Subject> subjects = subjectRepository.findBySubmission(uploadSession);
             Collection<ValidationErrorMessage> resultSubjectRegistration = new ArrayList<>();
-            if (! subjects.isEmpty()) {
+            if (!subjects.isEmpty()) {
                 resultSubjectRegistration = openClinicaService.registerPatients(userName, pwdHash, url, subjects);
             }
-
+            if (resultSubjectRegistration.size() > 0) {
+                resultSubjectRegistration.add(new ValidationErrorMessage("Event registration aborted due to errors in subject registration"));
+            }
             List<Event> eventList = eventRepository.findBySubmission(uploadSession);
             Collection<ValidationErrorMessage> resultEventRegistration = new ArrayList<>();
-            if (! eventList.isEmpty()) {
+            if (!eventList.isEmpty() && resultSubjectRegistration.size() > 0) {
                 resultEventRegistration = openClinicaService.scheduleEvents(userName, pwdHash, url, metaData, eventList, studySubjectWithEventsTypeList);
             }
 //            List<ClinicalData> clinicalDataList =
@@ -94,8 +96,7 @@ public class ODMUploadController {
             result.addAll(resultSubjectRegistration);
             result.addAll(resultEventRegistration);
             return new ResponseEntity<>(result, HttpStatus.OK);
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
             ValidationErrorMessage errorMessage = new ValidationErrorMessage(e.getMessage());
             result.add(errorMessage);

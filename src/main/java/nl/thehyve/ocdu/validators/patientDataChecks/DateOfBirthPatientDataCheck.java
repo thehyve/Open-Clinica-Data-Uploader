@@ -10,10 +10,7 @@ import org.openclinica.ws.beans.StudySubjectWithEventsType;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.List;
-import java.util.Locale;
-import java.util.Date;
+import java.util.*;
 
 /**
  * Created by bo on 6/15/16.
@@ -21,7 +18,8 @@ import java.util.Date;
 public class DateOfBirthPatientDataCheck implements PatientDataCheck {
     @Override
     public ValidationErrorMessage getCorrespondingError(int index, Subject subject, MetaData metaData,
-                                                        List<StudySubjectWithEventsType> subjectWithEventsTypes) {
+                                                        List<StudySubjectWithEventsType> subjectWithEventsTypes,
+                                                        Set<String> ssidsInData) {
 
         int DOBrequired = metaData.getBirthdateRequired();
         for (int i = 0; i < metaData.getSiteDefinitions().size(); i++) {

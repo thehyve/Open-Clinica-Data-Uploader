@@ -6,6 +6,7 @@ import nl.thehyve.ocdu.models.errors.ValidationErrorMessage;
 import org.openclinica.ws.beans.StudySubjectWithEventsType;
 
 import java.util.List;
+import java.util.Set;
 
 /**
  * Created by piotrzakrzewski on 06/07/16.
@@ -13,7 +14,8 @@ import java.util.List;
 public class SubjectNotRegistered implements PatientDataCheck {
     @Override
     public ValidationErrorMessage getCorrespondingError(int index, Subject subject, MetaData metaData,
-                                                        List<StudySubjectWithEventsType> subjectWithEventsTypes) {
+                                                        List<StudySubjectWithEventsType> subjectWithEventsTypes,
+                                                        Set<String> ssidsInData) {
         for (StudySubjectWithEventsType subjectInfo : subjectWithEventsTypes) {
             if (subjectInfo.getLabel().equals(subject.getSsid())) {
                 return getError(index, subject, metaData);

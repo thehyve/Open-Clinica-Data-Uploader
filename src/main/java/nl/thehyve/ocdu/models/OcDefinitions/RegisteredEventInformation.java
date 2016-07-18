@@ -1,6 +1,6 @@
 package nl.thehyve.ocdu.models.OcDefinitions;
 
-import nl.thehyve.ocdu.models.OCEntities.Event;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.openclinica.ws.beans.EventResponseType;
 import org.openclinica.ws.beans.EventsType;
@@ -8,7 +8,13 @@ import org.openclinica.ws.beans.SiteRefType;
 import org.openclinica.ws.beans.StudyRefType;
 import org.openclinica.ws.beans.StudySubjectWithEventsType;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
@@ -52,31 +58,43 @@ public class RegisteredEventInformation {
         return ret;
     }
 
-    public static Map<String, List<EventDefinition>> getMissingEventsPerSubject(MetaData metaData,
-                                                                                List<StudySubjectWithEventsType> studySubjectWithEventsTypeList,
-                                                                                Set<ImmutablePair> patientsInEvent) {
-        Map<String, List<EventDefinition>> ret = new HashMap<>();
-        Map<String, EventDefinition> evDefsByname = new HashMap<>();
-        Map<String, EventDefinition> evDefsByOID = new HashMap<>();
+    public static Collection<EventToSchedule> determineEventsToSchedule(MetaData metaData,
+                                                                        List<StudySubjectWithEventsType> studySubjectWithEventsTypeList,
+                                                                        Set<ImmutablePair> patientsInEvent) {
+        Collection<EventToSchedule> ret = new HashSet<>();
+
+        Map<String, String> eventNameToOIDMap = new HashMap<>();
+        Map<String, String> eventOIDToNameMap = new HashMap<>();
         metaData.getEventDefinitions().forEach(eventDefinition -> {
-            evDefsByname.put(eventDefinition.getName(), eventDefinition);
-            evDefsByOID.put(eventDefinition.getStudyEventOID(), eventDefinition);
+            eventNameToOIDMap.put(eventDefinition.getName(), eventDefinition.getStudyEventOID());
+            eventOIDToNameMap.put(eventDefinition.getStudyEventOID(), eventDefinition.getName());
         });
-        Map<String, List<EventDefinition>> alreadyRegistered = new HashMap<>(); //SSiD->Events
-        studySubjectWithEventsTypeList.forEach(studySubjectWithEventsType -> {
-            List<EventDefinition> regEvents = studySubjectWithEventsType.getEvents().getEvent()
-                    .stream().map(eventResponseType -> evDefsByOID.get(eventResponseType.getEventDefinitionOID()))
-                    .collect(Collectors.toList());
-            alreadyRegistered.put(studySubjectWithEventsType.getLabel(), regEvents);
-        });
+
+        Collection<EventToSchedule> alreadyRegistered = new HashSet<>();
+        for (StudySubjectWithEventsType studySubjectWithEventsType : studySubjectWithEventsTypeList) {
+            List<EventResponseType> regEvents = studySubjectWithEventsType.getEvents().getEvent();
+            String studySubjectID = studySubjectWithEventsType.getSubject().getUniqueIdentifier();
+            for (EventResponseType eventResponseType : regEvents) {
+                String eventOID = eventResponseType.getEventDefinitionOID();
+                String eventName = eventOIDToNameMap.get(eventOID);
+                String eventRepeatNumber = eventResponseType.getOccurrence();
+                EventToSchedule eventAlreadyScheduled = new EventToSchedule(studySubjectID, eventOID, eventName, eventRepeatNumber);
+                alreadyRegistered.add(eventAlreadyScheduled);
+            }
+        }
+
         patientsInEvent.stream().forEach(patientInEvent -> {
-            String ssid = (String) patientInEvent.left;
-            EventDefinition evnt = evDefsByname.get(patientInEvent.right);
-            List<EventDefinition> registeredEvents = alreadyRegistered.get(ssid);
-            if (registeredEvents == null) registeredEvents = new ArrayList<>();
-            if (!registeredEvents.contains(evnt)) {
-                if (!ret.containsKey(ssid)) ret.put(ssid, new ArrayList<>());
-                ret.get(ssid).add(evnt);
+            String studySubjectID = (String) patientInEvent.left;
+            String eventName = (String) patientInEvent.right;
+            String eventRepeatNumber = StringUtils.substringAfterLast(eventName, "#");
+            if (StringUtils.isEmpty(eventRepeatNumber)) {
+                eventRepeatNumber = "1";
+            }
+            eventName = StringUtils.substringBeforeLast(eventName, "#");
+            String eventOID = eventNameToOIDMap.get(eventName);
+            EventToSchedule eventToSchedule = new EventToSchedule(studySubjectID, eventOID, eventName, eventRepeatNumber);
+            if (! alreadyRegistered.contains(eventToSchedule)) {
+               ret.add(eventToSchedule);
             }
         });
         return ret;

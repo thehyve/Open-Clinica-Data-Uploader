@@ -2,6 +2,7 @@ package nl.thehyve.ocdu.factories;
 
 import nl.thehyve.ocdu.models.OCEntities.Event;
 import nl.thehyve.ocdu.models.OcDefinitions.EventDefinition;
+import nl.thehyve.ocdu.models.OcDefinitions.EventToSchedule;
 import nl.thehyve.ocdu.models.OcDefinitions.MetaData;
 import nl.thehyve.ocdu.models.OcDefinitions.ProtocolFieldRequirementSetting;
 import nl.thehyve.ocdu.models.OcDefinitions.RegisteredEventInformation;
@@ -100,7 +101,8 @@ public class EventDataFactory extends UserSubmittedDataFactory {
     }
 
     public List<String> generateEventSchedulingTemplate(MetaData metaData, List<StudySubjectWithEventsType> studySubjectWithEventsTypeList, Set<ImmutablePair> patientsInEvent) {
-        Map<String, List<EventDefinition>> eventsPerSubject = RegisteredEventInformation.getMissingEventsPerSubject(metaData, studySubjectWithEventsTypeList, patientsInEvent);
+        Collection<EventToSchedule> eventToScheduleList =
+                RegisteredEventInformation.determineEventsToSchedule(metaData, studySubjectWithEventsTypeList, patientsInEvent);
 
         List<String> result = new ArrayList<>();
         String delim = "\t";
@@ -118,13 +120,10 @@ public class EventDataFactory extends UserSubmittedDataFactory {
         header.add("Repeat Number");
         result.add(String.join(delim, header) + "\n");
 
-        for (String ssid : eventsPerSubject.keySet()) {
-            List<EventDefinition> events = eventsPerSubject.get(ssid);
-            for (EventDefinition ed : events) {
-                String eventname = ed.getName();
+        for (EventToSchedule eventToSchedule : eventToScheduleList) {
                 List<String> row = new ArrayList<>();
-                row.add(ssid);//study subject id
-                row.add(eventname);//event name
+                row.add(eventToSchedule.getStudySubjectID());//study subject id
+                row.add(eventToSchedule.getEventName());//event name
                 row.add(metaData.getStudyName());//study
                 if (isLocationInTemplate(metaData)) {
                     row.add("");//location
@@ -133,11 +132,9 @@ public class EventDataFactory extends UserSubmittedDataFactory {
                 row.add("");//Start Time
                 row.add("");//End Date
                 row.add("");//End Time
-                row.add("");//Repeat Number
+                row.add(eventToSchedule.getRepeatNumber());//Repeat Number
                 result.add(String.join(delim, row) + "\n");
-            }//for
-        }//for
-
+        }
         return result;
     }
 

@@ -1,8 +1,7 @@
 package nl.thehyve.ocdu.models.OcDefinitions;
 
 import nl.thehyve.ocdu.TestUtils;
-import nl.thehyve.ocdu.models.OcUser;
-import nl.thehyve.ocdu.models.UploadSession;
+import nl.thehyve.ocdu.models.OCEntities.Event;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -35,14 +34,22 @@ public class RegisteredEventInformationTests {
     }
 
     @Test
-    public void testMissingEventPerSubject() {
+    public void testDetermineEventsToSchedule() {
         Set<ImmutablePair> patInEv = new HashSet<>();
         patInEv.add(new ImmutablePair("EV-00003", "EVENTFUL"));
-        Map<String, List<EventDefinition>> missingEventsInOpenClinicaPerSubject =
-                RegisteredEventInformation.getMissingEventsPerSubject(metaData, studySubjectWithEventsTypeList, patInEv);
-        List<EventDefinition> missingList = missingEventsInOpenClinicaPerSubject.get("EV-00003");
-        assertEquals(1, missingList.size());
-        assertEquals("SE_EVENTFUL", missingList.get(0).getStudyEventOID());
+        patInEv.add(new ImmutablePair("EV-00005", "REPEATING_EVENT#3"));
+        // the next 2 events are already present in the listAllByStudyResponse.xml file
+        patInEv.add(new ImmutablePair("EVS-00001", "EVENTFUL"));
+        patInEv.add(new ImmutablePair("EV-00006", "REPEATING_EVENT#2"));
+        Collection<EventToSchedule> eventsToScheduleList =
+                RegisteredEventInformation.determineEventsToSchedule(metaData, studySubjectWithEventsTypeList, patInEv);
+
+        assertEquals(2, eventsToScheduleList.size());
+        EventToSchedule expected = new EventToSchedule("EV-00003", "SE_EVENTFUL", "EVENTFUL", "1");
+        assertEquals(true, eventsToScheduleList.contains(expected));
+
+        expected = new EventToSchedule("EV-00005", "SE_REPEATINGEVENT", "REPEATING_EVENT", "3");
+        assertEquals(true, eventsToScheduleList.contains(expected));
     }
 
     @BeforeClass
@@ -51,6 +58,7 @@ public class RegisteredEventInformationTests {
         metaData = new MetaData();
         EventDefinition eventDefinitionRepeatingEvent = new EventDefinition();
         eventDefinitionRepeatingEvent.setStudyEventOID("SE_REPEATINGEVENT");
+        eventDefinitionRepeatingEvent.setName("REPEATING_EVENT");
 
         EventDefinition eventDefinitionEvent = new EventDefinition();
         eventDefinitionEvent.setStudyEventOID("SE_EVENTFUL");

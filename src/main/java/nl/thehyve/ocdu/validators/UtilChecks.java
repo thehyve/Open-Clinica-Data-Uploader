@@ -79,6 +79,9 @@ public class UtilChecks {
 
 
     public static boolean isInteger(String input) {
+        if (containsAlphaNumeric(input)) {
+            return false;
+        }
         if (input.contains(".") || input.contains(",")) {
             return false;
         }
@@ -91,6 +94,9 @@ public class UtilChecks {
     }
 
     public static boolean isFloat(String input) {
+        if (containsAlphaNumeric(input)) {
+            return false;
+        }
         if (!input.contains(".")) {
             return false;
         }
@@ -103,6 +109,9 @@ public class UtilChecks {
         } catch (NumberFormatException e) {
             return false;
         }
+    }
+    private static boolean containsAlphaNumeric(String input) {
+        return input.matches(".*[A-z].*");
     }
 
 }

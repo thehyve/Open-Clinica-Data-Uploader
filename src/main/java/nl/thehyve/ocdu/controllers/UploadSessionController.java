@@ -5,10 +5,7 @@ import nl.thehyve.ocdu.models.OcUser;
 import nl.thehyve.ocdu.models.UploadSession;
 import nl.thehyve.ocdu.repositories.ClinicalDataRepository;
 import nl.thehyve.ocdu.repositories.UploadSessionRepository;
-import nl.thehyve.ocdu.services.DataService;
-import nl.thehyve.ocdu.services.OcUserService;
-import nl.thehyve.ocdu.services.UploadSessionNotFoundException;
-import nl.thehyve.ocdu.services.UploadSessionService;
+import nl.thehyve.ocdu.services.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,6 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.servlet.http.HttpSession;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import static org.springframework.http.HttpStatus.OK;
 
@@ -70,16 +68,36 @@ public class UploadSessionController {
             UploadSession currentUploadSession = uploadSessionService.getCurrentUploadSession(session);
             UploadSession.Step _step;
             switch (step) {
-                case "mapping": _step = UploadSession.Step.MAPPING; break;
-                case "feedback-data": _step = UploadSession.Step.FEEDBACK_DATA; break;
-                case "subjects": _step = UploadSession.Step.SUBJECTS; break;
-                case "feedback-subjects": _step = UploadSession.Step.FEEDBACK_SUBJECTS; break;
-                case "events": _step = UploadSession.Step.EVENTS; break;
-                case "feedback-events": _step = UploadSession.Step.FEEDBACK_EVENTS; break;
-                case "pre-odm-upload": _step = UploadSession.Step.PRE_ODM_UPLOAD; break;
-                case "odm-upload": _step = UploadSession.Step.ODM_UPLOAD; break;
-                case "final": _step = UploadSession.Step.FINAL; break;
-                default: _step = UploadSession.Step.MAPPING; break;
+                case "mapping":
+                    _step = UploadSession.Step.MAPPING;
+                    break;
+                case "feedback-data":
+                    _step = UploadSession.Step.FEEDBACK_DATA;
+                    break;
+                case "subjects":
+                    _step = UploadSession.Step.SUBJECTS;
+                    break;
+                case "feedback-subjects":
+                    _step = UploadSession.Step.FEEDBACK_SUBJECTS;
+                    break;
+                case "events":
+                    _step = UploadSession.Step.EVENTS;
+                    break;
+                case "feedback-events":
+                    _step = UploadSession.Step.FEEDBACK_EVENTS;
+                    break;
+                case "pre-odm-upload":
+                    _step = UploadSession.Step.PRE_ODM_UPLOAD;
+                    break;
+                case "odm-upload":
+                    _step = UploadSession.Step.ODM_UPLOAD;
+                    break;
+                case "final":
+                    _step = UploadSession.Step.FINAL;
+                    break;
+                default:
+                    _step = UploadSession.Step.MAPPING;
+                    break;
             }
             currentUploadSession.setStep(_step);
             uploadSessionRepository.save(currentUploadSession);
@@ -93,7 +111,7 @@ public class UploadSessionController {
     @Autowired
     ClinicalDataRepository clinicalDataRepository;
 
-    @RequestMapping(value = "/delete", method=RequestMethod.POST)
+    @RequestMapping(value = "/delete", method = RequestMethod.POST)
     public ResponseEntity<?> deleteSubmission(HttpSession session) {
         try {
             UploadSession currentUploadSession = uploadSessionService.getCurrentUploadSession(session);
@@ -112,19 +130,17 @@ public class UploadSessionController {
     public ResponseEntity<?> deleteSubmissionById(@RequestParam(value = "id") long longsessionid, HttpSession session) {
         try {
             UploadSession selectedSession = uploadSessionRepository.findOne(longsessionid);
-            if(selectedSession != null) {
+            if (selectedSession != null) {
                 OcUser currentOcUser = ocUserService.getCurrentOcUser(session);
                 long userId1 = currentOcUser.getId();
                 long userId2 = selectedSession.getOwner().getId();
-                if(userId1 == userId2) {
+                if (userId1 == userId2) {
                     List<ClinicalData> bySubmission = clinicalDataRepository.findBySubmission(selectedSession);
                     clinicalDataRepository.delete(bySubmission);
                     uploadSessionRepository.delete(selectedSession);
                     return new ResponseEntity<>(HttpStatus.OK);
-                }
-                else return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-            }
-            else return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+                } else return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            } else return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 
         } catch (UploadSessionNotFoundException e) {
             e.printStackTrace();
@@ -208,6 +224,22 @@ public class UploadSessionController {
             UploadSession currentUploadSession = uploadSessionService.getCurrentUploadSession(session);
             List<String> userItems = dataService.getUserItems(currentUploadSession);
             return new ResponseEntity<>(userItems, OK);
+        } catch (UploadSessionNotFoundException e) {
+            e.printStackTrace();
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+
+    }
+
+    @Autowired
+    MappingService mappingService;
+
+    @RequestMapping(value = "/current-mapping")
+    public ResponseEntity<Map<String, String>> getCurrentMapping(HttpSession session) {
+        try {
+            UploadSession currentUploadSession = uploadSessionService.getCurrentUploadSession(session);
+            Map<String, String> mapping = mappingService.getCurrentMapping(currentUploadSession);
+            return new ResponseEntity<>(mapping, OK);
         } catch (UploadSessionNotFoundException e) {
             e.printStackTrace();
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);

@@ -22,25 +22,89 @@ $(function () {
     var oc_tip;
     var usr_tip;
 
-    
+
+    function find_oc_item(oc_label) {
+        var found_oc_item = null;
+        $('.oc-item').each(function (index, _oc_item) {
+            var oc_item = $(_oc_item);
+            var data_oc_label = oc_item.attr('data-oc-label');
+            if (oc_label === data_oc_label) {
+                found_oc_item = oc_item;
+            }
+        });
+
+        return found_oc_item;
+    }
+
+    function find_usr_item(usr_label) {
+        var found_usr_item = null;
+        $('.usr-item').each(function (index, _usr_item) {
+            var usr_item = $(_usr_item);
+            var data_usr_label = usr_item.attr('data-usr-label');
+            if (usr_label === data_usr_label) {
+                found_usr_item = usr_item;
+            }
+        });
+
+        return found_usr_item;
+    }
+
+    function map_usr_item_to_oc_item(oc_item, usr_item) {
+
+        var oc_label = oc_item.attr('data-oc-label');
+        var oc_id = oc_item.attr('id');
+        var usr_label = usr_item.attr('data-usr-label');
+        if (mapping[oc_label] == null) { // can be mapped
+            mapping[oc_label] = usr_label;
+            var usr_id = usr_item.attr('id');
+            oc_usr_id_mapping[oc_id] = usr_id;
+            var html = usr_label_mapping[usr_label];
+            oc_item.html(html);
+            usr_item.hide();
+            mapped_usr_item_ids.push(usr_id);
+        }
+    }
+
+    function build_mapping() {
+        $.ajax({
+            url: baseApp + "/submission/current-mapping",
+            type: "GET",
+            success: function (_mapping) {
+                for (var oc_label in _mapping) {
+                    var usr_label = _mapping[oc_label];
+                    var oc_item = find_oc_item(oc_label);
+                    var usr_item = find_usr_item(usr_label);
+                    if (oc_item !== null && usr_item !== null) {
+                        map_usr_item_to_oc_item(oc_item, usr_item);
+                    }
+                }
+            },
+            error: function (jqXHR, textStatus, errorThrown) {
+                console.log(jqXHR.status + " " + textStatus + " " + errorThrown);
+            }
+        });
+    }
+
     function build_filters() {
         $('#oc-filter-input').keyup(function () {
             var query = $(this).val().toLowerCase();
-            if(query == '') {
+            if (query == '') {
                 $('.oc-label-item').each(function (index, obj) {
                     $(obj).show();
-                    $('#oc_'+index).show();
+                    $('#oc_' + index).show();
                 });
             }
             else {
                 $('.oc-label-item').each(function (index, obj) {
                     var item = $(obj);
                     var label = item.attr('data-oc-label').toLowerCase();
-                    if(label.indexOf(query) > -1) {
-                        item.show(); $('#oc_'+index).show();
+                    if (label.indexOf(query) > -1) {
+                        item.show();
+                        $('#oc_' + index).show();
                     }
-                    else{
-                        item.hide(); $('#oc_'+index).hide();
+                    else {
+                        item.hide();
+                        $('#oc_' + index).hide();
                     }
                 });
             }
@@ -48,22 +112,22 @@ $(function () {
 
         $('#usr-filter-input').keyup(function () {
             var query = $(this).val().toLowerCase();
-            if(query == '') {
+            if (query == '') {
                 $('.usr-item').each(function (index, obj) {
                     var usr_id = $(obj).attr('id');
-                    if(mapped_usr_item_ids.indexOf(usr_id) == -1) $(obj).show();
+                    if (mapped_usr_item_ids.indexOf(usr_id) == -1) $(obj).show();
                 });
             }
             else {
                 $('.usr-item').each(function (index, obj) {
                     var item = $(obj);
                     var usr_id = item.attr('id');
-                    if(mapped_usr_item_ids.indexOf(usr_id) == -1) {
+                    if (mapped_usr_item_ids.indexOf(usr_id) == -1) {
                         var label = item.attr('data-usr-label').toLowerCase();
-                        if(label.indexOf(query) > -1) {
+                        if (label.indexOf(query) > -1) {
                             item.show();
                         }
-                        else{
+                        else {
                             item.hide();
                         }
                     }
@@ -95,7 +159,7 @@ $(function () {
                         .transition().duration(200)
                         .style('opacity', .95);
                     oc_tip
-                        .html('<span style=\"'+tip_style+'\">' + oc_label + '</span>');
+                        .html('<span style=\"' + tip_style + '\">' + oc_label + '</span>');
 
                     var tipBox = oc_tip[0][0].getBoundingClientRect();
                     var top = +box.top - 3;
@@ -129,7 +193,7 @@ $(function () {
                         .style('opacity', .95);
 
                     usr_tip
-                        .html('<span style=\"'+tip_style+'\">' + usr_label + '</span>')
+                        .html('<span style=\"' + tip_style + '\">' + usr_label + '</span>')
                         .style('top', top + 'px')
                         .style('left', left + 'px');
                 }
@@ -156,7 +220,7 @@ $(function () {
                         .style('opacity', .95);
 
                     usr_tip
-                        .html('<span style=\"'+tip_style+'\"\>' + usr_label + '</span>')
+                        .html('<span style=\"' + tip_style + '\"\>' + usr_label + '</span>')
                         .style('top', top + 'px')
                         .style('left', left + 'px');
                 }
@@ -177,7 +241,7 @@ $(function () {
             var usr_id = oc_usr_id_mapping[oc_id];
             $('#' + usr_id).show();
             oc_usr_id_mapping[oc_id] = null;
-            mapped_usr_item_ids.splice($.inArray(usr_id, mapped_usr_item_ids),1);
+            mapped_usr_item_ids.splice($.inArray(usr_id, mapped_usr_item_ids), 1);
         }
     }
 
@@ -197,7 +261,7 @@ $(function () {
                 var oc_obj = $(this);
                 var oc_label = oc_obj.attr('data-oc-label');
                 var oc_id = oc_obj.attr('id');
-                if(usr_label == oc_label) {
+                if (usr_label == oc_label) {
                     mapping[oc_label] = usr_label;
                     oc_usr_id_mapping[oc_id] = usr_id;
                     var short_usr_label = usr_label_mapping[usr_label];
@@ -281,8 +345,8 @@ $(function () {
 
     function shorten_label(label) {
         var slabel = label;
-        if(slabel.length > MAX_NUM_LABEL_CHARS) {
-            slabel = slabel.substring(0,MAX_NUM_LABEL_CHARS);
+        if (slabel.length > MAX_NUM_LABEL_CHARS) {
+            slabel = slabel.substring(0, MAX_NUM_LABEL_CHARS);
             slabel += '...';
         }
         return slabel;
@@ -316,10 +380,11 @@ $(function () {
         //build tips and filters
         build_tips();
         build_filters();
+        build_mapping();
     }
 
     function build_usr_list() {
-        if(!TESTING) {
+        if (!TESTING) {
             $.ajax({
                 url: baseApp + "/submission/user-items",
                 type: "GET",
@@ -335,19 +400,9 @@ $(function () {
     }
 
     function handle_usr_item_drop(event, ui) {
-
-        var oc_label = $(this).attr('data-oc-label');
-        var oc_id = $(this).attr('id');
-        var usr_label = ui.draggable.attr('data-usr-label');
-        if (mapping[oc_label] == null) { // can be mapped
-            mapping[oc_label] = usr_label;
-            var usr_id = ui.draggable.attr('id');
-            oc_usr_id_mapping[oc_id] = usr_id;
-            var html = usr_label_mapping[usr_label];
-            $(this).html(html);
-            ui.draggable.hide();
-            mapped_usr_item_ids.push(usr_id);
-        }
+        var oc_item = $(this);
+        var usr_item = ui.draggable;
+        map_usr_item_to_oc_item(oc_item, usr_item);
     }
 
     function handle_oc_item_click() {
@@ -363,12 +418,12 @@ $(function () {
         oc_path.push(path_items[1]);//crf
         oc_path.push(path_items[2]);//crf version
         //<span class="label label-warning">Warning</span>
-        var event_span = '<span class="label label-warning">'+path_items[0]+'</span>';
-        var crf_span = '<span class="label label-warning">'+path_items[1]+'</span>';
-        var crfv_span = '<span class="label label-warning">'+path_items[2]+'</span>';
+        var event_span = '<span class="label label-warning">' + path_items[0] + '</span>';
+        var crf_span = '<span class="label label-warning">' + path_items[1] + '</span>';
+        var crfv_span = '<span class="label label-warning">' + path_items[2] + '</span>';
 
         var path_html = 'Event: ' + event_span + ' &#8594; CRF: ' + crf_span + ' &#8594; CRF version: ' + crfv_span;
-        $('#path-area').html('<h4><div>'+path_html+'</div></h4><br>');
+        $('#path-area').html('<h4><div>' + path_html + '</div></h4><br>');
 
         for (var i = 0; i < oc_list.length; i++) {
             var arr = oc_list[i].split('\\');
@@ -399,7 +454,7 @@ $(function () {
 
 
     function build_oc_list() {
-        if(!TESTING) {
+        if (!TESTING) {
             $.ajax({
                 url: baseApp + "/metadata/targetedCrf",
                 type: "GET",
@@ -409,21 +464,21 @@ $(function () {
                 }
             });
         }
-        else{
+        else {
             callback_build_oc_list(oc_list);
         }
     }
 
     function test() {
-        if(TESTING) {
+        if (TESTING) {
             oc_list = [];
             usr_list = [];
             var delim = '\\';
             var head = 'event' + delim + 'crf' + delim + 'version' + delim;
 
-            oc_list.push(head+'long_long_long_long_long_long_long_long_long_OC_label');
-            for(var i=0; i<100; i++) {
-                var oclabel = head+'oc_label_'+i;
+            oc_list.push(head + 'long_long_long_long_long_long_long_long_long_OC_label');
+            for (var i = 0; i < 100; i++) {
+                var oclabel = head + 'oc_label_' + i;
                 oc_list.push(oclabel);
             }
 
@@ -438,12 +493,13 @@ $(function () {
             usr_list.push('XXXXXX_XPQXXXXXXXXXXXXXXX');//25 Xs
             usr_list.push('xxxxxxxxxxxxxxxxxxxxxxxxx');//25 Xs
 
-            for(var i=0; i<50; i++) {
-                var usrlabel = 'usr_label_'+i;
+            for (var i = 0; i < 50; i++) {
+                var usrlabel = 'usr_label_' + i;
                 usr_list.push(usrlabel);
             }
         }
     }
+
 
     function init() {
         _SESSION_CONFIG = JSON.parse(localStorage.getItem("session_config"));
@@ -451,7 +507,7 @@ $(function () {
         test();
         build_oc_list();
         //disable "Apply the mapping file" button if MAPPING_FILE_ENABLED (config.js) is false
-        if(!_SESSION_CONFIG[_CURRENT_SESSION_NAME]['MAPPING_FILE_ENABLED']) {
+        if (!_SESSION_CONFIG[_CURRENT_SESSION_NAME]['MAPPING_FILE_ENABLED']) {
             $('#apply-map-btn').hide();
         }
     }

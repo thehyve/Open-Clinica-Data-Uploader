@@ -73,7 +73,7 @@ public class TemplateController {
     }
 
     @RequestMapping(value = "/get-event-template", method = RequestMethod.GET)
-    public ResponseEntity<List<String>> getEventtTemplate(HttpSession session) {
+    public ResponseEntity<List<String>> getEventTemplate(HttpSession session) {
         try {
             UploadSession uploadSession = uploadSessionService.getCurrentUploadSession(session);
             OcUser user = ocUserService.getCurrentOcUser(session);

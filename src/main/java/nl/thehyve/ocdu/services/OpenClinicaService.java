@@ -250,8 +250,13 @@ public class OpenClinicaService {
                 }
                 eventType.setEventDefinitionOID(eventOID);
                 eventType.setLocation(event.getLocation());
-                XMLGregorianCalendar startDate = SoapUtils.getFullXmlDate((GregorianCalendar) GregorianCalendar.getInstance());
+                XMLGregorianCalendar startDate = SoapUtils.getFullXmlDate(event.getStartDate());
                 eventType.setStartDate(startDate);
+
+                XMLGregorianCalendar endDate = SoapUtils.getFullXmlDate(event.getEndDate());
+                eventType.setEndDate(endDate);
+
+                // TODO fix the start and end times
                 eventTypeList.add(eventType);
             }
         }

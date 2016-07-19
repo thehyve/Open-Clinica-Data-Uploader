@@ -86,7 +86,7 @@ public class ODMUploadController {
             }
             List<Event> eventList = eventRepository.findBySubmission(uploadSession);
             Collection<ValidationErrorMessage> resultEventRegistration = new ArrayList<>();
-            if (!eventList.isEmpty() && resultSubjectRegistration.size() > 0) {
+            if (!eventList.isEmpty() && resultSubjectRegistration.size() == 0) {
                 resultEventRegistration = openClinicaService.scheduleEvents(userName, pwdHash, url, metaData, eventList, studySubjectWithEventsTypeList);
             }
 //            List<ClinicalData> clinicalDataList =

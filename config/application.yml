@@ -2,10 +2,10 @@ OpenClinicaEnvironments:
   ocEnvironments:
      -
          url: http://ocdu-openclinica-dev.thehyve.net/OpenClinica-ws
-         name: oc-dev
+         name: Development Server The Hyve
          version: 3.6
      -
-         url: http://ocdu-openclinica-test.thehyve.net/OpenClinica-ws
-         name: oc-test
+         url: http://ocdu-openclinica-acc.thehyve.net/OpenClinica-ws
+         name: Acceptance Server The Hyve
          version: 3.6
 

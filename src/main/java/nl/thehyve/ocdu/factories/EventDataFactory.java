@@ -1,7 +1,6 @@
 package nl.thehyve.ocdu.factories;
 
 import nl.thehyve.ocdu.models.OCEntities.Event;
-import nl.thehyve.ocdu.models.OcDefinitions.EventDefinition;
 import nl.thehyve.ocdu.models.OcDefinitions.MetaData;
 import nl.thehyve.ocdu.models.OcDefinitions.ProtocolFieldRequirementSetting;
 import nl.thehyve.ocdu.models.OcDefinitions.RegisteredEventInformation;
@@ -13,7 +12,12 @@ import org.openclinica.ws.beans.StudySubjectWithEventsType;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -100,7 +104,8 @@ public class EventDataFactory extends UserSubmittedDataFactory {
     }
 
     public List<String> generateEventSchedulingTemplate(MetaData metaData, List<StudySubjectWithEventsType> studySubjectWithEventsTypeList, Set<ImmutablePair> patientsInEvent) {
-        Map<String, List<EventDefinition>> eventsPerSubject = RegisteredEventInformation.getMissingEventsPerSubject(metaData, studySubjectWithEventsTypeList, patientsInEvent);
+        Collection<Event> eventToScheduleList =
+                RegisteredEventInformation.determineEventsToSchedule(metaData, studySubjectWithEventsTypeList, patientsInEvent);
 
         List<String> result = new ArrayList<>();
         String delim = "\t";
@@ -118,13 +123,10 @@ public class EventDataFactory extends UserSubmittedDataFactory {
         header.add("Repeat Number");
         result.add(String.join(delim, header) + "\n");
 
-        for (String ssid : eventsPerSubject.keySet()) {
-            List<EventDefinition> events = eventsPerSubject.get(ssid);
-            for (EventDefinition ed : events) {
-                String eventname = ed.getName();
+        for (Event eventToSchedule : eventToScheduleList) {
                 List<String> row = new ArrayList<>();
-                row.add(ssid);//study subject id
-                row.add(eventname);//event name
+                row.add(eventToSchedule.getSsid());//study subject id
+                row.add(eventToSchedule.getEventName());//event name
                 row.add(metaData.getStudyName());//study
                 if (isLocationInTemplate(metaData)) {
                     row.add("");//location
@@ -133,11 +135,9 @@ public class EventDataFactory extends UserSubmittedDataFactory {
                 row.add("");//Start Time
                 row.add("");//End Date
                 row.add("");//End Time
-                row.add("");//Repeat Number
+                row.add(eventToSchedule.getRepeatNumber());//Repeat Number
                 result.add(String.join(delim, row) + "\n");
-            }//for
-        }//for
-
+        }
         return result;
     }
 

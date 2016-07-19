@@ -37,8 +37,11 @@ public class GenderPatientDataCheck implements PatientDataCheck {
         ValidationErrorMessage error = null;
         if (!isGenderRequired && !StringUtils.isBlank(subject.getGender())) {
             error = new ValidationErrorMessage(commonMessage + " It is not allowed to upload gender by the study protocol");
-        } else if (!StringUtils.isBlank(subject.getGender()) || isGenderRequired) {
-            if (!subject.getGender().equals("m") & !subject.getGender().equals("f")) {
+        } else if (isGenderRequired) {
+            if(subject.getGender() == null || StringUtils.isBlank(subject.getGender()) ) {
+                error = new ValidationErrorMessage(commonMessage + "Gender needs to be specified as m or f. ");
+            }
+            else if(!subject.getGender().equals("m") && !subject.getGender().equals("f")) {
                 error = new ValidationErrorMessage(commonMessage + "Gender needs to be specified as m or f. ");
             }
         }

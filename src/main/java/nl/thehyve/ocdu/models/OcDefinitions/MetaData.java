@@ -1,11 +1,11 @@
 package nl.thehyve.ocdu.models.OcDefinitions;
 
+import nl.thehyve.ocdu.models.OCEntities.PersonIDUsage;
 import org.apache.commons.lang3.StringUtils;
 
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * Created by piotrzakrzewski on 01/05/16.
@@ -129,7 +129,17 @@ public class MetaData {
 
     private boolean genderRequired;
 
+    private PersonIDUsage personIDUsage;
+
     private int birthdateRequired;
+
+    public PersonIDUsage getPersonIDUsage() {
+        return personIDUsage;
+    }
+
+    public void setPersonIDUsage(PersonIDUsage personIDUsage) {
+        this.personIDUsage = personIDUsage;
+    }
 
     public boolean isGenderRequired() {
         return genderRequired;

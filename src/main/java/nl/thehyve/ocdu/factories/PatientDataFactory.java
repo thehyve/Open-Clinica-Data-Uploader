@@ -1,5 +1,6 @@
 package nl.thehyve.ocdu.factories;
 
+import nl.thehyve.ocdu.models.OCEntities.PersonIDUsage;
 import nl.thehyve.ocdu.models.OCEntities.Subject;
 import nl.thehyve.ocdu.models.OcDefinitions.MetaData;
 import nl.thehyve.ocdu.models.OcUser;
@@ -93,6 +94,7 @@ public class PatientDataFactory extends UserSubmittedDataFactory {
         header.add(STUDY_SUBJECT_ID);
         if (metadata.isGenderRequired()) header.add(GENDER);
         if (metadata.getBirthdateRequired() != 3) header.add(DATE_OF_BIRTH);
+        if (metadata.getPersonIDUsage() != PersonIDUsage.NOT_USED) header.add(PERSON_ID);
         header.add(DATE_OF_ENROLLMENT);
         header.add(SECONDARY_ID);
         header.add(STUDY);

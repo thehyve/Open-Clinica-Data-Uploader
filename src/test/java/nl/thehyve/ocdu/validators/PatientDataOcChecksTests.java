@@ -1,6 +1,7 @@
 package nl.thehyve.ocdu.validators;
 
 import nl.thehyve.ocdu.TestUtils;
+import nl.thehyve.ocdu.models.OCEntities.PersonIDUsage;
 import nl.thehyve.ocdu.models.OCEntities.Subject;
 import nl.thehyve.ocdu.models.OcDefinitions.MetaData;
 import nl.thehyve.ocdu.models.OcDefinitions.SiteDefinition;
@@ -22,6 +23,7 @@ import java.util.List;
 import java.util.Set;
 
 import static org.hamcrest.Matchers.*;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertThat;
 
@@ -141,10 +143,33 @@ public class PatientDataOcChecksTests {
         subject.setSsid("1234");
 
         //person id is provided
-        subject.setPersonId("1357");
+        metadata.setPersonIDUsage(PersonIDUsage.REQUIRED);
+        subject.setPersonId("");
         PersonIdPatientDataCheck check = new PersonIdPatientDataCheck();
         ValidationErrorMessage error = check.getCorrespondingError(0, subject, metadata, testSubjectWithEventsTypeList, presentInData);
         assertThat(error.getMessage(), containsString("Person"));
+
+        metadata.setPersonIDUsage(PersonIDUsage.OPTIONAL);
+        error = check.getCorrespondingError(0, subject, metadata, testSubjectWithEventsTypeList, presentInData);
+        assertEquals(error, null);
+
+        metadata.setPersonIDUsage(PersonIDUsage.NOT_USED);
+        error = check.getCorrespondingError(0, subject, metadata, testSubjectWithEventsTypeList, presentInData);
+        assertEquals(error, null);
+
+        metadata.setPersonIDUsage(PersonIDUsage.REQUIRED);
+        subject.setPersonId("1345");
+        error = check.getCorrespondingError(0, subject, metadata, testSubjectWithEventsTypeList, presentInData);
+        assertEquals(error, null);
+
+        metadata.setPersonIDUsage(PersonIDUsage.OPTIONAL);
+        error = check.getCorrespondingError(0, subject, metadata, testSubjectWithEventsTypeList, presentInData);
+        assertEquals(error, null);
+
+        metadata.setPersonIDUsage(PersonIDUsage.NOT_USED);
+        error = check.getCorrespondingError(0, subject, metadata, testSubjectWithEventsTypeList, presentInData);
+        assertEquals(error, null);
+
     }
 
 

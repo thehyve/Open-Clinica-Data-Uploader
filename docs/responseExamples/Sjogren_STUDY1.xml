@@ -5182,7 +5182,7 @@ copy for mapping check on identical item names in 2 CRFs&apos; within one event<
                 <OpenClinica:StudyParameterConfiguration>
                     <OpenClinica:StudyParameterListRef StudyParameterListID="SPL_collectDob" Value="2"/>
                     <OpenClinica:StudyParameterListRef StudyParameterListID="SPL_discrepancyManagement" Value="true"/>
-                    <OpenClinica:StudyParameterListRef StudyParameterListID="SPL_subjectPersonIdRequired" Value="not used"/>
+                    <OpenClinica:StudyParameterListRef StudyParameterListID="SPL_subjectPersonIdRequired" Value="required"/>
                     <OpenClinica:StudyParameterListRef StudyParameterListID="SPL_genderRequired" Value="true"/>
                     <OpenClinica:StudyParameterListRef StudyParameterListID="SPL_subjectIdGeneration" Value="manual"/>
                     <OpenClinica:StudyParameterListRef StudyParameterListID="SPL_interviewerNameRequired" Value="not_used"/>

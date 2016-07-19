@@ -8,6 +8,7 @@ import nl.thehyve.ocdu.models.errors.ValidationErrorMessage;
 import nl.thehyve.ocdu.soap.ResponseHandlers.GetStudyMetadataResponseHandler;
 import nl.thehyve.ocdu.validators.patientDataChecks.*;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.openclinica.ws.beans.StudySubjectWithEventsType;
 
@@ -30,21 +31,21 @@ import static org.junit.Assert.assertThat;
  */
 public class PatientDataOcChecksTests {
 
-    MetaData metadata;
-    private List<StudySubjectWithEventsType> testSubjectWithEventsTypeList;
-    private Set<String> presentInData;
+    private static MetaData metadata;
+    private static List<StudySubjectWithEventsType> testSubjectWithEventsTypeList;
+    private static Set<String> presentInData;
 
-    @Before
-    public void setup() {
+    @BeforeClass
+    public static void setup() {
         try {
-            this.testSubjectWithEventsTypeList = TestUtils.createStudySubjectWithEventList();
+            testSubjectWithEventsTypeList = TestUtils.createStudySubjectWithEventList();
             MessageFactory messageFactory = MessageFactory.newInstance();
             File testFile = new File("docs/responseExamples/Sjogren_STUDY1.xml");
             FileInputStream in = new FileInputStream(testFile);
 
             SOAPMessage mockedResponseGetMetadata = messageFactory.createMessage(null, in);
-            this.metadata = GetStudyMetadataResponseHandler.parseGetStudyMetadataResponse(mockedResponseGetMetadata);
-            this.presentInData = new HashSet<>();
+            metadata = GetStudyMetadataResponseHandler.parseGetStudyMetadataResponse(mockedResponseGetMetadata);
+            presentInData = new HashSet<>();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -96,7 +97,6 @@ public class PatientDataOcChecksTests {
         subject.setDateOfBirth(null);
         error = check.getCorrespondingError(0, subject, metadata, testSubjectWithEventsTypeList, presentInData);
         assertThat(error.getMessage(), containsString("Date of birth is missing"));
-
     }
 
     @Test

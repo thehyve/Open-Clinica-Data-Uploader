@@ -92,6 +92,11 @@ public class PatientDataOcChecksTests {
         DateOfBirthPatientDataCheck check = new DateOfBirthPatientDataCheck();
         ValidationErrorMessage error = check.getCorrespondingError(0, subject, metadata, testSubjectWithEventsTypeList, presentInData);
         assertThat(error.getMessage(), containsString("past"));
+
+        subject.setDateOfBirth(null);
+        error = check.getCorrespondingError(0, subject, metadata, testSubjectWithEventsTypeList, presentInData);
+        assertThat(error.getMessage(), containsString("Date of birth is missing"));
+
     }
 
     @Test

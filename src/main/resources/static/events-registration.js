@@ -134,6 +134,7 @@ function upload_event_data() {
 }
 
 function log_errors(errors) {
+    $('#loading_div').remove();
     var info = '<div class="alert alert-danger"><ul>';
     errors.forEach(function (error) {
         var errDiv = '<li><span>' + error.message + '</span></li>';

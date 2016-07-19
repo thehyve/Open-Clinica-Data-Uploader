@@ -73,6 +73,9 @@ $(document).ready(function () {
             success: displayMessages,
             error: function (jqXHR, textStatus, errorThrown) {
                 console.log(jqXHR.status + " " + textStatus + " " + errorThrown);
+                $('#loading_div').remove();
+                var html = '<div class="alert alert-danger">Subject validation has failed.</div>';
+                $(html).insertBefore('#data-feedback-back-btn');
             }
         });
     }

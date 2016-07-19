@@ -342,7 +342,7 @@ public class EventDataOcChecksTests {
         event1.setEventName(anotherEventName);
         event1.setSsid(event.getSsid());
         event1.setStartDate("10-06-2014");
-        event1.setRepeatNumber("1");
+        event1.setRepeatNumber("2");
         events.add(event1);
 
         events.add(event1);
@@ -354,11 +354,11 @@ public class EventDataOcChecksTests {
         assertThat(errors, contains(
                 allOf(
                         hasProperty("message", is("An event for the given subject is duplicated.")),
-                        hasProperty("offendingValues", contains(event.getSsid(), anotherEventName))
+                        hasProperty("offendingValues", contains(event.getSsid(), anotherEventName, "2"))
                 ),
                 allOf(
                         hasProperty("message", is("An event for the given subject is duplicated.")),
-                        hasProperty("offendingValues", contains(event.getSsid(), anotherEventName))
+                        hasProperty("offendingValues", contains(event.getSsid(), anotherEventName, "2"))
                 )));
     }
 

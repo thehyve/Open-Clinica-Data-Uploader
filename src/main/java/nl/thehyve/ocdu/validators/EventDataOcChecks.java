@@ -70,6 +70,7 @@ public class EventDataOcChecks {
             ArrayList<String> key = new ArrayList<>();
             key.add(event.getSsid());
             key.add(event.getEventName());
+            key.add(event.getRepeatNumber());
             if (keyToEventMap.containsKey(key)) {
                 ValidationErrorMessage duplicatedEvent = new ValidationErrorMessage(
                         "An event for the given subject is duplicated.");

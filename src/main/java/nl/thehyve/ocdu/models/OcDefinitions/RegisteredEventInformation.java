@@ -1,5 +1,6 @@
 package nl.thehyve.ocdu.models.OcDefinitions;
 
+import nl.thehyve.ocdu.models.OCEntities.Event;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.openclinica.ws.beans.EventResponseType;
@@ -58,10 +59,10 @@ public class RegisteredEventInformation {
         return ret;
     }
 
-    public static Collection<EventToSchedule> determineEventsToSchedule(MetaData metaData,
-                                                                        List<StudySubjectWithEventsType> studySubjectWithEventsTypeList,
-                                                                        Set<ImmutablePair> patientsInEvent) {
-        Collection<EventToSchedule> ret = new HashSet<>();
+    public static Collection<Event> determineEventsToSchedule(MetaData metaData,
+                                                              List<StudySubjectWithEventsType> studySubjectWithEventsTypeList,
+                                                              Set<ImmutablePair> patientsInEvent) {
+        Collection<Event> ret = new HashSet<>();
 
         Map<String, String> eventNameToOIDMap = new HashMap<>();
         Map<String, String> eventOIDToNameMap = new HashMap<>();
@@ -70,7 +71,7 @@ public class RegisteredEventInformation {
             eventOIDToNameMap.put(eventDefinition.getStudyEventOID(), eventDefinition.getName());
         });
 
-        Collection<EventToSchedule> alreadyRegistered = new HashSet<>();
+        Collection<Event> alreadyRegistered = new HashSet<>();
         for (StudySubjectWithEventsType studySubjectWithEventsType : studySubjectWithEventsTypeList) {
             List<EventResponseType> regEvents = studySubjectWithEventsType.getEvents().getEvent();
             String studySubjectID = studySubjectWithEventsType.getSubject().getUniqueIdentifier();
@@ -78,8 +79,11 @@ public class RegisteredEventInformation {
                 String eventOID = eventResponseType.getEventDefinitionOID();
                 String eventName = eventOIDToNameMap.get(eventOID);
                 String eventRepeatNumber = eventResponseType.getOccurrence();
-                EventToSchedule eventAlreadyScheduled = new EventToSchedule(studySubjectID, eventOID, eventName, eventRepeatNumber);
-                alreadyRegistered.add(eventAlreadyScheduled);
+                Event event = new Event();
+                event.setEventName(eventName);
+                event.setRepeatNumber(eventRepeatNumber);
+                event.setSsid(studySubjectID);
+                alreadyRegistered.add(event);
             }
         }
 
@@ -91,8 +95,10 @@ public class RegisteredEventInformation {
                 eventRepeatNumber = "1";
             }
             eventName = StringUtils.substringBeforeLast(eventName, "#");
-            String eventOID = eventNameToOIDMap.get(eventName);
-            EventToSchedule eventToSchedule = new EventToSchedule(studySubjectID, eventOID, eventName, eventRepeatNumber);
+            Event eventToSchedule = new Event();
+            eventToSchedule.setRepeatNumber(eventRepeatNumber);
+            eventToSchedule.setSsid(studySubjectID);
+            eventToSchedule.setEventName(eventName);
             if (! alreadyRegistered.contains(eventToSchedule)) {
                ret.add(eventToSchedule);
             }

@@ -41,14 +41,21 @@ public class RegisteredEventInformationTests {
         // the next 2 events are already present in the listAllByStudyResponse.xml file
         patInEv.add(new ImmutablePair("EVS-00001", "EVENTFUL"));
         patInEv.add(new ImmutablePair("EV-00006", "REPEATING_EVENT#2"));
-        Collection<EventToSchedule> eventsToScheduleList =
+        Collection<Event> eventsToScheduleList =
                 RegisteredEventInformation.determineEventsToSchedule(metaData, studySubjectWithEventsTypeList, patInEv);
 
         assertEquals(2, eventsToScheduleList.size());
-        EventToSchedule expected = new EventToSchedule("EV-00003", "SE_EVENTFUL", "EVENTFUL", "1");
+        Event expected = new Event();
+
+        expected.setSsid("EV-00003");
+        expected.setEventName("EVENTFUL");
+        expected.setRepeatNumber("1");
         assertEquals(true, eventsToScheduleList.contains(expected));
 
-        expected = new EventToSchedule("EV-00005", "SE_REPEATINGEVENT", "REPEATING_EVENT", "3");
+        expected = new Event();
+        expected.setSsid("EV-00005");
+        expected.setEventName("REPEATING_EVENT");
+        expected.setRepeatNumber("3");
         assertEquals(true, eventsToScheduleList.contains(expected));
     }
 

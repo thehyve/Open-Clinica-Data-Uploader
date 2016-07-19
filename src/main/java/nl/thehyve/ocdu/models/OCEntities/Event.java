@@ -175,7 +175,6 @@ public class Event implements OcEntity, UserSubmitted, EventReference {
         return ret.toString().toUpperCase();
     }
 
-
     public EventType createEventType(Map<String, String> eventNameOIDMap) {
         EventType ret = new EventType();
         StudyRefType studyRefType = new StudyRefType();
@@ -191,4 +190,26 @@ public class Event implements OcEntity, UserSubmitted, EventReference {
         ret.setEventDefinitionOID(eventName);
         return ret;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Event event = (Event) o;
+
+        if (eventName != null ? !eventName.equals(event.eventName) : event.eventName != null) return false;
+        if (ssid != null ? !ssid.equals(event.ssid) : event.ssid != null) return false;
+        return repeatNumber != null ? repeatNumber.equals(event.repeatNumber) : event.repeatNumber == null;
+
+    }
+
+    @Override
+    public int hashCode() {
+        int result = eventName != null ? eventName.hashCode() : 0;
+        result = 31 * result + (ssid != null ? ssid.hashCode() : 0);
+        result = 31 * result + (repeatNumber != null ? repeatNumber.hashCode() : 0);
+        return result;
+    }
+
 }

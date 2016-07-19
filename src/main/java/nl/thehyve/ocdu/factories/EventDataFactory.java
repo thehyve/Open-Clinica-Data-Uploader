@@ -1,8 +1,6 @@
 package nl.thehyve.ocdu.factories;
 
 import nl.thehyve.ocdu.models.OCEntities.Event;
-import nl.thehyve.ocdu.models.OcDefinitions.EventDefinition;
-import nl.thehyve.ocdu.models.OcDefinitions.EventToSchedule;
 import nl.thehyve.ocdu.models.OcDefinitions.MetaData;
 import nl.thehyve.ocdu.models.OcDefinitions.ProtocolFieldRequirementSetting;
 import nl.thehyve.ocdu.models.OcDefinitions.RegisteredEventInformation;
@@ -14,7 +12,12 @@ import org.openclinica.ws.beans.StudySubjectWithEventsType;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -101,7 +104,7 @@ public class EventDataFactory extends UserSubmittedDataFactory {
     }
 
     public List<String> generateEventSchedulingTemplate(MetaData metaData, List<StudySubjectWithEventsType> studySubjectWithEventsTypeList, Set<ImmutablePair> patientsInEvent) {
-        Collection<EventToSchedule> eventToScheduleList =
+        Collection<Event> eventToScheduleList =
                 RegisteredEventInformation.determineEventsToSchedule(metaData, studySubjectWithEventsTypeList, patientsInEvent);
 
         List<String> result = new ArrayList<>();
@@ -120,9 +123,9 @@ public class EventDataFactory extends UserSubmittedDataFactory {
         header.add("Repeat Number");
         result.add(String.join(delim, header) + "\n");
 
-        for (EventToSchedule eventToSchedule : eventToScheduleList) {
+        for (Event eventToSchedule : eventToScheduleList) {
                 List<String> row = new ArrayList<>();
-                row.add(eventToSchedule.getStudySubjectID());//study subject id
+                row.add(eventToSchedule.getSsid());//study subject id
                 row.add(eventToSchedule.getEventName());//event name
                 row.add(metaData.getStudyName());//study
                 if (isLocationInTemplate(metaData)) {

@@ -1,14 +1,13 @@
 package nl.thehyve.ocdu.validators;
 
 import nl.thehyve.ocdu.TestUtils;
-import nl.thehyve.ocdu.models.OCEntities.PersonIDUsage;
 import nl.thehyve.ocdu.models.OCEntities.Subject;
 import nl.thehyve.ocdu.models.OcDefinitions.MetaData;
+import nl.thehyve.ocdu.models.OcDefinitions.ProtocolFieldRequirementSetting;
 import nl.thehyve.ocdu.models.OcDefinitions.SiteDefinition;
 import nl.thehyve.ocdu.models.errors.ValidationErrorMessage;
 import nl.thehyve.ocdu.soap.ResponseHandlers.GetStudyMetadataResponseHandler;
 import nl.thehyve.ocdu.validators.patientDataChecks.*;
-import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.openclinica.ws.beans.StudySubjectWithEventsType;
@@ -143,30 +142,30 @@ public class PatientDataOcChecksTests {
         subject.setSsid("1234");
 
         //person id is provided
-        metadata.setPersonIDUsage(PersonIDUsage.REQUIRED);
+        metadata.setPersonIDUsage(ProtocolFieldRequirementSetting.MANDATORY);
         subject.setPersonId("");
         PersonIdPatientDataCheck check = new PersonIdPatientDataCheck();
         ValidationErrorMessage error = check.getCorrespondingError(0, subject, metadata, testSubjectWithEventsTypeList, presentInData);
         assertThat(error.getMessage(), containsString("Person"));
 
-        metadata.setPersonIDUsage(PersonIDUsage.OPTIONAL);
+        metadata.setPersonIDUsage(ProtocolFieldRequirementSetting.OPTIONAL);
         error = check.getCorrespondingError(0, subject, metadata, testSubjectWithEventsTypeList, presentInData);
         assertEquals(error, null);
 
-        metadata.setPersonIDUsage(PersonIDUsage.NOT_USED);
+        metadata.setPersonIDUsage(ProtocolFieldRequirementSetting.BANNED);
         error = check.getCorrespondingError(0, subject, metadata, testSubjectWithEventsTypeList, presentInData);
         assertEquals(error, null);
 
-        metadata.setPersonIDUsage(PersonIDUsage.REQUIRED);
+        metadata.setPersonIDUsage(ProtocolFieldRequirementSetting.MANDATORY);
         subject.setPersonId("1345");
         error = check.getCorrespondingError(0, subject, metadata, testSubjectWithEventsTypeList, presentInData);
         assertEquals(error, null);
 
-        metadata.setPersonIDUsage(PersonIDUsage.OPTIONAL);
+        metadata.setPersonIDUsage(ProtocolFieldRequirementSetting.OPTIONAL);
         error = check.getCorrespondingError(0, subject, metadata, testSubjectWithEventsTypeList, presentInData);
         assertEquals(error, null);
 
-        metadata.setPersonIDUsage(PersonIDUsage.NOT_USED);
+        metadata.setPersonIDUsage(ProtocolFieldRequirementSetting.BANNED);
         error = check.getCorrespondingError(0, subject, metadata, testSubjectWithEventsTypeList, presentInData);
         assertEquals(error, null);
 

@@ -1,15 +1,19 @@
 package nl.thehyve.ocdu.factories;
 
-import nl.thehyve.ocdu.models.OCEntities.PersonIDUsage;
 import nl.thehyve.ocdu.models.OCEntities.Subject;
 import nl.thehyve.ocdu.models.OcDefinitions.MetaData;
+import nl.thehyve.ocdu.models.OcDefinitions.ProtocolFieldRequirementSetting;
 import nl.thehyve.ocdu.models.OcUser;
 import nl.thehyve.ocdu.models.UploadSession;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -94,7 +98,7 @@ public class PatientDataFactory extends UserSubmittedDataFactory {
         header.add(STUDY_SUBJECT_ID);
         if (metadata.isGenderRequired()) header.add(GENDER);
         if (metadata.getBirthdateRequired() != 3) header.add(DATE_OF_BIRTH);
-        if (metadata.getPersonIDUsage() != PersonIDUsage.NOT_USED) header.add(PERSON_ID);
+        if (metadata.getPersonIDUsage() != ProtocolFieldRequirementSetting.BANNED) header.add(PERSON_ID);
         header.add(DATE_OF_ENROLLMENT);
         header.add(SECONDARY_ID);
         header.add(STUDY);

@@ -1,7 +1,15 @@
 package nl.thehyve.ocdu.soap.ResponseHandlers;
 
-import nl.thehyve.ocdu.models.OCEntities.PersonIDUsage;
-import nl.thehyve.ocdu.models.OcDefinitions.*;
+import nl.thehyve.ocdu.models.OcDefinitions.CRFDefinition;
+import nl.thehyve.ocdu.models.OcDefinitions.CodeListDefinition;
+import nl.thehyve.ocdu.models.OcDefinitions.CodeListItemDefinition;
+import nl.thehyve.ocdu.models.OcDefinitions.DisplayRule;
+import nl.thehyve.ocdu.models.OcDefinitions.EventDefinition;
+import nl.thehyve.ocdu.models.OcDefinitions.ItemDefinition;
+import nl.thehyve.ocdu.models.OcDefinitions.ItemGroupDefinition;
+import nl.thehyve.ocdu.models.OcDefinitions.MetaData;
+import nl.thehyve.ocdu.models.OcDefinitions.ProtocolFieldRequirementSetting;
+import nl.thehyve.ocdu.models.OcDefinitions.RangeCheck;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.security.authentication.AuthenticationCredentialsNotFoundException;
 import org.w3c.dom.Document;
@@ -20,7 +28,13 @@ import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 import java.io.IOException;
 import java.math.BigDecimal;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import static nl.thehyve.ocdu.soap.ResponseHandlers.SoapUtils.toDocument;
@@ -230,7 +244,7 @@ public class GetStudyMetadataResponseHandler extends OCResponseHandler {
         return isGenderRequired;
     }
 
-    private static PersonIDUsage parsePersonIDNotUsed(Document odm, String mypath) throws XPathExpressionException {
+    private static ProtocolFieldRequirementSetting parsePersonIDNotUsed(Document odm, String mypath) throws XPathExpressionException {
         Node n = (Node) xpath.evaluate(mypath, odm, XPathConstants.NODE);
         Node study_details_node = null;
         NodeList children = n.getChildNodes();
@@ -265,12 +279,12 @@ public class GetStudyMetadataResponseHandler extends OCResponseHandler {
                         Node value_attr = attrs.getNamedItem("Value");
                         String isPersonIDRequiredStr = value_attr.getNodeValue();
                         if ("not used".equalsIgnoreCase(isPersonIDRequiredStr)) {
-                            return PersonIDUsage.NOT_USED;
+                            return ProtocolFieldRequirementSetting.BANNED;
                         }
                         if ("required".equalsIgnoreCase(isPersonIDRequiredStr)) {
-                            return PersonIDUsage.REQUIRED;
+                            return ProtocolFieldRequirementSetting.MANDATORY;
                         }
-                        return PersonIDUsage.OPTIONAL;
+                        return ProtocolFieldRequirementSetting.OPTIONAL;
                     }
                 }//if
             }//for

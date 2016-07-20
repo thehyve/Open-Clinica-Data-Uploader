@@ -1,6 +1,5 @@
 package nl.thehyve.ocdu.models.OcDefinitions;
 
-import nl.thehyve.ocdu.models.OCEntities.PersonIDUsage;
 import org.apache.commons.lang3.StringUtils;
 
 import javax.persistence.*;
@@ -129,15 +128,15 @@ public class MetaData {
 
     private boolean genderRequired;
 
-    private PersonIDUsage personIDUsage;
+    private ProtocolFieldRequirementSetting personIDUsage;
 
     private int birthdateRequired;
 
-    public PersonIDUsage getPersonIDUsage() {
+    public ProtocolFieldRequirementSetting getPersonIDUsage() {
         return personIDUsage;
     }
 
-    public void setPersonIDUsage(PersonIDUsage personIDUsage) {
+    public void setPersonIDUsage(ProtocolFieldRequirementSetting personIDUsage) {
         this.personIDUsage = personIDUsage;
     }
 

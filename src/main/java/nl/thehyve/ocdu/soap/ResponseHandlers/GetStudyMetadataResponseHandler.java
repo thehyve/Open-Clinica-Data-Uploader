@@ -1,6 +1,15 @@
 package nl.thehyve.ocdu.soap.ResponseHandlers;
 
-import nl.thehyve.ocdu.models.OcDefinitions.*;
+import nl.thehyve.ocdu.models.OcDefinitions.CRFDefinition;
+import nl.thehyve.ocdu.models.OcDefinitions.CodeListDefinition;
+import nl.thehyve.ocdu.models.OcDefinitions.CodeListItemDefinition;
+import nl.thehyve.ocdu.models.OcDefinitions.DisplayRule;
+import nl.thehyve.ocdu.models.OcDefinitions.EventDefinition;
+import nl.thehyve.ocdu.models.OcDefinitions.ItemDefinition;
+import nl.thehyve.ocdu.models.OcDefinitions.ItemGroupDefinition;
+import nl.thehyve.ocdu.models.OcDefinitions.MetaData;
+import nl.thehyve.ocdu.models.OcDefinitions.ProtocolFieldRequirementSetting;
+import nl.thehyve.ocdu.models.OcDefinitions.RangeCheck;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.security.authentication.AuthenticationCredentialsNotFoundException;
 import org.w3c.dom.Document;
@@ -19,7 +28,13 @@ import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 import java.io.IOException;
 import java.math.BigDecimal;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import static nl.thehyve.ocdu.soap.ResponseHandlers.SoapUtils.toDocument;
@@ -93,6 +108,8 @@ public class GetStudyMetadataResponseHandler extends OCResponseHandler {
         metaData.setItemGroupDefinitions(itemGroups);
         String studyRequirementPath = STUDY_SELECTOR + "/MetaDataVersion";
         metaData.setGenderRequired(parseGenderRequired(odm, studyRequirementPath));
+
+        metaData.setPersonIDUsage(parsePersonIDNotUsed(odm, studyRequirementPath));
         metaData.setBirthdateRequired(parseDateOfBirthRequired(odm, studyRequirementPath));
         metaData.setStatus(studyStatus);
         Node studyRequirements = (Node) xpath.evaluate(studyRequirementPath , odm, XPathConstants.NODE);
@@ -225,6 +242,54 @@ public class GetStudyMetadataResponseHandler extends OCResponseHandler {
         }//if
 
         return isGenderRequired;
+    }
+
+    private static ProtocolFieldRequirementSetting parsePersonIDNotUsed(Document odm, String mypath) throws XPathExpressionException {
+        Node n = (Node) xpath.evaluate(mypath, odm, XPathConstants.NODE);
+        Node study_details_node = null;
+        NodeList children = n.getChildNodes();
+        for (int i = 0; i < children.getLength(); i++) {
+            String name = children.item(i).getNodeName();
+            if (name.equals("OpenClinica:StudyDetails")) {
+                study_details_node = children.item(i);
+                break;
+            }
+        }
+
+        Node param_config_node = null;
+        if (study_details_node != null) {
+            NodeList details_children = study_details_node.getChildNodes();
+            for (int j = 0; j < details_children.getLength(); j++) {
+                String name = details_children.item(j).getNodeName();
+                if (name.equals("OpenClinica:StudyParameterConfiguration")) {
+                    param_config_node = details_children.item(j);
+                    break;
+                }
+            }
+        }
+
+        if (param_config_node != null) {
+            NodeList config_children = param_config_node.getChildNodes();
+            for (int j = 0; j < config_children.getLength(); j++) {
+                Node config_child = config_children.item(j);
+                NamedNodeMap attrs = config_child.getAttributes();
+                if (attrs != null) {
+                    Node listID_attr = attrs.getNamedItem("StudyParameterListID");
+                    if (listID_attr != null && listID_attr.getNodeValue().equals("SPL_subjectPersonIdRequired")) {
+                        Node value_attr = attrs.getNamedItem("Value");
+                        String isPersonIDRequiredStr = value_attr.getNodeValue();
+                        if ("not used".equalsIgnoreCase(isPersonIDRequiredStr)) {
+                            return ProtocolFieldRequirementSetting.BANNED;
+                        }
+                        if ("required".equalsIgnoreCase(isPersonIDRequiredStr)) {
+                            return ProtocolFieldRequirementSetting.MANDATORY;
+                        }
+                        return ProtocolFieldRequirementSetting.OPTIONAL;
+                    }
+                }//if
+            }//for
+        }//if
+        throw new IllegalStateException("Invalid personID usage in metadata response");
     }
 
     private static int parseDateOfBirthRequired(Document odm, String mypath) throws XPathExpressionException {

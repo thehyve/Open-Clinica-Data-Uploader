@@ -1,5 +1,6 @@
 package nl.thehyve.ocdu.soap.ResponseHandlers;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.xml.transform.StringResult;
 import org.w3c.dom.Document;
 import org.xml.sax.InputSource;
@@ -24,7 +25,10 @@ import javax.xml.transform.stream.StreamResult;
 import java.io.IOException;
 import java.io.StringReader;
 import java.io.StringWriter;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.GregorianCalendar;
 
 /**
@@ -68,11 +72,18 @@ public class SoapUtils {
         return null;
     }
 
-    public static XMLGregorianCalendar getFullXmlDate(GregorianCalendar cal) {
+    public static XMLGregorianCalendar getFullXmlDate(String dateString) {
         try {
-            return DatatypeFactory.newInstance().newXMLGregorianCalendarDate(cal.get(Calendar.YEAR),
-                    cal.get(Calendar.MONTH) + 1, cal.get(Calendar.DAY_OF_MONTH), DatatypeConstants.FIELD_UNDEFINED);
-        } catch (DatatypeConfigurationException e) {
+            Calendar calendar = GregorianCalendar.getInstance();
+            if (! StringUtils.isEmpty(dateString)) {
+                DateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
+                Date date = dateFormat.parse(dateString);
+                calendar.setTime(date);
+            }
+            return DatatypeFactory.newInstance().newXMLGregorianCalendarDate(calendar.get(Calendar.YEAR),
+                    calendar.get(Calendar.MONTH) + 1, calendar.get(Calendar.DAY_OF_MONTH), DatatypeConstants.FIELD_UNDEFINED);
+        }
+        catch (Exception e) {
             e.printStackTrace();
             return null;
         }

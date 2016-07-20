@@ -3,11 +3,12 @@ package nl.thehyve.ocdu.validators;
 import nl.thehyve.ocdu.TestUtils;
 import nl.thehyve.ocdu.models.OCEntities.Subject;
 import nl.thehyve.ocdu.models.OcDefinitions.MetaData;
+import nl.thehyve.ocdu.models.OcDefinitions.ProtocolFieldRequirementSetting;
 import nl.thehyve.ocdu.models.OcDefinitions.SiteDefinition;
 import nl.thehyve.ocdu.models.errors.ValidationErrorMessage;
 import nl.thehyve.ocdu.soap.ResponseHandlers.GetStudyMetadataResponseHandler;
 import nl.thehyve.ocdu.validators.patientDataChecks.*;
-import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.openclinica.ws.beans.StudySubjectWithEventsType;
 
@@ -21,6 +22,7 @@ import java.util.List;
 import java.util.Set;
 
 import static org.hamcrest.Matchers.*;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertThat;
 
@@ -30,21 +32,21 @@ import static org.junit.Assert.assertThat;
  */
 public class PatientDataOcChecksTests {
 
-    MetaData metadata;
-    private List<StudySubjectWithEventsType> testSubjectWithEventsTypeList;
-    private Set<String> presentInData;
+    private static MetaData metadata;
+    private static List<StudySubjectWithEventsType> testSubjectWithEventsTypeList;
+    private static Set<String> presentInData;
 
-    @Before
-    public void setup() {
+    @BeforeClass
+    public static void setup() {
         try {
-            this.testSubjectWithEventsTypeList = TestUtils.createStudySubjectWithEventList();
+            testSubjectWithEventsTypeList = TestUtils.createStudySubjectWithEventList();
             MessageFactory messageFactory = MessageFactory.newInstance();
             File testFile = new File("docs/responseExamples/Sjogren_STUDY1.xml");
             FileInputStream in = new FileInputStream(testFile);
 
             SOAPMessage mockedResponseGetMetadata = messageFactory.createMessage(null, in);
-            this.metadata = GetStudyMetadataResponseHandler.parseGetStudyMetadataResponse(mockedResponseGetMetadata);
-            this.presentInData = new HashSet<>();
+            metadata = GetStudyMetadataResponseHandler.parseGetStudyMetadataResponse(mockedResponseGetMetadata);
+            presentInData = new HashSet<>();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -92,6 +94,10 @@ public class PatientDataOcChecksTests {
         DateOfBirthPatientDataCheck check = new DateOfBirthPatientDataCheck();
         ValidationErrorMessage error = check.getCorrespondingError(0, subject, metadata, testSubjectWithEventsTypeList, presentInData);
         assertThat(error.getMessage(), containsString("past"));
+
+        subject.setDateOfBirth(null);
+        error = check.getCorrespondingError(0, subject, metadata, testSubjectWithEventsTypeList, presentInData);
+        assertThat(error.getMessage(), containsString("Date of birth is missing"));
     }
 
     @Test
@@ -136,10 +142,33 @@ public class PatientDataOcChecksTests {
         subject.setSsid("1234");
 
         //person id is provided
-        subject.setPersonId("1357");
+        metadata.setPersonIDUsage(ProtocolFieldRequirementSetting.MANDATORY);
+        subject.setPersonId("");
         PersonIdPatientDataCheck check = new PersonIdPatientDataCheck();
         ValidationErrorMessage error = check.getCorrespondingError(0, subject, metadata, testSubjectWithEventsTypeList, presentInData);
         assertThat(error.getMessage(), containsString("Person"));
+
+        metadata.setPersonIDUsage(ProtocolFieldRequirementSetting.OPTIONAL);
+        error = check.getCorrespondingError(0, subject, metadata, testSubjectWithEventsTypeList, presentInData);
+        assertEquals(error, null);
+
+        metadata.setPersonIDUsage(ProtocolFieldRequirementSetting.BANNED);
+        error = check.getCorrespondingError(0, subject, metadata, testSubjectWithEventsTypeList, presentInData);
+        assertEquals(error, null);
+
+        metadata.setPersonIDUsage(ProtocolFieldRequirementSetting.MANDATORY);
+        subject.setPersonId("1345");
+        error = check.getCorrespondingError(0, subject, metadata, testSubjectWithEventsTypeList, presentInData);
+        assertEquals(error, null);
+
+        metadata.setPersonIDUsage(ProtocolFieldRequirementSetting.OPTIONAL);
+        error = check.getCorrespondingError(0, subject, metadata, testSubjectWithEventsTypeList, presentInData);
+        assertEquals(error, null);
+
+        metadata.setPersonIDUsage(ProtocolFieldRequirementSetting.BANNED);
+        error = check.getCorrespondingError(0, subject, metadata, testSubjectWithEventsTypeList, presentInData);
+        assertEquals(error, null);
+
     }
 
 

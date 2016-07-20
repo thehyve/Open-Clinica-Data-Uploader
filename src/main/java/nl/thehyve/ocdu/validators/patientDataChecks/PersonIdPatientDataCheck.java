@@ -2,6 +2,7 @@ package nl.thehyve.ocdu.validators.patientDataChecks;
 
 import nl.thehyve.ocdu.models.OCEntities.Subject;
 import nl.thehyve.ocdu.models.OcDefinitions.MetaData;
+import nl.thehyve.ocdu.models.OcDefinitions.ProtocolFieldRequirementSetting;
 import nl.thehyve.ocdu.models.errors.ValidationErrorMessage;
 import org.apache.commons.lang3.StringUtils;
 import org.openclinica.ws.beans.StudySubjectWithEventsType;
@@ -25,8 +26,8 @@ public class PersonIdPatientDataCheck implements PatientDataCheck {
         ValidationErrorMessage error = null;
         String personId = subject.getPersonId();
 
-        if (!StringUtils.isBlank(personId)) {
-            error = new ValidationErrorMessage(commonMessage + "Person ID is not allowed during registration via web services. Please delete this column from your file or leave the fields empty ");
+        if ((metaData.getPersonIDUsage() == ProtocolFieldRequirementSetting.MANDATORY) && (StringUtils.isBlank(personId))) {
+            error = new ValidationErrorMessage(commonMessage + "Person ID is missing");
         }
 
         if(error != null) {

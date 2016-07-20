@@ -79,7 +79,9 @@ public class DateOfBirthPatientDataCheck implements PatientDataCheck {
     private String checkFullDate(String dob) {
         DateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy", Locale.ENGLISH);
         dateFormat.setLenient(false);
-
+        if (StringUtils.isEmpty(dob)) {
+            return "Date of birth is missing.";
+        }
         try {
             Date date = dateFormat.parse(dob);
             Date currentDate = new Date();

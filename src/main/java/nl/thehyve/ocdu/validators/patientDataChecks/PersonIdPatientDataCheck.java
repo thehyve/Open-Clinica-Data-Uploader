@@ -30,6 +30,10 @@ public class PersonIdPatientDataCheck implements PatientDataCheck {
             error = new ValidationErrorMessage(commonMessage + "Person ID is missing");
         }
 
+        if ((metaData.getPersonIDUsage() == ProtocolFieldRequirementSetting.BANNED) && (StringUtils.isNotBlank(personId))) {
+            error = new ValidationErrorMessage(commonMessage + "Person ID is defined as 'not used' in study: '" + metaData.getStudyName() +"' but it is present in the data. Please remove it");
+        }
+
         if(error != null) {
             error.addOffendingValue("Person ID: " + subject.getPersonId());
         }

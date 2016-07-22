@@ -1,0 +1,14 @@
+AutonomousUploadChannels:
+  uploadChannel:
+    name: StudyXYZChannel
+    studyPrefix: STXYZ
+    uploadSession: Session1
+    ocPassword: 96afd7aba406ead43ba3d62b2c0f96622e4b2c93
+    resultNotificationEmail: j.rousseau@nki.nl
+
+  uploadChannel:
+      name: StudyABCChannel
+      studyPrefix: STABC
+      uploadSession: SessionABC
+      ocPassword: 96afd7aba406ead43ba3d62b2c0f96622e4b2c93
+      resultNotificationEmail: j.rousseau@xs4all.nl

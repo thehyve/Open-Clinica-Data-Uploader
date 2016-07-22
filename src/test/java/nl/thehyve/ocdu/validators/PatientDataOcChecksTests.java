@@ -167,7 +167,7 @@ public class PatientDataOcChecksTests {
 
         metadata.setPersonIDUsage(ProtocolFieldRequirementSetting.BANNED);
         error = check.getCorrespondingError(0, subject, metadata, testSubjectWithEventsTypeList, presentInData);
-        assertEquals(error, null);
+        assertThat(error.getMessage(), containsString("Person ID is defined as 'not used' in study"));
 
     }
 

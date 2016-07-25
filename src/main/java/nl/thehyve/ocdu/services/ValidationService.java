@@ -81,6 +81,8 @@ public class ValidationService {
         Study study = dataService.findStudy(submission.getStudy(), submitter, wsPwdHash);
         MetaData metadata = openClinicaService
                 .getMetadata(submitter.getUsername(), wsPwdHash, submitter.getOcEnvironment(), study);
+        events.forEach(event -> event.setStudyProtocolName(metadata.getProtocolName())); //TODO: Refactor setting studyProtocolName out of validation , this is not the right place to do it
+        eventRepository.save(events);
         EventDataOcChecks checks = new EventDataOcChecks(metadata, events);
         List<ValidationErrorMessage> validationErrorMessages = checks.getErrors();
         return validationErrorMessages;
@@ -93,7 +95,7 @@ public class ValidationService {
         OcUser submitter = submission.getOwner();
         Study study = dataService.findStudy(submission.getStudy(), submitter, wsPwdHash);
         MetaData metadata = openClinicaService.getMetadata(submitter.getUsername(), wsPwdHash, submitter.getOcEnvironment(), study);
-        bySubmission.forEach(subject -> subject.setStudyId(metadata.getProtocolName())); //TODO: Refactor setting studyOID out of validation , this is not the right place to do it
+        bySubmission.forEach(subject -> subject.setStudyProtocolName(metadata.getProtocolName())); //TODO: Refactor setting studyOID out of validation , this is not the right place to do it
         subjectRepository.save(bySubmission);
         List<StudySubjectWithEventsType> subjectWithEventsTypes = openClinicaService
                 .getStudySubjectsType(submitter.getUsername(), wsPwdHash, submitter.getOcEnvironment(), study.getIdentifier(), "");

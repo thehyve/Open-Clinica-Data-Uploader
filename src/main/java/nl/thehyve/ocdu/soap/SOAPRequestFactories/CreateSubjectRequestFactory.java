@@ -8,12 +8,7 @@ import org.openclinica.ws.studysubject.v1.CreateRequest;
 
 import javax.xml.bind.JAXBElement;
 import javax.xml.datatype.DatatypeConfigurationException;
-import javax.xml.datatype.DatatypeFactory;
-import javax.xml.datatype.XMLGregorianCalendar;
 import javax.xml.namespace.QName;
-import java.util.Collection;
-import java.util.List;
-import java.util.stream.Collectors;
 
 import static nl.thehyve.ocdu.soap.SOAPRequestFactories.StudyRefFactory.createStudyRef;
 import static nl.thehyve.ocdu.soap.SOAPRequestFactories.StudySubjectFactory.createStudySubject;
@@ -26,7 +21,7 @@ public class CreateSubjectRequestFactory {
 
     public static JAXBElement<CreateRequest> getCreateRequests(Subject subject) {
         try {
-            Study study = new Study(subject.getStudyId(), subject.getStudy(), subject.getStudy());  //TODO: check if it needs to be an identifier or a name
+            Study study = new Study(subject.getStudyProtocolName(), subject.getStudy(), subject.getStudy());  //TODO: check if it needs to be an identifier or a name
             SiteDefinition site = new SiteDefinition();
             String siteText = subject.getSite();
             if (siteText != null && !siteText.equals("")) {

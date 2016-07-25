@@ -28,6 +28,16 @@ public class Event implements OcEntity, UserSubmitted, EventReference {
     private UploadSession submission;
     @ManyToOne
     private OcUser owner;
+    private String studyProtocolName;
+
+    public String getStudyProtocolName() {
+        return studyProtocolName;
+    }
+
+    public void setStudyProtocolName(String studyProtocolName) {
+        this.studyProtocolName = studyProtocolName;
+    }
+
     private String eventName;
     private String ssid;
     private String study;
@@ -178,7 +188,7 @@ public class Event implements OcEntity, UserSubmitted, EventReference {
     public EventType createEventType(Map<String, String> eventNameOIDMap) {
         EventType ret = new EventType();
         StudyRefType studyRefType = new StudyRefType();
-        studyRefType.setIdentifier(study);
+        studyRefType.setIdentifier(studyProtocolName);
         SiteRefType siteRefType = new SiteRefType();
         siteRefType.setIdentifier(site);
         studyRefType.setSiteRef(siteRefType);

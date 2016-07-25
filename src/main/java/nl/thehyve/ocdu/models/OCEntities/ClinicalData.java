@@ -52,6 +52,16 @@ public class ClinicalData implements OcEntity, UserSubmitted, EventReference {
 
     @Column(columnDefinition = "TEXT")
     private String value;
+    private String studyProtocolName;
+
+    @Override
+    public String getStudyProtocolName() {
+        return studyProtocolName;
+    }
+
+    public void setStudyProtocolName(String studyProtocolName) {
+        this.studyProtocolName = studyProtocolName;
+    }
 
     public ClinicalData(String study, String item, String ssid, String eventName, Integer eventRepeat, String crfName, UploadSession submission, String crfVersion, Integer groupRepeat, OcUser owner, String value) {
         this.study = study;

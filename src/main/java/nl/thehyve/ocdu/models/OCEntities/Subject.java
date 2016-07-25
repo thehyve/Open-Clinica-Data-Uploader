@@ -5,7 +5,6 @@ import nl.thehyve.ocdu.models.OcUser;
 import nl.thehyve.ocdu.models.UploadSession;
 
 import javax.persistence.*;
-import java.util.Date;
 
 /**
  * Created by piotrzakrzewski on 16/04/16.
@@ -27,15 +26,15 @@ public class Subject implements OcEntity, UserSubmitted, ODMElement {
     @Column(columnDefinition = "TEXT")
     private String site;
 
-    public String getStudyId() {
-        return studyId;
+    public String getStudyProtocolName() {
+        return studyProtocolName;
     }
 
-    public void setStudyId(String studyId) {
-        this.studyId = studyId;
+    public void setStudyProtocolName(String studyProtocolName) {
+        this.studyProtocolName = studyProtocolName;
     }
 
-    private String studyId; // AKA ProtocolName. To be used for registration, not taken from the user file
+    private String studyProtocolName; // AKA ProtocolName. To be used for registration, not taken from the user file
 
     @ManyToOne()
     private OcUser owner;

@@ -6,4 +6,5 @@ package nl.thehyve.ocdu.models.OCEntities;
 public interface OcEntity {
     String getSsid();
     String getStudy();
+    String getStudyProtocolName();
 }

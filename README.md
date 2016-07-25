@@ -13,7 +13,7 @@ psql postgres -f prepare_db.sql
 deploy war file in tomcat as /ocdu (e.g. by making sure WAR file is named ocdu.war or configuring tomcat to
 serve under this route)
 
-modify config/application.yml to include your OpenClinica servers.
+modify src/main/resources/application.yml to include your OpenClinica servers.
 Make sure all users meant to use OCDU have web-service rights in given OC environemnt (server).
 OCDU relies on SOAP web services, which need to be installed separately. URL in application.yml config file
 refers to OpenClinica web-services URL not to OpenClinica frontend. This is usually host/OpenClinica-ws.

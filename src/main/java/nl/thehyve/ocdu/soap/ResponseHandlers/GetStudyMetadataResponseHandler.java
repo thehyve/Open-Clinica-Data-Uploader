@@ -40,6 +40,9 @@ import java.util.stream.Collectors;
 import static nl.thehyve.ocdu.soap.ResponseHandlers.SoapUtils.toDocument;
 
 /**
+ * Responsible for deserializing ODM XML into metadata object.
+ * Should be broken down into more classes.
+ *
  * Created by piotrzakrzewski on 29/04/16.
  */
 public class GetStudyMetadataResponseHandler extends OCResponseHandler {

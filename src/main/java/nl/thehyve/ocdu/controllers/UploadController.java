@@ -26,6 +26,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 /**
+ * Handles all file uploads performed by the user to the OCDU.
+ *
  * Created by piotrzakrzewski on 11/04/16.
  */
 @Controller

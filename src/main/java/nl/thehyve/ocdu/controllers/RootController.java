@@ -5,6 +5,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 /**
+ * Starting view for authenticated user.
+ *
  * Created by piotrzakrzewski on 10/05/16.
  */
 @Controller

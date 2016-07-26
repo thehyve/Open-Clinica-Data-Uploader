@@ -13,6 +13,9 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 /**
+ * Responsibe for executing cross checks on clinical data submitted by the user.
+ * in order to set which checks are to be run use setCheks, passing instances of ClinicalDataCrossCheck.
+ *
  * Created by piotrzakrzewski on 22/06/16.
  */
 public class ClinicalDataChecksRunner {

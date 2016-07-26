@@ -15,6 +15,7 @@ import javax.servlet.http.HttpSession;
 import java.util.List;
 
 /**
+ * Triggering validation for all respective data types.
  * Created by piotrzakrzewski on 06/05/16.
  */
 @RestController

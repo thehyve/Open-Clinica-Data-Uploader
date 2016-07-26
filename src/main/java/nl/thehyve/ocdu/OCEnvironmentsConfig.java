@@ -6,6 +6,9 @@ import org.springframework.context.annotation.Configuration;
 import java.util.List;
 
 /**
+ * Represents configured OpenClinica environments which will be presented to the user during login.
+ * OpenClinica environments can be added in application.yml inside resources folder
+ *
  * Created by piotrzakrzewski on 18/04/16.
  */
 @ConfigurationProperties(prefix = "OpenClinicaEnvironments")

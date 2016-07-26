@@ -8,6 +8,9 @@ import javax.persistence.ManyToOne;
 import java.util.Date;
 
 /**
+ * AKA User Submission. Stores all user-submitted data along with current submission state
+ * (step in the workflow)
+ *
  * Created by piotrzakrzewski on 28/04/16.
  */
 @Entity

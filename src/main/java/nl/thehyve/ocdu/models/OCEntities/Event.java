@@ -15,6 +15,7 @@ import javax.persistence.ManyToOne;
 import java.util.Map;
 
 /**
+ * Represents user-submitted event-subject pair. Meant to store data as-is.
  * Created by piotrzakrzewski on 16/04/16.
  */
 

@@ -22,6 +22,8 @@ import java.util.Collection;
 import static org.springframework.http.HttpStatus.OK;
 
 /**
+ * Study Metadata related calls used on the frontend.
+ *
  * Created by piotrzakrzewski on 07/05/16.
  */
 @RestController
@@ -40,7 +42,12 @@ public class MetadataController {
     OcUserService ocUserService;
 
 
-
+    /**
+     * Returns tree made of study metadata. Currently not used on the frontend - can be used again should we
+     * return to mapping more than one CRF-version contents at a time.
+     * @param session
+     * @return
+     */
     @RequestMapping(value = "/tree", method = RequestMethod.GET)
     public ResponseEntity<?> getMetadata(HttpSession session) {
         try {
@@ -58,6 +65,11 @@ public class MetadataController {
         }
     }
 
+    /**
+     * Returns OC paths (study/event/crf/version/item) for the CRF-version targeted by the user.
+     * @param session
+     * @return
+     */
     @RequestMapping(value = "/targetedCrf", method = RequestMethod.GET)
     public ResponseEntity<?> targetedCrf(HttpSession session) {
         try {

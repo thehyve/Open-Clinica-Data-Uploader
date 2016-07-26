@@ -11,6 +11,8 @@ import java.util.List;
 import static java.time.temporal.ChronoField.*;
 
 /**
+ * Common utilities for checking primitive types and dates according to OC specification.
+ *
  * Created by bo on 7/1/16.
  */
 public class UtilChecks {

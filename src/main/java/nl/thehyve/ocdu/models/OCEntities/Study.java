@@ -7,6 +7,9 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 /**
+ * Meant as a simple structure to bundle together Study Name, OID and identifier.
+ * Ideally this class should be merged with class Metadata - as they overlap in responsibility of representing
+ * study.
  * Created by piotrzakrzewski on 15/04/16.
  */
 public class Study extends AbstractStudySiteBase implements ODMElement {

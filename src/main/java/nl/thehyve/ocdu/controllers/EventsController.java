@@ -25,6 +25,9 @@ import javax.servlet.http.HttpSession;
 import java.util.List;
 
 /**
+ *
+ * Event registration related calls. Does not include template (this is in ViewsController)
+ *
  * Created by Jacob Rousseau on 22-Jun-2016.
  * Copyright CTMM-TraIT / NKI (c) 2016
  */

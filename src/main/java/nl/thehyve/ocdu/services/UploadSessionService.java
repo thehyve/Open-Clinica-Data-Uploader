@@ -8,6 +8,8 @@ import org.springframework.stereotype.Service;
 import javax.servlet.http.HttpSession;
 
 /**
+ * User submission aka UploadSession related methods.
+ *
  * Created by piotrzakrzewski on 06/05/16.
  */
 @Service

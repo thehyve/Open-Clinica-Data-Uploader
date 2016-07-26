@@ -32,6 +32,8 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 
 /**
+ * SOAP related utility methods speicifc to this project.
+ *
  * Created by piotrzakrzewski on 15/04/16.
  */
 public class SoapUtils {

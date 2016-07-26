@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
+ * User authentication is done against OpenClinica WebServices.
  * Created by piotrzakrzewski on 18/04/16.
  */
 @Component

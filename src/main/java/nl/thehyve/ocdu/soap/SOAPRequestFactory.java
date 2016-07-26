@@ -32,6 +32,8 @@ import javax.xml.transform.dom.DOMResult;
 
 
 /**
+ * Responsible for providing SOAP messages to be used as request bodies for OC-WS calls.
+ *
  * Created by piotrzakrzewski on 15/04/16.
  */
 public class SOAPRequestFactory {

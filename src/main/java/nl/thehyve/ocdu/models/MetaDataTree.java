@@ -6,6 +6,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
+ * Simple tree implementation for purpose of mapping view (currently not used, as only simple list to list mapping
+ * is employed at the moment).
+ *
  * Created by piotrzakrzewski on 21/06/16.
  */
 public class MetaDataTree {

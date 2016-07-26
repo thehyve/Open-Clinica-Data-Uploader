@@ -19,6 +19,8 @@ import java.util.List;
 import static nl.thehyve.ocdu.soap.ResponseHandlers.SoapUtils.toDocument;
 
 /**
+ * Responsible for deserializing SOAP response for ListStudies call.
+ *
  * Created by piotrzakrzewski on 15/04/16.
  */
 public class ListStudiesResponseHandler extends OCResponseHandler {

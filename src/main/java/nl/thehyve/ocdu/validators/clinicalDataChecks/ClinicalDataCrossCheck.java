@@ -12,6 +12,11 @@ import java.util.Map;
 import java.util.Set;
 
 /**
+ * All ClinicalData validation logic which relies on OpenClinica metadata should be implemented in classes
+ * implementing this interface. Each validation rule should have a separate class.
+ * These checks are meant to be run by ClinicalDataChecksRunner, which makes sure are inputs are provided as
+ * necessary.
+ *
  * Created by piotrzakrzewski on 04/05/16.
  */
 public interface ClinicalDataCrossCheck {

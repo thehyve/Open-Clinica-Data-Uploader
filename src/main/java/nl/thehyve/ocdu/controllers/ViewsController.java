@@ -12,6 +12,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import java.util.List;
 
 /**
+ * Simple mapping of routes to Thymeleaf templates.
+ *
  * Created by piotrzakrzewski on 22/03/16.
  */
 

@@ -12,6 +12,12 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /**
+ * This class is responsible for verifying that File can be successfully deserialized by respective factory.
+ * Each data type (ClinicalData/Event/Subject) has its own FileValidator extending this class.
+ * FileFormat validators should check only if given text file has all mandatory and permitted columns and
+ * if they are of expected type (if it is known without ambiguity and upfront). More advanced types of validation
+ * should be left to next stages of validation, i.e. premapping validation and cross-checks (see ValidationService)
+ *
  * Created by piotrzakrzewski on 06/05/16.
  */
 public class GenericFileValidator implements FileFormatValidator {

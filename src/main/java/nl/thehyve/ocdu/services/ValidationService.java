@@ -30,6 +30,13 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
+ * Service performing OpenClinica consistency checking. Supports checking data, subjects and events for
+ * consistency against targeted study/site. All methods here depend on OpenClinica Web-Services and therefore
+ * require valid OcEnvironment (reachable and working OC 3.6 Server with SOAP-ws installed and configured)
+ * and need valid OC User and sha1 hash of their password. All methods of this service accept UploadSession
+ * (aka User Submission) as input - this object represents submission user made along with all submitted data.
+ * This object is used to retrieve saved data/subjects/events and validate them.
+ *
  * Created by piotrzakrzewski on 01/05/16.
  */
 @Service
@@ -52,7 +59,14 @@ public class ValidationService {
     @Autowired
     DataService dataService;
 
-
+    /**
+     * Returns errors in consistency against OpenClinica study definition (metadata) in user submitted data.
+     *
+     * @param submission
+     * @param wsPwdHash
+     * @return
+     * @throws Exception
+     */
     public List<ValidationErrorMessage> getDataErrors(UploadSession submission, String wsPwdHash) throws Exception {
         List<ClinicalData> bySubmission = clinicalDataRepository.findBySubmission(submission);
         determineStudy(bySubmission, submission);
@@ -75,6 +89,15 @@ public class ValidationService {
         return errors;
     }
 
+    /**
+     * Returns errors in consistency against OpenClinica study definition (metadata) in event registration form
+     * subitted by the user.
+     *
+     * @param submission
+     * @param wsPwdHash
+     * @return
+     * @throws Exception
+     */
     public List<ValidationErrorMessage> getEventsErrors(UploadSession submission, String wsPwdHash) throws Exception {
         List<Event> events = eventRepository.findBySubmission(submission);
         OcUser submitter = submission.getOwner();
@@ -88,6 +111,16 @@ public class ValidationService {
         return validationErrorMessages;
     }
 
+    /**
+     *
+     * Returns errors in consistency against OpenClinica study definition (metadata) in user submitted subject
+     * registration form.
+     *
+     * @param submission
+     * @param wsPwdHash
+     * @return
+     * @throws Exception
+     */
     public List<ValidationErrorMessage> getPatientsErrors(UploadSession submission, String wsPwdHash) throws Exception {
         List<Subject> bySubmission = subjectRepository.findBySubmission(submission);
         Set<String> subjectsInData = clinicalDataRepository.findBySubmission(submission)
@@ -112,12 +145,29 @@ public class ValidationService {
         return validationErrorMessages;
     }
 
+    /**
+     * Sets study field in UploadSubmission, inferring from the data submitted by the user.
+     * Please mind that UploadSession is not saved - this method is called
+     * on every validation run - to account for possible changes in user data (if for instance, resubmitting was
+     * possible)
+     * @param entries
+     * @param submission
+     */
     private void determineStudy(Collection<ClinicalData> entries, UploadSession submission) {
         Set<String> usedStudyOIDs = entries.stream().map(ocEntity -> ocEntity.getStudy()).collect(Collectors.toSet());
         if (usedStudyOIDs.size() > 1) log.error("Attempted validation of file referencing multiple studies");
         submission.setStudy(usedStudyOIDs.stream().findFirst().get()); // Multiple studies not allowed, checked by a validator
     }
 
+    /**
+     * Responsible for finding errors in the data that would prevent displaying mapping view.
+     * This method does not check however for data format errors - those are checked by FileValidator.
+     *
+     * @param submission
+     * @param wsPwdHash
+     * @return
+     * @throws Exception
+     */
     public Collection<ValidationErrorMessage> dataPremappingValidation(UploadSession submission, String wsPwdHash) throws Exception {
         List<ClinicalData> bySubmission = clinicalDataRepository.findBySubmission(submission);
         determineStudy(bySubmission, submission);

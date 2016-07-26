@@ -19,6 +19,10 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /**
+ * The only way Patient objects should be created outside tests.
+ * This factory is responsible for deserializing Patient objects from user text file.
+ * It does not save anything to the database nor does any validation - FileValidator needs to check text file
+ * before PatientDataFactory can process it.
  * Created by bo on 6/6/16.
  */
 public class PatientDataFactory extends UserSubmittedDataFactory {

@@ -8,9 +8,9 @@ import javax.persistence.*;
 import java.util.Arrays;
 import java.util.List;
 
-;
 
 /**
+ * Represents user-submitted ClinicalData point. Meant to store data as-is.
  * Created by piotrzakrzewski on 16/04/16.
  */
 @Entity

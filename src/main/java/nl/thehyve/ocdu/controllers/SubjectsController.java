@@ -22,6 +22,9 @@ import java.util.Collection;
 import java.util.List;
 
 /**
+ *
+ * Calls related to subjects registration.
+ *
  * Created by piotrzakrzewski on 20/06/16.
  */
 @RestController
@@ -40,6 +43,11 @@ public class SubjectsController {
     @Autowired
     SubjectRepository subjectRepository;
 
+    /**
+     * Triggers registration of subjects submitted by the user. Does not do validation.
+     * @param session
+     * @return
+     */
     @RequestMapping(value = "/register", method = RequestMethod.GET)
     public ResponseEntity<String> checkNewPatients(HttpSession session) { //TODO: change all HTTP calls to accept at least submission id - so that running two submissions at the same time is possible in one browser
         try {

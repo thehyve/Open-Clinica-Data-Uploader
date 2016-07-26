@@ -14,6 +14,11 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /**
+ * The only way ClinicalData objects should be created outside tests.
+ * This factory is responsible for deserializing ClinicalData points from user text file.
+ * It does not save anything to the database nor does any validation - FileValidator needs to check text file
+ * before ClinicalDataFactory can process it.
+ *
  * Created by piotrzakrzewski on 16/04/16.
  */
 public class ClinicalDataFactory extends UserSubmittedDataFactory {

@@ -26,6 +26,7 @@ import java.util.Map;
 import static org.springframework.http.HttpStatus.OK;
 
 /**
+ * Calls related to the state of user submission (UploadSession).
  * Created by bo on 4/26/16.
  */
 @RestController

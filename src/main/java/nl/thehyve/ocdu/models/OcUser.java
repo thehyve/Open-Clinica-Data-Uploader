@@ -6,6 +6,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
 /**
+ * Shadow copy of OC user. Required to bind OcEnvironment and OC-ws password hash with user HTTP session.
  * Created by piotrzakrzewski on 18/04/16.
  */
 

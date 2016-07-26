@@ -18,6 +18,8 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 /**
+ * Service responsible for all (user submitted) ClinicalData related manipulations.
+ *
  * Created by piotrzakrzewski on 07/05/16.
  */
 @Service
@@ -26,6 +28,14 @@ public class DataService {
     @Autowired
     ClinicalDataRepository clinicalDataRepository;
 
+    /**
+     * Returns a simple structure containing target path for user submission.
+     * i.e. study/event/crf/version.
+     * Meant for determining which parts of this path are specified (non-empty)
+     *
+     * @param submission
+     * @return
+     */
     public FieldsDetermined getInfo(UploadSession submission) {
         List<ClinicalData> bySubmission = clinicalDataRepository.findBySubmission(submission);
         if (bySubmission.size() == 0) return null;
@@ -36,6 +46,14 @@ public class DataService {
         return info;
     }
 
+    /**
+     * Returns original item names submitted by the user. Difference between originalItemName and just item name
+     * is that the former is the name as found in the user submitted text file, while just item name is the name that
+     * will be used during validation and data upload, this name is changed by the mapping.
+     *
+     * @param submission
+     * @return
+     */
     public List<String> getUserItems(UploadSession submission) {
         List<ClinicalData> bySubmission = clinicalDataRepository.findBySubmission(submission);
         return bySubmission.stream()
@@ -60,7 +78,15 @@ public class DataService {
         return ret;
     }
 
-
+    /**
+     * Returns tree built from the subset of the study (which study is inferred from UploadSession).
+     * Subset is determined using user selection (see inferSelection method).
+     *
+     * @param submission
+     * @param ocwsHash
+     * @return
+     * @throws Exception
+     */
     public MetaDataTree getMetadataTree(UploadSession submission, String ocwsHash) throws Exception {
         MetaData metaData = getMetaData(submission, ocwsHash);
         MetaDataTree tree = buildTree(metaData);
@@ -91,6 +117,12 @@ public class DataService {
         return selection;
     }
 
+    /**
+     * Builds tree from whole study.
+     *
+     * @param metaData
+     * @return
+     */
     public static MetaDataTree buildTree(MetaData metaData) { //TODO: move to some utils class? Tree builder?
         String studyIdentifier = metaData.getStudyOID();
 
@@ -145,6 +177,14 @@ public class DataService {
     @Autowired
     OpenClinicaService openClinicaService;
 
+    /**
+     * Returns study MetaData inferring which OcEnvironment from UploadSession data (along with the user itself)
+     *
+     * @param submission
+     * @param ocwsHash
+     * @return
+     * @throws Exception
+     */
     public MetaData getMetaData(UploadSession submission, String ocwsHash) throws Exception {
         OcUser owner = submission.getOwner();
         FieldsDetermined info = getInfo(submission);
@@ -155,6 +195,14 @@ public class DataService {
         return openClinicaService.getMetadata(owner.getUsername(), ocwsHash, owner.getOcEnvironment(), study);
     }
 
+    /**
+     * Returns Study object (holding name, idenfier and OID) given study name
+     * @param studyName
+     * @param owner
+     * @param ocwsHash
+     * @return
+     * @throws Exception
+     */
     public Study findStudy(String studyName, OcUser owner, String ocwsHash) throws Exception {
         //TODO: implement caching of studies instead of looking it up each time by WS call
         List<Study> studies = openClinicaService.listStudies(owner.getUsername(), ocwsHash, owner.getOcEnvironment());

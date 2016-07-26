@@ -47,6 +47,10 @@ import java.util.stream.Collectors;
 import static nl.thehyve.ocdu.soap.ResponseHandlers.RegisterSubjectsResponseHandler.parseRegisterSubjectsResponse;
 
 /**
+ * Wrapper for OpenClinica webservices - or at least the calls that are relevant to to validation, registering subjects,
+ * events and uploading data. This is the only place in the application where new WS calls to OpenClnica should be
+ * implemented.
+ *
  * Created by piotrzakrzewski on 11/04/16.
  */
 

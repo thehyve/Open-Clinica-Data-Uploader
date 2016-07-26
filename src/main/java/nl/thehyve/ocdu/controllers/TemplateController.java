@@ -25,6 +25,7 @@ import java.util.Map;
 import java.util.Set;
 
 /**
+ * Provides file templates for the user.
  * Created by bo on 6/17/16.
  */
 @Controller

@@ -11,6 +11,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 /**
+ * Filter required to pass on user selected OcEnvironment during login.
+ *
  * Created by piotrzakrzewski on 18/04/16.
  */
 public class ExUsernamePasswordAuthenticationFilter extends UsernamePasswordAuthenticationFilter {

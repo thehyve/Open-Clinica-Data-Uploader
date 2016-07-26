@@ -7,6 +7,8 @@ import nl.thehyve.ocdu.models.UploadSession;
 import javax.persistence.*;
 
 /**
+ * Represents user-submitted Subject information. Meant to store data as-is.
+ *
  * Created by piotrzakrzewski on 16/04/16.
  */
 

@@ -23,6 +23,10 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /**
+ * The only way Event objects should be created outside tests.
+ * This factory is responsible for deserializing Event objects from user text file (event-subject pairs to be registered).
+ * It does not save anything to the database nor does any validation - FileValidator needs to check text file
+ * before EventDataFactory  can process it.
  */
 public class EventDataFactory extends UserSubmittedDataFactory {
 

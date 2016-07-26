@@ -26,6 +26,10 @@ import java.util.Collections;
 import java.util.List;
 
 /**
+ * Service responsible for depositing/accepting files submitted by the user.
+ * This is the only class outside tests which should call factories deserializing file contents.
+ * During file deposition appropriate validators are being used.
+ *
  * Created by piotrzakrzewski on 11/04/16.
  */
 

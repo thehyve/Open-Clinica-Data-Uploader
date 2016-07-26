@@ -15,6 +15,9 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
+ * All methods related to mapping clinical data subitted by the user with names defined
+ * in open clinica study metadata.
+ *
  * Created by piotrzakrzewski on 07/05/16.
  */
 @Service
@@ -25,6 +28,13 @@ public class MappingService {
 
     private static final Logger log = LoggerFactory.getLogger(MappingService.class);
 
+    /**
+     * Change item names in user submission (UploadSession) according to the mapping.
+     * Changes are saved to the database.
+     *
+     * @param mappings
+     * @param submission
+     */
     public void applyMapping(List<OcItemMapping> mappings, UploadSession submission) {
         List<ClinicalData> bySubmission = clinicalDataRepository.findBySubmission(submission);
         List<OcItemMapping> nonTrivial = mappings.stream().filter(ocItemMapping ->
@@ -50,6 +60,12 @@ public class MappingService {
         } else return false;
     }
 
+    /**
+     * Return current mapping between original item names and current item names from user submission.
+     *
+     * @param submission
+     * @return
+     */
     public Map<String, String> getCurrentMapping(UploadSession submission) {
         Map<String, String> mapping = new HashMap<>();
         List<ClinicalData> bySubmission = clinicalDataRepository.findBySubmission(submission);

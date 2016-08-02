@@ -16,6 +16,8 @@ import java.util.List;
 @Entity
 public class ClinicalData implements OcEntity, UserSubmitted, EventReference {
 
+    public static final String KEY_SEPARATOR = "\t";
+
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -284,6 +286,19 @@ public class ClinicalData implements OcEntity, UserSubmitted, EventReference {
         ret.append(crfVersion);
         ret.append(itemGroupOID);
 //        ret.append(groupRepeat.toString());
+        return ret.toString().toUpperCase();
+    }
+
+    public String createEventRepeatKey() {
+        StringBuffer ret = new StringBuffer();
+        ret.append(study);
+        ret.append(KEY_SEPARATOR);
+        ret.append(site);
+        ret.append(KEY_SEPARATOR);
+        ret.append(ssid);
+        ret.append(KEY_SEPARATOR);
+        ret.append(eventName);
+
         return ret.toString().toUpperCase();
     }
 

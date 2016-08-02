@@ -1,0 +1,7 @@
+StudySubjectID	Study	Site	EventName	CRFName	CRFVersion	EventRepeat	MyInt
+EV-01234	Eventful		Repeating Event	SuperSimpleCRF	0.1	1	101
+EV-01234	Eventful		Repeating Event	SuperSimpleCRF	0.1	2	201
+EV-01234	Eventful		Repeating Event	SuperSimpleCRF	0.1	5	301
+EV-05555	Eventful		Repeating Event	SuperSimpleCRF	0.1	2	401
+EV-05555	Eventful		Repeating Event	SuperSimpleCRF	0.1	3	501
+EV-00006	Eventful		Repeating Event	SuperSimpleCRF	0.1	9	601

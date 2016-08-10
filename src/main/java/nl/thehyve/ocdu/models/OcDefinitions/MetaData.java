@@ -5,6 +5,7 @@ import org.apache.commons.lang3.StringUtils;
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Created by piotrzakrzewski on 01/05/16.
@@ -172,6 +173,24 @@ public class MetaData {
         this.codeListDefinitions = new ArrayList<>();
         this.itemGroupDefinitions = new ArrayList<>();
         this.eventDefinitions = new ArrayList<>();
+    }
+
+    public String findEventOID(String eventName) {
+        Optional<EventDefinition> matchingEventDefintion =
+                eventDefinitions.stream().filter(eventDefinition -> eventDefinition.getName().equals(eventName)).findAny();
+        if (matchingEventDefintion.isPresent()) {
+            return matchingEventDefintion.get().getStudyEventOID();
+        }
+        throw new IllegalStateException("No matching eventOID found for event with name " + eventName);
+    }
+
+    public String findEventName(String eventOID) {
+        Optional<EventDefinition> matchingEventDefintion =
+                eventDefinitions.stream().filter(eventDefinition -> eventDefinition.getStudyEventOID().equals(eventOID)).findAny();
+        if (matchingEventDefintion.isPresent()) {
+            return matchingEventDefintion.get().getName();
+        }
+        throw new IllegalStateException("No matching event name found for event with OID " + eventOID);
     }
 
     public void setStatus(String status) {

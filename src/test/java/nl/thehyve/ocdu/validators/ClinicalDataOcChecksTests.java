@@ -12,7 +12,7 @@ import nl.thehyve.ocdu.validators.clinicalDataChecks.ClinicalDataCrossCheck;
 import nl.thehyve.ocdu.validators.clinicalDataChecks.MultipleCrfCrossCheck;
 import nl.thehyve.ocdu.validators.clinicalDataChecks.StudyStatusAvailable;
 import nl.thehyve.ocdu.validators.fileValidators.DataPreMappingValidator;
-import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.openclinica.ws.beans.StudySubjectWithEventsType;
@@ -36,72 +36,75 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 
 /**
+ * Units tests for the data validation
  * Created by piotrzakrzewski on 04/05/16.
  */
 
 public class ClinicalDataOcChecksTests {
 
-    ClinicalDataOcChecks clinicalDataOcChecks;
-    MetaData metaData;
-    List<StudySubjectWithEventsType> testSubjectWithEventsTypeList;
-    OcUser testUser;
-    UploadSession testSubmission;
-    ClinicalDataFactory factory;
-    Path testFileCorrect;
-    Path testFileInCorrectSsidLength;
-    Path testFileNonExistentEvent;
-    Path testFileNonExistentCRF;
-    Path testFileNonExistentStudy;
-    Path testFileItemLengthExceeded;
-    Path testFileNonExistentItem;
-    Path testFileCorrectNoSite;
-    Path testFileNonExistentVersion;
-    Path testFileRangeCheckViolation;
-    Path testFileTooManyValues;
-    Path testFileTooManySignificantDigits;
-    Path testFileDupSsid;
-    Path testFileRepeatInNonrepeatingEvent;
-    Path testFileMismatchingCRFVersion;
-    Path testFileGroupRepeatError;
-    Path emptyMandatory;
-    Path missingToggle;
-    Path hiddenVal;
+    private static ClinicalDataOcChecks clinicalDataOcChecks;
+    private static MetaData metaData;
+    private static List<StudySubjectWithEventsType> testSubjectWithEventsTypeList;
+    private static OcUser testUser;
+    private static UploadSession testSubmission;
+    private static ClinicalDataFactory factory;
+    private static Path testFileCorrect;
+    private static Path testFileInCorrectSsidLength;
+    private static Path testFileEventGapWithinData;
+    private static Path testFileNonExistentEvent;
+    private static Path testFileNonExistentCRF;
+    private static Path testFileNonExistentStudy;
+    private static Path testFileItemLengthExceeded;
+    private static Path testFileNonExistentItem;
+    private static Path testFileCorrectNoSite;
+    private static Path testFileNonExistentVersion;
+    private static Path testFileRangeCheckViolation;
+    private static Path testFileTooManyValues;
+    private static Path testFileTooManySignificantDigits;
+    private static Path testFileDupSsid;
+    private static Path testFileRepeatInNonrepeatingEvent;
+    private static Path testFileMismatchingCRFVersion;
+    private static Path testFileGroupRepeatError;
+    private static Path emptyMandatory;
+    private static Path missingToggle;
+    private static Path hiddenVal;
 
-    @Before
-    public void setUp() throws Exception {
+    @BeforeClass
+    public static void setUp() throws Exception {
         try {
-            this.testUser = new OcUser();
-            this.testUser.setUsername("tester");
-            this.testSubjectWithEventsTypeList = TestUtils.createStudySubjectWithEventList();
-            this.testSubmission = new UploadSession("submission1", UploadSession.Step.MAPPING, new Date(), this.testUser);
-            this.factory = new ClinicalDataFactory(testUser, testSubmission);
+            testUser = new OcUser();
+            testUser.setUsername("tester");
+            testSubjectWithEventsTypeList = TestUtils.createStudySubjectWithEventList();
+            testSubmission = new UploadSession("submission1", UploadSession.Step.MAPPING, new Date(), testUser);
+            factory = new ClinicalDataFactory(testUser, testSubmission);
 
-            this.testFileCorrect = Paths.get("docs/exampleFiles/data.txt");
-            this.testFileInCorrectSsidLength = Paths.get("docs/exampleFiles/tooLongSSID.txt");
-            this.testFileNonExistentEvent = Paths.get("docs/exampleFiles/nonExistentEvent.txt");
-            this.testFileNonExistentCRF = Paths.get("docs/exampleFiles/nonExistentCrf.txt");
-            this.testFileNonExistentStudy = Paths.get("docs/exampleFiles/nonexistentStudy.txt");
-            this.testFileItemLengthExceeded = Paths.get("docs/exampleFiles/itemLengthExceeded.txt");
-            this.testFileNonExistentItem = Paths.get("docs/exampleFiles/nonExistentItem.txt");
-            this.testFileCorrectNoSite = Paths.get("docs/exampleFiles/data_no_site.txt");
-            this.testFileNonExistentVersion = Paths.get("docs/exampleFiles/nonExistentVersion.txt");
-            this.testFileRangeCheckViolation = Paths.get("docs/exampleFiles/rangeCheckViolation.txt");
-            this.testFileTooManyValues = Paths.get("docs/exampleFiles/tooManyValues.txt");
-            this.testFileTooManySignificantDigits = Paths.get("docs/exampleFiles/tooManySignificantDigits.txt");
-            this.testFileDupSsid = Paths.get("docs/exampleFiles/dupSSID.txt");
-            this.testFileRepeatInNonrepeatingEvent = Paths.get("docs/exampleFiles/event_repeat.txt");
-            this.testFileMismatchingCRFVersion = Paths.get("docs/exampleFiles/mismatchingCrfVersionID.txt");
-            this.testFileGroupRepeatError = Paths.get("docs/exampleFiles/group_repeat_error.txt");
-            this.emptyMandatory = Paths.get("docs/exampleFiles/emptyMandatory.txt");
-            this.missingToggle = Paths.get("docs/exampleFiles/missingToggle.txt");
-            this.hiddenVal = Paths.get("docs/exampleFiles/hiddenVal.txt");
+            testFileCorrect = Paths.get("docs/exampleFiles/data.txt");
+            testFileInCorrectSsidLength = Paths.get("docs/exampleFiles/tooLongSSID.txt");
+            testFileEventGapWithinData = Paths.get("docs/exampleFiles/eventGapInData.txt");
+            testFileNonExistentEvent = Paths.get("docs/exampleFiles/nonExistentEvent.txt");
+            testFileNonExistentCRF = Paths.get("docs/exampleFiles/nonExistentCrf.txt");
+            testFileNonExistentStudy = Paths.get("docs/exampleFiles/nonexistentStudy.txt");
+            testFileItemLengthExceeded = Paths.get("docs/exampleFiles/itemLengthExceeded.txt");
+            testFileNonExistentItem = Paths.get("docs/exampleFiles/nonExistentItem.txt");
+            testFileCorrectNoSite = Paths.get("docs/exampleFiles/data_no_site.txt");
+            testFileNonExistentVersion = Paths.get("docs/exampleFiles/nonExistentVersion.txt");
+            testFileRangeCheckViolation = Paths.get("docs/exampleFiles/rangeCheckViolation.txt");
+            testFileTooManyValues = Paths.get("docs/exampleFiles/tooManyValues.txt");
+            testFileTooManySignificantDigits = Paths.get("docs/exampleFiles/tooManySignificantDigits.txt");
+            testFileDupSsid = Paths.get("docs/exampleFiles/dupSSID.txt");
+            testFileRepeatInNonrepeatingEvent = Paths.get("docs/exampleFiles/event_repeat.txt");
+            testFileMismatchingCRFVersion = Paths.get("docs/exampleFiles/mismatchingCrfVersionID.txt");
+            testFileGroupRepeatError = Paths.get("docs/exampleFiles/group_repeat_error.txt");
+            emptyMandatory = Paths.get("docs/exampleFiles/emptyMandatory.txt");
+            missingToggle = Paths.get("docs/exampleFiles/missingToggle.txt");
+            hiddenVal = Paths.get("docs/exampleFiles/hiddenVal.txt");
 
             MessageFactory messageFactory = MessageFactory.newInstance();
             File testFile = new File("docs/responseExamples/getStudyMetadata2.xml"); //TODO: Replace File with Path
             FileInputStream in = new FileInputStream(testFile);
 
             SOAPMessage mockedResponseGetMetadata = messageFactory.createMessage(null, in);//soapMessage;
-            this.metaData = GetStudyMetadataResponseHandler.parseGetStudyMetadataResponse(mockedResponseGetMetadata);
+            metaData = GetStudyMetadataResponseHandler.parseGetStudyMetadataResponse(mockedResponseGetMetadata);
         } catch (Exception ex) {
             ex.printStackTrace();
         }
@@ -122,6 +125,16 @@ public class ClinicalDataOcChecksTests {
         List<ValidationErrorMessage> errors = clinicalDataOcChecks.getErrors();
         assertEquals(1, errors.size());
         assertThat(errors, hasItem(isA(SSIDTooLong.class)));
+    }
+
+
+    @Test
+    public void eventGapWithInData() throws Exception {
+        List<ClinicalData> incorrectClinicalData = factory.createClinicalData(testFileEventGapWithinData);
+        clinicalDataOcChecks = new ClinicalDataOcChecks(metaData, incorrectClinicalData, testSubjectWithEventsTypeList);
+        List<ValidationErrorMessage> errors = clinicalDataOcChecks.getErrors();
+        assertEquals(1, errors.size());
+        assertThat(errors, hasItem(isA(EventGapError.class)));
     }
 
     @Test
